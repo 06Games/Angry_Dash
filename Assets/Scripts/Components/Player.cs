@@ -8,17 +8,28 @@ using PlayerPrefs = PreviewLabs.PlayerPrefs;
 
 public class Player : MonoBehaviour {
 
-    public int[] Sensibility;
-    public float Speed;
-    public int Sesibility;
-    public int x;
-    public int y;
-    public GameObject Arrivé;
-    public Transform Parents;
-    public GameObject Ar;
-    public GameObject JoyStick;
-    public bool PeutAvancer;
-    public Vector2 PositionInitiale;
+    //Dépendances
+    public LevelPlayer LP;
+
+    //Joystick
+    public GameObject JoyStick; //Le Joystick
+    public int[] Sensibility; //Min et max de l'aléatoire
+    public int Sesibility; //Sesi actuelle (distance du point d'arrivé)
+    int x; //pos x du joystick
+    int y; //pos y du joystick
+
+    //Paramètres
+    float Speed = 60; //Vitesse de déplacement
+
+    //Point d'arrivé
+    public GameObject Arrivé; //Prefab de l'arrivé
+    public Transform Parents; //Zone Unity pour spawn de l'arrivé
+    public GameObject Ar; //Pt d'arrivé actuel
+
+    //Avancer
+    public bool PeutAvancer; //Pas de mur
+    public Vector2 PositionInitiale; //Dernier point d'arrivé valide
+
 
     void Start()
     {
@@ -44,12 +55,12 @@ public class Player : MonoBehaviour {
         else if (!PeutAvancer)
         {
             Destroy(Ar);
-            //StartCoroutine(destroy());
         }
         else JoyStick.SetActive(false);
 
-        if (xa == 0 & ya == 0 & t & Ar == null) //si le joueur à lacher le joystick
+        if (xa == 0 & ya == 0 & t & Ar == null) //si le joueur a laché le joystick
         {
+            LP.nbLancer = LP.nbLancer + 1;
             Quaternion rot = new Quaternion(0, 0, 0, 0);
             Vector3 pos = new Vector3(transform.position.x - x, transform.position.y - y, 0);
             Ar = Instantiate(Arrivé, pos, rot, Parents);
@@ -61,7 +72,6 @@ public class Player : MonoBehaviour {
             PositionInitiale = transform.position;
             StartCoroutine(Navigate(px, py));
         }
-            //transform.position = new Vector2(transform.position.x - x, transform.position.y - y);
 
         x = xa; //x d'avant
         y = ya; //y d'avant
@@ -69,12 +79,33 @@ public class Player : MonoBehaviour {
 
     public IEnumerator Navigate(float px, float py)
     {
+        float adjacent = Ar.transform.position.x - transform.position.x;
+        float oppose = Ar.transform.position.y - transform.position.y;
+        float hypothenuse = (float)Math.Sqrt(Math.Pow(adjacent,2) + Math.Pow(oppose, 2));
+        float cos = adjacent / hypothenuse;
+        double z = (Math.Acos(cos) * 180) / Mathf.PI;
+        
+        if (transform.position.y < Ar.transform.position.y)
+            z = z - 90;
+        else z = z * -1 - 90;
+        
+        Quaternion rot = new Quaternion();
+        rot.eulerAngles = new Vector3(0,0,(float)z);
+        transform.rotation = rot;
+
         int i = 0;
         while (i < Speed)
         {
             if (PeutAvancer)
             {
-                transform.position = new Vector2(transform.position.x + px / Speed, transform.position.y + py / Speed);
+                float vitesse = i * 20 / (Speed / 2);
+                //float vitesse = 20 * (i * 0.025F);
+                if (i > Speed / 2)
+                    vitesse = i / -(Speed / 2) + 2;
+                    //vitesse = 20 / (i * 0.025F);
+                transform.Translate(Vector3.up * vitesse, Space.Self);
+                
+                //transform.localPosition = new Vector2(transform.localPosition.x + px / Speed, transform.localPosition.y + py / Speed);
                 i++;
                 yield return new WaitForSeconds(0.01F);
             }
@@ -87,6 +118,5 @@ public class Player : MonoBehaviour {
     {
         yield return new WaitForSeconds(0.5F);
         Destroy(Ar);
-        //PeutAvancer = true;
     }
 }   

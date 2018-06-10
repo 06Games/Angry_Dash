@@ -6,11 +6,14 @@ using UnityEngine.SceneManagement;
 public class menuMusic : MonoBehaviour {
 
     static bool AudioBegin = false;
+
+    public new AudioClip audio;
     void Awake()
     {
+
         if (!AudioBegin)
         {
-            GetComponent<AudioSource>().Play();
+            LoadMusic(audio);
             DontDestroyOnLoad(gameObject);
             AudioBegin = true;
         }
@@ -28,4 +31,27 @@ public class menuMusic : MonoBehaviour {
 
     public void Stop() { GetComponent<AudioSource>().Stop(); }
     public void Play() { GetComponent<AudioSource>().Play(); }
+
+    public void LoadMusic(string path, float timePos = 0)
+    {
+#if UNITY_STANDALONE || UNITY_EDITOR  || UNITY_WSA
+        string url = "file:///" + path;
+#else
+        string url = "file://" + path;
+#endif
+        StartCoroutine(StartAudio(url, timePos));
+    }
+    public void LoadMusic(AudioClip ac) { GetComponent<AudioSource>().clip = ac; Play(); }
+    IEnumerator StartAudio(string url, float timePos)
+     {
+        if (url.Length > 8)
+        {
+            WWW audioLoader = new WWW(url);
+            while (!audioLoader.isDone)
+                yield return null;
+            GetComponent<AudioSource>().clip = audioLoader.GetAudioClip(false, false);
+            GetComponent<AudioSource>().time = timePos;
+            Play();
+        }
+    }
 }

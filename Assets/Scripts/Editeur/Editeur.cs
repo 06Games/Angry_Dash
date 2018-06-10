@@ -44,7 +44,14 @@ public class Editeur : MonoBehaviour
         Selection.SetActive(false);
         gameObject.SetActive(true);
 
-        component = new string[] { "//Description", desc, "", "//Arrière Plan", "1; 4b4b4b255", " ", "//Blocks", "" };
+        component = new string[] { "description = " + desc,
+            "background = 1; 4b4b4b255",
+            "music = ",
+            "version = " +Application.version,
+            "author = " +ConfigAPI.GetString("Account.Username"),
+            " ",
+            "Blocks {",
+            "}"};
         file = txt;
         transform.GetChild(0).gameObject.SetActive(true);
 
@@ -58,7 +65,20 @@ public class Editeur : MonoBehaviour
         gameObject.SetActive(true);
 
         component = File.ReadAllLines(txt);
-        for (int i = 7; i < component.Length; i++)
+        int d = -1;
+        for (int x = 0; x < component.Length; x++)
+        {
+            if (component[x].Contains("Blocks {") & d == -1)
+                d = x+1;
+        }
+        int end = -1;
+        for(int i = d; i < component.Length; i++)
+        {
+            if (component[i].Contains("}") & end == -1)
+                end = i;
+        }
+
+        for (int i = d; i < end; i++)
             Instance(i);
         transform.GetChild(0).gameObject.SetActive(true);
 
@@ -68,7 +88,10 @@ public class Editeur : MonoBehaviour
     public void ExitEdit()
     {
         if (GameObject.Find("Audio") != null)
-            GameObject.Find("Audio").GetComponent<menuMusic>().Play();
+        {
+            menuMusic mm = GameObject.Find("Audio").GetComponent<menuMusic>();
+            mm.LoadMusic(mm.audio);
+        }
         Selection.SetActive(true);
         Selection.GetComponent<EditorSelect>().NewStart();
         //transform.GetChild(0).gameObject.SetActive(false);
@@ -127,6 +150,11 @@ public class Editeur : MonoBehaviour
             }
         }
 
+        Color32 backColor = new Color32(32, 32, 32, 255);
+        if (SelectMode)
+            backColor = new Color32(70, 70, 70, 255);
+        transform.GetChild(0).GetChild(2).GetComponent<Image>().color = backColor;
+
         //Sauvegarde Automatique
         if (file != "" & component.Length != 0)
         {
@@ -160,15 +188,8 @@ public class Editeur : MonoBehaviour
                     float id = newblockid;
                     if (id > 10000)
                         id = (newblockid - 10000F) / 10F;
-
-                    bool p = true;
-                    for(int i = 0; i < component.Length; i++)
-                    {
-                        if (component[i] == id + "; " + a + "; 0; " + color)
-                            p = false;
-                    }
-                    if (p)
-                        CreateBloc(x, y, new Color32(190, 190, 190, 255));
+                    
+                    CreateBloc(x, y, new Color32(190, 190, 190, 255));
                 }
             }
         }
@@ -238,7 +259,7 @@ public class Editeur : MonoBehaviour
         }
 #endif
 
-        /*#if UNITY_STANDALONE || UNITY_EDITOR
+        #if UNITY_STANDALONE || UNITY_EDITOR
                 int MoveX = 0;
                 int MoveY = 0;
 
@@ -257,7 +278,7 @@ public class Editeur : MonoBehaviour
                 Deplacer(MoveX * Speed, MoveY * Speed);
         #elif UNITY_ANDROID || UNITY_IOS
 
-        #endif*/
+        #endif
     }
 
     void Zoom(int Z = 0)
@@ -309,9 +330,31 @@ public class Editeur : MonoBehaviour
         if(id > 10000)
             id = (newblockid - 10000F) /10F;
 
-        component = component.Union(new string[1] { id.ToString(".0####") + "; " + a + "; 0; " + color }).ToArray();
-        //AddBlocking = false;
-        Instance(component.Length - 1);
+        int start = -1;
+        for (int i = 0; i < component.Length; i++)
+        {
+            if (component[i].Contains("Blocks {") & start == -1)
+                start = i + 1;
+        }
+        int end = -1;
+        for (int i = start; i < component.Length; i++)
+        {
+            if (component[i].Contains("}") & end == -1)
+                end = i;
+        }
+        string[] newComponent = new string[component.Length+1];
+        for(int i = 0; i < newComponent.Length; i++)
+        {
+            if (i < end)
+                newComponent[i] = component[i];
+            else if (i == end)
+                newComponent[i] = id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0";
+            else newComponent[i] = component[i-1];
+        }
+
+        component = newComponent;
+        //component = component.Union(new string[1] { id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0" }).ToArray();
+        Instance(end);
     }
     public void AddBlock(string _id)
     {
@@ -332,14 +375,14 @@ public class Editeur : MonoBehaviour
             {
                 Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
                 Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + newblockid.ToString(".0####") + ".png"));
+                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + newblockid.ToString("0.0####") + ".png"));
                 Contenu[3].transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
             }
             else
             {
                 Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
                 Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + i.ToString(".0####") + ".png"));
+                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + i.ToString("0.0####") + ".png"));
                 Contenu[3].transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
             }
         }
@@ -405,7 +448,7 @@ public class Editeur : MonoBehaviour
         }
     }
 
-    public void Instance(int num)
+    public void Instance(int num, bool keep = false)
     {
         float id = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]);
         Vector3 p = GetObjectPos(num);
@@ -414,19 +457,39 @@ public class Editeur : MonoBehaviour
         rot.eulerAngles = new Vector3(0, 0, int.Parse(GetBlocStatus(2, num)));
         GameObject Pref = null;
         if (id < 1)
-            Pref = TriggerPrefabs[(int)(id * 10F)-1];
+            Pref = TriggerPrefabs[(int)(id * 10F) - 1];
         else Pref = Prefab;
-        GameObject go = Instantiate(Pref, pos, rot, transform.GetChild(1));
-        go.name = "Objet n° " + num;
-        go.transform.localScale = new Vector2(Screen.height / (Screen.height / 50), Screen.height / (Screen.height / 50));
-        SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
-        
-        Texture2D tex = new Texture2D(1, 1);
-        tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString(".0####") + ".png"));
-        SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-        
-        SR.color = HexToColor(GetBlocStatus(3, num));
-        SR.sortingOrder = (int)p.z;
+
+        Transform g = transform.GetChild(1);
+        bool b = true;
+        for (int i = 0; i < g.childCount; i++)
+        {
+            if (g.GetChild(i).gameObject.name == "Objet n° " + num)
+                b = false;
+        }
+        if (b | keep)
+        {
+            GameObject go = null;
+            if (keep)
+            {
+                go = GameObject.Find("Objet n° " + num);
+                go.transform.position = pos;
+                go.transform.rotation = rot;
+            }
+            else go = Instantiate(Pref, pos, rot, transform.GetChild(1));
+            
+            go.name = "Objet n° " + num;
+            //go.transform.localScale = new Vector2(Screen.height / (Screen.height / 50), Screen.height / (Screen.height / 50));
+            go.transform.localScale = new Vector2(50, 50);
+            SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
+            
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString("0.0####") + ".png"));
+            SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+
+            SR.color = HexToColor(GetBlocStatus(3, num));
+            SR.sortingOrder = (int)p.z;
+        }
     }
     public Vector3 GetObjectPos(int num)
     {
@@ -465,31 +528,32 @@ public class Editeur : MonoBehaviour
         return a;
     }
 
-    public void ChangBlocStatus(float StatusID, string conponent, int Bloc = -1)
+    public void ChangBlocStatus(float StatusID, string _component, int Bloc = -1)
     {
         if (Bloc == -1)
             Bloc = SelectedBlock;
 
         string[] b = component[Bloc].Split(new string[] { "; " }, System.StringSplitOptions.None);
+
         string[] Pos = b[1].Split(new string[] { ", " }, System.StringSplitOptions.None);
+        if (StatusID == 1.1F)
+            _component = "(" + _component + ", " + Pos[2];
+        else if (StatusID == 1.2F)
+            _component = Pos[0] + ", " + Pos[1] + ", " + _component + ")";
 
         string c = "";
-        if (StatusID == 0)
-            c = conponent + "; " + b[1] + "; " + b[2] + "; " + b[3];
-        else if (StatusID == 1)
-            c = b[0] + "; " + conponent + "; " + b[2] + "; " + b[3];
-        else if(StatusID == 1.1F)
-            c = b[0] + "; (" + conponent + ", " + Pos[2] + "; " + b[2] + "; " + b[3];
-        else if (StatusID == 1.2F)
-            c = b[0] + "; " + Pos[0] + ", " + Pos[1] + ", " + conponent + "); " + b[2] + "; " + b[3];
-        else if (StatusID == 2)
-            c = b[0] + "; " + b[1] + "; " + conponent + "; " + b[3];
-        else if (StatusID == 3)
-            c = b[0] + "; " + b[1] + "; " + b[2] + "; " + conponent;
+        for (int i = 0; i < b.Length; i++)
+        {
+            if (i == (int)StatusID)
+                c = c + _component;
+            else c = c + b[i];
+
+            if (i < b.Length - 1)
+                c = c + "; ";
+        }
 
         component[Bloc] = c;
-        Destroy(GameObject.Find("Objet n° " + Bloc));
-        Instance((Bloc));
+        Instance(Bloc, true);
     }
     public string GetBlocStatus(float StatusID, int Bloc = -1)
     {
@@ -503,7 +567,7 @@ public class Editeur : MonoBehaviour
             if (StatusID < a.Length & StatusID == (int)StatusID)
                 return a[(int)StatusID];
             else if (StatusID < a.Length)
-                return a[(int)StatusID].Split(new string[] { ", " }, System.StringSplitOptions.None)[(int)(StatusID * 10 - (int)StatusID * 10)];
+                return a[(int)StatusID].Split(new string[] { ", " }, System.StringSplitOptions.None)[(int)(StatusID * 10 - (int)StatusID * 10)].Replace(")", "").Replace("(", "");
             else return "";
         }
         else return "";
@@ -516,24 +580,15 @@ public class Editeur : MonoBehaviour
             int SB = SelectedBlock;
             SelectedBlock = -1;
             string[] NewComponent = new string[component.Length - 1];
-
-            //GameObject go = GameObject.Find("Objet n° " + SB);
-
-            //while (transform.GetChild(1).GetChild(SB - 6).gameObject.name != "Objet n° " + SB)
-            //{
-                GameObject go = transform.GetChild(1).GetChild(SB - 6).gameObject;
-                Destroy(go);
-            //}
+            
+            GameObject go = transform.GetChild(1).GetChild(SB - 6).gameObject;
+            Destroy(go);
 
             for (int i = 0; i < NewComponent.Length; i++)
             {
                 if (i < SB)
                     NewComponent[i] = component[i];
-                else
-                {
-                    NewComponent[i] = component[i + 1];
-                    //GameObject.Find("Objet n° " + (i + 1)).name = "Objet n° " + i;
-                }
+                else NewComponent[i] = component[i + 1];
             }
             component = NewComponent;
             File.WriteAllLines(file, component);

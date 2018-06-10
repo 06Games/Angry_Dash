@@ -32,7 +32,7 @@ namespace PreviewLabs
 		//NOTE modify the iw3q part to an arbitrary string of length 4 for your project, as this is the encryption key
 		private static byte[] bytes = ASCIIEncoding.ASCII.GetBytes ("iw3q" + SystemInfo.deviceUniqueIdentifier.Substring (0, 4));
 		private static bool wasEncrypted = false;
-		private static bool securityModeEnabled = false;
+		private static bool securityModeEnabled = true;
 		
 		static PlayerPrefs ()
 		{

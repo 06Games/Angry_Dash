@@ -72,10 +72,11 @@ public class Shop : MonoBehaviour {
         for(int i = 0; i < 2; i++)
         {
             string PPname = "Item" + (i + 1);
+            if (PlayerPrefs.GetString(PPname) == null)
+                PlayerPrefs.SetString(PPname, "0");
             string PP = PlayerPrefs.GetString(PPname);
             string[] a = PP.Split(new string[1] { " " }, StringSplitOptions.None);
 
-            print("i : " + i);
             for(int v = 1; v < 6; v++)
             {
                 bool f = true;
@@ -85,7 +86,6 @@ public class Shop : MonoBehaviour {
                         f = false;
                 }
                 transform.GetChild(0).GetChild(0).GetChild(2).GetChild(i).GetChild(v).GetComponent<Button>().interactable = f;
-                print("v : " + v);
             }
         }
     }

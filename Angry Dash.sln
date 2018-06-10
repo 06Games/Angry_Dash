@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2017
+# Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Angry Dash", "Angry Dash.csproj", "{34E66077-136C-E88F-166B-8CFF6854C3C3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Angry Dash.Plugins", "Angry Dash.Plugins.csproj", "{F19D63BD-EC61-626D-03E7-EB2A879A5A9F}"

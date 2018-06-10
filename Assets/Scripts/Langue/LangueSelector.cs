@@ -5,17 +5,27 @@ using UnityEngine.UI;
 
 public class LangueSelector : MonoBehaviour {
 
-    public Text ZoneDeTexte;
-    public Button Precedant;
-    public Button Suivant;
+    public Transform Langues;
+    public GameObject RestartRequire;
+    public LoadingScreenControl LS;
 
     public bool AutomatiqueUpdate;
 
     public string[] LangueDispo;
     public int actuel = 0;
 
-	void Start () {
-        actuel = 0;
+    void Start() { NewStart(); }
+
+	void NewStart () {
+        if (string.IsNullOrEmpty(LangueAPI.LangGet()))
+            ReloadScene();
+
+        for(int i = 0; i < LangueDispo.Length; i++)
+        {
+            if (LangueAPI.LangGet() == LangueDispo[i])
+                actuel = i;
+        }
+
         if (AutomatiqueUpdate)
         {
             StartCoroutine(LangueAPI.UpdateFiles());
@@ -25,38 +35,42 @@ public class LangueSelector : MonoBehaviour {
 
     void Update()
     {
-        if (actuel >= LangueDispo.Length-1)
-            Suivant.interactable = false;
-        else Suivant.interactable = true;
-
-        if (actuel == 0)
-            Precedant.interactable = false;
-        else Precedant.interactable = true;
-        
-        ZoneDeTexte.text = LangueDispo[actuel];
+        for(int i = 0; i < LangueDispo.Length; i++)
+        {
+            if (i == actuel)
+                Langues.GetChild(i).GetChild(0).gameObject.SetActive(true);
+            else Langues.GetChild(i).GetChild(0).gameObject.SetActive(false);
+        }
     }
 
-    public void PrecedantButton() { actuel = actuel - 1; }
-    public void SuivantButton() { actuel = actuel + 1; }
-    public void Apply() { LangueAPI.LangSet(LangueDispo[actuel]); }
+    public void Chang(int i){
+        if (i != actuel)
+        {
+            actuel = i;
+            RestartRequire.SetActive(true);
+        }
+    }
+    public void Cancel() { RestartRequire.SetActive(false); NewStart(); }
+    public void ReloadScene() { Apply(); LS.LoadScreen(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name); }
+    void Apply() { LangueAPI.LangSet(LangueDispo[actuel]); }
 
     IEnumerator GetLangDispo()
     {
-        WWW www = new WWW("https://raw.githubusercontent.com/06Games/06GamesLauncher/master/Asset/Langue/index");
+        WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/index");
         yield return www;
         string[] All = www.text.Split(new string[] { "\n" }, StringSplitOptions.None);
-        
-        LangueDispo = new string[All.Length - 1];
-        int dispo;
-        for (dispo = 0; dispo < All.Length - 1; dispo++)
+
+        int lines = All.Length;
+        if (string.IsNullOrEmpty(All[lines - 1]))
+            lines = lines - 1;
+
+        LangueDispo = new string[lines];
+        for (int dispo = 0; dispo < lines; dispo++)
         {
             LangueDispo[dispo] = All[dispo].Split(new string[] { "[" }, StringSplitOptions.None)[0];
         }
 
         if (LangueAPI.LangGet() == null)
-        {
-            LangueAPI.LangSet(LangueDispo[actuel]);
-            ZoneDeTexte.text = LangueAPI.LangGet();
-        }
+            Apply();
     }
 }

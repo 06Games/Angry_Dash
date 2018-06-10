@@ -10,22 +10,30 @@ using UnityEngine.UI;
 
 public class EditorSelect : MonoBehaviour
 {
+    public Text SongUsed;
     public GameObject Selector;
     public GameObject Info;
     public GameObject Cam;
     public GameObject _NewG;
     InputField[] _New = new InputField[2];
     public Editeur editeur;
+    public Soundboard SoundBoard;
 
     public int SelectedLevel = -1;
     public string[] Desc;
     public string[] file;
+    public string[] Songs;
+    string[] files;
     int lastItem = -1;
 
-    private void Start()
+    void Start()
     {
+        SoundBoard.RefreshList();
         _New[0] = _NewG.transform.GetChild(0).GetChild(2).gameObject.GetComponent<InputField>();
         _New[1] = _NewG.transform.GetChild(0).GetChild(3).gameObject.GetComponent<InputField>();
+        transform.GetChild(0).gameObject.SetActive(true);
+        for(int i = 1; i < transform.childCount; i++)
+            transform.GetChild(i).gameObject.SetActive(false);
         NewStart();
     }
 
@@ -41,11 +49,24 @@ public class EditorSelect : MonoBehaviour
         string directory = Application.persistentDataPath + "/Saved Level/";
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
-        file = Directory.GetFiles(directory);
+        files = Directory.GetFiles(directory);
+        file = files;
         int Files = file.Length;
         Desc = new string[Files];
+        Songs = new string[Files];
 
         Page(1);
+    }
+
+    public void OpenMostRecentlevel()
+    {
+        string[] fileSort = files;
+        DateTime[] creationTimes = new DateTime[fileSort.Length];
+        for (int i = 0; i < fileSort.Length; i++)
+            creationTimes[i] = new FileInfo(fileSort[i]).CreationTime;
+        Array.Sort(creationTimes, fileSort);
+
+
     }
 
     public static string FormatedDate(DateTime DT)
@@ -59,9 +80,17 @@ public class EditorSelect : MonoBehaviour
     {
         SelectedLevel = button+(lastItem-4);
 
-        if (button != -1)
+        for(int i = 1; i < 6; i++)
+        {
+            if (i == button+1)
+                Selector.transform.GetChild(i).GetComponent<Image>().color = new Color32(80, 80, 80, 255);
+            else Selector.transform.GetChild(i).GetComponent<Image>().color = new Color32(95, 95, 95, 255);
+        }
+        if (button != -1 & Desc[button] != "")
             Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = Desc[button];
-        else Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = "";
+        else Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = "Description incompatible";
+
+        SongUsed.text = Songs[button];
     }
 
     public void ChangDesc(InputField IF)
@@ -70,7 +99,19 @@ public class EditorSelect : MonoBehaviour
         {
             Desc[SelectedLevel] = IF.text;
             string[] a = File.ReadAllLines(file[SelectedLevel]);
-            a[1] = Desc[SelectedLevel];
+            
+            int d = -1;
+            for (int x = 0; x < a.Length; x++)
+            {
+                if (a[x].Contains("description = ") & d == -1)
+                    d = x;
+            }
+            if (d != -1)
+                a[d] = "description = " + Desc[SelectedLevel];
+            else {
+                Desc[SelectedLevel] = "";
+                IF.text = "Description incompatible";
+            }
             File.WriteAllLines(file[SelectedLevel], a);
         }
     }
@@ -150,7 +191,29 @@ public class EditorSelect : MonoBehaviour
 
                 go.GetChild(0).GetComponent<Text>().text = Name[Name.Length - 1].Replace(".level", "");
                 go.GetChild(1).GetComponent<Text>().text = FormatedDate(UTC);
-                Desc[i] = File.ReadAllLines(file[f])[1];
+
+                string[] a = File.ReadAllLines(file[f]);
+                int d = -1;
+                for (int x = 0; x < a.Length; x++)
+                {
+                    if (a[x].Contains("description = ") & d == -1)
+                        d = x;
+                }
+                if (d == -1)
+                    Desc[i] = "";
+                else Desc[i] = a[d].Replace("description = ", "");
+
+                int m = -1;
+                for (int x = 0; x < a.Length; x++)
+                {
+                    if (a[x].Contains("music = ") & m == -1)
+                        m = x;
+                }
+                if (m == -1)
+                    Songs[i] = "No Music";
+                else if (a[m].Replace("music = ", "") == "")
+                    Songs[i] = "No Music";
+                else Songs[i] = TagLib.File.Create(Application.persistentDataPath + "/Musics/" + a[m].Replace("music = ", "")).Tag.Title;
 
                 f = f + 1;
             }
@@ -159,5 +222,48 @@ public class EditorSelect : MonoBehaviour
 
         Selector.transform.GetChild(6).GetComponent<Button>().interactable = lastItem < file.Length - 1;
         Selector.transform.GetChild(0).GetComponent<Button>().interactable = lastItem - 5 > -1;
+        for (int i = 1; i < 6; i++)
+            Selector.transform.GetChild(i).GetComponent<Image>().color = new Color32(95, 95, 95, 255);
+    }
+    public void Search(InputField IF)
+    {
+        lastItem = -1;
+        SelectedLevel = -1;
+        _NewG.SetActive(false);
+
+        if (string.IsNullOrEmpty(IF.text))
+            NewStart();
+        else
+        {
+            bool[] fileList = new bool[files.Length];
+            if (IF != null)
+            {
+                if (!string.IsNullOrEmpty(IF.text))
+                {
+                    for (int i = 0; i < files.Length; i++)
+                    {
+                        string[] file = files[i].Split(new string[1] { "/" }, System.StringSplitOptions.None);
+                        string fileName = file[file.Length - 1].Replace(".level", "");
+                        fileList[i] = fileName.Contains(IF.text);
+                    }
+                }
+            }
+
+            int item = 0;
+            string[] fileCorresponding = new string[files.Length];
+            for (int i = 0; i < files.Length; i++)
+            {
+                if (fileList[i])
+                {
+                    item = item + 1;
+                    fileCorresponding[item - 1] = files[i];
+                }
+            }
+            string[] SearchResult = new string[item];
+            for (int i = 0; i < item; i++)
+                SearchResult[i] = fileCorresponding[i];
+            file = SearchResult;
+            Page(0);
+        }
     }
 }

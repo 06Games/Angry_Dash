@@ -27,6 +27,9 @@ public class Inventory : MonoBehaviour {
     }
 
     void Start () {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Flush();
+
         for (int i = 1; i < 3; i++)
         {
             if (PlayerPrefs.GetString("Item" + i) == "")
@@ -134,6 +137,8 @@ public class Inventory : MonoBehaviour {
             for (int i = 0; i < 1; i++)
             {
                 string PPname = "Item" + (i + 1);
+                if (PlayerPrefs.GetString(PPname) == null)
+                    PlayerPrefs.SetString(PPname, "0");
                 string PP = PlayerPrefs.GetString(PPname);
                 string[] a = PP.Split(new string[1] { " " }, StringSplitOptions.None);
 

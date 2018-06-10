@@ -14,6 +14,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
     <CompilerResponseFile></CompilerResponseFile>
+    <UnityProjectGenerator>VSTU</UnityProjectGenerator>
     <UnityProjectType>GamePlugins:3</UnityProjectType>
     <UnityBuildTarget>Android:13</UnityBuildTarget>
     <UnityVersion>2017.1.1p3</UnityVersion>
@@ -50,31 +51,31 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEditor">
-      <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TestRunner">
-      <HintPath>Library\UnityAssemblies\UnityEngine.TestRunner.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/UnityEngine.TestRunner.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>Library\UnityAssemblies\nunit.framework.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/net35/unity-custom/nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Timeline">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Timeline.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Timeline/RuntimeEditor/UnityEngine.Timeline.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Analytics">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Analytics.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.HoloLens">
-      <HintPath>Library\UnityAssemblies\UnityEngine.HoloLens.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +170,249 @@
     <Compile Include="Assets\Standard Assets\LeanTouch\Scripts\LeanSelectable.cs" />
     <Compile Include="Assets\Standard Assets\LeanTouch\Scripts\LeanSnapshot.cs" />
     <Compile Include="Assets\Standard Assets\LeanTouch\Scripts\LeanTouch.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Aac\AudioHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Aac\BitStream.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Aac\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Aiff\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Aiff\StreamHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ape\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ape\Footer.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ape\Item.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ape\StreamHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ape\Tag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\ContentDescriptionObject.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\ContentDescriptor.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\DescriptionRecord.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\ExtendedContentDescriptionObject.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\FilePropertiesObject.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\Guid.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\HeaderExtensionObject.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\HeaderObject.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\MetadataLibraryObject.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\Object.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\PaddingObject.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\StreamPropertiesObject.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\Tag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Asf\UnknownObject.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Audible\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Audible\Tag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\ByteVector.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\ByteVectorList.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\CombinedTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\CorruptFileException.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Debugger.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Dsf\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Dsf\StreamHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\FileTypes.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Flac\Block.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Flac\BlockHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Flac\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Flac\Picture.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Flac\StreamHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Genres.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Gif\Codec.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Gif\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Gif\GifCommentTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\ICodec.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v1\StringHandler.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v1\Tag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\ExtendedHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Footer.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\FrameFactory.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\FrameHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\AttachedPictureFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\CommentsFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\GeneralEncapsulatedObjectFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\MusicCdIdentifierFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\PlayCountFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\PopularimeterFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\PrivateFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\RelativeVolumeFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\SynchronizedLyricsFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\TermsOfUseFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\TextIdentificationFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\UniqueFileIdentifierFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\UnknownFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\UnsynchronisedLyricsFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Frames\UrlLinkFrame.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\FrameTypes.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Header.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\SynchData.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Id3v2\Tag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\ByteIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\ByteVectorIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\LongArrayIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\LongIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\MakernoteIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\Rational.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\RationalArrayIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\RationalIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\SByteIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\ShortArrayIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\ShortIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\SLongArrayIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\SLongIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\SRational.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\SRationalArrayIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\SRationalIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\SShortArrayIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\SShortIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\StringIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\StripOffsetsIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\SubIFDArrayEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\SubIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\ThumbnailDataIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\UndefinedIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Entries\UserCommentIFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\IFDDirectory.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\IFDEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\IFDEntryType.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\IFDReader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\IFDRenderer.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\IFDStructure.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\IFDTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Makernotes\Nikon3MakernoteReader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\CanonFileInfoEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\CanonMakerNoteEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\CanonPictureInfoEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\ExifEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\GPSEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\IFDEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\IOPEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\Nikon3MakerNoteEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\NikonIsoInfoEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\NikonLensData3EntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\NikonPictureControlEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\NikonPreviewMakerNoteEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\NikonShotInfoEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\NikonVibrationReductionEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\NikonWorldTimeEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\OlympusMakerNoteEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\PanasonicMakerNoteEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\PentaxMakerNoteEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IFD\Tags\SonyMakerNoteEntryTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IIM\IIMReader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\IIM\IIMTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Image\Codec.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Image\CombinedImageTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Image\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Image\ImageBlockFile.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Image\ImageOrientation.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Image\ImageTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Image\NoMetadata\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Jpeg\Codec.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Jpeg\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Jpeg\JpegCommentTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Jpeg\Marker.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Jpeg\Table.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\ListBase.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\Attachment.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\AudioTrack.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\EBMLElement.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\EBMLIDs.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\EBMLreader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\IUIDElement.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\MatroskaIDs.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\SimpleTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\SubtitleTrack.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\Tag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\Tags.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\TargetType.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\Track.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Matroska\VideoTrack.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpc\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpc\StreamHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg\AudioFile.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg\AudioHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg\VBRIHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg\VideoHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg\XingHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\AppleTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Box.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\AppleAdditionalInfoBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\AppleAnnotationBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\AppleDataBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\AppleElementaryStreamDescriptor.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\AppleItemListBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\FullBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoAudioSampleEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoChunkLargeOffsetBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoChunkOffsetBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoFreeSpaceBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoHandlerBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoMetaBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoMovieHeaderBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoSampleDescriptionBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoSampleEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoSampleTableBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoUserDataBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\IsoVisualSampleEntry.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\TextBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\UnknownBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\Boxes\UrlBox.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\BoxFactory.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\BoxHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\BoxTypes.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Mpeg4\FileParser.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\NonContainer\EndTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\NonContainer\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\NonContainer\StartTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\NonContainer\Tag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ogg\Bitstream.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ogg\Codec.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ogg\Codecs\Opus.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ogg\Codecs\Theora.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ogg\Codecs\Vorbis.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ogg\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ogg\GroupedComment.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ogg\Page.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ogg\PageHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ogg\Paginator.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Ogg\XiphComment.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Picture.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Png\Codec.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Png\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Png\PngTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Properties.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\ReadOnlyByteVector.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Riff\AviHeaderList.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Riff\AviStream.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Riff\BitmapInfoHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Riff\DivXTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Riff\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Riff\InfoTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Riff\List.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Riff\ListTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Riff\MovieIdTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Riff\WaveFormatEx.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\StringList.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\SupportedMimeType.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tiff\Arw\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tiff\BaseTiffFile.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tiff\Codec.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tiff\Cr2\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tiff\Dng\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tiff\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tiff\Nef\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tiff\Pef\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tiff\Rw2\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tiff\Rw2\IFDReader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Tiff\Rw2\IFDTag.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\UnsupportedFormatException.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\WavPack\File.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\WavPack\StreamHeader.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Xmp\XmlNodeExtensions.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Xmp\XmpNode.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Xmp\XmpNodeType.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Xmp\XmpNodeVisitor.cs" />
+    <Compile Include="Assets\Standard Assets\TagLib\Xmp\XmpTag.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\PlayServicesResolver\Editor\play-services-resolver_v1.2.61.0.txt" />

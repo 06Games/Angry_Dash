@@ -23,6 +23,8 @@ public class BaseControl : MonoBehaviour {
     public Slider BigSlider;
     public Slider SmallSlider;
 
+    public GameObject AudioPrefs;
+
     private void OnApplicationQuit()
     {
         File.Delete(Application.temporaryCachePath + "/ac.txt");
@@ -30,6 +32,9 @@ public class BaseControl : MonoBehaviour {
 
     private void Start()
     {
+        if (GameObject.Find("Audio") == null)
+            Instantiate(AudioPrefs).name = "Audio";
+
         if (LSC == null)
             LSC = GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>();
 
@@ -174,8 +179,8 @@ public class BaseControl : MonoBehaviour {
             BigSlider.value = MasterCat[0] * 100 / MasterCat[1];
             SmallSlider.value = actual / (float)s.Length;
 
-            BigSlider.transform.GetChild(3).GetComponent<Text>().text = "Type : " + MasterCat[0] + "/" + MasterCat[1];
-            SmallSlider.transform.GetChild(3).GetComponent<Text>().text = "Texture : " + (actual+1) + "/" + s.Length;
+            BigSlider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.StringWithArgument("downloadTexType", new string[2] { MasterCat[0].ToString(), MasterCat[1].ToString() });
+            SmallSlider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.StringWithArgument("downloadTexTexNumber", new string[2] { (actual + 1).ToString(), s.Length.ToString() });
         });
 
         string desktopPath = mainPath + MasterCat[0] + "/" + s[actual];
@@ -252,7 +257,7 @@ public class BaseControl : MonoBehaviour {
             {
                 Base.downloadFile(0, 1);
                 Base.DeactiveObjectStatic(DownloadPanel);
-            string[] lines = new string[2];
+                string[] lines = new string[2];
                 lines[0] = "[database]";
                 lines[1] = "version="+Application.version;
                 File.WriteAllLines(Application.persistentDataPath + "/Textures/info.ini", lines);

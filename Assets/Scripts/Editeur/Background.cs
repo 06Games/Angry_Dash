@@ -33,12 +33,22 @@ public class Background : MonoBehaviour {
         Transform _Color = transform.GetChild(1);
         if (file != Editor.file)
         {
-            Selected = int.Parse(Editor.component[4].Split(new string[1] { "; " }, System.StringSplitOptions.None)[0]);
-            Color32 rgb = Editeur.HexToColor(Editor.component[4].Split(new string[1] { "; " }, System.StringSplitOptions.None)[1]);
-            _Color.GetChild(0).GetComponent<InputField>().text = rgb.r.ToString();
-            _Color.GetChild(1).GetComponent<InputField>().text = rgb.g.ToString();
-            _Color.GetChild(2).GetComponent<InputField>().text = rgb.b.ToString();
-            Page(0);
+            int d = -1;
+            for (int x = 0; x < Editor.component.Length; x++)
+            {
+                if (Editor.component[x].Contains("background = ") & d == -1)
+                    d = x;
+            }
+
+            if (d != -1)
+            {
+                Selected = int.Parse(Editor.component[d].Replace("background = ", "").Split(new string[1] { "; " }, System.StringSplitOptions.None)[0]);
+                Color32 rgb = Editeur.HexToColor(Editor.component[d].Replace("background = ", "").Split(new string[1] { "; " }, System.StringSplitOptions.None)[1]);
+                _Color.GetChild(0).GetComponent<InputField>().text = rgb.r.ToString();
+                _Color.GetChild(1).GetComponent<InputField>().text = rgb.g.ToString();
+                _Color.GetChild(2).GetComponent<InputField>().text = rgb.b.ToString();
+                Page(0);
+            }
         }
 
         file = Editor.file;
@@ -84,7 +94,14 @@ public class Background : MonoBehaviour {
                 else trans.GetComponent<Image>().color = new Color32(92, 92, 92, 255);
             }
 
-            Editor.component[4] = Selected + "; " + Editeur.ColorToHex(color);
+            int d = -1;
+            for (int x = 0; x < Editor.component.Length; x++)
+            {
+                if (Editor.component[x].Contains("background = ") & d == -1)
+                    d = x;
+            }
+            if(d != -1)
+                Editor.component[d] = "background = " + Selected.ToString("0") + "; " + Editeur.ColorToHex(color);
 
             ActualiseFond(Editor);
         }
@@ -94,11 +111,23 @@ public class Background : MonoBehaviour {
 
     public void ActualiseFond(Editeur Editor)
     {
+        Charg();
         Transform go = GameObject.Find("BackgroundDiv").transform;
+
+        int d = -1;
+        for (int x = 0; x < Editor.component.Length; x++)
+        {
+            if (Editor.component[x].Contains("background = ") & d == -1)
+                d = x;
+        }
+        string back = "1; 4B4B4B255";
+        if (d != -1)
+            back = Editor.component[d].Replace("background = ", "");
+        string[] Ar = back.Split(new string[1] { "; " }, System.StringSplitOptions.None);
+
         for (int i = 0; i < go.childCount; i++)
         {
             Image Im = go.GetChild(i).GetComponent<Image>();
-            string[] Ar = Editor.component[4].Split(new string[1] { "; " }, System.StringSplitOptions.None);
             Im.sprite = sp[int.Parse(Ar[0])];
             Im.color = Editeur.HexToColor(Ar[1]);
         }

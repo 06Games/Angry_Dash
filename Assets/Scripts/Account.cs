@@ -61,6 +61,8 @@ public class Account : MonoBehaviour {
 #elif UNITY_ANDROID
         string path = Application.persistentDataPath.Replace("AngryDash", "Launcher") + "/account.account";
 #endif
+            string[] a = Result.Split(new string[] { "<br>" }, StringSplitOptions.None);
+            ConfigAPI.SetString("Account.Username", a[3]);
             File.WriteAllLines(path, new string[2] { "1 = " + user, "2 = " + MDP });
             File.WriteAllLines(Application.temporaryCachePath + "/ac.txt", new string[1] { Security.Encrypting.Encrypt(user + BaseControl.pathToActualLogMessage(), mdp) });
         }

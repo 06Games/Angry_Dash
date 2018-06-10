@@ -14,7 +14,7 @@ public class Layer : MonoBehaviour {
         if (Bloc != editeur.SelectedBlock)
         {
             Bloc = editeur.SelectedBlock;
-            IF.text = editeur.GetBlocStatus(1.2F).Replace(")", "");
+            IF.text = editeur.GetBlocStatus(1.2F);
         }
         else {
             try
@@ -22,7 +22,7 @@ public class Layer : MonoBehaviour {
                 IF.text = IF.text.Replace(".0", "");
                 int.Parse(IF.text);
 
-                editeur.ChangBlocStatus(1.2F, float.Parse(IF.text).ToString());
+                editeur.ChangBlocStatus(1.2F, float.Parse(IF.text).ToString("0.0"));
 
                 if (IF.text == "999")
                     Button[1].interactable = false;
@@ -37,7 +37,7 @@ public class Layer : MonoBehaviour {
                 else if (IF.text.Length > 3 & int.Parse(IF.text) >= 0)
                     IF.text = int.Parse(IF.text).ToString();
             }
-            catch { Debug.LogError("The input was not a int"); }
+            catch { Debug.LogError("The input was not a int"); IF.text = "0"; }
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,6 +24,17 @@ public class LevelPlayer : MonoBehaviour {
     public GameObject[] TriggerPref;
     public Transform Base;
 
+    public int nbLancer;
+    public Text nbLancerTxt;
+
+    public string[] SongName;
+    public string[] SongPath;
+
+    private void Update()
+    {
+        nbLancerTxt.text = LangueAPI.StringWithArgument("playerTurn", new string[1] { nbLancer.ToString() });
+    }
+
     private void Start()
     {
         NewStart();
@@ -38,7 +50,8 @@ public class LevelPlayer : MonoBehaviour {
 
         if (File.Exists(Application.temporaryCachePath + "/play.txt"))
         {
-            if (File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 1) {
+            if (File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 1)
+            {
                 file = File.ReadAllLines(Application.temporaryCachePath + "/play.txt")[0];
 
                 if (File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 1)
@@ -54,25 +67,67 @@ public class LevelPlayer : MonoBehaviour {
 
                 component = File.ReadAllLines(file);
 
+                int a = -1;
+                for (int x = 0; x < component.Length; x++)
+                {
+                    if (component[x].Contains("background = ") & a == -1)
+                        a = x;
+                }
+                string back = "1; 4B4B4B255";
+                if (a != -1)
+                    back = component[a].Replace("background = ", "");
+                string[] Ar = back.Split(new string[1] { "; " }, System.StringSplitOptions.None);
                 for (int i = 0; i < ArrierePlan.childCount; i++)
                 {
                     Image Im = ArrierePlan.GetChild(i).GetComponent<Image>();
-                    string[] Ar = component[4].Split(new string[1] { "; " }, System.StringSplitOptions.None);
                     Im.sprite = ArrierePlanS[int.Parse(Ar[0])];
                     Im.color = HexToColor(Ar[1]);
                 }
 
-                for (int i = 7; i < component.Length; i++)
+                int d = -1;
+                for (int x = 0; x < component.Length; x++)
+                {
+                    if (component[x].Contains("Blocks {") & d == -1)
+                        d = x + 1;
+                }
+                int end = -1;
+                for (int i = d; i < component.Length; i++)
+                {
+                    if (component[i].Contains("}") & end == -1)
+                        end = i;
+                }
+
+                for (int i = d; i < end; i++)
                     Instance(i);
                 transform.GetChild(0).gameObject.SetActive(true);
 
                 Base.GetChild(3).gameObject.SetActive(false);
                 string[] fileDir = file.Split(new string[1] { "/" }, System.StringSplitOptions.None);
-                Base.GetChild(3).GetChild(0).GetComponent<Text>().text = fileDir[fileDir.Length-1].Replace(".level", "");
+                Base.GetChild(3).GetChild(0).GetComponent<Text>().text = fileDir[fileDir.Length - 1].Replace(".level", "");
+                
+                int m = -1;
+                for (int x = 0; x < component.Length; x++)
+                {
+                    if (component[x].Contains("music = ") & m == -1)
+                        m = x;
+                }
+                string music = "";
+                if (m != -1)
+                    music = Application.persistentDataPath + "/Musiques/" + component[m].Replace("music = ", "");
+                if (GameObject.Find("Audio") != null & music != "null")
+                    GameObject.Find("Audio").GetComponent<menuMusic>().LoadMusic(music);
             }
-            else GetComponent<BaseControl>().LSC.LoadScreen("Home");
+            else
+            {
+                File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/Level 1.level", "Home" });
+                NewStart();
+            }
         }
-        else GetComponent<BaseControl>().LSC.LoadScreen("Home");
+        else
+        {
+            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/Level 1.level", "Home" });
+            NewStart();
+        }
     }
 
     public void Instance(int num)
@@ -80,6 +135,7 @@ public class LevelPlayer : MonoBehaviour {
         float id = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]);
         string rotZ = component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[2];
         string color = component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[3];
+        int colid = int.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[4]);
         Vector3 p = GetObjectPos(num);
         Vector3 pos = new Vector3(p.x, p.y, 0);
         Quaternion rot = new Quaternion();
@@ -87,12 +143,16 @@ public class LevelPlayer : MonoBehaviour {
 
         if (id >= 1)
         {
-            GameObject go = Instantiate(Prefabs[(int)id - 1], pos, rot, SummonPlace);
+            GameObject go = Instantiate(Prefabs[(int)id-1], pos, rot, SummonPlace);
             go.name = "Objet n° " + num;
             go.transform.localScale = new Vector2(Screen.height / BlocSize, Screen.height / BlocSize);
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
             SR.color = HexToColor(color);
             SR.sortingOrder = (int)p.z;
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString(".0####") + ".png"));
+            SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+            go.GetComponent<Mur>().colider = colid;
         }
         else
         {
@@ -128,8 +188,11 @@ public class LevelPlayer : MonoBehaviour {
         if (FromScene == "")
             scene = "Home";
 
-        if(scene != "Home")
+        if (scene != "Home")
+        {
             File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, "" });
+            GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
+        }
         else GameObject.Find("Audio").GetComponent<menuMusic>().Play();
         GetComponent<BaseControl>().LSC.LoadScreen(scene);
     }

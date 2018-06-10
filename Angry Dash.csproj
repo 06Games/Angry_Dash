@@ -14,6 +14,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
     <CompilerResponseFile></CompilerResponseFile>
+    <UnityProjectGenerator>VSTU</UnityProjectGenerator>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>Android:13</UnityBuildTarget>
     <UnityVersion>2017.1.1p3</UnityVersion>
@@ -50,31 +51,31 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEditor">
-      <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TestRunner">
-      <HintPath>Library\UnityAssemblies\UnityEngine.TestRunner.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/UnityEngine.TestRunner.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>Library\UnityAssemblies\nunit.framework.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/TestRunner/net35/unity-custom/nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Timeline">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Timeline.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Timeline/RuntimeEditor/UnityEngine.Timeline.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Analytics">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Analytics.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.HoloLens">
-      <HintPath>Library\UnityAssemblies\UnityEngine.HoloLens.dll</HintPath>
+      <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -104,15 +105,19 @@
     <Compile Include="Assets\Scripts\Components\MainCam.cs" />
     <Compile Include="Assets\Scripts\Components\Mur.cs" />
     <Compile Include="Assets\Scripts\Components\Player.cs" />
+    <Compile Include="Assets\Scripts\ConfigAPI.cs" />
     <Compile Include="Assets\Scripts\CreatorManager.cs" />
     <Compile Include="Assets\Scripts\Editeur\Background.cs" />
+    <Compile Include="Assets\Scripts\Editeur\Behavior.cs" />
     <Compile Include="Assets\Scripts\Editeur\Color.cs" />
     <Compile Include="Assets\Scripts\Editeur\DeleteBloc.cs" />
     <Compile Include="Assets\Scripts\Editeur\Edit.cs" />
     <Compile Include="Assets\Scripts\Editeur\Editeur.cs" />
+    <Compile Include="Assets\Scripts\Editeur\EditorSearch.cs" />
     <Compile Include="Assets\Scripts\Editeur\EditorSelect.cs" />
     <Compile Include="Assets\Scripts\Editeur\Layer.cs" />
     <Compile Include="Assets\Scripts\Editeur\Rotation.cs" />
+    <Compile Include="Assets\Scripts\Editeur\Soundboard.cs" />
     <Compile Include="Assets\Scripts\FPSCounter.cs" />
     <Compile Include="Assets\Scripts\GetVersion.cs" />
     <Compile Include="Assets\Scripts\GIF_Reader.cs" />
@@ -124,6 +129,8 @@
     <Compile Include="Assets\Scripts\LevelPlayer.cs" />
     <Compile Include="Assets\Scripts\LoadingScreenControl.cs" />
     <Compile Include="Assets\Scripts\menuMusic.cs" />
+    <Compile Include="Assets\Scripts\Particules.cs" />
+    <Compile Include="Assets\Scripts\ParticulesManager.cs" />
     <Compile Include="Assets\Scripts\PlayerPrefs.cs" />
     <Compile Include="Assets\Scripts\Shop.cs" />
     <Compile Include="Assets\Scripts\SurClique.cs" />
