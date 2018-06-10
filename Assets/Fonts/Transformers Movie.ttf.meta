@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: d622be8d5c621f5439c2c2821f94a2f9
+timeCreated: 1513505931
+licenseType: Pro
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Transformers
+  fontNames:
+  - Transformers
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
