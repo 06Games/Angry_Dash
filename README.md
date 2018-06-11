@@ -1,4 +1,4 @@
-[![Download](https://img.shields.io/badge/T%C3%A9l%C3%A9chargement--white.svg?longCache=true&style=for-the-badge&colorB=808080&colorA=696969)](https://06games.ddns.net:8888/EvanG/Angry-Dash/tags)
+[![Download](https://img.shields.io/badge/T%C3%A9l%C3%A9chargement--white.svg?longCache=true&style=for-the-badge&colorB=808080&colorA=696969)](https://06games.ddns.net:8888/06Games/Angry_Dash/releases)
 
 ## Introduction
 Le projet aura un mode éditeur (à la Geometry Dash). <br/>
