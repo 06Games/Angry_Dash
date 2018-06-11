@@ -649,6 +649,8 @@ MonoBehaviour:
   Base: {fileID: 1249314462}
   nbLancer: 0
   nbLancerTxt: {fileID: 964563685}
+  SongName: []
+  SongPath: []
 --- !u!1 &199017475
 GameObject:
   m_ObjectHideFlags: 0
@@ -3805,6 +3807,11 @@ Prefab:
       propertyPath: LP
       value: 
       objectReference: {fileID: 191689105}
+    - target: {fileID: 114739312834396952, guid: 79265f9128f23e74d89893cb362141a7,
+        type: 2}
+      propertyPath: vitesse
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 79265f9128f23e74d89893cb362141a7, type: 2}
   m_IsPrefabParent: 0

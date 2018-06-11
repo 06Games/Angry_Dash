@@ -135,7 +135,7 @@ public class LevelPlayer : MonoBehaviour {
         float id = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]);
         string rotZ = component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[2];
         string color = component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[3];
-        int colid = int.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[4]);
+        float colid = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[4]);
         Vector3 p = GetObjectPos(num);
         Vector3 pos = new Vector3(p.x, p.y, 0);
         Quaternion rot = new Quaternion();

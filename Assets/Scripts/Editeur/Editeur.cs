@@ -352,7 +352,14 @@ public class Editeur : MonoBehaviour
             else newComponent[i] = component[i-1];
         }
 
-        component = newComponent;
+        bool t = true;
+        for(int i = 0; i < component.Length; i++)
+        {
+            if (component[i] == newComponent[end])
+                t = false;
+        }
+        if(t)
+            component = newComponent;
         //component = component.Union(new string[1] { id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0" }).ToArray();
         Instance(end);
     }

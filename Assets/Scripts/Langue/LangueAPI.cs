@@ -101,5 +101,7 @@ public class LangueAPI : MonoBehaviour
             writer.WriteLine(Result[j]);
             writer.Close();
         }
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Home");
     }
 }

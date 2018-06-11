@@ -29,7 +29,9 @@ public class Player : MonoBehaviour {
     //Avancer
     public bool PeutAvancer; //Pas de mur
     public Vector2 PositionInitiale; //Dernier point d'arrivé valide
-
+    
+    public int move = 0;
+    public float vitesse = 1;
 
     void Start()
     {
@@ -38,6 +40,7 @@ public class Player : MonoBehaviour {
         tex.LoadImage(System.IO.File.ReadAllBytes(Application.persistentDataPath + "/Textures/1/" + playerSkin + ".png"));
         Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
         GetComponent<SpriteRenderer>().sprite = sprite;
+        vitesse = 1;
     }
 
     void Update()
@@ -58,7 +61,7 @@ public class Player : MonoBehaviour {
         }
         else JoyStick.SetActive(false);
 
-        if (xa == 0 & ya == 0 & t & Ar == null) //si le joueur a laché le joystick
+        if (xa == 0 & ya == 0 & t & Ar == null & move == 0) //si le joueur a laché le joystick
         {
             LP.nbLancer = LP.nbLancer + 1;
             Quaternion rot = new Quaternion(0, 0, 0, 0);
@@ -70,7 +73,7 @@ public class Player : MonoBehaviour {
             float py = Ar.transform.position.y - transform.position.y;
 
             PositionInitiale = transform.position;
-            StartCoroutine(Navigate(px, py));
+                StartCoroutine(Navigate(px, py));
         }
 
         x = xa; //x d'avant
@@ -79,6 +82,8 @@ public class Player : MonoBehaviour {
 
     public IEnumerator Navigate(float px, float py)
     {
+        move = 0;
+
         float adjacent = Ar.transform.position.x - transform.position.x;
         float oppose = Ar.transform.position.y - transform.position.y;
         float hypothenuse = (float)Math.Sqrt(Math.Pow(adjacent,2) + Math.Pow(oppose, 2));
@@ -93,24 +98,23 @@ public class Player : MonoBehaviour {
         rot.eulerAngles = new Vector3(0,0,(float)z);
         transform.rotation = rot;
 
-        int i = 0;
-        while (i < Speed)
+        while (move < Speed)
         {
             if (PeutAvancer)
             {
-                float vitesse = i * 20 / (Speed / 2);
-                //float vitesse = 20 * (i * 0.025F);
-                if (i > Speed / 2)
-                    vitesse = i / -(Speed / 2) + 2;
-                    //vitesse = 20 / (i * 0.025F);
-                transform.Translate(Vector3.up * vitesse, Space.Self);
-                
+                float v = vitesse * (move * 20 / (Speed / 2));
+                if (move > Speed / 2)
+                    v = vitesse * (move / -(Speed / 2) + 2);
+                transform.Translate(Vector3.up * v, Space.Self);
+
                 //transform.localPosition = new Vector2(transform.localPosition.x + px / Speed, transform.localPosition.y + py / Speed);
-                i++;
+                move++;
                 yield return new WaitForSeconds(0.01F);
             }
-            else i = (int)Speed;
+            else move = (int)Speed;
         }
+        move = 0;
+        vitesse = 1;
         StartCoroutine(destroy());
     }
 
