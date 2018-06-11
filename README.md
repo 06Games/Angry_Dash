@@ -15,6 +15,6 @@ Le Gameplay est simple, c’est exactement comme un Angry Bird, sauf que tu tire
 8. Un gestionnaire d’amis via le compte Google et une sauvegarde pourront être fais et pour rejoindre vos amis facilement en jeu.
 9. Plusieurs thème « UI » de couleurs différentes seront proposés dans les paramètre du jeu (comme le thème foncé activé par défaut).
 
-## Remerciment
-Le jeu sera crée par Evan Galli grâce au moteur de jeu Unity. <br/>
-MazeWave est en charge des textures et UI. <br/>
+## Credits
+Les scripts, les musiques et la mise en page est réalisé par Evan Galli. <br/>
+Les textures et les musiques sont réalisées par MazeWave. <br/>
