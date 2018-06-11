@@ -66,6 +66,8 @@ public class LangueAPI : MonoBehaviour
     static string[] Result;
     public static IEnumerator UpdateFiles()
     {
+        bool FilesExists = Directory.GetFiles(Application.persistentDataPath + "/Languages/").Length > 0;
+
         WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/index");
         yield return www;
         string[] All = www.text.Split(new string[] { "\n" }, StringSplitOptions.None);
@@ -102,6 +104,7 @@ public class LangueAPI : MonoBehaviour
             writer.Close();
         }
 
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Home");
+        if(!FilesExists)
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Home");
     }
 }
