@@ -24,7 +24,7 @@ public class Player : MonoBehaviour {
     //Point d'arrivé
     public GameObject Arrivé; //Prefab de l'arrivé
     public Transform Parents; //Zone Unity pour spawn de l'arrivé
-    public GameObject Ar; //Pt d'arrivé actuel
+    public Vector2 Ar = new Vector2(); //Pt d'arrivé actuel
 
     //Avancer
     public bool PeutAvancer; //Pas de mur
@@ -53,24 +53,19 @@ public class Player : MonoBehaviour {
         if (x != 0 | y != 0)
             t = true;
 
-        if (Ar == null)
+        if (Ar == new Vector2())
             JoyStick.SetActive(true);
-        else if (!PeutAvancer)
-        {
-            Destroy(Ar);
-        }
         else JoyStick.SetActive(false);
 
-        if (xa == 0 & ya == 0 & t & Ar == null & move == 0) //si le joueur a laché le joystick
+        if (xa == 0 & ya == 0 & t & Ar == new Vector2() & move == 0) //si le joueur a laché le joystick
         {
             LP.nbLancer = LP.nbLancer + 1;
             Quaternion rot = new Quaternion(0, 0, 0, 0);
             Vector3 pos = new Vector3(transform.position.x - x, transform.position.y - y, 0);
-            Ar = Instantiate(Arrivé, pos, rot, Parents);
-            Ar.name = "Arrivé";
+            Ar = pos;
 
-            float px = Ar.transform.position.x - transform.position.x;
-            float py = Ar.transform.position.y - transform.position.y;
+            float px = pos.x - transform.position.x;
+            float py = pos.y - transform.position.y;
 
             PositionInitiale = transform.position;
                 StartCoroutine(Navigate(px, py));
@@ -84,13 +79,13 @@ public class Player : MonoBehaviour {
     {
         move = 0;
 
-        float adjacent = Ar.transform.position.x - transform.position.x;
-        float oppose = Ar.transform.position.y - transform.position.y;
+        float adjacent = Ar.x - transform.position.x;
+        float oppose = Ar.y - transform.position.y;
         float hypothenuse = (float)Math.Sqrt(Math.Pow(adjacent,2) + Math.Pow(oppose, 2));
         float cos = adjacent / hypothenuse;
         double z = (Math.Acos(cos) * 180) / Mathf.PI;
         
-        if (transform.position.y < Ar.transform.position.y)
+        if (transform.position.y < Ar.y)
             z = z - 90;
         else z = z * -1 - 90;
         
@@ -106,8 +101,6 @@ public class Player : MonoBehaviour {
                 if (move > Speed / 2)
                     v = vitesse * (move / -(Speed / 2) + 2);
                 transform.Translate(Vector3.up * v, Space.Self);
-
-                //transform.localPosition = new Vector2(transform.localPosition.x + px / Speed, transform.localPosition.y + py / Speed);
                 move++;
                 yield return new WaitForSeconds(0.01F);
             }
@@ -115,12 +108,12 @@ public class Player : MonoBehaviour {
         }
         move = 0;
         vitesse = 1;
-        StartCoroutine(destroy());
+        Ar = new Vector2();
+        //StartCoroutine(destroy());
     }
 
     public IEnumerator destroy()
     {
         yield return new WaitForSeconds(0.5F);
-        Destroy(Ar);
     }
 }   
