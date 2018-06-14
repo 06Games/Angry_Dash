@@ -87,5 +87,9 @@ public class Base : MonoBehaviour {
         });
     }
 
-    public void Gold(Text t) { t.text = PlayerPrefs.GetString("money"); }
+    public void Gold(Text t) {
+        if (string.IsNullOrEmpty(PlayerPrefs.GetString("money")))
+            t.text = "0";
+        else t.text = PlayerPrefs.GetString("money");
+    }
 }
