@@ -56,6 +56,7 @@ public class Editeur : MonoBehaviour
         transform.GetChild(0).gameObject.SetActive(true);
 
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
+        OpenCat(-1);
     }
 
     public void EditFile(string txt)
@@ -83,6 +84,7 @@ public class Editeur : MonoBehaviour
         transform.GetChild(0).gameObject.SetActive(true);
 
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
+        OpenCat(-1);
     }
 
     public void ExitEdit()
@@ -173,23 +175,29 @@ public class Editeur : MonoBehaviour
             {
                 if (Input.mousePosition.y > Screen.height / 4)
                 {
-                    //float ZoomIndice = (cam.orthographicSize / Screen.height) + 0.5F;
-                    float PosDoigtX = (Input.mousePosition.x - 25) / 50;
-                    float PosDoigtY = (Input.mousePosition.y - 25) / 50;
-                    float IndiceChangPosCamX = cam.transform.position.x / (Screen.width / 2);
-                    float IndiceChangPosCamY = cam.transform.position.y / (Screen.height / 2);
+                    bool isInTop = Input.mousePosition.y > Screen.height - (Screen.height / 10);
+                    bool isInRightTop = Input.mousePosition.x > Screen.width - (Screen.width / 9);
 
-                    int x = Mathf.RoundToInt(PosDoigtX * IndiceChangPosCamX);
-                    int y = Mathf.RoundToInt(PosDoigtY * IndiceChangPosCamY);
+                    if (!(isInTop & isInRightTop))
+                    {
+                        //float ZoomIndice = (cam.orthographicSize / Screen.height) + 0.5F;
+                        float PosDoigtX = (Input.mousePosition.x - 25) / 50;
+                        float PosDoigtY = (Input.mousePosition.y - 25) / 50;
+                        float IndiceChangPosCamX = cam.transform.position.x / (Screen.width / 2);
+                        float IndiceChangPosCamY = cam.transform.position.y / (Screen.height / 2);
+
+                        int x = Mathf.RoundToInt(PosDoigtX * IndiceChangPosCamX);
+                        int y = Mathf.RoundToInt(PosDoigtY * IndiceChangPosCamY);
 
 
-                    Vector3 a = new Vector3(x, y, 0);
-                    string color = ColorToHex(new Color32(190, 190, 190, 255));
-                    float id = newblockid;
-                    if (id > 10000)
-                        id = (newblockid - 10000F) / 10F;
-                    
-                    CreateBloc(x, y, new Color32(190, 190, 190, 255));
+                        Vector3 a = new Vector3(x, y, 0);
+                        string color = ColorToHex(new Color32(190, 190, 190, 255));
+                        float id = newblockid;
+                        if (id > 10000)
+                            id = (newblockid - 10000F) / 10F;
+
+                        CreateBloc(x, y, new Color32(190, 190, 190, 255));
+                    }
                 }
             }
         }
@@ -198,7 +206,6 @@ public class Editeur : MonoBehaviour
         {
             if (Input.mousePosition.y > Screen.height / 4)
             {
-                //float ZoomIndice = (cam.orthographicSize / Screen.height) + 0.5F;
                 float PosDoigtX = (Input.mousePosition.x - 25) / 50;
                 float PosDoigtY = (Input.mousePosition.y - 25) / 50;
                 float IndiceChangPosCamX = cam.transform.position.x / (Screen.width / 2);
@@ -403,55 +410,67 @@ public class Editeur : MonoBehaviour
     }
     public void OpenCat(int id)
     {
-        Vector2 pos = Contenu[3].transform.GetChild(id).localPosition;
-        pos.x = pos.x + 20;
-        if (id / 2F != id / 2)
+        if (id >= 0)
         {
-            pos.y = pos.y - 80;
-            Image im = BulleDeveloppementCat.GetComponent<Image>();
-            im.sprite = BulleDeveloppementCatSp[0];
-            BulleDeveloppementCat.transform.GetChild(0).GetComponent<Image>().sprite = BulleDeveloppementCatSp[3];
-            BulleDeveloppementCat.transform.GetChild(0).GetChild(0).localPosition = new Vector3(0, -8.75F, 0);
-        }
-        else
-        {
-            pos.y = pos.y + 80;
-            Image im = BulleDeveloppementCat.GetComponent<Image>();
-            im.sprite = BulleDeveloppementCatSp[1];
-            BulleDeveloppementCat.transform.GetChild(0).GetComponent<Image>().sprite = BulleDeveloppementCatSp[2];
-            BulleDeveloppementCat.transform.GetChild(0).GetChild(0).localPosition = new Vector3(0, 8.75F, 0);
-        }
-
-        if (!BulleDeveloppementCat.activeInHierarchy | BulleDeveloppementCat.transform.localPosition != (Vector3)pos)
-        {
-            for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++)
-                Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
-            BulleDeveloppementCat.transform.GetChild(0).gameObject.SetActive(false);
-
-            string path = Application.persistentDataPath + "/Textures/0/";
-            for (int i = 0; i < Directory.GetFiles(path, id+".*", SearchOption.AllDirectories).Length; i++)
+            Vector2 pos = Contenu[3].transform.GetChild(id).localPosition;
+            pos.x = pos.x + 20;
+            if (id / 2F != id / 2)
             {
-                GameObject newRef = Instantiate(BulleDeveloppementCat.transform.GetChild(0).gameObject, BulleDeveloppementCat.transform);
-                newRef.SetActive(true);
-                newRef.name = i.ToString();
-                newRef.transform.localPosition = new Vector3(i * 80, 0, 0);
-                newRef.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => AddBlock(id.ToString() + "." + newRef.name));
-
-                Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id + "." + i + ".png"));
-                newRef.transform.GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+                pos.y = pos.y - 80;
+                Image im = BulleDeveloppementCat.GetComponent<Image>();
+                im.sprite = BulleDeveloppementCatSp[0];
+                BulleDeveloppementCat.transform.GetChild(0).GetComponent<Image>().sprite = BulleDeveloppementCatSp[3];
+                BulleDeveloppementCat.transform.GetChild(0).GetChild(0).localPosition = new Vector3(0, -8.75F, 0);
+            }
+            else
+            {
+                pos.y = pos.y + 80;
+                Image im = BulleDeveloppementCat.GetComponent<Image>();
+                im.sprite = BulleDeveloppementCatSp[1];
+                BulleDeveloppementCat.transform.GetChild(0).GetComponent<Image>().sprite = BulleDeveloppementCatSp[2];
+                BulleDeveloppementCat.transform.GetChild(0).GetChild(0).localPosition = new Vector3(0, 8.75F, 0);
             }
 
+            if (!BulleDeveloppementCat.activeInHierarchy | BulleDeveloppementCat.transform.localPosition != (Vector3)pos)
+            {
+                for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++)
+                    Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
+                BulleDeveloppementCat.transform.GetChild(0).gameObject.SetActive(false);
 
-            BulleDeveloppementCat.SetActive(true);
-            BulleDeveloppementCat.transform.localPosition = pos;
+                string path = Application.persistentDataPath + "/Textures/0/";
+                for (int i = 0; i < Directory.GetFiles(path, id + ".*", SearchOption.AllDirectories).Length; i++)
+                {
+                    GameObject newRef = Instantiate(BulleDeveloppementCat.transform.GetChild(0).gameObject, BulleDeveloppementCat.transform);
+                    newRef.SetActive(true);
+                    newRef.name = i.ToString();
+                    newRef.transform.localPosition = new Vector3(i * 80, 0, 0);
+                    newRef.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => AddBlock(id.ToString() + "." + newRef.name));
+
+                    Texture2D tex = new Texture2D(1, 1);
+                    tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id + "." + i + ".png"));
+                    newRef.transform.GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+                }
+
+
+                BulleDeveloppementCat.SetActive(true);
+                BulleDeveloppementCat.transform.localPosition = pos;
+            }
+            else
+            {
+                for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++)
+                    Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
+
+                BulleDeveloppementCat.SetActive(false);
+            }
         }
         else
         {
             for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++)
                 Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
-
             BulleDeveloppementCat.SetActive(false);
+
+            for (int i = 1; i < Contenu[3].transform.childCount-2; i++)
+                Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
         }
     }
 
