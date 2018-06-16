@@ -66,6 +66,9 @@ public class LangueAPI : MonoBehaviour
     static string[] Result;
     public static IEnumerator UpdateFiles()
     {
+        if (!Directory.Exists(Application.persistentDataPath + "/Languages/"))
+            Directory.CreateDirectory(Application.persistentDataPath + "/Languages/");
+
         bool FilesExists = Directory.GetFiles(Application.persistentDataPath + "/Languages/").Length > 0;
 
         WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/index");
