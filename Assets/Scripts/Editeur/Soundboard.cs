@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NAudio.Wave;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,13 +13,10 @@ using UnityEngine.UI;
 public class Soundboard : MonoBehaviour {
 
     public string[] SongPath;
-    List<string> list = new List<string> { "", "", "", "", "" };
-
     public string[] SongName;
     public string[] SongArtist;
     float[] MusicPos;
-
-    public RectTransform Template;
+    
     public Editeur editor;
     public Text Music;
 
@@ -27,87 +25,71 @@ public class Soundboard : MonoBehaviour {
     public GameObject DownloadPanel;
     string labelSpeed= "0 kb/s";
     string labelDownloaded = "0 MB sur 0 MB";
+    public string[] ids;
+
+    public GameObject MusicSelectorPanel;
 
     public void RefreshList () {
-        //Template.position = new Vector2(0, 0);
-        //Template.GetChild(0).localPosition = new Vector3(0, 0, 0);
+        MusicSelectorPanel.SetActive(false);
 
-        if (Directory.Exists(Application.persistentDataPath + "/Musics/"))
-            SongPath = new string[1] { "" }.Union(Directory.GetFiles(Application.persistentDataPath + "/Musics/")).ToArray();
-        else SongPath = new string[1] { "" };
+        WebClient client = new WebClient();
+        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        string Result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/?min=0&max=-1");
+        string[] song = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
 
-        SongName = new string[SongPath.Length];
-        SongArtist = new string[SongPath.Length];
-        MusicPos = new float[SongPath.Length];
-        for (int i = 1; i < SongPath.Length; i++)
+        int lenght = song.Length;
+        if(string.IsNullOrEmpty(song[lenght-1]))
+            lenght = song.Length-1;
+
+        SongPath = new string[lenght];
+        SongName = new string[lenght];
+        SongArtist = new string[lenght];
+        MusicPos = new float[lenght];
+
+        for (int i = 0; i < lenght; i++)
         {
-            TagLib.File file = TagLib.File.Create(SongPath[i]);
-            SongName[i] = file.Tag.Title;
-            SongArtist[i] = file.Tag.FirstPerformer;
+            string[] songInfo = song[i].Split(new string[1] { " ; " }, StringSplitOptions.None);
+            SongPath[i] = songInfo[0];
+            SongArtist[i] = songInfo[1].Split(new string[1] { " / " }, StringSplitOptions.None)[0];
+            SongName[i] = songInfo[2];
         }
-        SongName[0] = "No Music";
-
-        if (editor.file == "")
-            gameObject.SetActive(false);
+        
+        gameObject.SetActive(false);
     }
 
-    void DownloadMusics()
+    Stopwatch sw = new Stopwatch();
+    public void DownloadMusic()
     {
         if (InternetAPI.IsConnected())
         {
-            gameObject.SetActive(true);
+            if (!Directory.Exists(Application.persistentDataPath + "/Musics/"))
+                Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
 
-            if (Directory.Exists(Application.persistentDataPath + "/Musics/"))
-                Directory.Delete(Application.persistentDataPath + "/Musics/", true);
-
-            Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
-
-            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/mp3";
-            WebClient client = new WebClient();
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            client.DownloadString(new Uri(URL));
-            string Result = client.DownloadString(URL).Replace("<tr><th colspan=\"5\"><hr></th></tr>", "").Replace("</table>\n</body></html>\n", "");
-            string[] c = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
-            int cLenght = c.Length - 13;
-
-            string[] s = new string[cLenght];
-            for (int i = 0; i < cLenght; i++)
-                s[i] = c[i + 11].Split(new string[1] { "<a href=\"" }, StringSplitOptions.None)[1].Split(new string[1] { "\">" }, StringSplitOptions.None)[0];
+            string URL = SongPath[SongOpened];
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
+            URL = SongPath[SongOpened].Replace("/mp3/", "/ogg/").Replace(".mp3", ".ogg");
+#endif
 
             Base.ActiveObjectStatic(DownloadPanel);
-            downloadFile(0, s, Application.persistentDataPath + "/Musics/");
+
+            using (WebClient wc = new WebClient())
+            {
+                sw.Start();
+                wc.DownloadProgressChanged += wc_DownloadProgressChanged;
+                wc.DownloadFileCompleted += wc_DownloadFileCompleted;
+                wc.DownloadFileAsync(new Uri(URL), Application.persistentDataPath + "/Musics/"+SongName[SongOpened]);
+            }
         }
     }
-    string[] downData = new string[3];
-    Stopwatch sw = new Stopwatch();
-    public void downloadFile(int actual, string[] s, string mainPath)
+    public static string FileFormat()
     {
-        UnityThread.executeInUpdate(() => {
-            DownloadPanel.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = (actual + 1) + " / " + s.Length;
-        });
-        string desktopPath = mainPath + s[actual];
-
-        string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/mp3/" + s[actual];
-
-        using (WebClient wc = new WebClient())
-        {
-            sw.Start();
-            wc.DownloadProgressChanged += wc_DownloadProgressChanged;
-            wc.DownloadFileCompleted += wc_DownloadFileCompleted;
-            wc.DownloadFileAsync(new Uri(url), desktopPath);
-        }
-
-        string newS = "";
-        for (int i = 0; i < s.Length; i++)
-        {
-            if (i < s.Length - 1)
-                newS = newS + s[i] + "\n";
-            else newS = newS + s[i];
-        }
-
-        downData[0] = actual.ToString();
-        downData[1] = newS;
-        downData[2] = mainPath;
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
+        return ".ogg";
+#elif UNITY_ANDROID || UNITY_IOS
+        return ".mp3";
+#else
+        return ".wav";
+#endif
     }
 
     private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -115,22 +97,20 @@ public class Soundboard : MonoBehaviour {
         //vitesse
         double speed = Math.Round((e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds), 1);
 
-        if (NbChiffreEntier(speed) >= 0 & NbChiffreEntier(speed) < 4)
-            labelSpeed = Math.Round(speed, 1) + " Ko/s";
-        else if (NbChiffreEntier(speed) >= 4)
-            labelSpeed = Math.Round(speed / 1000, 1) + " Mo/s";
-
         UnityThread.executeInUpdate(() =>
         {
+            if (NbChiffreEntier(speed) >= 0 & NbChiffreEntier(speed) < 4)
+                labelSpeed = LangueAPI.StringWithArgument(ids[0], new string[1] { Math.Round(speed, 1).ToString() });
+            else if (NbChiffreEntier(speed) >= 4)
+                labelSpeed = LangueAPI.StringWithArgument(ids[1], new string[1] { Math.Round(speed / 1000, 1).ToString() });
+
             Transform tr = DownloadPanel.transform.GetChild(0);
             tr.GetComponent<Slider>().value = e.ProgressPercentage; //barre de progression
             tr.GetChild(1).GetComponent<Text>().text = labelDownloaded;
             tr.GetChild(2).GetComponent<Text>().text = labelSpeed;
-        });
 
-        labelDownloaded = string.Format("{0} Mo sur {1} Mo", //Le nombre de MB téléchargé sur le nombre de MB total
-            (e.BytesReceived / 1024d / 1024d).ToString("0.0"),
-            (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.0"));
+        labelDownloaded = LangueAPI.StringWithArgument(ids[2], new string[2]{ (e.BytesReceived / 1024d / 1024d).ToString("0.0"), (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.0")});
+        });
     }
     int NbChiffreEntier(double d)
     {
@@ -143,7 +123,6 @@ public class Soundboard : MonoBehaviour {
 
         return d3[0].Length;
     }
-
     private void wc_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
     {
         if (e.Cancelled)
@@ -156,58 +135,20 @@ public class Soundboard : MonoBehaviour {
             print("An error ocurred while trying to download file\n" + e.Error);
             return;
         }
+        Base.DeactiveObjectStatic(DownloadPanel);
 
         UnityThread.executeInUpdate(() =>
         {
-            string[] s = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None);
-
-            if (int.Parse(downData[0]) < s.Length - 1)
-                downloadFile(int.Parse(downData[0]) + 1, s, downData[2]);
-            else
-            {
-                Base.DeactiveObjectStatic(DownloadPanel);
-                RefreshList();
-            }
+            Transform go = MusicSelectorPanel.transform.GetChild(3);
+            bool FileExists = File.Exists(Application.persistentDataPath + "/Musics/" + SongName[SongOpened]);
+            go.GetChild(0).GetChild(2).gameObject.SetActive(!FileExists);
+            go.GetChild(0).GetChild(3).gameObject.SetActive(FileExists);
         });
     }
 
 
     public void NewStart()
     {
-        if (SongPath.Length <= 1)
-            DownloadMusics();
-
-        int d = -1;
-        for (int x = 0; x < editor.component.Length; x++)
-        {
-            if (editor.component[x].Contains("music = ") & d == -1)
-                d = x;
-        }
-        for (int i = 1; i < SongPath.Length; i++)
-        {
-            if (SongPath[i] == Application.persistentDataPath + "/Musics/" + editor.component[d].Replace("music = ", ""))
-                Music.text = "<b> Music :</b> <i>" + SongName[i] + "</i>";
-        }
-    }
-	
-	// Update is called once per frame
-	void Update () {
-	}
-
-    public void OpenSongChangeMenu(Dropdown dd)
-    {
-        Template.GetChild(0).GetChild(0).GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
-        //list = new List<string>(SongPath.Length) { "No Music", "", "", "", "" };
-        list = SongPath.ToList();
-        for (int i = 1; i < SongPath.Length; i++)
-            list[i] = SongArtist[i] + " - <i>" + SongName[i] + "</i>";
-
-        dd.options.Clear();
-        foreach (string t in list)
-        {
-            dd.options.Add(new Dropdown.OptionData() { text = t });
-        }
-        
         int d = -1;
         for (int x = 0; x < editor.component.Length; x++)
         {
@@ -216,16 +157,49 @@ public class Soundboard : MonoBehaviour {
         }
         for (int i = 0; i < SongPath.Length; i++)
         {
-            if (SongPath[i] == Application.persistentDataPath + "/Musics/" + editor.component[d].Replace("music = ", ""))
-                dd.value = i;
+            if (SongName[i] == editor.component[d].Replace("music = ", ""))
+                Music.text = LangueAPI.StringWithArgument(ids[3], new string[1] { SongName[i] });
         }
-        
-        dd.Show();
+    }
 
-        Transform item = dd.transform.GetChild(3).GetChild(0).GetChild(0).GetChild(1);
-        item.GetChild(4).gameObject.SetActive(false);
-        item.GetChild(5).gameObject.SetActive(false);
-        item.GetChild(6).gameObject.SetActive(false);
+    int SongOpened;
+	public void OpenSongInfoPanel(int panel)
+    {
+        Transform go = MusicSelectorPanel.transform.GetChild(3);
+        SongOpened = lastFirstLine + panel;
+        go.GetChild(0).GetChild(0).GetComponent<Text>().text = SongName[SongOpened];
+        go.GetChild(0).GetChild(1).GetComponent<Text>().text = SongArtist[SongOpened];
+        bool FileExists = File.Exists(Application.persistentDataPath + "/Musics/" + SongName[SongOpened]);
+        go.GetChild(0).GetChild(2).gameObject.SetActive(!FileExists);
+        go.GetChild(0).GetChild(3).gameObject.SetActive(FileExists);
+        go.gameObject.SetActive(true);
+    }
+
+    public void OpenSongChangeMenu()
+    {
+        MusicSelectorPanel.SetActive(true);
+        Page(0);
+    }
+
+    public int lastFirstLine = 0;
+    public void ChangPage(int p) { Page(lastFirstLine + ((MusicSelectorPanel.transform.GetChild(1).childCount-1) * p)); }
+
+    void Page(int firstLine)
+    {
+        lastFirstLine = firstLine;
+
+        Transform ResultPanel = MusicSelectorPanel.transform.GetChild(1);
+        for (int i = 0; i < ResultPanel.childCount - 1; i++)
+        {
+            Transform go = ResultPanel.GetChild(i);
+            if (SongName.Length > i + firstLine)
+            {
+                go.gameObject.SetActive(true);
+                go.GetChild(0).GetComponent<Text>().text = SongName[firstLine + i];
+                go.GetChild(1).GetComponent<Text>().text = SongArtist[firstLine + i];
+            }
+            else go.gameObject.SetActive(false);
+        }
     }
     
     public void PlaySong(Transform Item)
@@ -282,7 +256,7 @@ public class Soundboard : MonoBehaviour {
             Go.GetChild(i).GetChild(4).GetComponent<Image>().sprite = PlayPause[0];
     }
 
-    public void OnValueChange(Dropdown dd)
+    public void Choose()
     {
         int d = -1;
         for (int x = 0; x < editor.component.Length; x++)
@@ -290,13 +264,13 @@ public class Soundboard : MonoBehaviour {
             if (editor.component[x].Contains("music = ") & d == -1)
                 d = x;
         }
-        editor.component[d] = "music = " + SongPath[dd.value].Replace(Application.persistentDataPath + "/Musics/", "");
+        editor.component[d] = "music = " + SongName[SongOpened];
 
         if (GameObject.Find("Audio") != null)
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
 
 
-        Music.text = "<b> Music :</b> <i>" + SongName[dd.value] + "</i>";
+        Music.text = LangueAPI.StringWithArgument(ids[3], new string[1] { SongName[SongOpened] });
     }
 
     public void Exit()

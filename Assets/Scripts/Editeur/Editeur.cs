@@ -83,6 +83,7 @@ public class Editeur : MonoBehaviour
             Instance(i);
         transform.GetChild(0).gameObject.SetActive(true);
 
+        Selection.GetComponent<EditorSelect>().SoundBoard.RefreshList();
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
         OpenCat(-1);
     }

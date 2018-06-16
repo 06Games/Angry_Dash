@@ -21,10 +21,10 @@ public class Base : MonoBehaviour {
     public void Quit() { Application.Quit(); print("L'Application est fermé"); }
 
     public void ActiveObject(GameObject go) { go.SetActive(true); }
-    public static void ActiveObjectStatic(GameObject go) { go.SetActive(true); }
+    public static void ActiveObjectStatic(GameObject go) { UnityThread.executeInUpdate(() => go.SetActive(true)); }
 
     public void DeactiveObject(GameObject go) { go.SetActive(false); }
-    public static void DeactiveObjectStatic(GameObject go) { go.SetActive(false); }
+    public static void DeactiveObjectStatic(GameObject go) { UnityThread.executeInUpdate(() => go.SetActive(false)); }
 
     public static string GetVersion() { return Application.version; }
 

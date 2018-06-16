@@ -113,7 +113,7 @@ public class LevelPlayer : MonoBehaviour {
                 }
                 string music = "";
                 if (m != -1)
-                    music = Application.persistentDataPath + "/Musiques/" + component[m].Replace("music = ", "");
+                    music = Application.persistentDataPath + "/Musics/" + component[m].Replace("music = ", "");
                 if (GameObject.Find("Audio") != null & music != "null")
                     GameObject.Find("Audio").GetComponent<menuMusic>().LoadMusic(music);
             }

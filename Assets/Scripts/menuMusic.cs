@@ -49,7 +49,14 @@ public class menuMusic : MonoBehaviour {
             WWW audioLoader = new WWW(url);
             while (!audioLoader.isDone)
                 yield return null;
-            GetComponent<AudioSource>().clip = audioLoader.GetAudioClip(false, false);
+
+            AudioType AT = AudioType.WAV;
+            if (Soundboard.FileFormat() == ".ogg")
+                AT = AudioType.OGGVORBIS;
+            else if (Soundboard.FileFormat() == ".mp3")
+                AT = AudioType.MPEG;
+
+            GetComponent<AudioSource>().clip = audioLoader.GetAudioClip(false, false, AT);
             GetComponent<AudioSource>().time = timePos;
             Play();
         }

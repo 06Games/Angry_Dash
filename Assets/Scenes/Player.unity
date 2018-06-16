@@ -1974,6 +1974,7 @@ GameObject:
   - component: {fileID: 812986497}
   - component: {fileID: 812986499}
   - component: {fileID: 812986498}
+  - component: {fileID: 812986500}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -2038,6 +2039,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 812986496}
+--- !u!114 &812986500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 812986496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: levelQuit
+  arg: []
 --- !u!1 &821153366
 GameObject:
   m_ObjectHideFlags: 0
@@ -3094,6 +3108,7 @@ GameObject:
   - component: {fileID: 1328014731}
   - component: {fileID: 1328014733}
   - component: {fileID: 1328014732}
+  - component: {fileID: 1328014734}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -3158,6 +3173,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1328014730}
+--- !u!114 &1328014734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1328014730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: levelResume
+  arg: []
 --- !u!1001 &1460994161
 Prefab:
   m_ObjectHideFlags: 0
@@ -4143,6 +4171,7 @@ GameObject:
   - component: {fileID: 1822236322}
   - component: {fileID: 1822236324}
   - component: {fileID: 1822236323}
+  - component: {fileID: 1822236325}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -4207,6 +4236,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1822236321}
+--- !u!114 &1822236325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1822236321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: levelPaused
+  arg: []
 --- !u!224 &1846819332 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 22400004, guid: bb945e2a87718084184a72db9cf1ee27,
