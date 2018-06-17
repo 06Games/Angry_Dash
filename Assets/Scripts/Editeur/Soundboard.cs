@@ -196,7 +196,6 @@ public class Soundboard : MonoBehaviour {
             float BoxHeight = Screen.height-250;
             if(go.transform.lossyScale.y != 0)
                 BoxHeight = 830 / go.transform.lossyScale.y;
-            print(BoxHeight + "\t" + go.transform.lossyScale.y);
 
             go.GetChild(i).GetComponent<RectTransform>().sizeDelta = new Vector2(0, BoxHeight / 3);
             go.GetChild(i).GetComponent<RectTransform>().anchoredPosition = new Vector2(0, (BoxHeight / 6) * ((i*2) + 1)*-1);
