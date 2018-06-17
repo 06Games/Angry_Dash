@@ -193,8 +193,12 @@ public class Soundboard : MonoBehaviour {
         Transform go = MusicSelectorPanel.transform.GetChild(1);
         for(int i = 0; i < go.childCount-1; i++)
         {
-            go.GetChild(i).GetComponent<RectTransform>().sizeDelta = new Vector2(0, (Screen.height-250) / 3);
-            go.GetChild(i).GetComponent<RectTransform>().anchoredPosition = new Vector2(0, ((Screen.height - 250) / 6) * ((i*2) + 1)*-1);
+            float BoxHeight = 830;
+            if(go.transform.lossyScale.y != 0)
+                BoxHeight = 830 / go.transform.lossyScale.y;
+
+            go.GetChild(i).GetComponent<RectTransform>().sizeDelta = new Vector2(0, BoxHeight / 3);
+            go.GetChild(i).GetComponent<RectTransform>().anchoredPosition = new Vector2(0, (BoxHeight / 6) * ((i*2) + 1)*-1);
         }
     }
 
@@ -334,7 +338,7 @@ public class Soundboard : MonoBehaviour {
             int[] Result = new int[0];
             for (int i = 0; i < BaseName.Length; i++)
             {
-                if (BaseName[i].Contains(IF.text) | BaseArtist[i].Contains(IF.text))
+                if (BaseName[i].ToUpper().Contains(IF.text.ToUpper()) | BaseArtist[i].ToUpper().Contains(IF.text.ToUpper()))
                     Result = Result.Union(new int[1] { i }).ToArray();
             }
 
