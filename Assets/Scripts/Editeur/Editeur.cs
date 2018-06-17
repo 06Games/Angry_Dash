@@ -54,7 +54,7 @@ public class Editeur : MonoBehaviour
             "}"};
         file = txt;
         transform.GetChild(0).gameObject.SetActive(true);
-
+        
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
         OpenCat(-1);
     }
@@ -82,8 +82,7 @@ public class Editeur : MonoBehaviour
         for (int i = d; i < end; i++)
             Instance(i);
         transform.GetChild(0).gameObject.SetActive(true);
-
-        Selection.GetComponent<EditorSelect>().SoundBoard.RefreshList();
+        
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
         OpenCat(-1);
     }
@@ -122,6 +121,7 @@ public class Editeur : MonoBehaviour
                 file = File.ReadAllLines(Application.temporaryCachePath + "/play.txt")[0];
                 File.WriteAllText(Application.temporaryCachePath + "/play.txt", "");
                 EditFile(file);
+                Selection.GetComponent<EditorSelect>().SoundBoard.RefreshList();
             }
             else Selection.SetActive(true);
         }
