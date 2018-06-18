@@ -8,6 +8,7 @@ public class LangueSelector : MonoBehaviour {
     public Transform Langues;
     public GameObject RestartRequire;
     public LoadingScreenControl LS;
+    public Transform DownloadingFilesPanel;
 
     public bool AutomatiqueUpdate;
 
@@ -28,7 +29,7 @@ public class LangueSelector : MonoBehaviour {
 
         if (AutomatiqueUpdate)
         {
-            StartCoroutine(LangueAPI.UpdateFiles());
+            StartCoroutine(LangueAPI.UpdateFiles(DownloadingFilesPanel, this));
             StartCoroutine(GetLangDispo());
         }
 	}

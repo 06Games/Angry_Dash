@@ -38,19 +38,33 @@ public class BaseControl : MonoBehaviour {
         if (LSC == null)
             LSC = GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>();
 
+
+        LSC.transform.GetChild(2).gameObject.SetActive(false);
+
+        if (Directory.Exists(Application.persistentDataPath + "/Languages/"))
+        {
+            if (CheckTex())
+                DownloadAllRequiredTex();
+        }
+    }
+
+    public bool CheckTex()
+    {
         if (SceneManager.GetActiveScene().name == "Home")
         {
             LSC.transform.GetChild(2).gameObject.SetActive(false);
 
             if (!Directory.Exists(Application.persistentDataPath + "/Textures/1"))
-                DownloadAllRequiredTex();
+                return true;
             else if (Directory.GetFiles(Application.persistentDataPath + "/Textures/1").Length == 0)
-                DownloadAllRequiredTex();
+                return true;
             else if (!File.Exists(Application.persistentDataPath + "/Textures/info.ini"))
-                DownloadAllRequiredTex();
-            else if (File.ReadAllLines(Application.persistentDataPath+"/Textures/info.ini")[1] != "version="+Application.version)
-                DownloadAllRequiredTex();
+                return true;
+            else if (File.ReadAllLines(Application.persistentDataPath + "/Textures/info.ini")[1] != "version=" + Application.version)
+                return true;
+            else return false;
         }
+        else return false;
     }
 
     void Update()
