@@ -15,6 +15,8 @@ public class Inventory : MonoBehaviour {
 
     Sprite[] sp1;
     Sprite[] sp2;
+
+    public string[] ids;
     
     bool Refreshed = false;
     public void Refresh()
@@ -152,9 +154,9 @@ public class Inventory : MonoBehaviour {
                     }
                     transform.GetChild(0).GetChild(0).GetChild(2).GetChild(i).GetChild(v).GetComponent<Button>().interactable = f;
 
-                    string t = "To Unlock";
+                    string t = LangueAPI.String(ids[0]);
                     if (f & PlayerPrefs.GetInt("PlayerSkin") == (v - 1) + page[i + 1])
-                        t = "Actual";
+                        t = LangueAPI.String(ids[1]);
                     else if (f)
                         t = "";
 
