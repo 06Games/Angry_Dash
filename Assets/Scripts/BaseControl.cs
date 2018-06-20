@@ -24,7 +24,7 @@ public class BaseControl : MonoBehaviour {
     public Slider SmallSlider;
 
     public GameObject AudioPrefs;
-
+    public AudioClip ButtonSoundOnClick;
     private void OnApplicationQuit()
     {
         File.Delete(Application.temporaryCachePath + "/ac.txt");
@@ -46,6 +46,11 @@ public class BaseControl : MonoBehaviour {
             if (CheckTex())
                 DownloadAllRequiredTex();
         }
+
+
+        GameObject[] gos = GameObject.FindGameObjectsWithTag("Button With Click");
+        for(int i = 0; i < gos.Length; i++)
+            gos[i].GetComponent<Button>().onClick.AddListener(() => GetComponent<AudioSource>().PlayOneShot(ButtonSoundOnClick));
     }
 
     public bool CheckTex()
