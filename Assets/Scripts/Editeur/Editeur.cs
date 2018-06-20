@@ -49,6 +49,8 @@ public class Editeur : MonoBehaviour
             "music = ",
             "version = " +Application.version,
             "author = " +ConfigAPI.GetString("Account.Username"),
+            /*"//Please don't touch this",
+            "publicID = ",*/
             " ",
             "Blocks {",
             "}"};
