@@ -38,8 +38,8 @@ public class BaseControl : MonoBehaviour {
         if (LSC == null)
             LSC = GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>();
 
-
-        LSC.transform.GetChild(2).gameObject.SetActive(false);
+        if (SceneManager.GetActiveScene().name == "Home")
+            LSC.transform.GetChild(2).gameObject.SetActive(false);
 
         if (Directory.Exists(Application.persistentDataPath + "/Languages/"))
         {
@@ -172,7 +172,6 @@ public class BaseControl : MonoBehaviour {
             string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/items/" + "0";
             WebClient client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            client.DownloadString(new Uri(URL));
             string Result = client.DownloadString(URL).Replace("<tr><th colspan=\"5\"><hr></th></tr>", "").Replace("</table>\n</body></html>\n", "");
             string[] c = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
             int cLenght = c.Length - 13;
