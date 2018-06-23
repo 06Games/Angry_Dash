@@ -193,8 +193,6 @@ public class Editeur : MonoBehaviour
                         int y = Mathf.RoundToInt(PosDoigtY * IndiceChangPosCamY);
 
 
-                        Vector3 a = new Vector3(x, y, 0);
-                        string color = ColorToHex(new Color32(190, 190, 190, 255));
                         float id = newblockid;
                         if (id > 10000)
                             id = (newblockid - 10000F) / 10F;

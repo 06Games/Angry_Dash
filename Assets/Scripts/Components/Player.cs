@@ -60,7 +60,6 @@ public class Player : MonoBehaviour {
         if (xa == 0 & ya == 0 & t & Ar == new Vector2() & move == 0) //si le joueur a laché le joystick
         {
             LP.nbLancer = LP.nbLancer + 1;
-            Quaternion rot = new Quaternion(0, 0, 0, 0);
             Vector3 pos = new Vector3(transform.position.x - x, transform.position.y - y, 0);
             Ar = pos;
 

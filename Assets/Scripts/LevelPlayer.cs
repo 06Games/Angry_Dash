@@ -39,7 +39,7 @@ public class LevelPlayer : MonoBehaviour {
     {
         NewStart();
     }
-    void NewStart ()
+    void NewStart()
     {
         BlocSize = Screen.height / 50;
 
@@ -66,6 +66,9 @@ public class LevelPlayer : MonoBehaviour {
                     GetComponent<BaseControl>().LSC.LoadScreen(scene);
 
                 component = File.ReadAllLines(file);
+
+                if (file.Contains(Application.temporaryCachePath))
+                    File.Delete(file);
 
                 int a = -1;
                 for (int x = 0; x < component.Length; x++)
@@ -114,6 +117,7 @@ public class LevelPlayer : MonoBehaviour {
                 string music = "";
                 if (m != -1)
                     music = Application.persistentDataPath + "/Musics/" + component[m].Replace("music = ", "");
+                
                 if (GameObject.Find("Audio") != null & music != "null")
                     GameObject.Find("Audio").GetComponent<menuMusic>().LoadMusic(music);
             }
@@ -187,13 +191,15 @@ public class LevelPlayer : MonoBehaviour {
         string scene = FromScene;
         if (FromScene == "")
             scene = "Home";
+        else if (FromScene == "Online")
+            scene = "Editor";
 
-        if (scene != "Home")
+        if (scene == "Editor" & FromScene == "Editor")
         {
             File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, "" });
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
         }
-        else GameObject.Find("Audio").GetComponent<menuMusic>().Play();
+        else GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
         GetComponent<BaseControl>().LSC.LoadScreen(scene);
     }
 
