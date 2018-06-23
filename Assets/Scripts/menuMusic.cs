@@ -10,13 +10,14 @@ public class menuMusic : MonoBehaviour {
     public new AudioClip audio;
     void Awake()
     {
-
         if (!AudioBegin)
-        {
-            LoadMusic(audio);
-            DontDestroyOnLoad(gameObject);
-            AudioBegin = true;
-        }
+            StartDefault();
+    }
+    public void StartDefault()
+    {
+        LoadMusic(audio);
+        DontDestroyOnLoad(gameObject);
+        AudioBegin = true;
     }
     void Update()
     {
