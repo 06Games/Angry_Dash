@@ -94,10 +94,13 @@ public class LevelPlayer : MonoBehaviour {
                         d = x + 1;
                 }
                 int end = -1;
-                for (int i = d; i < component.Length; i++)
+                if (d != -1)
                 {
-                    if (component[i].Contains("}") & end == -1)
-                        end = i;
+                    for (int i = d; i < component.Length; i++)
+                    {
+                        if (component[i].Contains("}") & end == -1)
+                            end = i;
+                    }
                 }
 
                 for (int i = d; i < end; i++)

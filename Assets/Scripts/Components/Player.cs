@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 using PlayerPrefs = PreviewLabs.PlayerPrefs;
 
 public class Player : MonoBehaviour {
@@ -35,6 +37,23 @@ public class Player : MonoBehaviour {
 
     void Start()
     {
+        if (LP == null)
+            LP = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
+        if (JoyStick == null)
+            JoyStick = GameObject.Find("SensitiveJoystick");
+        if (Parents == null)
+            Parents = GameObject.Find("Base").transform;
+
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online")
+        {
+            if (GetComponent<NetworkIdentity>().isLocalPlayer)
+            {
+                LP.GetComponent<MainCam>().Player = gameObject;
+                GetComponent<SpriteRenderer>().color = new Color32(255, 185, 0, 255);
+            }
+            else GetComponent<Player>().enabled = false;
+        }
+
         int playerSkin = PlayerPrefs.GetInt("PlayerSkin");
         Texture2D tex = new Texture2D(1, 1);
         tex.LoadImage(System.IO.File.ReadAllBytes(Application.persistentDataPath + "/Textures/1/" + playerSkin + ".png"));
