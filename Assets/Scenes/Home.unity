@@ -18116,6 +18116,11 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7733ed595bc20934fa931f73a6065bf7, type: 3}
   - {fileID: 21300000, guid: 9202f2a95569c2648bdb086e60a221d0, type: 3}
   sizeRange: 320000002c010000
+  Rotate: 0000000068010000
+  RotateSpeed: 1900000032000000
+  FallSpeed: 0500000008000000
+  FallDirector: {x: 0, y: 1}
+  SpawnZoneMultiplier: {x: 1, y: 1}
 --- !u!1 &1913068282
 GameObject:
   m_ObjectHideFlags: 0
