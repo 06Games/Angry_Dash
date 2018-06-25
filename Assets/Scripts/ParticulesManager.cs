@@ -59,7 +59,11 @@ public class ParticulesManager : MonoBehaviour
         Quaternion rot = new Quaternion();
         rot.eulerAngles = new Vector3(0, 0, rnd.Next(Rotate[0], Rotate[1]));
         go.transform.rotation = rot;
-        go.GetComponent<Image>().sprite = Sp[rnd.Next(0, Sp.Length - 1)];
+
+        int SpNb = rnd.Next(0, Sp.Length);
+        if (SpNb == Sp.Length)
+            SpNb = SpNb - 1;
+        go.GetComponent<Image>().sprite = Sp[SpNb];
 
         Particules pa = go.GetComponent<Particules>();
         int sens = rnd.Next(0, 1);
