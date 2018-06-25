@@ -9,7 +9,7 @@ Un mode éditeur sera présent afin de créer ses propres niveaux. <br/>
 2. Le mode éditeur sera ergonomique et complet. Les blocs auront chacun leurs fonctionnalités et seront modifiable (voir section Meta-données sur le [wiki](https://06games.ddns.net:8888/06Games/Angry_Dash/wiki/Méta-Données)). 
 3. Des triggers seront mis en place pour faire changer de couleur l’arrière-plan ou les blocs. D’autre trigger serviront à faire bouger ou pivoter les blocs.
 4. La communauté pourra partager ses niveaux et jouer au niveaux d'autre personnes. (**Prochainement**)
-5. Il y aura un multijoueur avec plusieurs modes de jeux pour vous amuser (Premièrement en LAN puis après en Online).
+5. Il y aura un multijoueur avec plusieurs modes de jeux pour vous amuser. (**Prochainement**)
 6. Le personnage ainsi que le tracet et leur couleurs seront personnalisable grace au magasin présent en jeu. La monnaie du magasin sera gagnée en terminant certain niveau.
 7. Un gestionnaire d’amis via le compte 06Games (associable avec un compte Google Jeux ou GameCenter) sera ajouté pour rejoindre vos amis facilement en jeu.
 8. Plusieurs thème « UI » de couleurs différentes seront proposés dans les paramètre du jeu (comme le thème foncé activé par défaut).
