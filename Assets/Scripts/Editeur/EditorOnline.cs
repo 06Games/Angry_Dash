@@ -13,6 +13,8 @@ public class EditorOnline : MonoBehaviour
 
     public Transform rZone;
     public Transform levelPanel;
+    public Transform CommentPanel;
+    public Transform InfoPanel;
     public Editeur Editor;
     public string[] ids;
     string[] files;
@@ -148,7 +150,7 @@ public class EditorOnline : MonoBehaviour
         }
         else levelPanel.GetChild(4).gameObject.SetActive(false);
 
-        //levelPanel.GetChild(0).GetChild(2).GetChild(0).GetComponent<Text>().text = description[actual];
+        InfoPanel.GetChild(2).GetChild(0).GetComponent<Text>().text = description[actual];
         GetComponent<CreatorManager>().ChangArray(1);
     }
 

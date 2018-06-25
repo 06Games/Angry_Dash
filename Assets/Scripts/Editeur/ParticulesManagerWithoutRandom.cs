@@ -12,6 +12,7 @@ public class ParticulesManagerWithoutRandom : MonoBehaviour {
     public float SpawnSpeed;
     public Vector2 FallDirector = new Vector2(0, -1);
     public Vector2 SpawnZoneMultiplier = new Vector2(1, 1);
+    public Color32 color = new Color32(255, 255, 255, 255);
 
     private void Start()
     {
@@ -45,6 +46,7 @@ public class ParticulesManagerWithoutRandom : MonoBehaviour {
                     rot.eulerAngles = new Vector3(0, 0, 0);
                     go.transform.rotation = rot;
                     go.GetComponent<Image>().sprite = _Particule;
+                    go.GetComponent<Image>().color = color;
 
                     Particules pa = go.GetComponent<Particules>();
                     pa.RotateSpeed = 0;
@@ -74,6 +76,7 @@ public class ParticulesManagerWithoutRandom : MonoBehaviour {
                 rot.eulerAngles = new Vector3(0, 0, 0);
                 go.transform.rotation = rot;
                 go.GetComponent<Image>().sprite = _Particule;
+                go.GetComponent<Image>().color = color;
 
                 Particules pa = go.GetComponent<Particules>();
                 pa.RotateSpeed = 0;
