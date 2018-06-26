@@ -50,6 +50,7 @@ public class Player : MonoBehaviour {
             {
                 LP.GetComponent<MainCam>().Player = gameObject;
                 GetComponent<SpriteRenderer>().color = new Color32(255, 185, 0, 255);
+                GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
             }
             else GetComponent<Player>().enabled = false;
         }

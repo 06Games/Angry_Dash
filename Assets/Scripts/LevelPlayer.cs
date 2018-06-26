@@ -37,17 +37,17 @@ public class LevelPlayer : MonoBehaviour {
 
     private void Start()
     {
-        NewStart();
-    }
-    void NewStart()
-    {
         BlocSize = Screen.height / 50;
 
         cam = GetComponent<Camera>();
-
         cam.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, -10);
         cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;
 
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
+             FromFile();
+    }
+    void FromFile()
+    {
         if (File.Exists(Application.temporaryCachePath + "/play.txt"))
         {
             if (File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 1)
@@ -70,71 +70,83 @@ public class LevelPlayer : MonoBehaviour {
                 if (file.Contains(Application.temporaryCachePath))
                     File.Delete(file);
 
-                int a = -1;
-                for (int x = 0; x < component.Length; x++)
-                {
-                    if (component[x].Contains("background = ") & a == -1)
-                        a = x;
-                }
-                string back = "1; 4B4B4B255";
-                if (a != -1)
-                    back = component[a].Replace("background = ", "");
-                string[] Ar = back.Split(new string[1] { "; " }, System.StringSplitOptions.None);
-                for (int i = 0; i < ArrierePlan.childCount; i++)
-                {
-                    Image Im = ArrierePlan.GetChild(i).GetComponent<Image>();
-                    Im.sprite = ArrierePlanS[int.Parse(Ar[0])];
-                    Im.color = HexToColor(Ar[1]);
-                }
-
-                int d = -1;
-                for (int x = 0; x < component.Length; x++)
-                {
-                    if (component[x].Contains("Blocks {") & d == -1)
-                        d = x + 1;
-                }
-                int end = -1;
-                if (d != -1)
-                {
-                    for (int i = d; i < component.Length; i++)
-                    {
-                        if (component[i].Contains("}") & end == -1)
-                            end = i;
-                    }
-                }
-
-                for (int i = d; i < end; i++)
-                    Instance(i);
-                transform.GetChild(0).gameObject.SetActive(true);
-
-                Base.GetChild(3).gameObject.SetActive(false);
                 string[] fileDir = file.Split(new string[1] { "/" }, System.StringSplitOptions.None);
                 Base.GetChild(3).GetChild(0).GetComponent<Text>().text = fileDir[fileDir.Length - 1].Replace(".level", "");
-                
-                int m = -1;
-                for (int x = 0; x < component.Length; x++)
-                {
-                    if (component[x].Contains("music = ") & m == -1)
-                        m = x;
-                }
-                string music = "";
-                if (m != -1)
-                    music = Application.persistentDataPath + "/Musics/" + component[m].Replace("music = ", "");
-                
-                if (GameObject.Find("Audio") != null & music != "null")
-                    GameObject.Find("Audio").GetComponent<menuMusic>().LoadMusic(music);
+                Parse();
             }
             else
             {
                 File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/Level 1.level", "Home" });
-                NewStart();
+                FromFile();
             }
         }
         else
         {
             File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/Level 1.level", "Home" });
-            NewStart();
+            FromFile();
         }
+    }
+
+    public void MapData(string[] c)
+    {
+        component = c;
+        Base.GetChild(3).GetChild(0).GetComponent<Text>().text = "Multiplayer";
+        Parse();
+    }
+
+    void Parse()
+    {
+        int a = -1;
+        for (int x = 0; x < component.Length; x++)
+        {
+            if (component[x].Contains("background = ") & a == -1)
+                a = x;
+        }
+        string back = "1; 4B4B4B255";
+        if (a != -1)
+            back = component[a].Replace("background = ", "");
+        string[] Ar = back.Split(new string[1] { "; " }, System.StringSplitOptions.None);
+        for (int i = 0; i < ArrierePlan.childCount; i++)
+        {
+            Image Im = ArrierePlan.GetChild(i).GetComponent<Image>();
+            Im.sprite = ArrierePlanS[int.Parse(Ar[0])];
+            Im.color = HexToColor(Ar[1]);
+        }
+
+        int d = -1;
+        for (int x = 0; x < component.Length; x++)
+        {
+            if (component[x].Contains("Blocks {") & d == -1)
+                d = x + 1;
+        }
+        int end = -1;
+        if (d != -1)
+        {
+            for (int i = d; i < component.Length; i++)
+            {
+                if (component[i].Contains("}") & end == -1)
+                    end = i;
+            }
+        }
+
+        for (int i = d; i < end; i++)
+            Instance(i);
+        transform.GetChild(0).gameObject.SetActive(true);
+
+        Base.GetChild(3).gameObject.SetActive(false);
+
+        int m = -1;
+        for (int x = 0; x < component.Length; x++)
+        {
+            if (component[x].Contains("music = ") & m == -1)
+                m = x;
+        }
+        string music = "";
+        if (m != -1)
+            music = Application.persistentDataPath + "/Musics/" + component[m].Replace("music = ", "");
+
+        if (GameObject.Find("Audio") != null & music != "null")
+            GameObject.Find("Audio").GetComponent<menuMusic>().LoadMusic(music);
     }
 
     public void Instance(int num)
@@ -194,7 +206,7 @@ public class LevelPlayer : MonoBehaviour {
         string scene = FromScene;
         if (FromScene == "")
             scene = "Home";
-        else if (FromScene == "Online")
+        else if (FromScene == "Editor/Online")
             scene = "Editor";
 
         if (scene == "Editor" & FromScene == "Editor")
@@ -211,6 +223,6 @@ public class LevelPlayer : MonoBehaviour {
         GameObject.Find("Player").GetComponent<Player>().PeutAvancer = true;
         Base.GetChild(3).gameObject.SetActive(false);
         File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, FromScene });
-        NewStart();
+        FromFile();
     }
 }

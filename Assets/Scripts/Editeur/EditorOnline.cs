@@ -243,7 +243,7 @@ public class EditorOnline : MonoBehaviour
         if (File.Exists(path))
             File.Delete(path);
         File.WriteAllText(path, file);
-        File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { path, "Online" });
+        File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { path, "Editor/Online" });
         GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
     }
 }
