@@ -19,14 +19,12 @@ public class _NetworkManager : NetworkBehaviour
     {
         GetComponent<NetworkManager>().StartHost();
         StartData(true);
-        Selection.SetActive(false);
     }
 
     public void Join()
     {
         GetComponent<NetworkManager>().StartClient();
         StartData(false);
-        Selection.SetActive(false);
     }
 
     public void Disconnect()
@@ -67,12 +65,14 @@ public class _NetworkManager : NetworkBehaviour
             m_Message.map = "Blocks {\n1.0; (0.0, 0.0, 0.0); 0; FF0000255; 0\n1.0; (0.0, 5.0, 0.0); 0; FF0000255; 0\n}";
         }
         isSetup = true;
+        serv = server;
     }
 
     int player = 0;
+    bool serv = false;
     private void Update()
     {
-        if(GetComponent<NetworkManager>().numPlayers != player)
+        if(GetComponent<NetworkManager>().numPlayers != player & serv)
         {
             NetworkServer.SendToAll(MessageType, m_Message);
             player = GetComponent<NetworkManager>().numPlayers;
@@ -81,6 +81,10 @@ public class _NetworkManager : NetworkBehaviour
 
     public void OnConnected(NetworkMessage netMsg)
     {
+        if (GameObject.Find("Audio") != null)
+            GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
+        Selection.SetActive(false);
+
         MyMsgBase msg = netMsg.ReadMessage<MyMsgBase>();
         string[] map = msg.map.Split(new string[1] { "\n" }, System.StringSplitOptions.None);
         GameObject.Find("Main Camera").GetComponent<LevelPlayer>().MapData(map);
