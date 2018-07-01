@@ -24,15 +24,17 @@ public class Editeur : MonoBehaviour
     GameObject SelectedZone;
     public GameObject SelectedZonePref;
     public Scrollbar zoomIndicator;
-    
+
     Camera cam;
     public int ZoomSensitive = 20;
-    
+
     public GameObject[] TriggerPrefabs;
     public bool SelectMode = false;
 
     public GameObject BulleDeveloppementCat;
     public Sprite[] BulleDeveloppementCatSp;
+
+    public int CameraMouvementSpeed = 10;
 
     #region UI
     public void CreateFile(string fileName, string directory, string desc)
@@ -56,7 +58,7 @@ public class Editeur : MonoBehaviour
             "}"};
         file = txt;
         transform.GetChild(0).gameObject.SetActive(true);
-        
+
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
         OpenCat(-1);
     }
@@ -72,10 +74,10 @@ public class Editeur : MonoBehaviour
         for (int x = 0; x < component.Length; x++)
         {
             if (component[x].Contains("Blocks {") & d == -1)
-                d = x+1;
+                d = x + 1;
         }
         int end = -1;
-        for(int i = d; i < component.Length; i++)
+        for (int i = d; i < component.Length; i++)
         {
             if (component[i].Contains("}") & end == -1)
                 end = i;
@@ -84,7 +86,7 @@ public class Editeur : MonoBehaviour
         for (int i = d; i < end; i++)
             Instance(i);
         transform.GetChild(0).gameObject.SetActive(true);
-        
+
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
         OpenCat(-1);
     }
@@ -116,9 +118,9 @@ public class Editeur : MonoBehaviour
 
     private void Start()
     {
-        if(File.Exists(Application.temporaryCachePath + "/play.txt"))
+        if (File.Exists(Application.temporaryCachePath + "/play.txt"))
         {
-            if(File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 0)
+            if (File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 0)
             {
                 file = File.ReadAllLines(Application.temporaryCachePath + "/play.txt")[0];
                 File.WriteAllText(Application.temporaryCachePath + "/play.txt", "");
@@ -148,7 +150,7 @@ public class Editeur : MonoBehaviour
         if (SelectedZone == null)
         {
             SelectedZone = GameObject.Find("Selected Block");
-            if(SelectedZone == null)
+            if (SelectedZone == null)
             {
                 SelectedZone = Instantiate(SelectedZonePref, transform.GetChild(1));
                 SelectedZone.name = "Selected Block";
@@ -163,7 +165,7 @@ public class Editeur : MonoBehaviour
         //Sauvegarde Automatique
         if (file != "" & component.Length != 0)
         {
-            File.WriteAllLines(file, component);
+            try { File.WriteAllLines(file, component); } catch { }
         }
 
         //Détection de la localisation lors de l'ajout d'un bloc
@@ -183,21 +185,13 @@ public class Editeur : MonoBehaviour
 
                     if (!(isInTop & isInRightTop))
                     {
-                        //float ZoomIndice = (cam.orthographicSize / Screen.height) + 0.5F;
-                        float PosDoigtX = (Input.mousePosition.x - 25) / 50;
-                        float PosDoigtY = (Input.mousePosition.y - 25) / 50;
-                        float IndiceChangPosCamX = cam.transform.position.x / (Screen.width / 2);
-                        float IndiceChangPosCamY = cam.transform.position.y / (Screen.height / 2);
-
-                        int x = Mathf.RoundToInt(PosDoigtX * IndiceChangPosCamX);
-                        int y = Mathf.RoundToInt(PosDoigtY * IndiceChangPosCamY);
-
+                        Vector2 pos = GetClicPos();
 
                         float id = newblockid;
                         if (id > 10000)
                             id = (newblockid - 10000F) / 10F;
 
-                        CreateBloc(x, y, new Color32(190, 190, 190, 255));
+                        CreateBloc((int)pos.x, (int)pos.y, new Color32(190, 190, 190, 255));
                     }
                 }
             }
@@ -207,15 +201,8 @@ public class Editeur : MonoBehaviour
         {
             if (Input.mousePosition.y > Screen.height / 4)
             {
-                float PosDoigtX = (Input.mousePosition.x - 25) / 50;
-                float PosDoigtY = (Input.mousePosition.y - 25) / 50;
-                float IndiceChangPosCamX = cam.transform.position.x / (Screen.width / 2);
-                float IndiceChangPosCamY = cam.transform.position.y / (Screen.height / 2);
-
-                int x = Mathf.RoundToInt(PosDoigtX * IndiceChangPosCamX);
-                int y = Mathf.RoundToInt(PosDoigtY * IndiceChangPosCamY);
-
-                SelectedBlock = GetBloc(x, y);
+                Vector2 pos = GetClicPos();
+                SelectedBlock = GetBloc((int)pos.x, (int)pos.y);
             }
             SelectBlocking = false;
         }
@@ -229,7 +216,7 @@ public class Editeur : MonoBehaviour
             string[] b = a.Replace("(", "").Replace(" ", "").Replace(")", "").Split(new string[] { "," }, System.StringSplitOptions.None);
             float[] c = new float[] { float.Parse(b[0]) * 50, float.Parse(b[1]) * 50, float.Parse(b[2]) };
             SelectedZone.transform.position = new Vector3(c[0] + (BlocScale / 2), c[1] + (BlocScale / 2));
-            SelectedZone.transform.localScale = new Vector2(Screen.height / (Screen.height/50) + 1, Screen.height / (Screen.height / 50) + 1);
+            SelectedZone.transform.localScale = new Vector2(Screen.height / (Screen.height / 50) + 1, Screen.height / (Screen.height / 50) + 1);
         }
         else SelectedZone.SetActive(false);
 
@@ -267,26 +254,89 @@ public class Editeur : MonoBehaviour
         }
 #endif
 
-        #if UNITY_STANDALONE || UNITY_EDITOR
-                int MoveX = 0;
-                int MoveY = 0;
+#if UNITY_STANDALONE || UNITY_EDITOR
+        int MoveX = 0;
+        int MoveY = 0;
 
-                int Speed = 5;
+        int Speed = CameraMouvementSpeed;
+        if (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift))
+            Speed = CameraMouvementSpeed * 2;
 
-                if (Input.GetKey(KeyCode.RightArrow) & Ctrl)
-                    MoveX = 1;
-                else if (Input.GetKey(KeyCode.LeftArrow) & Ctrl)
-                    MoveX = -1;
+        if (Input.GetKey(KeyCode.RightArrow) & Ctrl)
+            MoveX = 1;
+        else if (Input.GetKey(KeyCode.LeftArrow) & Ctrl)
+            MoveX = -1;
 
-                if (Input.GetKey(KeyCode.UpArrow) & Ctrl)
-                    MoveY = 1;
-                else if (Input.GetKey(KeyCode.DownArrow) & Ctrl)
-                    MoveY = -1;
+        if (Input.GetKey(KeyCode.UpArrow) & Ctrl)
+            MoveY = 1;
+        else if (Input.GetKey(KeyCode.DownArrow) & Ctrl)
+            MoveY = -1;
 
-                Deplacer(MoveX * Speed, MoveY * Speed);
-        #elif UNITY_ANDROID || UNITY_IOS
+        Deplacer(MoveX * Speed, MoveY * Speed);
+#elif UNITY_ANDROID || UNITY_IOS
+        // If there are two touches on the device...
+        if (Input.touchCount == 2 | Input.touchCount == 3)
+        {
+            // Store both touches.
+            Touch touchZero = Input.GetTouch(0);
+            Touch touchOne = Input.GetTouch(1);
 
-        #endif
+            // Find the position in the previous frame of each touch.
+            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+            // Find the magnitude of the vector (the distance) between the touches in each frame.
+            float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+            float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+
+            // Find the difference in the distances between each frame.
+            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+            float screenCenterX = Screen.width * 0.5f;
+            float screenCenterY = Screen.height * 0.5f;
+
+            int MoveX = 0;
+            int MoveY = 0;
+
+            int Speed = CameraMouvementSpeed;
+            if (Input.touchCount == 3)
+                Speed = CameraMouvementSpeed * 2;
+
+                if (touchZero.position.x > screenCenterX & touchOne.position.x > screenCenterX)
+                MoveX = 1;
+            else if (touchZero.position.x < screenCenterX & touchOne.position.x < screenCenterX)
+                MoveX = -1;
+
+            if (touchZero.position.y > screenCenterY & touchOne.position.y > screenCenterY)
+                MoveY = 1;
+            else if (touchZero.position.y < screenCenterY & touchOne.position.y < screenCenterY)
+                MoveY = -1;
+
+            Deplacer(MoveX * Speed, MoveY * Speed);
+        }
+#endif
+    }
+
+    Vector2 GetClicPos()
+    {
+        float zoomRelatively = (Screen.height / 2) / cam.orthographicSize;
+        float zoom = Screen.height / cam.orthographicSize;
+
+        float camMoveX = cam.transform.position.x - (Screen.width / zoom);
+        float camMoveY = cam.transform.position.y - cam.orthographicSize;
+
+        float PosDoigtX = (camMoveX - (25 * zoomRelatively)) / 50;
+        float PosDoigtY = (camMoveY - (25 * zoomRelatively)) / 50;
+
+        float PosDoigtNoCamPosX = (Input.mousePosition.x - (25 * zoomRelatively)) / 50;
+        float PosDoigtNoCamPosY = (Input.mousePosition.y - (25 * zoomRelatively)) / 50;
+
+        float IndiceChangPosCamX = (Screen.width / zoom) / (Screen.width / 2);
+        float IndiceChangPosCamY = cam.orthographicSize / (Screen.height / 2);
+
+        int x = Mathf.RoundToInt(PosDoigtNoCamPosX * IndiceChangPosCamX) + (int)PosDoigtX;
+        int y = Mathf.RoundToInt(PosDoigtNoCamPosY * IndiceChangPosCamY) + (int)PosDoigtY;
+        return new Vector2(x, y);
     }
 
     void Zoom(int Z = 0)
@@ -299,7 +349,7 @@ public class Editeur : MonoBehaviour
             cam.orthographicSize = cam.orthographicSize - Z;
 
             float zoom = Screen.height / cam.orthographicSize;
-            cam.transform.position = new Vector3(Screen.width / zoom, Screen.height / zoom, -10);
+            //cam.transform.position = new Vector3(Screen.width / zoom, Screen.height / zoom, -10);
         }
         StartCoroutine(ZoomIndicator());
     }
@@ -313,7 +363,7 @@ public class Editeur : MonoBehaviour
             cam.orthographicSize = cam.orthographicSize + Z;
 
             float zoom = Screen.height / cam.orthographicSize;
-            cam.transform.position = new Vector3(Screen.width / zoom, Screen.height / zoom, -10);
+            //cam.transform.position = new Vector3(Screen.width / zoom, Screen.height / zoom, -10);
         }
         StartCoroutine(ZoomIndicator());
     }
