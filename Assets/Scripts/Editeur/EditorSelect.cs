@@ -78,19 +78,27 @@ public class EditorSelect : MonoBehaviour
 
     public void ChangLevel(int button)
     {
-        SelectedLevel = button+(lastItem-4);
+        SelectedLevel = button + (lastItem - 4);
 
-        for(int i = 1; i < 6; i++)
+        for (int i = 1; i < 6; i++)
         {
-            if (i == button+1)
+            if (i == button + 1)
                 Selector.transform.GetChild(i).GetComponent<Image>().color = new Color32(80, 80, 80, 255);
             else Selector.transform.GetChild(i).GetComponent<Image>().color = new Color32(95, 95, 95, 255);
         }
-        if (button != -1 & Desc[button] != "")
-            Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = Desc[button];
-        else Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = "Description incompatible";
+        if (button != -1)
+        {
+            if (button != -1 & Desc[button] != "")
+                Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = Desc[button];
+            else Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = "Description incompatible";
 
-        SongUsed.text = Songs[button];
+            SongUsed.text = Songs[button];
+        }
+        else
+        {
+            Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = "";
+            SongUsed.text = "";
+        }
     }
 
     public void ChangDesc(InputField IF)
