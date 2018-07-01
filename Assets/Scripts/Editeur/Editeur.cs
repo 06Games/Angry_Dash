@@ -357,7 +357,7 @@ public class Editeur : MonoBehaviour
                 newComponent[i] = component[i];
             else if (i == end)
                 newComponent[i] = id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0";
-            else newComponent[i] = component[i-1];
+            else newComponent[i] = component[i - 1];
         }
 
         bool t = true;
@@ -366,10 +366,11 @@ public class Editeur : MonoBehaviour
             if (component[i] == newComponent[end])
                 t = false;
         }
-        if(t)
+        if (t)
+        {
             component = newComponent;
-        //component = component.Union(new string[1] { id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0" }).ToArray();
-        Instance(end);
+            Instance(end);
+        }
     }
     public void AddBlock(string _id)
     {
@@ -608,17 +609,26 @@ public class Editeur : MonoBehaviour
             SelectedBlock = -1;
             string[] NewComponent = new string[component.Length - 1];
             
-            GameObject go = transform.GetChild(1).GetChild(SB - 6).gameObject;
-            Destroy(go);
+            Transform obj = transform.GetChild(1).Find("Objet n° " + SB);
+            if(obj != null)
+                Destroy(obj.gameObject);
 
             for (int i = 0; i < NewComponent.Length; i++)
             {
                 if (i < SB)
                     NewComponent[i] = component[i];
-                else NewComponent[i] = component[i + 1];
+                else
+                {
+                    NewComponent[i] = component[i + 1];
+
+                    Transform objet = transform.GetChild(1).Find("Objet n° " + (i + 1));
+                    if(objet != null)
+                        objet.name = "Objet n° " + i;
+                }
             }
             component = NewComponent;
             File.WriteAllLines(file, component);
+            SelectedBlock = -1;
         }
         else if (!fromUpdateScript)
         {
