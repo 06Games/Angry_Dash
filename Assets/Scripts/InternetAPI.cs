@@ -2,6 +2,7 @@
 using System;
 using System.Net;
 using UnityEngine.Events;
+using System.Linq;
 
 public class InternetAPI : MonoBehaviour {
 
@@ -53,4 +54,27 @@ public class InternetAPI : MonoBehaviour {
     }
 
     public void ActiveGameObjectIfDisconected(GameObject GO){ GO.SetActive(!IsConnected()); }
+
+    public static bool ValidateIPv4(string ipString)
+    {
+        if (String.IsNullOrEmpty(ipString))
+        {
+            return false;
+        }
+
+        ipString = ipString.Split(new string[1] { ":" }, System.StringSplitOptions.None)[0];
+
+        if (ipString == "localhost")
+            return true;
+
+        string[] splitValues = ipString.Split('.');
+        if (splitValues.Length != 4)
+        {
+            return false;
+        }
+
+        byte tempForParsing;
+
+        return splitValues.All(r => byte.TryParse(r, out tempForParsing));
+    }
 }
