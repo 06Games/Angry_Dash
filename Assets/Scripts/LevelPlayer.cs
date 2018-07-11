@@ -180,7 +180,7 @@ public class LevelPlayer : MonoBehaviour {
         else
         {
             if (id == 0.1F)
-                GameObject.Find("Player").transform.position = pos;
+                GetComponent<MainCam>().Player.transform.position = pos;
             else if (id == 0.2F)
             {
                 GameObject go = Instantiate(TriggerPref[0], pos, rot, place);
