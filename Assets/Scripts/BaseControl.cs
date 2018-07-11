@@ -13,7 +13,8 @@ using System.ComponentModel;
 using UnityEngine.UI;
 using System.Linq;
 
-public class BaseControl : MonoBehaviour {
+public class BaseControl : MonoBehaviour
+{
 
 
     public string scene = "Home";
@@ -43,22 +44,22 @@ public class BaseControl : MonoBehaviour {
 
         if (Directory.Exists(Application.persistentDataPath + "/Languages/"))
         {
+            if (SceneManager.GetActiveScene().name == "Home")
+                LSC.transform.GetChild(2).gameObject.SetActive(false);
             if (CheckTex())
                 DownloadAllRequiredTex();
         }
 
 
         GameObject[] gos = GameObject.FindGameObjectsWithTag("Button With Click");
-        for(int i = 0; i < gos.Length; i++)
+        for (int i = 0; i < gos.Length; i++)
             gos[i].GetComponent<Button>().onClick.AddListener(() => GetComponent<AudioSource>().PlayOneShot(ButtonSoundOnClick));
     }
 
-    public bool CheckTex()
+    public static bool CheckTex()
     {
         if (SceneManager.GetActiveScene().name == "Home")
         {
-            LSC.transform.GetChild(2).gameObject.SetActive(false);
-
             if (!Directory.Exists(Application.persistentDataPath + "/Textures/1"))
                 return true;
             else if (Directory.GetFiles(Application.persistentDataPath + "/Textures/1").Length == 0)
@@ -84,7 +85,7 @@ public class BaseControl : MonoBehaviour {
             else LSC.LoadScreen(scene);
         }
     }
-    
+
     void OnEnable() { Application.logMessageReceived += HandleLog; }
     void OnDisable() { Application.logMessageReceived -= HandleLog; }
     void HandleLog(string logString, string stackTrace, LogType type)
@@ -145,11 +146,12 @@ public class BaseControl : MonoBehaviour {
             });
         }
     }
-    public static string pathToActualLogMessage() {
+    public static string pathToActualLogMessage()
+    {
         string DT = (DateTime.Now - TimeSpan.FromSeconds(Time.realtimeSinceStartup)).ToString("yyyy-MM-dd HH-mm-ss");
         string path = Application.persistentDataPath + "/logs/";
         return path + DT + ".log";
-        
+
     }
     public void DeleteAllCache()
     {
@@ -178,7 +180,7 @@ public class BaseControl : MonoBehaviour {
 
             string[] s = new string[cLenght];
             for (int i = 0; i < cLenght; i++)
-                s[i] = c[i+11].Split(new string[1] { "<a href=\"" }, StringSplitOptions.None)[1].Split(new string[1] { "\">" }, StringSplitOptions.None)[0];
+                s[i] = c[i + 11].Split(new string[1] { "<a href=\"" }, StringSplitOptions.None)[1].Split(new string[1] { "\">" }, StringSplitOptions.None)[0];
 
             DownloadPanel = LSC.transform.GetChild(2).gameObject;
             DownloadPanel.SetActive(true);
@@ -202,7 +204,7 @@ public class BaseControl : MonoBehaviour {
         });
 
         string desktopPath = mainPath + MasterCat[0] + "/" + s[actual];
-        
+
         string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/items/" + MasterCat[0] + "/" + s[actual];
 
         using (WebClient wc = new WebClient())
@@ -215,7 +217,7 @@ public class BaseControl : MonoBehaviour {
         string newS = "";
         for (int i = 0; i < s.Length; i++)
         {
-            if(i < s.Length-1)
+            if (i < s.Length - 1)
                 newS = newS + s[i] + "\n";
             else newS = newS + s[i];
         }
@@ -226,7 +228,7 @@ public class BaseControl : MonoBehaviour {
         downData[3] = MasterCat[0].ToString();
         downData[4] = MasterCat[1].ToString();
     }
-    
+
     private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
     }
@@ -277,7 +279,7 @@ public class BaseControl : MonoBehaviour {
                 Base.DeactiveObjectStatic(DownloadPanel);
                 string[] lines = new string[2];
                 lines[0] = "[database]";
-                lines[1] = "version="+Application.version;
+                lines[1] = "version=" + Application.version;
                 File.WriteAllLines(Application.persistentDataPath + "/Textures/info.ini", lines);
             }
         });

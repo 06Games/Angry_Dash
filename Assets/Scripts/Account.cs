@@ -45,7 +45,6 @@ public class Account : MonoBehaviour
     }
     public bool Connect(string user, string mdp, bool hash)
     {
-#if !UNITY_EDITOR
         string MDP = mdp;
         if (!hash)
             MDP = Security.Hashing.SHA384(mdp);
@@ -78,10 +77,13 @@ public class Account : MonoBehaviour
         }
 
         transform.GetChild(1).gameObject.SetActive(false);
-        return Result.Contains("Connection succesful !");
-#else
-        return true;
+#if UNITY_EDITOR
+#elif UNITY_ANDROID
+        if(Result.Contains("Connection succesful !"))
+                UnityThread.executeInUpdate(() => GameObject.Find("Social").GetComponent<Social>().Auth());
 #endif
+
+        return Result.Contains("Connection succesful !");
     }
 }
 
