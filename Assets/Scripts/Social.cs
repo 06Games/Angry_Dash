@@ -36,7 +36,6 @@ public class Social : MonoBehaviour
                     mWaitingForAuth = false;
                     if (success)
                     {
-                        //transform.GetChild(0).gameObject.SetActive(false);
                         transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Authenticated";
                         PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
                         .EnableSavedGames()
@@ -49,6 +48,7 @@ public class Social : MonoBehaviour
                         PlayGamesPlatform.DebugLogEnabled = true; // recommended for debugging
                         PlayGamesPlatform.Activate(); // Activate the Google Play Games platform
                         UnityEngine.Social.ReportProgress("CgkI9r-go54eEAIQAg", 100.0f, (bool s) => { }); //Débloque le succès Bienvenue
+                        transform.GetChild(0).gameObject.SetActive(false);
                     }
                     else
                     {
