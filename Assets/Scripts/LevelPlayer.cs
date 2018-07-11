@@ -10,7 +10,7 @@ public class LevelPlayer : MonoBehaviour {
 
     string file;
     string FromScene;
-    string[] component;
+    public string[] component;
     int BlocSize = 24;
     Camera cam;
 
@@ -129,8 +129,9 @@ public class LevelPlayer : MonoBehaviour {
             }
         }
 
+        Transform place = new GameObject("Items").transform;
         for (int i = d; i < end; i++)
-            Instance(i);
+            Instance(i, place);
         transform.GetChild(0).gameObject.SetActive(true);
 
         Base.GetChild(3).gameObject.SetActive(false);
@@ -147,9 +148,12 @@ public class LevelPlayer : MonoBehaviour {
 
         if (GameObject.Find("Audio") != null & music != "null")
             GameObject.Find("Audio").GetComponent<menuMusic>().LoadMusic(music);
+
+        Destroy(SummonPlace.gameObject);
+        SummonPlace = place;
     }
 
-    public void Instance(int num)
+    public void Instance(int num, Transform place)
     {
         float id = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]);
         string rotZ = component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[2];
@@ -162,7 +166,7 @@ public class LevelPlayer : MonoBehaviour {
 
         if (id >= 1)
         {
-            GameObject go = Instantiate(Prefabs[(int)id-1], pos, rot, SummonPlace);
+            GameObject go = Instantiate(Prefabs[(int)id-1], pos, rot, place);
             go.name = "Objet n° " + num;
             go.transform.localScale = new Vector2(Screen.height / BlocSize, Screen.height / BlocSize);
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
@@ -179,7 +183,7 @@ public class LevelPlayer : MonoBehaviour {
                 GameObject.Find("Player").transform.position = pos;
             else if (id == 0.2F)
             {
-                GameObject go = Instantiate(TriggerPref[0], pos, rot, SummonPlace);
+                GameObject go = Instantiate(TriggerPref[0], pos, rot, place);
                 go.name = "Trigger n° " + num;
                 go.transform.localScale = new Vector2(Screen.height / BlocSize, Screen.height / BlocSize);
             }

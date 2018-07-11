@@ -48,7 +48,7 @@ public class _NetworkManager : NetworkBehaviour
 
         string[] a = IF.text.Split(new string[1] { ":" }, System.StringSplitOptions.None);
         try { adress = a[0]; } catch { adress = "localhost"; }
-        try { port = int.Parse(a[1]); } catch { port = 7777; }
+        try { port = int.Parse(a[1]); } catch { port = 20000; }
     }
     public void OpenFavServ(int f)
     {
@@ -150,7 +150,7 @@ public class _NetworkManager : NetworkBehaviour
             {
                 string[] a = fav[i].Split(new string[1] { ":" }, System.StringSplitOptions.None);
                 try { NM.networkAddress = a[0]; } catch { NM.networkAddress = "localhost"; }
-                try { NM.networkPort = int.Parse(a[1]); } catch { NM.networkPort = 7777; }
+                try { NM.networkPort = int.Parse(a[1]); } catch { NM.networkPort = 20000; }
                 infoActual = i;
                 Client = NM.StartClient();
                 refreshing = true;
@@ -198,6 +198,7 @@ public class _NetworkManager : NetworkBehaviour
             ConfigAPI.SetString("online.favoriteServer", "");
 
         RefreshFav();
+        Client.RegisterHandler(MsgID.GetServerMap, OnConnected);
     }
 
     public void StartHost()
@@ -283,6 +284,7 @@ public class _NetworkManager : NetworkBehaviour
 
         if(NM.IsClientConnected() & refreshing)
         {
+            print("true");
             Client.Send(MsgID.AskForServerInfo, new ServRequest());
             refreshing = false;
         }
