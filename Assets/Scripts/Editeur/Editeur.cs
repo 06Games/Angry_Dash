@@ -96,7 +96,7 @@ public class Editeur : MonoBehaviour
         if (GameObject.Find("Audio") != null)
         {
             menuMusic mm = GameObject.Find("Audio").GetComponent<menuMusic>();
-            mm.LoadMusic(mm.audio);
+            mm.LoadMusic(mm.GetComponent<AudioSource>().clip);
         }
         Selection.SetActive(true);
         Selection.GetComponent<EditorSelect>().NewStart();
@@ -280,17 +280,6 @@ public class Editeur : MonoBehaviour
             // Store both touches.
             Touch touchZero = Input.GetTouch(0);
             Touch touchOne = Input.GetTouch(1);
-
-            // Find the position in the previous frame of each touch.
-            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
-
-            // Find the magnitude of the vector (the distance) between the touches in each frame.
-            float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
-            float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
-
-            // Find the difference in the distances between each frame.
-            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
             float screenCenterX = Screen.width * 0.5f;
             float screenCenterY = Screen.height * 0.5f;

@@ -7,7 +7,7 @@ public class menuMusic : MonoBehaviour {
 
     static bool AudioBegin = false;
 
-    public new AudioClip audio;
+    public AudioClip audioClip;
     void Awake()
     {
         if (!AudioBegin)
@@ -15,7 +15,7 @@ public class menuMusic : MonoBehaviour {
     }
     public void StartDefault()
     {
-        LoadMusic(audio);
+        LoadMusic(audioClip);
         DontDestroyOnLoad(gameObject);
         AudioBegin = true;
     }

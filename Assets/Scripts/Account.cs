@@ -7,9 +7,11 @@ using UnityEngine.UI;
 using System;
 using System.Linq;
 
-public class Account : MonoBehaviour {
+public class Account : MonoBehaviour
+{
 
-	void Start () {
+    void Start()
+    {
         transform.GetChild(0).gameObject.SetActive(false);
         transform.GetChild(0).GetChild(4).gameObject.SetActive(false);
         transform.GetChild(1).gameObject.SetActive(false);
@@ -23,9 +25,9 @@ public class Account : MonoBehaviour {
         {
             string[] details = File.ReadAllLines(path);
             //details[0] = "1 = Evan";
-            if(!File.Exists(Application.temporaryCachePath + "/ac.txt"))
+            if (!File.Exists(Application.temporaryCachePath + "/ac.txt"))
                 Connect(details[0].Replace("1 = ", ""), details[1].Replace("2 = ", ""), true);
-            else if (Security.Encrypting.Decrypt(File.ReadAllLines(Application.temporaryCachePath + "/ac.txt")[0], details[1].Replace("2 = ", "")) != details[0].Replace("1 = ", "")+ BaseControl.pathToActualLogMessage())
+            else if (Security.Encrypting.Decrypt(File.ReadAllLines(Application.temporaryCachePath + "/ac.txt")[0], details[1].Replace("2 = ", "")) != details[0].Replace("1 = ", "") + BaseControl.pathToActualLogMessage())
                 Connect(details[0].Replace("1 = ", ""), details[1].Replace("2 = ", ""), true);
         }
         else
@@ -43,6 +45,7 @@ public class Account : MonoBehaviour {
     }
     public bool Connect(string user, string mdp, bool hash)
     {
+#if !UNITY_EDITOR
         string MDP = mdp;
         if (!hash)
             MDP = Security.Hashing.SHA384(mdp);
@@ -76,9 +79,10 @@ public class Account : MonoBehaviour {
 
         transform.GetChild(1).gameObject.SetActive(false);
         return Result.Contains("Connection succesful !");
+#else
+        return true;
+#endif
     }
-
-    
 }
 
 namespace Security
