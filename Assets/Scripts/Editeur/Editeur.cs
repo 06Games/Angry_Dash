@@ -334,12 +334,7 @@ public class Editeur : MonoBehaviour
             Z = ZoomSensitive;
 
         if (cam.orthographicSize > 240)
-        {
             cam.orthographicSize = cam.orthographicSize - Z;
-
-            //float zoom = Screen.height / cam.orthographicSize;
-            //cam.transform.position = new Vector3(Screen.width / zoom, Screen.height / zoom, -10);
-        }
         StartCoroutine(ZoomIndicator());
     }
     void Dezoom(int Z = 0)
@@ -348,12 +343,7 @@ public class Editeur : MonoBehaviour
             Z = ZoomSensitive;
 
         if (cam.orthographicSize < 1200)
-        {
             cam.orthographicSize = cam.orthographicSize + Z;
-
-            //float zoom = Screen.height / cam.orthographicSize;
-            //cam.transform.position = new Vector3(Screen.width / zoom, Screen.height / zoom, -10);
-        }
         StartCoroutine(ZoomIndicator());
     }
     IEnumerator ZoomIndicator()

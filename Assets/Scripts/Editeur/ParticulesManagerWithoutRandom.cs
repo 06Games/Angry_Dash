@@ -36,7 +36,6 @@ public class ParticulesManagerWithoutRandom : MonoBehaviour {
             {
                 for (int width = 0; width <= xNbPart; width++)
                 {
-                    int part = Screen.height / Size;
                     float decalage = (yNbPart - i) * Size + Size/2;
                     Vector2 pos = new Vector2((width * Size) - decalage, Screen.height - ((yNbPart-i) * Size) - Size/2);
                     GameObject go = Instantiate(Prefab, pos, new Quaternion(), transform);
