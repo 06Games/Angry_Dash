@@ -36,44 +36,50 @@ public class Soundboard : MonoBehaviour {
     public GameObject MusicSelectorPanel;
 
     public void RefreshList () {
-        MusicSelectorPanel.SetActive(false);
 
-        WebClient client = new WebClient();
-        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string Result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/?min=0&max=-1");
-        string[] song = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
-
-        int lenght = song.Length;
-        if(string.IsNullOrEmpty(song[lenght-1]))
-            lenght = song.Length-1;
-
-        BasePath = new string[lenght];
-        BaseName = new string[lenght];
-        BaseArtist = new string[lenght];
-        BaseLicence = new string[lenght];
-
-        for (int i = 0; i < lenght; i++)
+        if (InternetAPI.IsConnected())
         {
-            string[] songInfo = song[i].Split(new string[1] { " ; " }, StringSplitOptions.None);
-            BasePath[i] = songInfo[0];
-            BaseArtist[i] = songInfo[1].Split(new string[1] { " / " }, StringSplitOptions.None)[0];
-            BaseName[i] = songInfo[2];
+            MusicSelectorPanel.SetActive(false);
 
-            WebClient c = new WebClient();
+            WebClient client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/licences/" + BaseArtist[i] + " - " + BaseName[i] + ".txt";
-            URL = URL.Replace(" ", "%20");
-            try
+            string Result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/?min=0&max=-1");
+            string[] song = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
+
+            int lenght = song.Length;
+            if (string.IsNullOrEmpty(song[lenght - 1]))
+                lenght = song.Length - 1;
+
+            BasePath = new string[lenght];
+            BaseName = new string[lenght];
+            BaseArtist = new string[lenght];
+            BaseLicence = new string[lenght];
+
+            for (int i = 0; i < lenght; i++)
             {
-                BaseLicence[i] = c.DownloadString(URL);
-            }
-            catch {
-                UnityEngine.Debug.LogWarning("404 Error : File doesn't exist \n" + URL);
-                BaseLicence[i] = "Error"; }
+                string[] songInfo = song[i].Split(new string[1] { " ; " }, StringSplitOptions.None);
+                BasePath[i] = songInfo[0];
+                BaseArtist[i] = songInfo[1].Split(new string[1] { " / " }, StringSplitOptions.None)[0];
+                BaseName[i] = songInfo[2];
+
+                WebClient c = new WebClient();
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/licences/" + BaseArtist[i] + " - " + BaseName[i] + ".txt";
+                URL = URL.Replace(" ", "%20");
+                try
+                {
+                    BaseLicence[i] = c.DownloadString(URL);
+                }
+                catch
+                {
+                    UnityEngine.Debug.LogWarning("404 Error : File doesn't exist \n" + URL);
+                    BaseLicence[i] = "Error";
+                }
             }
 
-        Search(null);
-        gameObject.SetActive(false);
+            Search(null);
+            gameObject.SetActive(false);
+        }
     }
 
     Stopwatch sw = new Stopwatch();

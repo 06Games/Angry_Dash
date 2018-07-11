@@ -32,9 +32,13 @@ public class InternetAPI : MonoBehaviour {
     /// <summary> Vérifie si l'appareil est connecter à internet </summary> 
     public static bool IsConnected()
     {
-        if (Application.internetReachability == NetworkReachability.NotReachable)
-            return false; // Pas de réseau
-        else return true; // Réseau
+        return Application.internetReachability != NetworkReachability.NotReachable;
+    }
+
+    /// <summary> Vérifie si l'appareil est connecter à internet grace à un réseau mobile </summary> 
+    public static bool IsOnMobileData()
+    {
+        return Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork; 
     }
 
     /// <summary> Initialise une url en URi pour le bon fonctionnement d'un téléchargement avec la classe WebClient </summary> 

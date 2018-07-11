@@ -39,28 +39,31 @@ public class Base : MonoBehaviour {
     static int[] downData = new int[2];
     public static void downloadFile(int actual, int max)
     {
-        if (!Directory.Exists(Application.persistentDataPath + "/Level/Solo/"))
-            Directory.CreateDirectory(Application.persistentDataPath + "/Level/Solo/");
-
-        UnityThread.executeInUpdate(() =>
+        if (InternetAPI.IsConnected())
         {
-            GameObject go = GameObject.Find("LoadingScreen").transform.GetChild(1).gameObject;
-            go.SetActive(true);
-            go.transform.GetChild(0).GetComponent<Slider>().value = (actual+1) / (max+1);
-            go.transform.GetChild(2).GetComponent<Text>().text = actual + "/" + max;
-        });
+            if (!Directory.Exists(Application.persistentDataPath + "/Level/Solo/"))
+                Directory.CreateDirectory(Application.persistentDataPath + "/Level/Solo/");
 
-        string desktopPath = Application.persistentDataPath + "/Level/Solo/Level " + (actual+1) + ".level";
+            UnityThread.executeInUpdate(() =>
+            {
+                GameObject go = GameObject.Find("LoadingScreen").transform.GetChild(1).gameObject;
+                go.SetActive(true);
+                go.transform.GetChild(0).GetComponent<Slider>().value = (actual + 1) / (max + 1);
+                go.transform.GetChild(2).GetComponent<Text>().text = actual + "/" + max;
+            });
 
-        string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/solo/" + (actual+1) + ".level";
+            string desktopPath = Application.persistentDataPath + "/Level/Solo/Level " + (actual + 1) + ".level";
 
-        using (WebClient wc = new WebClient())
-        {
-            wc.DownloadFileCompleted += wc_DownloadFileCompleted;
-            wc.DownloadFileAsync(new Uri(url), desktopPath);
+            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/solo/" + (actual + 1) + ".level";
+
+            using (WebClient wc = new WebClient())
+            {
+                wc.DownloadFileCompleted += wc_DownloadFileCompleted;
+                wc.DownloadFileAsync(new Uri(url), desktopPath);
+            }
+            downData[0] = actual;
+            downData[1] = max;
         }
-        downData[0] = actual;
-        downData[1] = max;
     }
     
     private static void wc_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)

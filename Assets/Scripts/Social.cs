@@ -23,39 +23,44 @@ public class Social : MonoBehaviour
     bool mWaitingForAuth = false;
     public void Auth()
     {
-        transform.GetChild(0).gameObject.SetActive(true);
-        if (!UnityEngine.Social.localUser.authenticated & !mWaitingForAuth)
+        if (InternetAPI.IsConnected())
         {
-            mWaitingForAuth = true;
-            transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Authenticating...";
-            transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
-            UnityEngine.Social.localUser.Authenticate((bool success) =>
+            transform.GetChild(0).gameObject.SetActive(true);
+            if (!UnityEngine.Social.localUser.authenticated & !mWaitingForAuth)
             {
-                mWaitingForAuth = false;
-                if (success)
+                mWaitingForAuth = true;
+                transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Authenticating...";
+                transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
+                UnityEngine.Social.localUser.Authenticate((bool success) =>
                 {
-                    transform.GetChild(0).gameObject.SetActive(false);
-                    PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
-                    .EnableSavedGames()
-                    .RequestEmail()
-                    .RequestServerAuthCode(false)
-                    .RequestIdToken()
-                    .Build();
+                    mWaitingForAuth = false;
+                    if (success)
+                    {
+                        //transform.GetChild(0).gameObject.SetActive(false);
+                        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Authenticated";
+                        PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
+                        .EnableSavedGames()
+                        .RequestEmail()
+                        .RequestServerAuthCode(false)
+                        .RequestIdToken()
+                        .Build();
 
-                    PlayGamesPlatform.InitializeInstance(config);
-                    PlayGamesPlatform.DebugLogEnabled = true; // recommended for debugging
-                    PlayGamesPlatform.Activate(); // Activate the Google Play Games platform
-                    UnityEngine.Social.ReportProgress("CgkI9r-go54eEAIQAg", 100.0f, (bool s) => { }); //Débloque le succès Bienvenue
-                }
-                else
-                {
-                    transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Authentication failed.\nGoogle Play service failed to start";
-                    transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
-                }
-            });
+                        PlayGamesPlatform.InitializeInstance(config);
+                        PlayGamesPlatform.DebugLogEnabled = true; // recommended for debugging
+                        PlayGamesPlatform.Activate(); // Activate the Google Play Games platform
+                        UnityEngine.Social.ReportProgress("CgkI9r-go54eEAIQAg", 100.0f, (bool s) => { }); //Débloque le succès Bienvenue
+                    }
+                    else
+                    {
+                        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Authentication failed.\nGoogle Play service failed to start";
+                        transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
+                    }
+                });
+            }
+            else if (!mWaitingForAuth)
+                transform.GetChild(0).gameObject.SetActive(false);
         }
-        else if (!mWaitingForAuth)
-            transform.GetChild(0).gameObject.SetActive(false);
+        else transform.GetChild(0).gameObject.SetActive(false);
     }
 
     // Update is called once per frame

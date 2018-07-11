@@ -58,7 +58,7 @@ public class BaseControl : MonoBehaviour
 
     public static bool CheckTex()
     {
-        if (SceneManager.GetActiveScene().name == "Home")
+        if (SceneManager.GetActiveScene().name == "Home" & InternetAPI.IsConnected())
         {
             if (!Directory.Exists(Application.persistentDataPath + "/Textures/1"))
                 return true;

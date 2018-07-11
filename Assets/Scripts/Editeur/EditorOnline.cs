@@ -39,12 +39,15 @@ public class EditorOnline : MonoBehaviour
         {
             if (!string.IsNullOrEmpty(IF.text))
             {
-                rZone.gameObject.SetActive(true);
-                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + IF.text;
-                WebClient client = new WebClient();
-                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                string Result = client.DownloadString(URL.Replace(" ", "%20"));
-                files = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
+                if (InternetAPI.IsConnected())
+                {
+                    rZone.gameObject.SetActive(true);
+                    string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + IF.text;
+                    WebClient client = new WebClient();
+                    ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                    string Result = client.DownloadString(URL.Replace(" ", "%20"));
+                    files = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
+                }
             }
             else rZone.gameObject.SetActive(false);
         }
@@ -234,16 +237,19 @@ public class EditorOnline : MonoBehaviour
 
     public void PlayLevel()
     {
-        string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + author[actual] + "/" + level[actual] + ".level";
-        string path = Application.temporaryCachePath + "/" + level[actual] + ".level";
-        WebClient client = new WebClient();
-        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        
-        string file = client.DownloadString(url.Replace(" ", "%20"));
-        if (File.Exists(path))
-            File.Delete(path);
-        File.WriteAllText(path, file);
-        File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { path, "Editor/Online" });
-        GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
+        if (InternetAPI.IsConnected())
+        {
+            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + author[actual] + "/" + level[actual] + ".level";
+            string path = Application.temporaryCachePath + "/" + level[actual] + ".level";
+            WebClient client = new WebClient();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
+            string file = client.DownloadString(url.Replace(" ", "%20"));
+            if (File.Exists(path))
+                File.Delete(path);
+            File.WriteAllText(path, file);
+            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { path, "Editor/Online" });
+            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
+        }
     }
 }
