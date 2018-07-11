@@ -333,11 +333,11 @@ public class Editeur : MonoBehaviour
         if (Z == 0)
             Z = ZoomSensitive;
 
-        if(cam.orthographicSize > 240)
+        if (cam.orthographicSize > 240)
         {
             cam.orthographicSize = cam.orthographicSize - Z;
 
-            float zoom = Screen.height / cam.orthographicSize;
+            //float zoom = Screen.height / cam.orthographicSize;
             //cam.transform.position = new Vector3(Screen.width / zoom, Screen.height / zoom, -10);
         }
         StartCoroutine(ZoomIndicator());
@@ -351,7 +351,7 @@ public class Editeur : MonoBehaviour
         {
             cam.orthographicSize = cam.orthographicSize + Z;
 
-            float zoom = Screen.height / cam.orthographicSize;
+            //float zoom = Screen.height / cam.orthographicSize;
             //cam.transform.position = new Vector3(Screen.width / zoom, Screen.height / zoom, -10);
         }
         StartCoroutine(ZoomIndicator());
@@ -359,9 +359,9 @@ public class Editeur : MonoBehaviour
     IEnumerator ZoomIndicator()
     {
         zoomIndicator.gameObject.SetActive(true);
-        zoomIndicator.value = (cam.orthographicSize-240) / 960 * -1 + 1;
+        zoomIndicator.value = (cam.orthographicSize - 240) / 960 * -1 + 1;
         yield return new WaitForSeconds(1F);
-        
+
         bool Ctrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
         if (Input.GetAxis("Mouse ScrollWheel") == 0 & !Ctrl)
             zoomIndicator.gameObject.SetActive(false);
@@ -374,8 +374,8 @@ public class Editeur : MonoBehaviour
         string color = ColorToHex(_Color);
 
         float id = newblockid;
-        if(id > 10000)
-            id = (newblockid - 10000F) /10F;
+        if (id > 10000)
+            id = (newblockid - 10000F) / 10F;
 
         int start = -1;
         for (int i = 0; i < component.Length; i++)
@@ -389,8 +389,8 @@ public class Editeur : MonoBehaviour
             if (component[i].Contains("}") & end == -1)
                 end = i;
         }
-        string[] newComponent = new string[component.Length+1];
-        for(int i = 0; i < newComponent.Length; i++)
+        string[] newComponent = new string[component.Length + 1];
+        for (int i = 0; i < newComponent.Length; i++)
         {
             if (i < end)
                 newComponent[i] = component[i];
@@ -400,7 +400,7 @@ public class Editeur : MonoBehaviour
         }
 
         bool t = true;
-        for(int i = 0; i < component.Length; i++)
+        for (int i = 0; i < component.Length; i++)
         {
             if (component[i] == newComponent[end])
                 t = false;
@@ -415,7 +415,7 @@ public class Editeur : MonoBehaviour
     {
         float id = float.Parse(_id);
 
-        if(id == newblockid)
+        if (id == newblockid)
             AddBlocking = !AddBlocking;
         else
         {
@@ -510,7 +510,7 @@ public class Editeur : MonoBehaviour
                 Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
             BulleDeveloppementCat.SetActive(false);
 
-            for (int i = 1; i < Contenu[3].transform.childCount-2; i++)
+            for (int i = 1; i < Contenu[3].transform.childCount - 2; i++)
                 Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
         }
     }
@@ -544,12 +544,12 @@ public class Editeur : MonoBehaviour
                 go.transform.rotation = rot;
             }
             else go = Instantiate(Pref, pos, rot, transform.GetChild(1));
-            
+
             go.name = "Objet n° " + num;
             //go.transform.localScale = new Vector2(Screen.height / (Screen.height / 50), Screen.height / (Screen.height / 50));
             go.transform.localScale = new Vector2(50, 50);
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
-            
+
             Texture2D tex = new Texture2D(1, 1);
             tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString("0.0####") + ".png"));
             SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
@@ -647,9 +647,9 @@ public class Editeur : MonoBehaviour
             int SB = SelectedBlock;
             SelectedBlock = -1;
             string[] NewComponent = new string[component.Length - 1];
-            
+
             Transform obj = transform.GetChild(1).Find("Objet n° " + SB);
-            if(obj != null)
+            if (obj != null)
                 Destroy(obj.gameObject);
 
             for (int i = 0; i < NewComponent.Length; i++)
@@ -661,7 +661,7 @@ public class Editeur : MonoBehaviour
                     NewComponent[i] = component[i + 1];
 
                     Transform objet = transform.GetChild(1).Find("Objet n° " + (i + 1));
-                    if(objet != null)
+                    if (objet != null)
                         objet.name = "Objet n° " + i;
                 }
             }
@@ -686,12 +686,12 @@ public class Editeur : MonoBehaviour
         float CamX = cam.transform.position.x;
         float CamY = cam.transform.position.y;
 
-        if(x < 0)
+        if (x < 0)
         {
             if (cam.transform.position.x > Screen.width / 2)
                 CamX = cam.transform.position.x + x;
         }
-        else if(x > 0)
+        else if (x > 0)
             CamX = cam.transform.position.x + x;
 
         if (y < 0)
@@ -708,7 +708,7 @@ public class Editeur : MonoBehaviour
     public void PlayLevel()
     {
         File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, "Editor" });
-       GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
+        GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
     }
 
     public void SelectModeChang(bool enable) { SelectMode = enable; }
