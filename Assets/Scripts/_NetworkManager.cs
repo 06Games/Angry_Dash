@@ -276,7 +276,10 @@ public class _NetworkManager : NetworkBehaviour
     bool mapRequested = true;
     private void Update()
     {
-        if(NM.numPlayers != player & serv)
+        if (Items == null)
+            Items = GameObject.Find("Main Camera").GetComponent<LevelPlayer>().SummonPlace.gameObject;
+
+        if (NM.numPlayers != player & serv)
         {
             NetworkServer.SendToAll(MsgID.GetServerMap, m_Message);
             player = NM.numPlayers;
@@ -284,7 +287,6 @@ public class _NetworkManager : NetworkBehaviour
 
         if(NM.IsClientConnected() & refreshing)
         {
-            print("true");
             Client.Send(MsgID.AskForServerInfo, new ServRequest());
             refreshing = false;
         }

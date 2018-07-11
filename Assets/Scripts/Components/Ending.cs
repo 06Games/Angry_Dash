@@ -10,6 +10,8 @@ public class Ending : MonoBehaviour {
         player = collision.gameObject.GetComponent<Player>();
         player.PeutAvancer = false;
 
+        GameObject.Find("Base").transform.GetChild(3).GetChild(2).GetChild(0).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online");
+        GameObject.Find("Base").transform.GetChild(3).GetChild(2).GetChild(1).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online");
         GameObject.Find("Base").transform.GetChild(3).gameObject.SetActive(true);
     }
 }

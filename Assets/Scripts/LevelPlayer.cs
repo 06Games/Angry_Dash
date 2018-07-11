@@ -207,24 +207,32 @@ public class LevelPlayer : MonoBehaviour {
 
     public void Exit()
     {
-        string scene = FromScene;
-        if (FromScene == "")
-            scene = "Home";
-        else if (FromScene == "Editor/Online")
-            scene = "Editor";
-
-        if (scene == "Editor" & FromScene == "Editor")
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
         {
-            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, "" });
-            GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
+            string scene = FromScene;
+            if (FromScene == "")
+                scene = "Home";
+            else if (FromScene == "Editor/Online")
+                scene = "Editor";
+
+            if (scene == "Editor" & FromScene == "Editor")
+            {
+                File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, "" });
+                GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
+            }
+            else GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
+            GetComponent<BaseControl>().LSC.LoadScreen(scene);
         }
-        else GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
-        GetComponent<BaseControl>().LSC.LoadScreen(scene);
+        else
+        {
+            GameObject.Find("Network Manager").GetComponent<_NetworkManager>().Disconnect();
+        }
     }
 
     public void Replay()
     {
         GameObject.Find("Player").GetComponent<Player>().PeutAvancer = true;
+        nbLancer = 0;
         Base.GetChild(3).gameObject.SetActive(false);
         File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, FromScene });
         FromFile();
