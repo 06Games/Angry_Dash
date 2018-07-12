@@ -43,8 +43,8 @@ public class _NetworkManager : NetworkBehaviour
     public void OnValueChang(InputField IF)
     {
         if (isInFav(IF.text))
-            Selection.transform.GetChild(2).GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = "Remove";
-        else Selection.transform.GetChild(2).GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = "Add";
+            Selection.transform.GetChild(2).GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.String("multiplayerRemove");
+        else Selection.transform.GetChild(2).GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.String("multiplayerAdd");
 
         string[] a = IF.text.Split(new string[1] { ":" }, System.StringSplitOptions.None);
         try { adress = a[0]; } catch { adress = "localhost"; }
@@ -114,12 +114,16 @@ public class _NetworkManager : NetworkBehaviour
     }
     public void RefreshFavorite(InputField IF)
     {
-        int f = whereIsItInFav(IF.text);
-        if(f > -1)
-            RefreshFav(f, true);
+        if (!refreshing)
+        {
+            int f = whereIsItInFav(IF.text);
+            if (f > -1)
+                RefreshFav(f, true);
+        }
     }
-    void RefreshFav(int last = -1, bool onlyOne = false)
+    void RefreshFav(int last = -1, bool _onlyOne = false)
     {
+        onlyOne = _onlyOne;
         Transform trans = Selection.transform.GetChild(2).GetChild(0).GetChild(1);
 
         if (last == -1)
@@ -135,14 +139,17 @@ public class _NetworkManager : NetworkBehaviour
                 if (v < fav.Length)
                 {
                     go.GetChild(0).GetComponent<Image>().sprite = DefaultServerIcon;
-                    go.GetChild(1).GetComponent<Text>().text = "Syncing";
-                    go.GetChild(2).GetComponent<Text>().text = "?/?";
+                    go.GetChild(1).GetComponent<Text>().text = LangueAPI.String("multiplayerSyncing");
+                    go.GetChild(2).GetComponent<Text>().text = LangueAPI.String("multiplayerPlayersUnkown");
                     go.GetChild(3).GetComponent<Text>().text = fav[v];
                 }
             }
         }
 
         int i = last+1;
+        if (onlyOne)
+            i = last;
+
         if (i < 4)
         {
             Transform go = trans.GetChild(i);
@@ -158,23 +165,29 @@ public class _NetworkManager : NetworkBehaviour
                 Client.RegisterHandler(MsgID.GetServerInfo, ServInfoRecup);
 
                 go.GetChild(0).GetComponent<Image>().sprite = DefaultServerIcon;
-                go.GetChild(1).GetComponent<Text>().text = "Syncing";
-                go.GetChild(2).GetComponent<Text>().text = "?/?";
+                go.GetChild(1).GetComponent<Text>().text = LangueAPI.String("multiplayerSyncing");
+                go.GetChild(2).GetComponent<Text>().text = LangueAPI.String("multiplayerPlayersUnkown");
                 go.GetChild(3).GetComponent<Text>().text = fav[i];
             }
             else NM.StopClient();
         }
         else NM.StopClient();
+
+        Selection.transform.GetChild(2).GetChild(1).GetChild(3).GetComponent<Button>().interactable = !refreshing;
     }
     bool refreshing = false;
     int infoActual = 0;
+    bool onlyOne = false;
     void InfoDisconnected(NetworkMessage netMsg)
     {
-        RefreshFav(infoActual);
+        if (!onlyOne)
+            RefreshFav(infoActual);
 
         Transform go = Selection.transform.GetChild(2).GetChild(0).GetChild(1).GetChild(infoActual);
-        go.GetChild(1).GetComponent<Text>().text = "Error";
-        go.GetChild(2).GetComponent<Text>().text = "?/?";
+        go.GetChild(1).GetComponent<Text>().text = LangueAPI.String("multiplayerError");
+        go.GetChild(2).GetComponent<Text>().text = LangueAPI.String("multiplayerPlayersUnkown");
+        refreshing = false;
+        Selection.transform.GetChild(2).GetChild(1).GetChild(3).GetComponent<Button>().interactable = !refreshing;
     }
     public void ServInfoRecup(NetworkMessage netMsg)
     {
@@ -184,9 +197,11 @@ public class _NetworkManager : NetworkBehaviour
         text.LoadImage(msg.icon);
         go.GetChild(0).GetComponent<Image>().sprite = Sprite.Create(text, new Rect(0, 0, text.width, text.height), new Vector2(.5f, .5f));
         go.GetChild(1).GetComponent<Text>().text = msg.Name;
-        go.GetChild(2).GetComponent<Text>().text = msg.player + "/" + msg.maxPlayer;
+        go.GetChild(2).GetComponent<Text>().text = LangueAPI.StringWithArgument("multiplayerPlayers", new string[2] { msg.player.ToString(), msg.maxPlayer.ToString() });
 
-        RefreshFav(infoActual);
+        if (!onlyOne)
+            RefreshFav(infoActual);
+        Selection.transform.GetChild(2).GetChild(1).GetChild(3).GetComponent<Button>().interactable = !refreshing;
     }
 
 

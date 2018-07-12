@@ -120,6 +120,7 @@ GameObject:
   - component: {fileID: 4421371}
   - component: {fileID: 4421373}
   - component: {fileID: 4421372}
+  - component: {fileID: 4421374}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -184,6 +185,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 4421370}
+--- !u!114 &4421374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 4421370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: multiplayerConnect
+  arg: []
 --- !u!1 &42701984
 GameObject:
   m_ObjectHideFlags: 0
@@ -2719,6 +2733,7 @@ GameObject:
   - component: {fileID: 580484959}
   - component: {fileID: 580484961}
   - component: {fileID: 580484960}
+  - component: {fileID: 580484962}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -2783,6 +2798,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 580484958}
+--- !u!114 &580484962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 580484958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: multiplayerRefresh
+  arg: []
 --- !u!1 &586147119
 GameObject:
   m_ObjectHideFlags: 0
@@ -2793,6 +2821,7 @@ GameObject:
   - component: {fileID: 586147120}
   - component: {fileID: 586147122}
   - component: {fileID: 586147121}
+  - component: {fileID: 586147123}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -2857,6 +2886,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 586147119}
+--- !u!114 &586147123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 586147119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: multiplayerIPAdress
+  arg: []
 --- !u!1 &596073031
 GameObject:
   m_ObjectHideFlags: 0
@@ -3202,6 +3244,7 @@ GameObject:
   - component: {fileID: 668001115}
   - component: {fileID: 668001117}
   - component: {fileID: 668001116}
+  - component: {fileID: 668001118}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -3266,6 +3309,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 668001114}
+--- !u!114 &668001118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 668001114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: multiplayerAdd
+  arg: []
 --- !u!1 &716471801
 GameObject:
   m_ObjectHideFlags: 0
@@ -3913,6 +3969,7 @@ GameObject:
   - component: {fileID: 1041752212}
   - component: {fileID: 1041752214}
   - component: {fileID: 1041752213}
+  - component: {fileID: 1041752215}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -3977,6 +4034,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1041752211}
+--- !u!114 &1041752215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1041752211}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: multiplayerServers
+  arg: []
 --- !u!1 &1044458537
 GameObject:
   m_ObjectHideFlags: 0
@@ -4899,6 +4969,7 @@ GameObject:
   - component: {fileID: 1337906965}
   - component: {fileID: 1337906967}
   - component: {fileID: 1337906966}
+  - component: {fileID: 1337906968}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -4963,6 +5034,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1337906964}
+--- !u!114 &1337906968
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1337906964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: multiplayerHost
+  arg: []
 --- !u!1001 &1460994161
 Prefab:
   m_ObjectHideFlags: 0
@@ -5423,6 +5507,7 @@ GameObject:
   - component: {fileID: 1560725193}
   - component: {fileID: 1560725195}
   - component: {fileID: 1560725194}
+  - component: {fileID: 1560725196}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -5487,6 +5572,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1560725192}
+--- !u!114 &1560725196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1560725192}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: multiplayerFavoriteServers
+  arg: []
 --- !u!1 &1617311606
 GameObject:
   m_ObjectHideFlags: 0
@@ -5497,6 +5595,7 @@ GameObject:
   - component: {fileID: 1617311607}
   - component: {fileID: 1617311609}
   - component: {fileID: 1617311608}
+  - component: {fileID: 1617311610}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -5561,6 +5660,19 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1617311606}
+--- !u!114 &1617311610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1617311606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: multiplayerConnecting
+  arg: []
 --- !u!1 &1640817803
 GameObject:
   m_ObjectHideFlags: 0
@@ -6194,7 +6306,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0.54901963, g: 0.54901963, b: 0.54901963, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
