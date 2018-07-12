@@ -284,4 +284,9 @@ public class EditorSelect : MonoBehaviour
             Page(0);
         }
     }
+
+    public void Share()
+    {
+        NativeShare.Share("", file[SelectedLevel], "", "", "image/png", true, "Select sharing app");
+    }
 }
