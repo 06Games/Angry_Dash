@@ -29,7 +29,7 @@ public class Social : MonoBehaviour
             if (!UnityEngine.Social.localUser.authenticated & !mWaitingForAuth)
             {
                 mWaitingForAuth = true;
-                transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Authenticating...";
+                transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("googleServiceAuthenticating");
                 transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
                 UnityEngine.Social.localUser.Authenticate((bool success) =>
                 {
@@ -52,7 +52,7 @@ public class Social : MonoBehaviour
                     }
                     else
                     {
-                        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Authentication failed.\nGoogle Play service failed to start";
+                        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("googleServiceAuthenticationFailed");
                         transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
                     }
                 });
