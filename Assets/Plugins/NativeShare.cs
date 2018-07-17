@@ -2,6 +2,7 @@
 using System.Runtime.InteropServices;
 using System;
 #else
+using System.IO;
 using UnityEngine;
 #endif
 
@@ -38,65 +39,65 @@ public static class NativeShare
     /// <param name="chooserText"></param>
     public static void ShareMultiple(string body, string[] filePaths = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app")
     {
-#if UNITY_ANDROID
-		ShareAndroid(body, subject, url, filePaths, mimeType, chooser, chooserText);
+#if UNITY_EDITOR || UNITY_STANDALONE
+        SharePC(body, filePaths[0]);
+#elif UNITY_ANDROID
+        ShareAndroid(body, subject, url, filePaths, mimeType, chooser, chooserText);
 #elif UNITY_IOS
 		ShareIOS(body, subject, url, filePaths);
 #else
-        Debug.Log("No sharing set up for this platform.");
-        Debug.Log("Subject: " + subject);
-        Debug.Log("Body: " + body);
+        
 #endif
     }
 
 #if UNITY_ANDROID
-	public static void ShareAndroid(string body, string subject, string url, string[] filePaths, string mimeType, bool chooser, string chooserText)
-	{
-		using (AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent"))
-		using (AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent"))
-		{
-			using (intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND")))
-			{ }
-			using (intentObject.Call<AndroidJavaObject>("setType", mimeType))
-			{ }
-			using (intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), subject))
-			{ }
-			using (intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), body))
-			{ }
+    public static void ShareAndroid(string body, string subject, string url, string[] filePaths, string mimeType, bool chooser, string chooserText)
+    {
+        using (AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent"))
+        using (AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent"))
+        {
+            using (intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND")))
+            { }
+            using (intentObject.Call<AndroidJavaObject>("setType", mimeType))
+            { }
+            using (intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_SUBJECT"), subject))
+            { }
+            using (intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), body))
+            { }
 
-			if (!string.IsNullOrEmpty(url))
-			{
-				// attach url
-				using (AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri"))
-				using (AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("parse", url))
-				using (intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObject))
-				{ }
-			}
-			else if (filePaths != null)
-			{
-				// attach extra files (pictures, pdf, etc.)
-				using (AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri"))
-				using (AndroidJavaObject uris = new AndroidJavaObject("java.util.ArrayList"))
-				{
-					for (int i = 0; i < filePaths.Length; i++)
-					{
-						//instantiate the object Uri with the parse of the url's file
-						using (AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("parse", "file://" + filePaths[i]))
-						{
-							uris.Call<bool>("add", uriObject);
-						}
-					}
+            if (!string.IsNullOrEmpty(url))
+            {
+                // attach url
+                using (AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri"))
+                using (AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("parse", url))
+                using (intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObject))
+                { }
+            }
+            else if (filePaths != null)
+            {
+                // attach extra files (pictures, pdf, etc.)
+                using (AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri"))
+                using (AndroidJavaObject uris = new AndroidJavaObject("java.util.ArrayList"))
+                {
+                    for (int i = 0; i < filePaths.Length; i++)
+                    {
+                        //instantiate the object Uri with the parse of the url's file
+                        using (AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("parse", "file://" + filePaths[i]))
+                        {
+                            uris.Call<bool>("add", uriObject);
+                        }
+                    }
 
-					using (intentObject.Call<AndroidJavaObject>("putParcelableArrayListExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uris))
-					{ }
-				}
-			}
+                    using (intentObject.Call<AndroidJavaObject>("putParcelableArrayListExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uris))
+                    { }
+                }
+            }
 
-			// finally start application
-			using (AndroidJavaClass unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-			using (AndroidJavaObject currentActivity = unity.GetStatic<AndroidJavaObject>("currentActivity"))
-			{
-				if (chooser)
+            // finally start application
+            using (AndroidJavaClass unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            using (AndroidJavaObject currentActivity = unity.GetStatic<AndroidJavaObject>("currentActivity"))
+            {
+                if (chooser)
                 {
                     AndroidJavaObject jChooser = intentClass.CallStatic<AndroidJavaObject>("createChooser", intentObject, chooserText);
                     currentActivity.Call("startActivity", jChooser);
@@ -105,9 +106,9 @@ public static class NativeShare
                 {
                     currentActivity.Call("startActivity", intentObject);
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 #endif
 
 #if UNITY_IOS
@@ -150,5 +151,25 @@ public static class NativeShare
 
 		showSocialSharing(ref conf);
 	}
+#endif
+
+#if UNITY_EDITOR || UNITY_STANDALONE
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern void SaveFileDialog();
+
+    public static void SharePC(string body, string filePath)
+    {
+        System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
+        sfd.Filter = "level file (*.level)|*.level|All files (*.*)|*.*";
+        sfd.Title = body;
+        sfd.FilterIndex = 2;
+        sfd.RestoreDirectory = true;
+        if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+        {
+            FileInfo fileInfo = new FileInfo(sfd.FileName);
+            File.WriteAllLines(fileInfo.DirectoryName, File.ReadAllLines(filePath)); //Full path to file
+        }
+    }
 #endif
 }
