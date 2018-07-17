@@ -150,7 +150,7 @@ PlayerSettings:
     Android: com.fr_06Games.AngryDash
     Standalone: com.fr_06Games.AngryDash
   buildNumber: {}
-  AndroidBundleVersionCode: 201807172
+  AndroidBundleVersionCode: 201807173
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
