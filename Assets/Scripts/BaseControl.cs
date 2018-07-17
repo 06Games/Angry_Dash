@@ -31,7 +31,7 @@ public class BaseControl : MonoBehaviour
         File.Delete(Application.temporaryCachePath + "/ac.txt");
     }
 
-    private void Start()
+    void Start()
     {
         if (GameObject.Find("Audio") == null)
             Instantiate(AudioPrefs).name = "Audio";
@@ -129,7 +129,7 @@ public class BaseControl : MonoBehaviour
 
                 if (!Directory.Exists(path))
                     Directory.CreateDirectory(path);
-                else if (!File.Exists(filepath))
+                if (!File.Exists(filepath))
                     File.WriteAllText(filepath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] The game start\n\n");
 
                 if (stackTrace != null)
