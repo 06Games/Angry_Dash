@@ -40,7 +40,7 @@ public static class NativeShare
     public static void ShareMultiple(string body, string[] filePaths = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app")
     {
 #if UNITY_EDITOR || UNITY_STANDALONE
-        SharePC(body, filePaths[0]);
+        SharePC(body, filePaths[0], url);
 #elif UNITY_ANDROID
         ShareAndroid(body, subject, url, filePaths, mimeType, chooser, chooserText);
 #elif UNITY_IOS
@@ -158,18 +158,17 @@ public static class NativeShare
     [System.Runtime.InteropServices.DllImport("user32.dll")]
     private static extern void SaveFileDialog();
 
-    public static void SharePC(string body, string filePath)
+    public static void SharePC(string body, string filePath, string filter = "level file (*.level)|*.level")
     {
+        if (filter == null)
+            filter = "level file (*.level)|*.level";
         System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
-        sfd.Filter = "level file (*.level)|*.level|All files (*.*)|*.*";
+        sfd.Filter = filter;
         sfd.Title = body;
         sfd.FilterIndex = 2;
         sfd.RestoreDirectory = true;
         if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-        {
-            FileInfo fileInfo = new FileInfo(sfd.FileName);
-            File.WriteAllLines(fileInfo.DirectoryName, File.ReadAllLines(filePath)); //Full path to file
-        }
+            File.WriteAllLines(sfd.FileName, File.ReadAllLines(filePath));
     }
 #endif
 }
