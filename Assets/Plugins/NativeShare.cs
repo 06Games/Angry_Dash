@@ -22,9 +22,9 @@ public static class NativeShare
     /// <param name="mimeType"></param>
     /// <param name="chooser"></param>
     /// <param name="chooserText"></param>
-    public static void Share(string body, string filePath = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app")
+    public static void Share(string body, string filePath = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app", string[] filters = null)
     {
-        ShareMultiple(body, new string[] { filePath }, url, subject, mimeType, chooser, chooserText);
+        ShareMultiple(body, new string[] { filePath }, url, subject, mimeType, chooser, chooserText, filters);
     }
 
     /// <summary>
@@ -37,10 +37,10 @@ public static class NativeShare
     /// <param name="mimeType"></param>
     /// <param name="chooser"></param>
     /// <param name="chooserText"></param>
-    public static void ShareMultiple(string body, string[] filePaths = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app")
+    public static void ShareMultiple(string body, string[] filePaths = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app", string[] filters = null)
     {
 #if UNITY_EDITOR || UNITY_STANDALONE
-        SharePC(body, filePaths[0], url);
+        SharePC(body, filePaths[0], filters);
 #elif UNITY_ANDROID
         ShareAndroid(body, subject, url, filePaths, mimeType, chooser, chooserText);
 #elif UNITY_IOS
@@ -158,10 +158,14 @@ public static class NativeShare
     [System.Runtime.InteropServices.DllImport("user32.dll")]
     private static extern void SaveFileDialog();
 
-    public static void SharePC(string body, string filePath, string filter = "level file (*.level)|*.level")
+    public static void SharePC(string body, string filePath, string[] filters = null)
     {
-        if (filter == null)
-            filter = "level file (*.level)|*.level";
+        if (filters == null)
+            filters = new string[1] { "level file (*.level)|*.level" };
+        string filter = filters[0];
+        for (int i = 1; i < filters.Length; i++)
+            filter = filter + "|" + filters[i];
+
         System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
         sfd.Filter = filter;
         sfd.Title = body;

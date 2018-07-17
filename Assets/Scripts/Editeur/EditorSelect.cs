@@ -285,6 +285,6 @@ public class EditorSelect : MonoBehaviour
 
     public void Share()
     {
-        NativeShare.Share("", file[SelectedLevel]);
+        NativeShare.Share("", file[SelectedLevel], null, "", "text/plain", false, "Select sharing app", new string[1] { "level file (*.level)|*.level" });
     }
 }
