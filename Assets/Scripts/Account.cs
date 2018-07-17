@@ -55,7 +55,19 @@ public class Account : MonoBehaviour
         string url = "https://06games.ddns.net/accounts/lite/connect.php?id=" + user + "&mdp=" + MDP + "&hash=true";
         WebClient client = new WebClient();
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string Result = client.DownloadString(url);
+
+        string Result = "";
+        try
+        {
+            Result = client.DownloadString(url);
+        }
+        catch
+        {
+#if UNITY_EDITOR
+            Result = "Connection succesful !<br><br>Unity<br>UnityAccount<br>01/01/2000<br><b>Jeux :</b><dd>";
+#endif
+        }
+
         if (Result.Contains("Connection succesful !"))
         {
             BaseControl.LogNewMassage("Successful connection to 06Games account", true);

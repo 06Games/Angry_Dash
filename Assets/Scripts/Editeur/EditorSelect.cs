@@ -65,8 +65,6 @@ public class EditorSelect : MonoBehaviour
         for (int i = 0; i < fileSort.Length; i++)
             creationTimes[i] = new FileInfo(fileSort[i]).CreationTime;
         Array.Sort(creationTimes, fileSort);
-
-
     }
 
     public static string FormatedDate(DateTime DT)

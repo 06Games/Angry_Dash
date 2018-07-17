@@ -43,7 +43,8 @@ public class Soundboard : MonoBehaviour {
 
             WebClient client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            string Result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/?min=0&max=-1");
+            string Result = "";
+            try { Result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/?min=0&max=-1"); } catch { }
             string[] song = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
 
             int lenght = song.Length;

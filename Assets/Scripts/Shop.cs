@@ -24,12 +24,14 @@ public class Shop : MonoBehaviour {
             if (!Refreshed)
                 ArticleInitialise();
             Refreshed = true;
-
-            transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
         }
         else if (Refreshed)
             transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
-        else transform.GetChild(0).GetChild(2).gameObject.SetActive(true);
+        else
+        {
+            transform.GetChild(0).GetChild(2).GetChild(2).GetComponent<Text>().text = LangueAPI.String("shopInternetRequire");
+            transform.GetChild(0).GetChild(2).gameObject.SetActive(true);
+        }
     }
 
     private void Update()
@@ -153,43 +155,56 @@ public class Shop : MonoBehaviour {
             string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/shop/items_" + v + ".txt";
             WebClient client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            string Result = client.DownloadString(URL);
-            string[] c = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
 
-            Sprite[] b = new Sprite[c.Length];
-            for (int i = 0; i < c.Length; i++)
+            string Result = "";
+            try { Result = client.DownloadString(URL); }
+            catch
             {
-                string[] a = c[i].Split(new string[1] { "; " }, StringSplitOptions.None)[0].Split(new string[1] { ":" }, StringSplitOptions.None);
-                byte[] Result2 = System.IO.File.ReadAllBytes(Application.persistentDataPath + "/Textures/" + a[0] + "/" + a[1] + ".png");
-                Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(Result2);
-                Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-                b[i] = sprite;
+                transform.GetChild(0).GetChild(2).GetChild(2).GetComponent<Text>().text = LangueAPI.String("shopServerError");
+                transform.GetChild(0).GetChild(2).gameObject.SetActive(true);
+            }
 
-                if (i < 5)
+            if (Result != "")
+            {
+                string[] c = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
+
+                Sprite[] b = new Sprite[c.Length];
+                for (int i = 0; i < c.Length; i++)
                 {
-                    transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(i + 1).GetChild(0).GetComponent<Image>().sprite = b[i];
-                    transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(i + 1).GetChild(1).GetComponent<Text>().text = c[i].Split(new string[1] { "; " }, StringSplitOptions.None)[1];
+                    string[] a = c[i].Split(new string[1] { "; " }, StringSplitOptions.None)[0].Split(new string[1] { ":" }, StringSplitOptions.None);
+                    byte[] Result2 = System.IO.File.ReadAllBytes(Application.persistentDataPath + "/Textures/" + a[0] + "/" + a[1] + ".png");
+                    Texture2D tex = new Texture2D(1, 1);
+                    tex.LoadImage(Result2);
+                    Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+                    b[i] = sprite;
+
+                    if (i < 5)
+                    {
+                        transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(i + 1).GetChild(0).GetComponent<Image>().sprite = b[i];
+                        transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(i + 1).GetChild(1).GetComponent<Text>().text = c[i].Split(new string[1] { "; " }, StringSplitOptions.None)[1];
+                    }
+
+                    transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(6).GetComponent<Button>().interactable = page[v] > 0;
+                    transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(7).GetComponent<Button>().interactable = page[v] + 5 < c.Length;
+
                 }
 
-                transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(6).GetComponent<Button>().interactable = page[v] > 0;
-                transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(7).GetComponent<Button>().interactable = page[v]+5 < c.Length;
+                if (v == 1)
+                {
+                    sp1 = b;
+                    article1 = c;
+                }
+                else if (v == 2)
+                {
+                    sp2 = b;
+                    article2 = c;
+                }
+                
+                transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
+                RefreshArticle();
 
-            }
-
-            if (v == 1)
-            {
-                sp1 = b;
-                article1 = c;
-            }
-            else if (v == 2)
-            {
-                sp2 = b;
-                article2 = c;
             }
         }
-        
-        RefreshArticle();
     }
     
     public void StartPub()

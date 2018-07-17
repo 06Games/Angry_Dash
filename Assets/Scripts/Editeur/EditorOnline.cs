@@ -45,7 +45,9 @@ public class EditorOnline : MonoBehaviour
                     string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + IF.text;
                     WebClient client = new WebClient();
                     ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                    string Result = client.DownloadString(URL.Replace(" ", "%20"));
+
+                    string Result = "";
+                    try { Result = client.DownloadString(URL.Replace(" ", "%20")); } catch {}
                     files = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
                 }
             }
