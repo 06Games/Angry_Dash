@@ -3,6 +3,7 @@ using System;
 using System.Net;
 using UnityEngine.Events;
 using System.Linq;
+using System.IO;
 
 public class InternetAPI : MonoBehaviour {
 
@@ -35,6 +36,44 @@ public class InternetAPI : MonoBehaviour {
         return Application.internetReachability != NetworkReachability.NotReachable;
     }
 
+    public static bool CanAccessToInternet()
+    {
+        string resource = "http://google.com";
+        string html = string.Empty;
+        string HtmlText = "";
+        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(resource);
+        try
+        {
+            using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
+            {
+                bool isSuccess = (int)resp.StatusCode < 299 && (int)resp.StatusCode >= 200;
+                if (isSuccess)
+                {
+                    using (StreamReader reader = new StreamReader(resp.GetResponseStream()))
+                    {
+                        //We are limiting the array to 80 so we don't have
+                        //to parse the entire html document feel free to 
+                        //adjust (probably stay under 300)
+                        char[] cs = new char[80];
+                        reader.Read(cs, 0, cs.Length);
+                        foreach (char ch in cs)
+                        {
+                            html += ch;
+                        }
+                    }
+                }
+            }
+            HtmlText = html;
+        }
+        catch
+        {
+            HtmlText = "";
+        }
+
+        BaseControl.LogNewMassage("Internet connection : " + (HtmlText != "").ToString());
+        return HtmlText != "";
+    }
+
     /// <summary> Vérifie si l'appareil est connecter à internet grace à un réseau mobile </summary> 
     public static bool IsOnMobileData()
     {
@@ -51,6 +90,8 @@ public class InternetAPI : MonoBehaviour {
             start = "https://";
         else if (URL.Contains("file://"))
             start = "file://";
+        else if (URL.Contains("file:///"))
+            start = "file:///";
         else Debug.LogWarning("L'URL n'est pas valide, ou le format est non supporté\n" + URL);
 
         Uri URi = URL.StartsWith(start, StringComparison.OrdinalIgnoreCase) ? new Uri(URL) : new Uri(start + URL);
