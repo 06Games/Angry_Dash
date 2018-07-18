@@ -15,14 +15,15 @@ public static class NativeShare
     /// <summary>
     /// Shares on file maximum
     /// </summary>
-    /// <param name="body"></param>
+    /// <param name="body">The default message of sms, mails, ...</param>
     /// <param name="filePath">The path to the attached file</param>
     /// <param name="url"></param>
     /// <param name="subject"></param>
-    /// <param name="mimeType"></param>
+    /// <param name="mimeType">The mime type of the file</param>
     /// <param name="chooser"></param>
     /// <param name="chooserText"></param>
-    public static void Share(string body, string filePath = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app", string[] filters = null)
+    /// <param name="filters">Supported export formats (only for Windows)</param>
+    public static void Share(string body, string filePath = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app", SFB.ExtensionFilter[] filters = null)
     {
         ShareMultiple(body, new string[] { filePath }, url, subject, mimeType, chooser, chooserText, filters);
     }
@@ -30,17 +31,17 @@ public static class NativeShare
     /// <summary>
     /// Shares multiple files at once
     /// </summary>
-    /// <param name="body"></param>
+    /// <param name="body">The default message of sms, mails, ...</param>
     /// <param name="filePaths">The paths to the attached files</param>
     /// <param name="url"></param>
     /// <param name="subject"></param>
     /// <param name="mimeType"></param>
     /// <param name="chooser"></param>
     /// <param name="chooserText"></param>
-    public static void ShareMultiple(string body, string[] filePaths = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app", string[] filters = null)
+    public static void ShareMultiple(string body, string[] filePaths = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app", SFB.ExtensionFilter[] filters = null)
     {
-#if UNITY_EDITOR || UNITY_STANDALONE
-        SharePC(body, filePaths[0], filters);
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+        SharePC(subject, body, filePaths[0], filters);
 #elif UNITY_ANDROID
         ShareAndroid(body, subject, url, filePaths, mimeType, chooser, chooserText);
 #elif UNITY_IOS
@@ -158,21 +159,11 @@ public static class NativeShare
     [System.Runtime.InteropServices.DllImport("user32.dll")]
     private static extern void SaveFileDialog();
 
-    public static void SharePC(string body, string filePath, string[] filters = null)
+    public static void SharePC(string subject, string body, string filePath, SFB.ExtensionFilter[] filters)
     {
-        if (filters == null)
-            filters = new string[1] { "level file (*.level)|*.level" };
-        string filter = filters[0];
-        for (int i = 1; i < filters.Length; i++)
-            filter = filter + "|" + filters[i];
-
-        System.Windows.Forms.SaveFileDialog sfd = new System.Windows.Forms.SaveFileDialog();
-        sfd.Filter = filter;
-        sfd.Title = body;
-        sfd.FilterIndex = 2;
-        sfd.RestoreDirectory = true;
-        if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            File.WriteAllLines(sfd.FileName, File.ReadAllLines(filePath));
+        string path = SFB.StandaloneFileBrowser.SaveFilePanel(subject, "", body, filters);
+        if (!string.IsNullOrEmpty(path))
+            File.Copy(filePath, path);
     }
 #endif
 }
