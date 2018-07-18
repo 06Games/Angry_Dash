@@ -91,12 +91,6 @@ public class Account : MonoBehaviour
         }
 
         transform.GetChild(1).gameObject.SetActive(false);
-#if UNITY_EDITOR
-#elif UNITY_ANDROID
-        if(Result.Contains("Connection succesful !"))
-                UnityThread.executeInUpdate(() => GameObject.Find("Social").GetComponent<Social>().Auth());
-#endif
-
         return Result.Contains("Connection succesful !");
     }
 }
