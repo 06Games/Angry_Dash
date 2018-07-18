@@ -138,7 +138,6 @@ public class LangueAPI : MonoBehaviour
 
         if (!FilesExists)
             UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-
-        instance.End();
+        else instance.End();
     }
 }
