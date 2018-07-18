@@ -20,9 +20,12 @@ public class Social : MonoBehaviour
 #endif
     }
 
+#if UNITY_ANDROID
     bool mWaitingForAuth = false;
+#endif
     public void Auth()
     {
+#if UNITY_ANDROID
         if (InternetAPI.IsConnected())
         {
             transform.GetChild(0).gameObject.SetActive(true);
@@ -61,6 +64,7 @@ public class Social : MonoBehaviour
                 transform.GetChild(0).gameObject.SetActive(false);
         }
         else transform.GetChild(0).gameObject.SetActive(false);
+#endif
     }
 
     // Update is called once per frame
