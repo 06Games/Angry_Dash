@@ -39,7 +39,7 @@ namespace AdManager
 
         void OnApplicationPause(bool isPaused)
         {
-            IronSource.Agent.onApplicationPause(isPaused);
+            //IronSource.Agent.onApplicationPause(isPaused);
         }
     }
     public class RewardAdd : MonoBehaviour
