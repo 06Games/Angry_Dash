@@ -9,6 +9,7 @@ public class LangueSelector : MonoBehaviour {
     public GameObject RestartRequire;
     public LoadingScreenControl LS;
     public Transform DownloadingFilesPanel;
+    public Social _Social;
 
     public bool AutomatiqueUpdate;
 
@@ -36,11 +37,14 @@ public class LangueSelector : MonoBehaviour {
 
     void Update()
     {
-        for(int i = 0; i < LangueDispo.Length; i++)
+        if (Langues != null)
         {
-            if (i == actuel)
-                Langues.GetChild(i).GetChild(0).gameObject.SetActive(true);
-            else Langues.GetChild(i).GetChild(0).gameObject.SetActive(false);
+            for (int i = 0; i < LangueDispo.Length; i++)
+            {
+                if (i == actuel)
+                    Langues.GetChild(i).GetChild(0).gameObject.SetActive(true);
+                else Langues.GetChild(i).GetChild(0).gameObject.SetActive(false);
+            }
         }
     }
 
@@ -48,7 +52,8 @@ public class LangueSelector : MonoBehaviour {
         if (i != actuel)
         {
             actuel = i;
-            RestartRequire.SetActive(true);
+            if (Langues != null)
+                RestartRequire.SetActive(true);
         }
     }
     public void Cancel() { RestartRequire.SetActive(false); NewStart(); }
@@ -73,5 +78,11 @@ public class LangueSelector : MonoBehaviour {
 
         if (LangueAPI.LangGet() == null)
             Apply();
+    }
+
+    public void End()
+    {
+        if (_Social != null)
+            _Social.NewStart();
     }
 }

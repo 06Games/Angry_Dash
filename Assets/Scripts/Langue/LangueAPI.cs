@@ -94,6 +94,7 @@ public class LangueAPI : MonoBehaviour
 
         if (!FilesExists)
             Base.ActiveObjectStatic(DownloadingFilesPanel.gameObject);
+        else instance.End();
 
         WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/index");
         yield return www;
@@ -136,6 +137,8 @@ public class LangueAPI : MonoBehaviour
         }
 
         if (!FilesExists)
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Home");
+            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+
+        instance.End();
     }
 }

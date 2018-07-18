@@ -9,14 +9,14 @@ using UnityEngine.UI;
 
 public class Social : MonoBehaviour
 {
+    public LoadingScreenControl LSC;
 
-    void Start()
+    public void NewStart()
     {
-#if UNITY_EDITOR
-        transform.GetChild(0).gameObject.SetActive(false);
-#elif UNITY_ANDROID
-        if(!BaseControl.CheckTex())
-            Auth();
+#if UNITY_ANDROID && !UNITY_EDITOR
+        Auth();
+#elif !UNITY_EDITOR
+        LSC.LoadScreen("Home");
 #endif
     }
 
@@ -51,7 +51,7 @@ public class Social : MonoBehaviour
                         PlayGamesPlatform.DebugLogEnabled = true; // recommended for debugging
                         PlayGamesPlatform.Activate(); // Activate the Google Play Games platform
                         UnityEngine.Social.ReportProgress("CgkI9r-go54eEAIQAg", 100.0f, (bool s) => { }); //Débloque le succès Bienvenue
-                        transform.GetChild(0).gameObject.SetActive(false);
+                        LSC.LoadScreen("Home");
                     }
                     else
                     {
@@ -61,9 +61,9 @@ public class Social : MonoBehaviour
                 });
             }
             else if (!mWaitingForAuth)
-                transform.GetChild(0).gameObject.SetActive(false);
+                LSC.LoadScreen("Home");
         }
-        else transform.GetChild(0).gameObject.SetActive(false);
+        else LSC.LoadScreen("Home");
 #endif
     }
 
