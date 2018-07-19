@@ -285,6 +285,16 @@ public class EditorSelect : MonoBehaviour
 
     public void Share()
     {
-        NativeShare.Share("", file[SelectedLevel], null, "", "text/plain", true, "Select sharing app", new SFB.ExtensionFilter[] { new SFB.ExtensionFilter("level file", "level") });
+        string[] dirToPath = file[SelectedLevel].Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
+
+        NativeShare.Share("try my new super level called "+ dirToPath[dirToPath.Length - 1].Replace(".level", "")+ ", that I created on Angry Dash.", //body
+        file[SelectedLevel], //path
+        "", //url
+        "Try my level on Angry Dash", //subject
+        "text/plain", //mime
+        true, //chooser
+        "Select sharing app", //chooserText
+        new SFB.ExtensionFilter[] { new SFB.ExtensionFilter("level file", "level") //Windows filter
+        });
     }
 }

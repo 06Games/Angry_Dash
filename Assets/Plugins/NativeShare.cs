@@ -17,7 +17,7 @@ public static class NativeShare
     /// </summary>
     /// <param name="body">The default message of sms, mails, ...</param>
     /// <param name="filePath">The path to the attached file</param>
-    /// <param name="url"></param>
+    /// <param name="url">The url to share</param>
     /// <param name="subject"></param>
     /// <param name="mimeType">The mime type of the file</param>
     /// <param name="chooser"></param>
@@ -32,12 +32,13 @@ public static class NativeShare
     /// Shares multiple files at once
     /// </summary>
     /// <param name="body">The default message of sms, mails, ...</param>
-    /// <param name="filePaths">The paths to the attached files</param>
-    /// <param name="url"></param>
+    /// <param name="filePath">The path to the attached file</param>
+    /// <param name="url">The url to share</param>
     /// <param name="subject"></param>
-    /// <param name="mimeType"></param>
+    /// <param name="mimeType">The mime type of the file</param>
     /// <param name="chooser"></param>
     /// <param name="chooserText"></param>
+    /// <param name="filters">Supported export formats (only for Windows)</param>
     public static void ShareMultiple(string body, string[] filePaths = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app", SFB.ExtensionFilter[] filters = null)
     {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
@@ -54,6 +55,8 @@ public static class NativeShare
 #if UNITY_ANDROID
     public static void ShareAndroid(string body, string subject, string url, string[] filePaths, string mimeType, bool chooser, string chooserText)
     {
+        using (AndroidJavaClass unityPlayerClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        using (AndroidJavaObject currentActivity = unityPlayerClass.GetStatic<AndroidJavaObject>("currentActivity"))
         using (AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent"))
         using (AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent"))
         {
@@ -74,39 +77,37 @@ public static class NativeShare
                 using (intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObject))
                 { }
             }
-            else if (filePaths != null)
+            else if (filePaths != null & filePaths.Length > 0 & !string.IsNullOrEmpty(filePaths[0]))
             {
                 // attach extra files (pictures, pdf, etc.)
+                using (AndroidJavaClass fileProviderClass = new AndroidJavaClass("android.support.v4.content.FileProvider"))
+                using (AndroidJavaObject unityContext = currentActivity.Call<AndroidJavaObject>("getApplicationContext"))
                 using (AndroidJavaClass uriClass = new AndroidJavaClass("android.net.Uri"))
                 using (AndroidJavaObject uris = new AndroidJavaObject("java.util.ArrayList"))
                 {
-                    for (int i = 0; i < filePaths.Length; i++)
-                    {
-                        //instantiate the object Uri with the parse of the url's file
-                        using (AndroidJavaObject uriObject = uriClass.CallStatic<AndroidJavaObject>("parse", "file://" + filePaths[i]))
-                        {
-                            uris.Call<bool>("add", uriObject);
-                        }
-                    }
+                    string packageName = unityContext.Call<string>("getPackageName");
+                    string authority = packageName + ".provider";
 
-                    using (intentObject.Call<AndroidJavaObject>("putParcelableArrayListExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uris))
+                    AndroidJavaObject fileObj = new AndroidJavaObject("java.io.File", filePaths[0]);
+                    AndroidJavaObject uriObj = fileProviderClass.CallStatic<AndroidJavaObject>("getUriForFile", unityContext, authority, fileObj);
+
+                    int FLAG_GRANT_READ_URI_PERMISSION = intentObject.GetStatic<int>("FLAG_GRANT_READ_URI_PERMISSION");
+                    intentObject.Call<AndroidJavaObject>("addFlags", FLAG_GRANT_READ_URI_PERMISSION);
+
+                    using (intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_STREAM"), uriObj))
                     { }
                 }
             }
 
             // finally start application
-            using (AndroidJavaClass unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-            using (AndroidJavaObject currentActivity = unity.GetStatic<AndroidJavaObject>("currentActivity"))
+            if (chooser)
             {
-                if (chooser)
-                {
-                    AndroidJavaObject jChooser = intentClass.CallStatic<AndroidJavaObject>("createChooser", intentObject, chooserText);
-                    currentActivity.Call("startActivity", jChooser);
-                }
-                else
-                {
-                    currentActivity.Call("startActivity", intentObject);
-                }
+                AndroidJavaObject jChooser = intentClass.CallStatic<AndroidJavaObject>("createChooser", intentObject, chooserText);
+                currentActivity.Call("startActivity", jChooser);
+            }
+            else
+            {
+                currentActivity.Call("startActivity", intentObject);
             }
         }
     }
