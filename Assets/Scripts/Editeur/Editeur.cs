@@ -33,8 +33,12 @@ public class Editeur : MonoBehaviour
 
     public GameObject BulleDeveloppementCat;
     public Sprite[] BulleDeveloppementCatSp;
-
+    
+#if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
+    public int CameraMouvementSpeed = 1;
+#else
     public int CameraMouvementSpeed = 10;
+#endif
 
     #region UI
     public void CreateFile(string fileName, string directory, string desc)
@@ -114,7 +118,7 @@ public class Editeur : MonoBehaviour
         newblockid = -1;
         gameObject.SetActive(false);
     }
-    #endregion
+#endregion
 
     private void Start()
     {
@@ -274,8 +278,9 @@ public class Editeur : MonoBehaviour
 
         Deplacer(MoveX * Speed, MoveY * Speed);
 #elif UNITY_ANDROID || UNITY_IOS
-        // If there are two touches on the device...
-        if (Input.touchCount == 2 | Input.touchCount == 3)
+        bool isSimple = !AddBlocking & (Input.touchCount == 1 | Input.touchCount == 2);
+        bool isAdvence = AddBlocking & (Input.touchCount == 2 | Input.touchCount == 3);
+        if (isSimple | isAdvence)
         {
             // Store both touches.
             Touch touchZero = Input.GetTouch(0);
@@ -291,7 +296,7 @@ public class Editeur : MonoBehaviour
             if (Input.touchCount == 3)
                 Speed = CameraMouvementSpeed * 2;
 
-                if (touchZero.position.x > screenCenterX & touchOne.position.x > screenCenterX)
+            if (touchZero.position.x > screenCenterX & touchOne.position.x > screenCenterX)
                 MoveX = 1;
             else if (touchZero.position.x < screenCenterX & touchOne.position.x < screenCenterX)
                 MoveX = -1;
@@ -357,48 +362,51 @@ public class Editeur : MonoBehaviour
             zoomIndicator.gameObject.SetActive(false);
     }
 
-    #region GestionBloc
+#region GestionBloc
     void CreateBloc(int x, int y, Color32 _Color)
     {
-        Vector3 a = new Vector3(x, y, 0);
-        string color = ColorToHex(_Color);
+        if (Input.touchCount == 1)
+        {
+            Vector3 a = new Vector3(x, y, 0);
+            string color = ColorToHex(_Color);
 
-        float id = newblockid;
-        if (id > 10000)
-            id = (newblockid - 10000F) / 10F;
+            float id = newblockid;
+            if (id > 10000)
+                id = (newblockid - 10000F) / 10F;
 
-        int start = -1;
-        for (int i = 0; i < component.Length; i++)
-        {
-            if (component[i].Contains("Blocks {") & start == -1)
-                start = i + 1;
-        }
-        int end = -1;
-        for (int i = start; i < component.Length; i++)
-        {
-            if (component[i].Contains("}") & end == -1)
-                end = i;
-        }
-        string[] newComponent = new string[component.Length + 1];
-        for (int i = 0; i < newComponent.Length; i++)
-        {
-            if (i < end)
-                newComponent[i] = component[i];
-            else if (i == end)
-                newComponent[i] = id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0";
-            else newComponent[i] = component[i - 1];
-        }
+            int start = -1;
+            for (int i = 0; i < component.Length; i++)
+            {
+                if (component[i].Contains("Blocks {") & start == -1)
+                    start = i + 1;
+            }
+            int end = -1;
+            for (int i = start; i < component.Length; i++)
+            {
+                if (component[i].Contains("}") & end == -1)
+                    end = i;
+            }
+            string[] newComponent = new string[component.Length + 1];
+            for (int i = 0; i < newComponent.Length; i++)
+            {
+                if (i < end)
+                    newComponent[i] = component[i];
+                else if (i == end)
+                    newComponent[i] = id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0";
+                else newComponent[i] = component[i - 1];
+            }
 
-        bool t = true;
-        for (int i = 0; i < component.Length; i++)
-        {
-            if (component[i] == newComponent[end])
-                t = false;
-        }
-        if (t)
-        {
-            component = newComponent;
-            Instance(end);
+            bool t = true;
+            for (int i = 0; i < component.Length; i++)
+            {
+                if (component[i] == newComponent[end])
+                    t = false;
+            }
+            if (t)
+            {
+                component = newComponent;
+                Instance(end);
+            }
         }
     }
     public void AddBlock(string _id)
@@ -568,7 +576,7 @@ public class Editeur : MonoBehaviour
         byte a = byte.Parse(hex.Substring(6), System.Globalization.NumberStyles.Number);
         return new Color32(r, g, b, a);
     }
-    #endregion
+#endregion
 
     public void SelectBloc()
     {
