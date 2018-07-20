@@ -11399,7 +11399,8 @@ MonoBehaviour:
   RestartRequire: {fileID: 540310173}
   LS: {fileID: 144079152}
   DownloadingFilesPanel: {fileID: 987490567}
-  AutomatiqueUpdate: 1
+  _Social: {fileID: 0}
+  AutomatiqueUpdate: 0
   LangueDispo:
   - English
   - French
