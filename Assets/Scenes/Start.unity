@@ -2478,6 +2478,7 @@ GameObject:
   - component: {fileID: 2065800054}
   - component: {fileID: 2065800053}
   - component: {fileID: 2065800057}
+  - component: {fileID: 2065800059}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -2568,6 +2569,23 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2065800059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2065800052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aea3ca8d49b80d445bb6266b5d89a582, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scene: Home
+  LSC: {fileID: 327852930}
+  BigSlider: {fileID: 0}
+  SmallSlider: {fileID: 0}
+  AudioPrefs: {fileID: 1458537501854406, guid: 2cfcea02e17130a43b3499549985c4a0, type: 2}
+  ButtonSoundOnClick: {fileID: 8300000, guid: 7f487e4748fd40643adb86125a40f81e, type: 3}
 --- !u!1 &2109641236
 GameObject:
   m_ObjectHideFlags: 0
