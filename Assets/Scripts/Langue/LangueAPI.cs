@@ -91,10 +91,8 @@ public class LangueAPI : MonoBehaviour
             Directory.CreateDirectory(Application.persistentDataPath + "/Languages/");
 
         bool FilesExists = Directory.GetFiles(Application.persistentDataPath + "/Languages/").Length > 0;
-
-        if (!FilesExists)
-            Base.ActiveObjectStatic(DownloadingFilesPanel.gameObject);
-        else instance.End();
+        
+        Base.ActiveObjectStatic(DownloadingFilesPanel.gameObject);
 
         WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/index");
         yield return www;

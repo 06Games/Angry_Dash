@@ -82,6 +82,7 @@ public class LangueSelector : MonoBehaviour {
 
     public void End()
     {
+        Base.DeactiveObjectStatic(DownloadingFilesPanel.gameObject);
         if (_Social != null)
             _Social.NewStart();
     }
