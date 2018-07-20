@@ -17,6 +17,11 @@ public class Social : MonoBehaviour
         Auth();
 #elif !UNITY_EDITOR
         LSC.LoadScreen("Home");
+#else 
+        transform.GetChild(0).gameObject.SetActive(true);
+        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("googleServiceAuthenticating");
+        transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
+        LSC.LoadScreen("Home");
 #endif
     }
 
