@@ -19,8 +19,11 @@ public class LangueAPI : MonoBehaviour
 
     static string FormatString(string st)
     {
-        st = st.Replace("\\n", "\n");
-        st = st.Replace("\\t", "\t");
+        if (st != null)
+        {
+            st = st.Replace("\\n", "\n");
+            st = st.Replace("\\t", "\t");
+        }
         return st;
     }
     public static string String(string id)
@@ -45,7 +48,7 @@ public class LangueAPI : MonoBehaviour
     static string Cherche(string path, string what)
     {
         string line;
-        string name = "";
+        string name = null;
         if (File.Exists(path))
         {
             System.IO.StreamReader file = new System.IO.StreamReader(@path);
