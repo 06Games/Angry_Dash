@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public class Social : MonoBehaviour
 {
     public LoadingScreenControl LSC;
+    public bool EditorContinue = true;
 
     public void NewStart()
     {
@@ -17,11 +18,15 @@ public class Social : MonoBehaviour
         Auth();
 #elif !UNITY_EDITOR
         LSC.LoadScreen("Home");
-#else 
-        transform.GetChild(0).gameObject.SetActive(true);
-        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("googleServiceAuthenticating");
-        transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
-        LSC.LoadScreen("Home");
+#else
+
+        if (EditorContinue)
+        {
+            transform.GetChild(0).gameObject.SetActive(true);
+            transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("googleServiceAuthenticating");
+            transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
+            LSC.LoadScreen("Home");
+        }
 #endif
     }
 
