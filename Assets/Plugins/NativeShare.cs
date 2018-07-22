@@ -2,10 +2,11 @@
 using System.Runtime.InteropServices;
 using System;
 #else
-using System.IO;
 using UnityEngine;
+using System.IO;
 #endif
-
+using Crosstales.FB;
+using System;
 
 /// <summary>
 /// https://github.com/ChrisMaire/unity-native-sharing
@@ -22,10 +23,9 @@ public static class NativeShare
     /// <param name="mimeType">The mime type of the file</param>
     /// <param name="chooser"></param>
     /// <param name="chooserText"></param>
-    /// <param name="filters">Supported export formats (only for Windows)</param>
-    public static void Share(string body, string filePath = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app", SFB.ExtensionFilter[] filters = null)
+    public static void Share(string body, string filePath = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app")
     {
-        ShareMultiple(body, new string[] { filePath }, url, subject, mimeType, chooser, chooserText, filters);
+        ShareMultiple(body, new string[] { filePath }, url, subject, mimeType, chooser, chooserText);
     }
 
     /// <summary>
@@ -38,11 +38,10 @@ public static class NativeShare
     /// <param name="mimeType">The mime type of the file</param>
     /// <param name="chooser"></param>
     /// <param name="chooserText"></param>
-    /// <param name="filters">Supported export formats (only for Windows)</param>
-    public static void ShareMultiple(string body, string[] filePaths = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app", SFB.ExtensionFilter[] filters = null)
+    public static void ShareMultiple(string body, string[] filePaths = null, string url = null, string subject = "", string mimeType = "text/html", bool chooser = false, string chooserText = "Select sharing app")
     {
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-        SharePC(subject, body, filePaths[0], filters);
+#if UNITY_EDITOR || UNITY_STANDALONE
+        SharePC(filePaths, subject, "", null, null);
 #elif UNITY_ANDROID
         ShareAndroid(body, subject, url, filePaths, mimeType, chooser, chooserText);
 #elif UNITY_IOS
@@ -156,15 +155,38 @@ public static class NativeShare
 #endif
 
 #if UNITY_EDITOR || UNITY_STANDALONE
-
-    [System.Runtime.InteropServices.DllImport("user32.dll")]
-    private static extern void SaveFileDialog();
-
-    public static void SharePC(string subject, string body, string filePath, SFB.ExtensionFilter[] filters)
+    /// <param name="filePath">The path to the file</param>
+    /// <param name="title">Dialog title</param>
+    /// <param name="directory">Root directory</param>
+    /// <param name="fileName">Default file name</param>
+    /// <param name="filters">Supported export formats</param>
+    public static void SharePC(string filePath, string title = "", string directory = "", string fileName = "", ExtensionFilter[] filters = null)
     {
-        string path = SFB.StandaloneFileBrowser.SaveFilePanel(subject, "", body, filters);
-        if (!string.IsNullOrEmpty(path))
-            File.Copy(filePath, path);
+        SharePC(new string[] { filePath }, title, directory, new string[] { fileName }, filters);
+    }
+
+    /// <param name="filePath">The path to files</param>
+    /// <param name="title">Dialog title</param>
+    /// <param name="directory">Root directory</param>
+    /// <param name="fileName">Default files name</param>
+    /// <param name="filters">Supported export formats</param>
+    public static void SharePC(string[] filePath, string title, string directory, string[] fileName, ExtensionFilter[] filters)
+    {
+        if (filePath.Length == 1)
+        {
+            string path = FileBrowser.SaveFile(title, directory, fileName[0], filters);
+            if (!string.IsNullOrEmpty(path))
+                File.Copy(filePath[0], path);
+        }
+        else if (filePath.Length > 1)
+        {
+            string path = FileBrowser.OpenSingleFolder(title, directory);
+            if (!string.IsNullOrEmpty(path))
+            {
+                for (int i = 0; i < filePath.Length; i++)
+                    File.Copy(filePath[i], path + fileName[i]);
+            }
+        }
     }
 #endif
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
+using Crosstales.FB;
 
 public class EditorSelect : MonoBehaviour
 {
@@ -287,14 +288,21 @@ public class EditorSelect : MonoBehaviour
     {
         string[] dirToPath = file[SelectedLevel].Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
 
-        NativeShare.Share("try my new super level called "+ dirToPath[dirToPath.Length - 1].Replace(".level", "")+ ", that I created on Angry Dash.", //body
+        string filePath = file[SelectedLevel];
+        string fileName = dirToPath[dirToPath.Length - 1].Replace(".level", "");
+        ExtensionFilter[] extensionFilter = new ExtensionFilter[] { new ExtensionFilter("level file", "level") }; //Windows filter
+
+#if UNITY_STANDALONE || UNITY_EDITOR
+        NativeShare.SharePC(filePath, "", "", fileName, extensionFilter);
+#elif UNITY_ANDORID || UNITY_IOS
+        NativeShare.Share("try my new super level called "+ fileName + ", that I created on Angry Dash.", //body
         file[SelectedLevel], //path
         "", //url
         "Try my level on Angry Dash", //subject
         "text/plain", //mime
         true, //chooser
-        "Select sharing app", //chooserText
-        new SFB.ExtensionFilter[] { new SFB.ExtensionFilter("level file", "level") //Windows filter
-        });
+        "Select sharing app" //chooserText
+        );
+#endif
     }
 }
