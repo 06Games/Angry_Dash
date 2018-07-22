@@ -192,6 +192,7 @@ GameObject:
   - component: {fileID: 86800420}
   - component: {fileID: 86800422}
   - component: {fileID: 86800421}
+  - component: {fileID: 86800423}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -256,6 +257,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 86800419}
+--- !u!114 &86800423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 86800419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: downloadLangWait
+  keepIfNotExist: 1
+  arg: []
 --- !u!1 &148452780
 GameObject:
   m_ObjectHideFlags: 0
@@ -899,6 +914,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: googleServiceAuthenticationExitNo
+  keepIfNotExist: 1
   arg: []
 --- !u!114 &393948076
 MonoBehaviour:
@@ -1113,6 +1129,7 @@ GameObject:
   - component: {fileID: 430611342}
   - component: {fileID: 430611344}
   - component: {fileID: 430611343}
+  - component: {fileID: 430611345}
   m_Layer: 5
   m_Name: Subtitle
   m_TagString: Untagged
@@ -1182,6 +1199,20 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 430611341}
+--- !u!114 &430611345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 430611341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 
+  keepIfNotExist: 1
+  arg: []
 --- !u!1 &697701096
 GameObject:
   m_ObjectHideFlags: 0
@@ -1298,6 +1329,51 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 697701096}
+--- !u!1 &788496258
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 788496259}
+  - component: {fileID: 788496260}
+  m_Layer: 0
+  m_Name: Discord
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &788496259
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 788496258}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &788496260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 788496258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1fe7aaa51c55de4cbe15e4950b544fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &874193161
 GameObject:
   m_ObjectHideFlags: 0
@@ -1390,6 +1466,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: googleServiceAuthenticationExitWarning
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &934693252
 GameObject:
@@ -1636,6 +1713,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: googleServiceReconnect
+  keepIfNotExist: 1
   arg: []
 --- !u!114 &1004107882
 MonoBehaviour:
@@ -1863,6 +1941,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: googleServiceAuthenticationExitYes
+  keepIfNotExist: 1
   arg: []
 --- !u!114 &1401372811
 MonoBehaviour:
@@ -2476,7 +2555,6 @@ GameObject:
   - component: {fileID: 2065800056}
   - component: {fileID: 2065800055}
   - component: {fileID: 2065800054}
-  - component: {fileID: 2065800053}
   - component: {fileID: 2065800057}
   - component: {fileID: 2065800059}
   m_Layer: 0
@@ -2486,13 +2564,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &2065800053
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2065800052}
-  m_Enabled: 1
 --- !u!124 &2065800054
 Behaviour:
   m_ObjectHideFlags: 0
@@ -2597,6 +2668,7 @@ GameObject:
   - component: {fileID: 2109641237}
   - component: {fileID: 2109641239}
   - component: {fileID: 2109641238}
+  - component: {fileID: 2109641240}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -2664,6 +2736,20 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2109641236}
+--- !u!114 &2109641240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2109641236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: downloadLangTitle
+  keepIfNotExist: 1
+  arg: []
 --- !u!1 &2119409146
 GameObject:
   m_ObjectHideFlags: 0
@@ -2697,6 +2783,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LSC: {fileID: 327852930}
+  EditorContinue: 0
 --- !u!114 &2119409148
 MonoBehaviour:
   m_ObjectHideFlags: 0
