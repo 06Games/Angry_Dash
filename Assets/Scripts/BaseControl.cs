@@ -73,16 +73,19 @@ public class BaseControl : MonoBehaviour
         else return false;
     }
 
+    bool sceneChanging = false;
     void Update()
     {
         if (Input.GetKey(KeyCode.Escape))
         {
             if (scene == "")
             {
-                print("L'Appli est fermé");
-                Application.Quit();
+                Base.Quit(true);
             }
-            else LSC.LoadScreen(scene);
+            else if(!sceneChanging)
+                LSC.LoadScreen(scene);
+
+            sceneChanging = true;
         }
     }
 
