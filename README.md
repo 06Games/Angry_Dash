@@ -13,8 +13,18 @@ Un mode éditeur sera présent afin de créer ses propres niveaux. <br/>
 6. Le personnage ainsi que le tracet et leur couleurs seront personnalisable grace au magasin présent en jeu. La monnaie du magasin sera gagnée en terminant certain niveau.
 7. Un gestionnaire d’amis via le compte 06Games (associable avec un compte Google Jeux ou GameCenter) sera ajouté pour rejoindre vos amis facilement en jeu.
 8. Plusieurs thème « UI » de couleurs différentes seront proposés dans les paramètre du jeu (comme le thème foncé activé par défaut).
-9. Une API sera mise à disposition des développeurs afin de pouvoir créer des mods ajoutant de nouvelle fonctionnalité au jeu ainsi que pouvoir modifier certains aspects du jeu
+9. Une API sera mise à disposition des développeurs afin de pouvoir créer des mods ajoutant de nouvelles fonctionnalités au jeu ainsi que pouvoir modifier certains aspects du jeu
 
 ## Credits
-Les scripts, les musiques et la mise en page sont réalisés par Evan Galli. <br/>
-Les textures et les musiques sont réalisées par MazeWave. <br/>
+
+|  | Réalisation / Maintien |
+| -------- | -------- |
+| Scripts | **Evan Galli** |
+| Musiques | **Evan Galli, MazeWave, LeoVideo, et autre artistes** |
+| Mise en page | **Evan Galli** |
+| Textures | **MazeWave** |
+| Idées | **Evan Galli, MazeWave** |
+| Repos Git | **Evan Galli** |
+| Documentation | **Evan Galli** |
+
+
