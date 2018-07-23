@@ -197,6 +197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: multiplayerConnect
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &42701984
 GameObject:
@@ -852,7 +853,6 @@ GameObject:
   - component: {fileID: 191689101}
   - component: {fileID: 191689100}
   - component: {fileID: 191689099}
-  - component: {fileID: 191689098}
   - component: {fileID: 191689103}
   - component: {fileID: 191689104}
   - component: {fileID: 191689105}
@@ -863,13 +863,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &191689098
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 191689097}
-  m_Enabled: 0
 --- !u!124 &191689099
 Behaviour:
   m_ObjectHideFlags: 0
@@ -2810,6 +2803,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: multiplayerRefresh
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &586147119
 GameObject:
@@ -2898,6 +2892,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: multiplayerIPAdress
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &596073031
 GameObject:
@@ -3321,6 +3316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: multiplayerAdd
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &716471801
 GameObject:
@@ -4046,6 +4042,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: multiplayerServers
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1044458537
 GameObject:
@@ -5046,6 +5043,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: multiplayerHost
+  keepIfNotExist: 1
   arg: []
 --- !u!1001 &1460994161
 Prefab:
@@ -5584,6 +5582,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: multiplayerFavoriteServers
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1617311606
 GameObject:
@@ -5672,6 +5671,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: multiplayerConnecting
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1640817803
 GameObject:

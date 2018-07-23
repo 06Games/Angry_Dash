@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: languagesChooseMenu
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &4201945
 GameObject:
@@ -483,6 +484,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: languageChangRestartRequireMessage
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &20524437
 GameObject:
@@ -571,6 +573,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: editorButton
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &22129891
 GameObject:
@@ -1082,6 +1085,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 06GamesAccountConnecting
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &54780132
 GameObject:
@@ -1383,6 +1387,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: playButton
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &134622882
 GameObject:
@@ -1495,11 +1500,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 448568, guid: e0872585be79248ac8c6c78f7baf110a, type: 2}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 151388, guid: e0872585be79248ac8c6c78f7baf110a, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e0872585be79248ac8c6c78f7baf110a, type: 2}
@@ -2041,6 +2046,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 06GamesAccountConnectionPasswordExemple
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &189659471
 GameObject:
@@ -4114,6 +4120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: FXSoundSettings
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &355228526
 GameObject:
@@ -4570,6 +4577,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: soundSettingsMenu
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &405898766
 GameObject:
@@ -4927,6 +4935,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: delLogFiles
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &487688356
 GameObject:
@@ -5143,6 +5152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: loadingScene
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &516053640
 GameObject:
@@ -5349,7 +5359,6 @@ GameObject:
   - component: {fileID: 536226403}
   - component: {fileID: 536226402}
   - component: {fileID: 536226401}
-  - component: {fileID: 536226400}
   - component: {fileID: 536226406}
   - component: {fileID: 536226405}
   m_Layer: 0
@@ -5359,13 +5368,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &536226400
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 536226399}
-  m_Enabled: 0
 --- !u!124 &536226401
 Behaviour:
   m_ObjectHideFlags: 0
@@ -6520,6 +6522,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 06GamesAccountConnectionUsername
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &650753660
 GameObject:
@@ -6833,6 +6836,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: downloadingSoloLevels
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &692929029
 GameObject:
@@ -7142,6 +7146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: shopBuyPlayer
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &735628781
 GameObject:
@@ -7302,6 +7307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: languageChangApply
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &744777057
 GameObject:
@@ -7532,6 +7538,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: downloadTexTitle
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &809957413
 GameObject:
@@ -7620,6 +7627,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: shopWatchAd
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &816646598
 GameObject:
@@ -7786,6 +7794,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: masterSoundSettings
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &908987855
 GameObject:
@@ -7874,6 +7883,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 06GamesAccountConnectionTitle
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &919659877
 GameObject:
@@ -8008,6 +8018,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: downloadRequireInternetExit
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &924760088
 GameObject:
@@ -8466,6 +8477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: shopBuyPlayer
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &949643822
 GameObject:
@@ -9068,6 +9080,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: downloadRequireInternetTitle
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1030093016
 GameObject:
@@ -10094,6 +10107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: playMultiLevel
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1167946325
 GameObject:
@@ -10183,6 +10197,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: devCredits
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1180454076
 GameObject:
@@ -10367,7 +10382,7 @@ RectTransform:
   - {fileID: 1348130357}
   - {fileID: 1432892059}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -10747,6 +10762,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: languageChangCancel
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1275827236
 GameObject:
@@ -11641,6 +11657,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: downloadTexSubtitle
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1347436904
 GameObject:
@@ -12266,6 +12283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: musicSoundSettings
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1390531149
 GameObject:
@@ -12846,48 +12864,6 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1455996361}
---- !u!1001 &1456755071
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4094947911098980, guid: 2cfcea02e17130a43b3499549985c4a0, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4094947911098980, guid: 2cfcea02e17130a43b3499549985c4a0, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4094947911098980, guid: 2cfcea02e17130a43b3499549985c4a0, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4094947911098980, guid: 2cfcea02e17130a43b3499549985c4a0, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4094947911098980, guid: 2cfcea02e17130a43b3499549985c4a0, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4094947911098980, guid: 2cfcea02e17130a43b3499549985c4a0, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4094947911098980, guid: 2cfcea02e17130a43b3499549985c4a0, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4094947911098980, guid: 2cfcea02e17130a43b3499549985c4a0, type: 2}
-      propertyPath: m_RootOrder
-      value: 7
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 2cfcea02e17130a43b3499549985c4a0, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &1466009968
 GameObject:
   m_ObjectHideFlags: 0
@@ -13247,6 +13223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 06GamesAccountConnectionPassword
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1490684374
 GameObject:
@@ -13673,6 +13650,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 06GamesAccountConnectionUsernameExemple
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1514525294
 GameObject:
@@ -13955,6 +13933,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: downloadRequireInternetSubtitle
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1544055665
 GameObject:
@@ -14043,6 +14022,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: fpsCounter
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1547232600
 GameObject:
@@ -14779,6 +14759,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: settingsButton
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1632698159
 GameObject:
@@ -15246,6 +15227,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 06GamesAccountConnectionLogin
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1664091956
 GameObject:
@@ -16164,6 +16146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: playSoloLevelNumber
+  keepIfNotExist: 1
   arg:
   - 1
 --- !u!1 &1711512334
@@ -17984,6 +17967,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 06GamesAccountConnectionError
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1903926344
 GameObject:
@@ -18530,6 +18514,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: shopStartAd
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1932679842
 GameObject:
@@ -18766,6 +18751,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: playSoloLevel
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1953781550
 GameObject:
@@ -19016,6 +19002,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: gameTitle
+  keepIfNotExist: 1
   arg: []
 --- !u!1 &1973912082
 GameObject:

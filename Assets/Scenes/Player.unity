@@ -767,7 +767,6 @@ GameObject:
   - component: {fileID: 191689101}
   - component: {fileID: 191689100}
   - component: {fileID: 191689099}
-  - component: {fileID: 191689098}
   - component: {fileID: 191689103}
   - component: {fileID: 191689104}
   - component: {fileID: 191689105}
@@ -778,13 +777,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &191689098
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 191689097}
-  m_Enabled: 0
 --- !u!124 &191689099
 Behaviour:
   m_ObjectHideFlags: 0
@@ -1583,6 +1575,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: levelRewardCoins
+  keepIfNotExist: 1
   arg: []
 --- !u!114 &430156028
 MonoBehaviour:
@@ -3316,6 +3309,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: levelQuit
+  keepIfNotExist: 1
   arg: []
 --- !u!114 &1097100373
 MonoBehaviour:
@@ -3409,6 +3403,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: levelFinished
+  keepIfNotExist: 1
   arg: []
 --- !u!114 &1150619770
 MonoBehaviour:
@@ -3506,6 +3501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: levelReward
+  keepIfNotExist: 1
   arg: []
 --- !u!114 &1154371119
 MonoBehaviour:
@@ -3819,6 +3815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: levelPaused
+  keepIfNotExist: 1
   arg: []
 --- !u!114 &1327728704
 MonoBehaviour:
@@ -4164,6 +4161,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: levelResume
+  keepIfNotExist: 1
   arg: []
 --- !u!114 &1539524618
 MonoBehaviour:
