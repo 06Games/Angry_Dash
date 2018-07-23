@@ -126,6 +126,10 @@ public class Editeur : MonoBehaviour
 
     private void Start()
     {
+        cam = Selection.GetComponent<EditorSelect>().Cam.GetComponent<Camera>();
+        zoomIndicator.gameObject.SetActive(false);
+        BulleDeveloppementCat.SetActive(false);
+        
         if (File.Exists(Application.temporaryCachePath + "/play.txt"))
         {
             if (File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 0)
@@ -139,11 +143,7 @@ public class Editeur : MonoBehaviour
         }
         else Selection.SetActive(true);
 
-        cam = Selection.GetComponent<EditorSelect>().Cam.GetComponent<Camera>();
-        zoomIndicator.gameObject.SetActive(false);
-
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().Charg();
-        BulleDeveloppementCat.SetActive(false);
     }
 
     void Update()
