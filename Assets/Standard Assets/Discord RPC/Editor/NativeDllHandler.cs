@@ -26,7 +26,7 @@ public class DiscordNativeInstall  {
 
 		//We are not windows, cannot do anything
 #if !UNITY_STANDALONE_WIN
-		Debug.LogError("Cannot use the discord library because the natives do not support non-windows platforms yet.");
+		//Debug.LogError("Cannot use the discord library because the natives do not support non-windows platforms yet.");
 		CleanRoot();
 		return;
 #endif
