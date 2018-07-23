@@ -18,7 +18,21 @@ public class Base : MonoBehaviour {
 
     public void Scene(string levelName) { UnityEngine.SceneManagement.SceneManager.LoadScene(levelName); /* Charge la scene */ }
 
-    public void Quit() { Application.Quit(); print("L'Application est fermé"); }
+    public void Quit()
+    {
+        Quit(true);
+    }
+    public static void Quit(bool forceEditor = true)
+    {
+#if UNITY_EDITOR
+        if (forceEditor)
+            UnityEditor.EditorApplication.isPlaying = false;
+        else Debug.Log("The game as been close");
+#else
+            Debug.Log("The game as been close");
+            Application.Quit();
+#endif
+    }
 
     public void ActiveObject(GameObject go) { go.SetActive(true); }
     public static void ActiveObjectStatic(GameObject go) { UnityThread.executeInUpdate(() => go.SetActive(true)); }
