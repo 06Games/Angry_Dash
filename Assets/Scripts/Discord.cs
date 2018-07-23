@@ -30,7 +30,7 @@ public class Discord : MonoBehaviour
     void Initialize()
     {
         client = new DiscordRpcClient("470264480786284544", null, true, -1, new DiscordRPC.IO.NativeNamedPipeClient()); //Create a discord client
-        client.Logger = new ConsoleLogger() { Level = LogLevel.Warning }; //Set the logger
+        client.Logger = new DebugLogger() { Level = LogLevel.Info }; //Set the logger
 
         //Subscribe to events
         client.OnPresenceUpdate += (sender, e) =>

@@ -273,16 +273,12 @@ public class DiscordManager : MonoBehaviour {
 	/// <returns></returns>
 	public static IEnumerator SendPresence(string applicationID, DiscordPresence presence)
 	{
-		var requestPayload = DiscordRPC.Web.WebRPC.PrepareRequest(presence.ToRichPresence(), applicationID);
-		byte[] encodedRequest = System.Text.Encoding.UTF8.GetBytes(requestPayload.Data);
+#pragma warning disable CS0618 // Le type ou le membre est obsolète
+        var requestPayload = DiscordRPC.Web.WebRPC.PrepareRequest(presence.ToRichPresence(), applicationID);
+#pragma warning restore CS0618 // Le type ou le membre est obsolète
+        byte[] encodedRequest = System.Text.Encoding.UTF8.GetBytes(requestPayload.Data);
 
 		WWW www = new WWW(requestPayload.URL, encodedRequest, requestPayload.Headers);
 		yield return www;
-
-		/*
-		RichPresence p;
-		string response = System.Text.Encoding.UTF8.GetString(www.bytes);
-		DiscordRPC.Web.WebRPC.TryParseResponse(response, out p);
-		*/
 	}
 }
