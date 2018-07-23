@@ -125,7 +125,7 @@ public class Background : MonoBehaviour {
             back = Editor.component[d].Replace("background = ", "");
         string[] Ar = back.Split(new string[1] { "; " }, System.StringSplitOptions.None);
 
-        for (int i = 0; i < go.childCount; i++)
+        for (int i = 0; i < go.childCount-1; i++)
         {
             Image Im = go.GetChild(i).GetComponent<Image>();
             Im.sprite = sp[int.Parse(Ar[0])];

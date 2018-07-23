@@ -33,6 +33,8 @@ public class Editeur : MonoBehaviour
 
     public GameObject BulleDeveloppementCat;
     public Sprite[] BulleDeveloppementCatSp;
+
+    public Sprite GrilleSp;
     
 #if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
     public int CameraMouvementSpeed = 1;
@@ -65,6 +67,7 @@ public class Editeur : MonoBehaviour
 
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
         OpenCat(-1);
+        Grille(true);
     }
 
     public void EditFile(string txt)
@@ -93,6 +96,7 @@ public class Editeur : MonoBehaviour
 
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
         OpenCat(-1);
+        Grille(true);
     }
 
     public void ExitEdit()
@@ -341,6 +345,7 @@ public class Editeur : MonoBehaviour
         if (cam.orthographicSize > 240)
             cam.orthographicSize = cam.orthographicSize - Z;
         StartCoroutine(ZoomIndicator());
+        Grille(true);
     }
     void Dezoom(int Z = 0)
     {
@@ -350,6 +355,7 @@ public class Editeur : MonoBehaviour
         if (cam.orthographicSize < 1200)
             cam.orthographicSize = cam.orthographicSize + Z;
         StartCoroutine(ZoomIndicator());
+        Grille(true);
     }
     IEnumerator ZoomIndicator()
     {
@@ -361,53 +367,97 @@ public class Editeur : MonoBehaviour
         if (Input.GetAxis("Mouse ScrollWheel") == 0 & !Ctrl)
             zoomIndicator.gameObject.SetActive(false);
     }
-
-#region GestionBloc
-    void CreateBloc(int x, int y, Color32 _Color)
+    void Grille(bool needRespawn)
     {
-        if (Input.touchCount == 1)
+        Transform BD = GameObject.Find("BackgroundDiv").transform;
+        Transform _Grille = BD.GetChild(BD.childCount-1);
+
+        Vector3 GrillePos = new Vector2((int)(cam.transform.position.x / 50) * 50, (int)(cam.transform.position.y / 50) * 50);
+        _Grille.localPosition = new Vector2((cam.transform.position.x - GrillePos.x)*-1, (cam.transform.position.y - GrillePos.y)*-1);
+
+        if (needRespawn)
         {
-            Vector3 a = new Vector3(x, y, 0);
-            string color = ColorToHex(_Color);
+            for (int i = 0; i < _Grille.childCount; i++)
+                Destroy(_Grille.GetChild(i).gameObject);
 
-            float id = newblockid;
-            if (id > 10000)
-                id = (newblockid - 10000F) / 10F;
+            float zoomRelatively = (Screen.height / 2) / cam.orthographicSize;
+            float zoom = Screen.height / cam.orthographicSize;
 
-            int start = -1;
-            for (int i = 0; i < component.Length; i++)
-            {
-                if (component[i].Contains("Blocks {") & start == -1)
-                    start = i + 1;
-            }
-            int end = -1;
-            for (int i = start; i < component.Length; i++)
-            {
-                if (component[i].Contains("}") & end == -1)
-                    end = i;
-            }
-            string[] newComponent = new string[component.Length + 1];
-            for (int i = 0; i < newComponent.Length; i++)
-            {
-                if (i < end)
-                    newComponent[i] = component[i];
-                else if (i == end)
-                    newComponent[i] = id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0";
-                else newComponent[i] = component[i - 1];
-            }
+            float PosDoigtNoCamPosX = (Screen.width - (25 * zoomRelatively)) / 50;
+            float PosDoigtNoCamPosY = (Screen.height - (25 * zoomRelatively)) / 50;
 
-            bool t = true;
-            for (int i = 0; i < component.Length; i++)
+            float IndiceChangPosCamX = (Screen.width / zoom) / (Screen.width / 2);
+            float IndiceChangPosCamY = cam.orthographicSize / (Screen.height / 2);
+
+            Vector2 GrilleCarre = new Vector2(Mathf.RoundToInt(PosDoigtNoCamPosX * IndiceChangPosCamX)+2,
+                Mathf.RoundToInt(PosDoigtNoCamPosY * IndiceChangPosCamY)+2);
+            int GrilleCarreNb = (int)GrilleCarre.x * (int)GrilleCarre.y;
+            for (int i = 0; i < GrilleCarreNb; i++)
             {
-                if (component[i] == newComponent[end])
-                    t = false;
-            }
-            if (t)
-            {
-                component = newComponent;
-                Instance(end);
+                int y = (int)(i / GrilleCarre.x);
+                int x = i - ((int)GrilleCarre.x * y);
+                GameObject go = Instantiate(Prefab, new Vector2((x -1)* 50 + 25, (y-1) * 50 + 25), new Quaternion(), _Grille);
+                /*Destroy(go.GetComponent<SpriteRenderer>());
+                go.AddComponent<Image>().sprite = GrilleSp;*/
+                go.GetComponent<SpriteRenderer>().sprite = GrilleSp;
+                go.transform.localScale = new Vector2(50, 50);
+
+                //ToDo : ScaleWithZoom
+                //go.transform.localScale = new Vector2(41, 41);
             }
         }
+    }
+
+    #region GestionBloc
+    void CreateBloc(int x, int y, Color32 _Color)
+    {
+#if UNITY_ANDROID || UNITY_IOS
+        if (Input.touchCount == 1)
+        {
+#endif
+        Vector3 a = new Vector3(x, y, 0);
+        string color = ColorToHex(_Color);
+
+        float id = newblockid;
+        if (id > 10000)
+            id = (newblockid - 10000F) / 10F;
+
+        int start = -1;
+        for (int i = 0; i < component.Length; i++)
+        {
+            if (component[i].Contains("Blocks {") & start == -1)
+                start = i + 1;
+        }
+        int end = -1;
+        for (int i = start; i < component.Length; i++)
+        {
+            if (component[i].Contains("}") & end == -1)
+                end = i;
+        }
+        string[] newComponent = new string[component.Length + 1];
+        for (int i = 0; i < newComponent.Length; i++)
+        {
+            if (i < end)
+                newComponent[i] = component[i];
+            else if (i == end)
+                newComponent[i] = id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0";
+            else newComponent[i] = component[i - 1];
+        }
+
+        bool t = true;
+        for (int i = 0; i < component.Length; i++)
+        {
+            if (component[i] == newComponent[end])
+                t = false;
+        }
+        if (t)
+        {
+            component = newComponent;
+            Instance(end);
+        }
+#if UNITY_ANDROID || UNITY_IOS
+        }
+#endif
     }
     public void AddBlock(string _id)
     {
@@ -681,26 +731,30 @@ public class Editeur : MonoBehaviour
 
     public void Deplacer(int x, int y)
     {
-        float CamX = cam.transform.position.x;
-        float CamY = cam.transform.position.y;
-
-        if (x < 0)
+        if (x != 0 | y != 0)
         {
-            if (cam.transform.position.x > Screen.width / 2)
+            float CamX = cam.transform.position.x;
+            float CamY = cam.transform.position.y;
+
+            if (x < 0)
+            {
+                if (cam.transform.position.x > Screen.width / 2)
+                    CamX = cam.transform.position.x + x;
+            }
+            else if (x > 0)
                 CamX = cam.transform.position.x + x;
-        }
-        else if (x > 0)
-            CamX = cam.transform.position.x + x;
 
-        if (y < 0)
-        {
-            if (cam.transform.position.y > Screen.height / 2)
+            if (y < 0)
+            {
+                if (cam.transform.position.y > Screen.height / 2)
+                    CamY = cam.transform.position.y + y;
+            }
+            else if (y > 0)
                 CamY = cam.transform.position.y + y;
-        }
-        else if (y > 0)
-            CamY = cam.transform.position.y + y;
 
-        cam.transform.position = new Vector3(CamX, CamY, -10);
+            cam.transform.position = new Vector3(CamX, CamY, -10);
+            Grille(false);
+        }
     }
 
     public void PlayLevel()
