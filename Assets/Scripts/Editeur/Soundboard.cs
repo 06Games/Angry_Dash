@@ -1,7 +1,5 @@
 ﻿
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -92,9 +90,9 @@ public class Soundboard : MonoBehaviour {
                 Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
 
             string URL = SongPath[SongOpened];
-#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
-            URL = SongPath[SongOpened].Replace("/mp3/", "/ogg/").Replace(".mp3", ".ogg");
-#endif
+//#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
+            //URL = SongPath[SongOpened].Replace("/mp3/", "/ogg/").Replace(".mp3", ".ogg");
+//#endif
 
             Base.ActiveObjectStatic(DownloadPanel);
 
@@ -107,14 +105,14 @@ public class Soundboard : MonoBehaviour {
             }
         }
     }
-    public static string FileFormat()
+    public static string NativeFileFormat()
     {
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
-        return ".ogg";
+        return "ogg";
 #elif UNITY_ANDROID || UNITY_IOS
-        return ".mp3";
+        return "mp3";
 #else
-        return ".wav";
+        return "wav";
 #endif
     }
 

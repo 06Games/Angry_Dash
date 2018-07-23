@@ -222,15 +222,7 @@ public class EditorSelect : MonoBehaviour
                     Songs[i] = "No Music";
                 else if (!File.Exists(Application.persistentDataPath + "/Musics/" + a[m].Replace("music = ", "")))
                     Songs[i] = "Unkown Music";
-                else
-                {
-                    String AT = "audio/x-wav";
-                    if (Soundboard.FileFormat() == ".ogg")
-                        AT = "application/ogg";
-                    else if (Soundboard.FileFormat() == ".mp3")
-                        AT = "audio/mpeg";
-                    Songs[i] = TagLib.File.Create(Application.persistentDataPath + "/Musics/" + a[m].Replace("music = ", ""), AT, TagLib.ReadStyle.None).Tag.Title;
-                }
+                else Songs[i] = TagLib.File.Create(Application.persistentDataPath + "/Musics/" + a[m].Replace("music = ", ""), "audio/mpeg", TagLib.ReadStyle.None).Tag.Title;
 
                 f = f + 1;
             }
