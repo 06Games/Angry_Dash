@@ -20,7 +20,7 @@ Un mode éditeur sera présent afin de créer ses propres niveaux. <br/>
 |  | Réalisation / Maintien |
 | -------- | -------- |
 | Scripts | **Evan Galli** |
-| Musiques | **Evan Galli, MazeWave, LeoVideo, et autre artistes** |
+| Musiques | **Evan Galli, MazeWave, LeoVideo, et autres artistes** |
 | Mise en page | **Evan Galli** |
 | Textures | **MazeWave** |
 | Idées | **Evan Galli, MazeWave** |
