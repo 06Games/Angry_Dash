@@ -168,7 +168,7 @@ public class LevelPlayer : MonoBehaviour {
         catch { Debug.LogWarning("The block at the line " + num + " as an invalid position"); return; }
         Vector3 pos = new Vector3(p.x, p.y, 0);
         Quaternion rot = new Quaternion();
-        try { rot.eulerAngles = new Vector3(0, 0, int.Parse(rotZ); }
+        try { rot.eulerAngles = new Vector3(0, 0, int.Parse(rotZ)); }
         catch { Debug.LogWarning("The block at the line " + num + " as an invalid rotation"); return; }
 
         if (id >= 1)
