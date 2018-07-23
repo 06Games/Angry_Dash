@@ -16,7 +16,12 @@ public class Behavior : MonoBehaviour {
 
         if (SB != editor.SelectedBlock)
         {
-            float id = float.Parse(editor.GetBlocStatus(4));
+            float id = 0;
+            try
+            {
+                id = float.Parse(editor.GetBlocStatus(4));
+            }
+            catch { Debug.LogWarning("The block at the line " + editor.SelectedBlock + " as an invalid behavior id"); transform.parent.GetComponent<CreatorManager>().ChangArray(0); return; }
             transform.GetChild(0).GetChild((int)id).GetComponent<Toggle>().isOn = true;
 
             Boost.isOn = id != (int)id;

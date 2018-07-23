@@ -155,22 +155,39 @@ public class LevelPlayer : MonoBehaviour {
 
     public void Instance(int num, Transform place)
     {
-        float id = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]);
+        float id = 0;
+        try { id = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]); }
+        catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
         string rotZ = component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[2];
         string color = component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[3];
-        float colid = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[4]);
-        Vector3 p = GetObjectPos(num);
+        float colid = 0;
+        try { colid = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[4]); }
+        catch { Debug.LogWarning("The block at the line " + num + " as an invalid behavior id"); return; }
+        Vector3 p = new Vector3();
+        try { p = GetObjectPos(num); }
+        catch { Debug.LogWarning("The block at the line " + num + " as an invalid position"); return; }
         Vector3 pos = new Vector3(p.x, p.y, 0);
         Quaternion rot = new Quaternion();
-        rot.eulerAngles = new Vector3(0, 0, int.Parse(rotZ));
+        try { rot.eulerAngles = new Vector3(0, 0, int.Parse(rotZ); }
+        catch { Debug.LogWarning("The block at the line " + num + " as an invalid rotation"); return; }
 
         if (id >= 1)
         {
-            GameObject go = Instantiate(Prefabs[(int)id-1], pos, rot, place);
+            GameObject go = null;
+            try
+            {
+                go = Instantiate(Prefabs[(int)id - 1], pos, rot, place);
+            }
+            catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
             go.name = "Objet n° " + num;
             go.transform.localScale = new Vector2(Screen.height / BlocSize, Screen.height / BlocSize);
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
-            SR.color = HexToColor(color);
+            try { SR.color = HexToColor(color); }
+            catch
+            {
+                SR.color = new Color32(190, 190, 190, 255);
+                Debug.LogWarning("The block at the line " + num + " as an invalid color");
+            }
             SR.sortingOrder = (int)p.z;
             Texture2D tex = new Texture2D(1, 1);
             tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString(".0####") + ".png"));
@@ -183,7 +200,12 @@ public class LevelPlayer : MonoBehaviour {
                 GetComponent<MainCam>().Player.transform.position = pos;
             else if (id == 0.2F)
             {
-                GameObject go = Instantiate(TriggerPref[0], pos, rot, place);
+                GameObject go = null;
+                try
+                {
+                    go = Instantiate(Prefabs[(int)id - 1], pos, rot, place);
+                }
+                catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
                 go.name = "Trigger n° " + num;
                 go.transform.localScale = new Vector2(Screen.height / BlocSize, Screen.height / BlocSize);
             }

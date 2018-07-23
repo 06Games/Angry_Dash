@@ -220,11 +220,15 @@ public class Editeur : MonoBehaviour
         {
             SelectedZone.SetActive(true);
 
-            string a = component[SelectedBlock].Split(new string[] { "; " }, System.StringSplitOptions.None)[1];
-            string[] b = a.Replace("(", "").Replace(" ", "").Replace(")", "").Split(new string[] { "," }, System.StringSplitOptions.None);
-            float[] c = new float[] { float.Parse(b[0]) * 50, float.Parse(b[1]) * 50, float.Parse(b[2]) };
-            SelectedZone.transform.position = new Vector3(c[0] + (BlocScale / 2), c[1] + (BlocScale / 2));
-            SelectedZone.transform.localScale = new Vector2(Screen.height / (Screen.height / 50) + 1, Screen.height / (Screen.height / 50) + 1);
+            try
+            {
+                string a = component[SelectedBlock].Split(new string[] { "; " }, System.StringSplitOptions.None)[1];
+                string[] b = a.Replace("(", "").Replace(" ", "").Replace(")", "").Split(new string[] { "," }, System.StringSplitOptions.None);
+                float[] c = new float[] { float.Parse(b[0]) * 50, float.Parse(b[1]) * 50, float.Parse(b[2]) };
+                SelectedZone.transform.position = new Vector3(c[0] + (BlocScale / 2), c[1] + (BlocScale / 2));
+                SelectedZone.transform.localScale = new Vector2(Screen.height / (Screen.height / 50) + 1, Screen.height / (Screen.height / 50) + 1);
+            }
+            catch { }
         }
         else SelectedZone.SetActive(false);
 
@@ -565,45 +569,60 @@ public class Editeur : MonoBehaviour
 
     public void Instance(int num, bool keep = false)
     {
-        float id = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]);
-        Vector3 p = GetObjectPos(num);
+        float id = 0;
+        try { id = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]); }
+        catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
+        Vector3 p = new Vector3();
+        try { p = GetObjectPos(num); }
+        catch { Debug.LogWarning("The block at the line " + num + " as an invalid position"); return; }
         Vector3 pos = new Vector3(p.x, p.y, 0);
         Quaternion rot = new Quaternion();
-        rot.eulerAngles = new Vector3(0, 0, int.Parse(GetBlocStatus(2, num)));
+        try { rot.eulerAngles = new Vector3(0, 0, int.Parse(GetBlocStatus(2, num))); }
+        catch { Debug.LogWarning("The block at the line " + num + " as an invalid rotation"); return; }
         GameObject Pref = null;
-        if (id < 1)
-            Pref = TriggerPrefabs[(int)(id * 10F) - 1];
-        else Pref = Prefab;
 
-        Transform g = transform.GetChild(1);
-        bool b = true;
-        for (int i = 0; i < g.childCount; i++)
+        try
         {
-            if (g.GetChild(i).gameObject.name == "Objet n° " + num)
-                b = false;
+            if (id < 1)
+                Pref = TriggerPrefabs[(int)(id * 10F) - 1];
+            else Pref = Prefab;
         }
-        if (b | keep)
-        {
-            GameObject go = null;
-            if (keep)
+        catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
+        
+            Transform g = transform.GetChild(1);
+            bool b = true;
+            for (int i = 0; i < g.childCount; i++)
             {
-                go = GameObject.Find("Objet n° " + num);
-                go.transform.position = pos;
-                go.transform.rotation = rot;
+                if (g.GetChild(i).gameObject.name == "Objet n° " + num)
+                    b = false;
             }
-            else go = Instantiate(Pref, pos, rot, transform.GetChild(1));
+            if (b | keep)
+            {
+                GameObject go = null;
+                if (keep)
+                {
+                    go = GameObject.Find("Objet n° " + num);
+                    go.transform.position = pos;
+                    go.transform.rotation = rot;
+                }
+                else go = Instantiate(Pref, pos, rot, transform.GetChild(1));
 
-            go.name = "Objet n° " + num;
-            //go.transform.localScale = new Vector2(Screen.height / (Screen.height / 50), Screen.height / (Screen.height / 50));
-            go.transform.localScale = new Vector2(50, 50);
-            SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
+                go.name = "Objet n° " + num;
+                go.transform.localScale = new Vector2(50, 50);
+                SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
 
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString("0.0####") + ".png"));
-            SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+                Texture2D tex = new Texture2D(1, 1);
+                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString("0.0####") + ".png"));
+                SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
 
-            SR.color = HexToColor(GetBlocStatus(3, num));
-            SR.sortingOrder = (int)p.z;
+                try { SR.color = HexToColor(GetBlocStatus(3, num)); }
+                catch
+                {
+                    SR.color = new Color32(190, 190, 190, 255);
+                    Debug.LogWarning("The block at the line " + num + " as an invalid color");
+                }
+                SR.sortingOrder = (int)p.z;
+            
         }
     }
     public Vector3 GetObjectPos(int num)
