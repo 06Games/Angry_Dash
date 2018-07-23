@@ -15,7 +15,7 @@ PluginImporter:
       second:
         enabled: 0
         settings:
-          Exclude Android: 1
+          Exclude Android: 0
           Exclude Editor: 0
           Exclude Linux: 0
           Exclude Linux64: 0
@@ -23,21 +23,21 @@ PluginImporter:
           Exclude OSXIntel: 0
           Exclude OSXIntel64: 0
           Exclude OSXUniversal: 0
-          Exclude WiiU: 1
+          Exclude WiiU: 0
           Exclude Win: 0
           Exclude Win64: 0
     data:
       first:
         Android: Android
       second:
-        enabled: 0
+        enabled: 1
         settings:
           CPU: ARMv7
     data:
       first:
         Any: 
       second:
-        enabled: 0
+        enabled: 1
         settings: {}
     data:
       first:
@@ -54,7 +54,7 @@ PluginImporter:
       second:
         enabled: 0
         settings:
-          CPU: None
+          CPU: AnyCPU
     data:
       first:
         Facebook: Win64
@@ -68,7 +68,7 @@ PluginImporter:
       second:
         enabled: 1
         settings:
-          CPU: None
+          CPU: x86
     data:
       first:
         Standalone: Linux64
@@ -82,14 +82,14 @@ PluginImporter:
       second:
         enabled: 1
         settings:
-          CPU: x86_64
+          CPU: AnyCPU
     data:
       first:
         Standalone: OSXIntel
       second:
         enabled: 1
         settings:
-          CPU: None
+          CPU: AnyCPU
     data:
       first:
         Standalone: OSXIntel64
@@ -103,14 +103,14 @@ PluginImporter:
       second:
         enabled: 1
         settings:
-          CPU: x86_64
+          CPU: AnyCPU
     data:
       first:
         Standalone: Win
       second:
         enabled: 1
         settings:
-          CPU: None
+          CPU: AnyCPU
     data:
       first:
         Standalone: Win64
@@ -118,6 +118,12 @@ PluginImporter:
         enabled: 1
         settings:
           CPU: AnyCPU
+    data:
+      first:
+        WiiU: WiiU
+      second:
+        enabled: 1
+        settings: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 

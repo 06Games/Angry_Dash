@@ -537,6 +537,7 @@ PlayerSettings:
   scriptingDefineSymbols:
     1: CT_FB
     4: NO_GPGS
+    7: CT_FB
   platformArchitecture: {}
   scriptingBackend: {}
   incrementalIl2cppBuild: {}
