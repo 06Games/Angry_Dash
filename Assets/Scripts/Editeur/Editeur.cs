@@ -67,7 +67,9 @@ public class Editeur : MonoBehaviour
 
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
         OpenCat(-1);
-        Grille(true);
+
+        Grille(false, true);
+        GrilleOnOff(transform.GetChild(0).GetChild(5).GetComponent<Image>());
     }
 
     public void EditFile(string txt)
@@ -96,7 +98,9 @@ public class Editeur : MonoBehaviour
 
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
         OpenCat(-1);
-        Grille(true);
+
+        Grille(false, true);
+        GrilleOnOff(transform.GetChild(0).GetChild(5).GetComponent<Image>());
     }
 
     public void ExitEdit()
@@ -371,7 +375,22 @@ public class Editeur : MonoBehaviour
         if (Input.GetAxis("Mouse ScrollWheel") == 0 & !Ctrl)
             zoomIndicator.gameObject.SetActive(false);
     }
-    void Grille(bool needRespawn)
+    public void GrilleOnOff(Image Img)
+    {
+        Transform BD = GameObject.Find("BackgroundDiv").transform;
+        Transform _Grille = BD.GetChild(BD.childCount - 1);
+        if (_Grille.childCount > 0)
+        {
+            Img.color = new Color32(255, 0, 0, 255);
+            Grille(false, true);
+        }
+        else
+        {
+            Img.color = new Color32(0, 255, 0, 255);
+            Grille(true, false);
+        }
+    }
+    void Grille(bool needRespawn, bool del = false)
     {
         Transform BD = GameObject.Find("BackgroundDiv").transform;
         Transform _Grille = BD.GetChild(BD.childCount-1);
@@ -379,10 +398,11 @@ public class Editeur : MonoBehaviour
         Vector3 GrillePos = new Vector2((int)(cam.transform.position.x / 50) * 50, (int)(cam.transform.position.y / 50) * 50);
         _Grille.localPosition = new Vector2((cam.transform.position.x - GrillePos.x)*-1, (cam.transform.position.y - GrillePos.y)*-1);
 
-        if (needRespawn)
+        if (needRespawn | del)
         {
             for (int i = 0; i < _Grille.childCount; i++)
                 Destroy(_Grille.GetChild(i).gameObject);
+            if (del) return;
 
             float zoomRelatively = (Screen.height / 2) / cam.orthographicSize;
             float zoom = Screen.height / cam.orthographicSize;
