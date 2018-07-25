@@ -53,9 +53,11 @@ public class BaseControl : MonoBehaviour
         for (int i = 0; i < gos.Length; i++)
             gos[i].GetComponent<Button>().onClick.AddListener(() => GetComponent<AudioSource>().PlayOneShot(ButtonSoundOnClick));
 
+        if (Input.GetKeyDown(KeyCode.F11))
+            Screen.fullScreen = !Screen.fullScreen;
 
         if (SceneManager.GetActiveScene().name == "Home")
-            Discord.Presence("In the home menu", "", "default");
+            Discord.Presence("In the home menu", "", new DiscordClasses.Img("default"));
     }
 
     public static bool CheckTex()

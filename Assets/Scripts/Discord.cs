@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DiscordClasses;
 /*using DiscordRPC;
 using DiscordRPC.Logging;*/
 
@@ -114,10 +115,10 @@ public class Discord : MonoBehaviour
     /// <param name="state">Titre 1</param>
     /// <param name="detail">Titre 2</param>
     /// <param name="lImage">Image 1</param>
-    /// <param name="sImage">Image 2 ("" pour désactiver)</param>
+    /// <param name="sImage">Image 2 (null pour désactiver)</param>
     /// <param name="remainingTime">Temps restant avant la fin de la partie (-1 pour le désactiver)</param>
-    /// <param name="startTime">Temps en seconde depuis le démarage de la partie (-1 pour le désactiver, 0 pour actuelement)</param>
-    public static void Presence(string state, string detail, string lImage, string sImage = "", int remainingTime = -1, long startTime = -1)
+    /// <param name="startTime">Temps en seconde depuis le démarage de la partie (-1 pour actuelement, 0 pour le désactiver)</param>
+    public static void Presence(string state, string detail, Img lImage, Img sImage = null, int remainingTime = -1, long startTime = 0)
     {
 #if UNITY_STANDALONE
         GameObject go = GameObject.Find("Discord");
@@ -139,10 +140,18 @@ public class Discord : MonoBehaviour
 
     DiscordRpc.EventHandlers handlers;
 
-    void UpdatePresence(string state, string detail, string lImage, string sImage, int remainingTime, long startTime)
+    void UpdatePresence(string state, string detail, Img lImage, Img sImage, int remainingTime, long startTime)
     {
-        presence.largeImageKey = lImage;
-        presence.smallImageKey = sImage;
+        if (lImage != null)
+        {
+            presence.largeImageKey = lImage.key;
+            presence.largeImageText = lImage.legende;
+        }
+        if (sImage != null)
+        {
+            presence.smallImageKey = sImage.key;
+            presence.smallImageText = sImage.legende;
+        }
         presence.state = state;
         presence.details = detail;
         if (startTime == -1)
@@ -227,7 +236,7 @@ public class Discord : MonoBehaviour
         handlers.spectateCallback += SpectateCallback;
         handlers.requestCallback += RequestCallback;
         DiscordRpc.Initialize("470264480786284544", ref handlers, true, "");
-        Presence("Starting the game", "", "default");
+        Presence("Starting the game", "", new Img("default"));
     }
 
     void OnDisable()
@@ -240,4 +249,23 @@ public class Discord : MonoBehaviour
         DiscordRpc.RunCallbacks();
     }
 #endif
+}
+
+namespace DiscordClasses {
+    public class Img
+    {
+        /// <summary>
+        /// Créer une image d'illustration
+        /// </summary>
+        /// <param name="_key">Le nom de l'image</param>
+        public Img(string _key) { key = _key; legende = ""; }
+        /// <summary>
+        /// Créer une image d'illustration
+        /// </summary>
+        /// <param name="_key">Le nom de l'image</param>
+        /// <param name="_legende">La légende de l'image (s'affiche au survole)</param>
+        public Img(string _key, string _legende) { key = _key; legende = _legende; }
+        public string key;
+        public string legende;
+    }
 }
