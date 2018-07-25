@@ -421,8 +421,6 @@ public class Editeur : MonoBehaviour
                 int y = (int)(i / GrilleCarre.x);
                 int x = i - ((int)GrilleCarre.x * y);
                 GameObject go = Instantiate(Prefab, new Vector2((x -1)* 50 + 25, (y-1) * 50 + 25), new Quaternion(), _Grille);
-                /*Destroy(go.GetComponent<SpriteRenderer>());
-                go.AddComponent<Image>().sprite = GrilleSp;*/
                 go.GetComponent<SpriteRenderer>().sprite = GrilleSp;
                 go.transform.localScale = new Vector2(50, 50);
 

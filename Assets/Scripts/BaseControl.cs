@@ -15,8 +15,6 @@ using System.Linq;
 
 public class BaseControl : MonoBehaviour
 {
-
-
     public string scene = "Home";
     public LoadingScreenControl LSC;
 
@@ -54,6 +52,10 @@ public class BaseControl : MonoBehaviour
         GameObject[] gos = GameObject.FindGameObjectsWithTag("Button With Click");
         for (int i = 0; i < gos.Length; i++)
             gos[i].GetComponent<Button>().onClick.AddListener(() => GetComponent<AudioSource>().PlayOneShot(ButtonSoundOnClick));
+
+
+        if (SceneManager.GetActiveScene().name == "Home")
+            Discord.Presence("In the home menu", "", "default");
     }
 
     public static bool CheckTex()
