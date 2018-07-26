@@ -440,6 +440,9 @@ public class Editeur : MonoBehaviour
         if (Input.touchCount == 1)
         {
 #endif
+        if (newblockid <= 0)
+            return;
+
         Vector3 a = new Vector3(x, y, 0);
         string color = ColorToHex(_Color);
 
@@ -488,9 +491,7 @@ public class Editeur : MonoBehaviour
     {
         float id = float.Parse(_id);
 
-        if (id == newblockid)
-            AddBlocking = !AddBlocking;
-        else
+        if (id != newblockid)
         {
             newblockid = id;
             AddBlocking = true;
@@ -526,8 +527,9 @@ public class Editeur : MonoBehaviour
     {
         if (id == (int)newblockid)
         {
-            AddBlock(newblockid.ToString());
             newblockid = -1;
+            AddBlocking = false;
+            AddBlock(newblockid.ToString());
         }
         else if (id >= 0)
         {
