@@ -5530,6 +5530,8 @@ MonoBehaviour:
   SmallSlider: {fileID: 537233451}
   AudioPrefs: {fileID: 1458537501854406, guid: 2cfcea02e17130a43b3499549985c4a0, type: 2}
   ButtonSoundOnClick: {fileID: 8300000, guid: 7f487e4748fd40643adb86125a40f81e, type: 3}
+  DiscordPref: {fileID: 1650686116138130, guid: 23fa7d3e42dcf5a489750d3576031f1e,
+    type: 2}
 --- !u!1 &536299726
 GameObject:
   m_ObjectHideFlags: 0

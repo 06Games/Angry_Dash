@@ -24,6 +24,9 @@ public class BaseControl : MonoBehaviour
 
     public GameObject AudioPrefs;
     public AudioClip ButtonSoundOnClick;
+
+    public GameObject DiscordPref;
+
     private void OnApplicationQuit()
     {
         File.Delete(Application.temporaryCachePath + "/ac.txt");
@@ -33,6 +36,9 @@ public class BaseControl : MonoBehaviour
     {
         if (GameObject.Find("Audio") == null)
             Instantiate(AudioPrefs).name = "Audio";
+
+        if(GameObject.Find("Discord") == null)
+            Instantiate(DiscordPref).name = "Discord";
 
         if (LSC == null)
             LSC = GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>();

@@ -3,29 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DiscordClasses;
+using System;
 /*using DiscordRPC;
 using DiscordRPC.Logging;*/
 
 public class Discord : MonoBehaviour
 {
-    /*
-    [Header("Details")]
-    public string inputDetails;
-    public string inputState;
-
-    [Header("Time")]
-    public bool inputStartTime;
-    public float inputEndTime;
-
-    [Header("Images")]
-    public string inputLargeKey;
-    public string inputLargeTooltip;
-    public string inputSmallKey;
-    public string inputSmallTooltip;
-
-    public DiscordPresence presence;
-    */
-
     /*public DiscordRpcClient client;
 
     void Initialize()
@@ -67,58 +50,18 @@ public class Discord : MonoBehaviour
     void OnDisable()
     {
         client.Dispose();
-    }
-
-    /*public void SendPresence()
-    {
-        UpdatePresence();
-        DiscordManager.instance.SetPresence(presence);
-    }
-
-    public void UpdateFields(DiscordPresence presence)
-    {
-        this.presence = presence;
-        inputState = presence.state;
-        inputDetails = presence.details;
-
-
-        inputLargeTooltip = presence.largeAsset.tooltip;
-        inputLargeKey = presence.largeAsset.image;
-
-        inputSmallTooltip = presence.smallAsset.tooltip;
-        inputSmallKey = presence.smallAsset.image;
-    }
-
-    public void UpdatePresence()
-    {
-        presence.state = inputState;
-        presence.details = inputDetails;
-        presence.startTime = inputStartTime ? new DiscordTimestamp(Time.realtimeSinceStartup) : DiscordTimestamp.Invalid;
-
-        presence.largeAsset = new DiscordAsset()
-        {
-            image = inputLargeKey,
-            tooltip = inputLargeTooltip
-        };
-        presence.smallAsset = new DiscordAsset()
-        {
-            image = inputSmallKey,
-            tooltip = inputSmallTooltip
-        };
-
-        presence.endTime = inputEndTime > 0 ? new DiscordTimestamp(Time.realtimeSinceStartup + inputEndTime) : DiscordTimestamp.Invalid;
     }*/
 
     /// <summary>
     /// Update the Discord RPC PResence
     /// </summary>
     /// <param name="state">Titre 1</param>
-    /// <param name="detail">Titre 2</param>
-    /// <param name="lImage">Image 1</param>
+    /// <param name="detail">Titre 2 (null pour le désactiver)</param>
+    /// <param name="lImage">Image 1 (null pour garder l'image actuelle)</param>
     /// <param name="sImage">Image 2 (null pour désactiver)</param>
-    /// <param name="remainingTime">Temps restant avant la fin de la partie (-1 pour le désactiver)</param>
-    /// <param name="startTime">Temps en seconde depuis le démarage de la partie (-1 pour actuelement, 0 pour le désactiver)</param>
-    public static void Presence(string state, string detail, Img lImage, Img sImage = null, int remainingTime = -1, long startTime = 0)
+    /// <param name="remainingTime">Temps restant avant la fin de la partie (-1 pour le désactiver, 0 pour actuelement)</param>
+    /// <param name="startTime">Temps en seconde depuis le démarage de la partie (-1 pour le désactiver, 0 pour actuelement)</param>
+    public static void Presence(string state, string detail = null, Img lImage = null, Img sImage = null, int remainingTime = -1, long startTime = -1)
     {
 #if UNITY_STANDALONE
         GameObject go = GameObject.Find("Discord");
@@ -129,94 +72,93 @@ public class Discord : MonoBehaviour
 
 #if UNITY_STANDALONE
     public DiscordRpc.RichPresence presence = new DiscordRpc.RichPresence();
-    public int callbackCalls;
     public DiscordRpc.DiscordUser joinRequest;
     public UnityEngine.Events.UnityEvent onConnect;
     public UnityEngine.Events.UnityEvent onDisconnect;
-    public UnityEngine.Events.UnityEvent hasResponded;
     public DiscordJoinEvent onJoin;
     public DiscordJoinEvent onSpectate;
     public DiscordJoinRequestEvent onJoinRequest;
 
     DiscordRpc.EventHandlers handlers;
 
-    void UpdatePresence(string state, string detail, Img lImage, Img sImage, int remainingTime, long startTime)
+    void UpdatePresence(string detail, string state, Img lImage, Img sImage, int remainingTime, long startTime)
     {
+        presence.state = state; //State
+        presence.details = detail; //Detail
+
+        //Large Image
         if (lImage != null)
         {
             presence.largeImageKey = lImage.key;
             presence.largeImageText = lImage.legende;
         }
+
+        //Small Image
         if (sImage != null)
         {
             presence.smallImageKey = sImage.key;
             presence.smallImageText = sImage.legende;
         }
-        presence.state = state;
-        presence.details = detail;
-        if (startTime == -1)
-            presence.startTimestamp = System.DateTime.UtcNow.Second;
-        else if(startTime >= 0)
-            presence.startTimestamp = startTime;
+        else
+        {
+            presence.smallImageKey = null;
+            presence.smallImageText = null;
+        }
+
+        //End Timestamp
         if (remainingTime >= 0)
-            presence.endTimestamp = System.DateTime.UtcNow.Second + remainingTime;
+            presence.endTimestamp = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds) + remainingTime;
         else presence.endTimestamp = 0;
-        DiscordRpc.UpdatePresence(presence);
+        
+        //Start Timestamp
+        if (startTime == 0)
+            presence.startTimestamp = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds);
+        else if (startTime > 0)
+            presence.startTimestamp = startTime;
+        else if (startTime == -1)
+            presence.startTimestamp = 0;
+
+        DiscordRpc.UpdatePresence(presence); //Apply Changes
     }
 
     public void RequestRespond(bool accept)
     {
         if (accept)
-        {
-            Debug.Log("Discord: responding yes to Ask to Join request");
             DiscordRpc.Respond(joinRequest.userId, DiscordRpc.Reply.Yes);
-            hasResponded.Invoke();
-        }
-        else
-        {
-            Debug.Log("Discord: responding no to Ask to Join request");
-            DiscordRpc.Respond(joinRequest.userId, DiscordRpc.Reply.No);
-            hasResponded.Invoke();
-        }
+        else DiscordRpc.Respond(joinRequest.userId, DiscordRpc.Reply.No);
     }
 
     public void ReadyCallback(ref DiscordRpc.DiscordUser connectedUser)
     {
-        ++callbackCalls;
         Debug.Log(string.Format("Discord: connected to {0}#{1}: {2}", connectedUser.username, connectedUser.discriminator, connectedUser.userId));
         onConnect.Invoke();
     }
 
     public void DisconnectedCallback(int errorCode, string message)
     {
-        ++callbackCalls;
         Debug.Log(string.Format("Discord: disconnect {0}: {1}", errorCode, message));
         onDisconnect.Invoke();
     }
 
     public void ErrorCallback(int errorCode, string message)
     {
-        ++callbackCalls;
         Debug.Log(string.Format("Discord: error {0}: {1}", errorCode, message));
     }
 
     public void JoinCallback(string secret)
     {
-        ++callbackCalls;
         Debug.Log(string.Format("Discord: join ({0})", secret));
         onJoin.Invoke(secret);
     }
 
     public void SpectateCallback(string secret)
     {
-        ++callbackCalls;
         Debug.Log(string.Format("Discord: spectate ({0})", secret));
         onSpectate.Invoke(secret);
     }
 
     public void RequestCallback(ref DiscordRpc.DiscordUser request)
     {
-        ++callbackCalls;
         Debug.Log(string.Format("Discord: join request {0}#{1}: {2}", request.username, request.discriminator, request.userId));
         joinRequest = request;
         onJoinRequest.Invoke(request);
@@ -226,7 +168,6 @@ public class Discord : MonoBehaviour
     {
         Debug.Log("Discord API is starting");
         DontDestroyOnLoad(gameObject);
-        callbackCalls = 0;
 
         handlers = new DiscordRpc.EventHandlers();
         handlers.readyCallback = ReadyCallback;
