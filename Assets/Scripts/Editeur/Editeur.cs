@@ -30,6 +30,7 @@ public class Editeur : MonoBehaviour
 
     public GameObject[] TriggerPrefabs;
     public bool SelectMode = false;
+    public bool bloqueSelect = false;
 
     public GameObject BulleDeveloppementCat;
     public Sprite[] BulleDeveloppementCatSp;
@@ -191,7 +192,7 @@ public class Editeur : MonoBehaviour
 
         //Détection de la localisation lors de l'ajout d'un bloc
 
-        if (AddBlocking)
+        if (AddBlocking & !bloqueSelect)
         {
             KeyCode clic = KeyCode.Mouse0;
             if (SelectMode)
@@ -218,7 +219,7 @@ public class Editeur : MonoBehaviour
             }
         }
 
-        if (SelectBlocking)
+        if (SelectBlocking & !bloqueSelect)
         {
             if (Input.mousePosition.y > Screen.height / 4)
             {
@@ -665,7 +666,7 @@ public class Editeur : MonoBehaviour
         string hex = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2") + color.a.ToString();
         return hex;
     }
-    public static UnityEngine.Color HexToColor(string hex)
+    public static Color HexToColor(string hex)
     {
         byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
         byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
