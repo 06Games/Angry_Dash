@@ -36,7 +36,7 @@ public class Editeur : MonoBehaviour
 
     public Sprite GrilleSp;
     public Sprite[] GrilleBtn;
-    
+
 #if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
     public int CameraMouvementSpeed = 1;
 #else
@@ -105,7 +105,7 @@ public class Editeur : MonoBehaviour
 
 
         string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
-        Discord.Presence("In the editor", "Editing " + dirToPath[dirToPath.Length-1].Replace(".level", ""), new DiscordClasses.Img("default"));
+        Discord.Presence("In the editor", "Editing " + dirToPath[dirToPath.Length - 1].Replace(".level", ""), new DiscordClasses.Img("default"));
     }
 
     public void ExitEdit()
@@ -131,7 +131,7 @@ public class Editeur : MonoBehaviour
         newblockid = -1;
         gameObject.SetActive(false);
     }
-#endregion
+    #endregion
 
     private void Start()
     {
@@ -139,7 +139,7 @@ public class Editeur : MonoBehaviour
         cam = Selection.GetComponent<EditorSelect>().Cam.GetComponent<Camera>();
         zoomIndicator.gameObject.SetActive(false);
         BulleDeveloppementCat.SetActive(false);
-        
+
         if (File.Exists(Application.temporaryCachePath + "/play.txt"))
         {
             if (File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 0)
@@ -399,10 +399,10 @@ public class Editeur : MonoBehaviour
     void Grille(bool needRespawn, bool del = false)
     {
         Transform BD = GameObject.Find("BackgroundDiv").transform;
-        Transform _Grille = BD.GetChild(BD.childCount-1);
+        Transform _Grille = BD.GetChild(BD.childCount - 1);
 
         Vector3 GrillePos = new Vector2((int)(cam.transform.position.x / 50) * 50, (int)(cam.transform.position.y / 50) * 50);
-        _Grille.localPosition = new Vector2((cam.transform.position.x - GrillePos.x)*-1, (cam.transform.position.y - GrillePos.y)*-1);
+        _Grille.localPosition = new Vector2((cam.transform.position.x - GrillePos.x) * -1, (cam.transform.position.y - GrillePos.y) * -1);
 
         if (needRespawn | del)
         {
@@ -419,19 +419,16 @@ public class Editeur : MonoBehaviour
             float IndiceChangPosCamX = (Screen.width / zoom) / (Screen.width / 2);
             float IndiceChangPosCamY = cam.orthographicSize / (Screen.height / 2);
 
-            Vector2 GrilleCarre = new Vector2(Mathf.RoundToInt(PosDoigtNoCamPosX * IndiceChangPosCamX)+2,
-                Mathf.RoundToInt(PosDoigtNoCamPosY * IndiceChangPosCamY)+2);
+            Vector2 GrilleCarre = new Vector2(Mathf.RoundToInt(PosDoigtNoCamPosX * IndiceChangPosCamX) + 2,
+                Mathf.RoundToInt(PosDoigtNoCamPosY * IndiceChangPosCamY) + 2);
             int GrilleCarreNb = (int)GrilleCarre.x * (int)GrilleCarre.y;
             for (int i = 0; i < GrilleCarreNb; i++)
             {
                 int y = (int)(i / GrilleCarre.x);
                 int x = i - ((int)GrilleCarre.x * y);
-                GameObject go = Instantiate(Prefab, new Vector2((x -1)* 50 + 25, (y-1) * 50 + 25), new Quaternion(), _Grille);
+                GameObject go = Instantiate(Prefab, new Vector2((x - 1) * 50 + 25, (y - 1) * 50 + 25), new Quaternion(), _Grille);
                 go.GetComponent<SpriteRenderer>().sprite = GrilleSp;
-                go.transform.localScale = new Vector2(50, 50);
-
-                //ToDo : ScaleWithZoom
-                //go.transform.localScale = new Vector2(41, 41);
+                go.transform.localScale = new Vector2(50, 50); //ToDo : ScaleWithZoom
             }
         }
     }
@@ -527,7 +524,12 @@ public class Editeur : MonoBehaviour
     }
     public void OpenCat(int id)
     {
-        if (id >= 0)
+        if (id == (int)newblockid)
+        {
+            AddBlock(newblockid.ToString());
+            newblockid = -1;
+        }
+        else if (id >= 0)
         {
             Vector2 pos = Contenu[3].transform.GetChild(id).localPosition;
             pos.x = pos.x + 20;
@@ -567,8 +569,6 @@ public class Editeur : MonoBehaviour
                     tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id + "." + i + ".png"));
                     newRef.transform.GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
                 }
-
-
                 BulleDeveloppementCat.SetActive(true);
                 BulleDeveloppementCat.transform.localPosition = pos;
             }
@@ -612,41 +612,40 @@ public class Editeur : MonoBehaviour
             else Pref = Prefab;
         }
         catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
-        
-            Transform g = transform.GetChild(1);
-            bool b = true;
-            for (int i = 0; i < g.childCount; i++)
+
+        Transform g = transform.GetChild(1);
+        bool b = true;
+        for (int i = 0; i < g.childCount; i++)
+        {
+            if (g.GetChild(i).gameObject.name == "Objet n° " + num)
+                b = false;
+        }
+        if (b | keep)
+        {
+            GameObject go = null;
+            if (keep)
             {
-                if (g.GetChild(i).gameObject.name == "Objet n° " + num)
-                    b = false;
+                go = GameObject.Find("Objet n° " + num);
+                go.transform.position = pos;
+                go.transform.rotation = rot;
             }
-            if (b | keep)
+            else go = Instantiate(Pref, pos, rot, transform.GetChild(1));
+
+            go.name = "Objet n° " + num;
+            go.transform.localScale = new Vector2(50, 50);
+            SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString("0.0####") + ".png"));
+            SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+
+            try { SR.color = HexToColor(GetBlocStatus(3, num)); }
+            catch
             {
-                GameObject go = null;
-                if (keep)
-                {
-                    go = GameObject.Find("Objet n° " + num);
-                    go.transform.position = pos;
-                    go.transform.rotation = rot;
-                }
-                else go = Instantiate(Pref, pos, rot, transform.GetChild(1));
-
-                go.name = "Objet n° " + num;
-                go.transform.localScale = new Vector2(50, 50);
-                SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
-
-                Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString("0.0####") + ".png"));
-                SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-
-                try { SR.color = HexToColor(GetBlocStatus(3, num)); }
-                catch
-                {
-                    SR.color = new Color32(190, 190, 190, 255);
-                    Debug.LogWarning("The block at the line " + num + " as an invalid color");
-                }
-                SR.sortingOrder = (int)p.z;
-            
+                SR.color = new Color32(190, 190, 190, 255);
+                Debug.LogWarning("The block at the line " + num + " as an invalid color");
+            }
+            SR.sortingOrder = (int)p.z;
         }
     }
     public Vector3 GetObjectPos(int num)
@@ -669,7 +668,7 @@ public class Editeur : MonoBehaviour
         byte a = byte.Parse(hex.Substring(6), System.Globalization.NumberStyles.Number);
         return new Color32(r, g, b, a);
     }
-#endregion
+    #endregion
 
     public void SelectBloc()
     {
