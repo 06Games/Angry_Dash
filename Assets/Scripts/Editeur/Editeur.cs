@@ -199,7 +199,7 @@ public class Editeur : MonoBehaviour
                 if (Input.mousePosition.y > Screen.height / 4)
                 {
                     bool isInTop = Input.mousePosition.y > Screen.height - (Screen.height / 10);
-                    bool isInRightTop = Input.mousePosition.x > Screen.width - (Screen.width / 9);
+                    bool isInRightTop = Input.mousePosition.x > Screen.width - (Screen.width / 6);
 
                     if (!(isInTop & isInRightTop))
                     {
