@@ -7,8 +7,10 @@ using System.Linq;
 using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
-public class Soundboard : MonoBehaviour {
+public class Soundboard : MonoBehaviour
+{
 
     public string[] SongPath;
     public string[] SongName;
@@ -27,14 +29,14 @@ public class Soundboard : MonoBehaviour {
     public Sprite[] PlayPause;
 
     public GameObject DownloadPanel;
-    string labelSpeed= "0 kb/s";
+    string labelSpeed = "0 kb/s";
     string labelDownloaded = "0 MB sur 0 MB";
     public string[] ids;
 
     public GameObject MusicSelectorPanel;
 
-    public void RefreshList () {
-
+    public void RefreshList()
+    {
         if (InternetAPI.IsConnected())
         {
             MusicSelectorPanel.SetActive(false);
@@ -78,7 +80,29 @@ public class Soundboard : MonoBehaviour {
 
             Search(null);
             gameObject.SetActive(false);
+            if (lenght > 0) return;
         }
+
+            String AT = "audio/x-wav";
+            if (NativeFileFormat() == AudioType.OGGVORBIS)
+                AT = "application/ogg";
+            else if (NativeFileFormat() == AudioType.MPEG)
+                AT = "audio/mpeg";
+        string[] sFiles = Directory.GetFiles(Application.persistentDataPath + "/Musics/");
+        BasePath = new string[sFiles.Length];
+        BaseName = new string[sFiles.Length];
+        BaseArtist = new string[sFiles.Length];
+        BaseLicence = new string[sFiles.Length];
+        for (int i = 0; i < sFiles.Length; i++)
+        {
+            TagLib.Tag TL = TagLib.File.Create(sFiles[i], AT, TagLib.ReadStyle.None).Tag;
+            BasePath[i] = sFiles[i];
+            BaseArtist[i] = TL.Performers[0];
+            BaseName[i] = TL.Title;
+            BaseLicence[i] = "";
+        }
+        Search(null);
+        gameObject.SetActive(false);
     }
 
     Stopwatch sw = new Stopwatch();
@@ -90,9 +114,9 @@ public class Soundboard : MonoBehaviour {
                 Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
 
             string URL = SongPath[SongOpened];
-//#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
+            //#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
             //URL = SongPath[SongOpened].Replace("/mp3/", "/ogg/").Replace(".mp3", ".ogg");
-//#endif
+            //#endif
 
             Base.ActiveObjectStatic(DownloadPanel);
 
@@ -101,18 +125,23 @@ public class Soundboard : MonoBehaviour {
                 sw.Start();
                 wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                 wc.DownloadFileCompleted += wc_DownloadFileCompleted;
-                wc.DownloadFileAsync(new Uri(URL), Application.persistentDataPath + "/Musics/" + SongArtist[SongOpened] + " - " + SongName[SongOpened]);
+
+                string path = Application.persistentDataPath + "/Musics/";
+                if (NativeFileFormat() == AudioType.OGGVORBIS)
+                    path = Application.temporaryCachePath + "/";
+                wc.DownloadFileAsync(new Uri(URL), path + SongArtist[SongOpened] + " - " + SongName[SongOpened]);
             }
         }
     }
-    public static string NativeFileFormat()
+
+    public static AudioType NativeFileFormat()
     {
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
-        return "ogg";
+        return AudioType.OGGVORBIS;
 #elif UNITY_ANDROID || UNITY_IOS
-        return "mp3";
+        return AudioType.MPEG;
 #else
-        return "wav";
+        return AudioType.WAV;
 #endif
     }
 
@@ -133,7 +162,7 @@ public class Soundboard : MonoBehaviour {
             tr.GetChild(1).GetComponent<Text>().text = labelDownloaded;
             tr.GetChild(2).GetComponent<Text>().text = labelSpeed;
 
-        labelDownloaded = LangueAPI.StringWithArgument(ids[2], new string[2]{ (e.BytesReceived / 1024d / 1024d).ToString("0.0"), (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.0")});
+            labelDownloaded = LangueAPI.StringWithArgument(ids[2], new string[2] { (e.BytesReceived / 1024d / 1024d).ToString("0.0"), (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.0") });
         });
     }
     int NbChiffreEntier(double d)
@@ -159,17 +188,56 @@ public class Soundboard : MonoBehaviour {
             print("An error ocurred while trying to download file\n" + e.Error);
             return;
         }
-        Base.DeactiveObjectStatic(DownloadPanel);
 
+        if (NativeFileFormat() == AudioType.OGGVORBIS)
+        {
+            string fileName = SongArtist[SongOpened] + " - " + SongName[SongOpened];
+            UnityThread.executeInUpdate(() =>
+            {
+                if (File.Exists(Application.temporaryCachePath + "/" + fileName + ".mp3"))
+                    File.Delete(Application.temporaryCachePath + "/" + fileName + ".mp3");
+                File.Move(Application.temporaryCachePath + "/" + fileName, Application.temporaryCachePath + "/" + fileName + ".mp3");
+
+                if (File.Exists(Application.persistentDataPath + "/Musics/" + fileName + ".ogg"))
+                    File.Delete(Application.persistentDataPath + "/Musics/" + fileName + ".ogg");
+
+                
+                FFmpeg.FFmpegAPI.Convert(Application.temporaryCachePath + "/" + fileName + ".mp3", Application.temporaryCachePath + "/" + fileName + ".ogg", new FFmpeg.handler(ConvertEnd));
+            });
+        }
+        else
+        {
+            Base.DeactiveObjectStatic(DownloadPanel);
+
+            UnityThread.executeInUpdate(() =>
+            {
+                Transform go = MusicSelectorPanel.transform.GetChild(3).GetChild(0).GetChild(3);
+                bool FileExists = File.Exists(Application.persistentDataPath + "/Musics/" + SongArtist[SongOpened] + " - " + SongName[SongOpened]);
+                go.GetChild(0).gameObject.SetActive(!FileExists);
+                go.GetChild(1).gameObject.SetActive(FileExists);
+            });
+        }
+    }
+
+    void ConvertEnd(object sender, EventArgs e)
+    { 
         UnityThread.executeInUpdate(() =>
         {
+            string fileName = SongArtist[SongOpened] + " - " + SongName[SongOpened];
+            if (File.Exists(Application.temporaryCachePath + "/" + fileName + ".mp3"))
+                File.Delete(Application.temporaryCachePath + "/" + fileName + ".mp3");
+            if (File.Exists(Application.persistentDataPath + "/Musics/" + fileName))
+                File.Delete(Application.persistentDataPath + "/Musics/" + fileName);
+            File.Move(Application.temporaryCachePath + "/" + fileName + ".ogg", Application.persistentDataPath + "/Musics/" + fileName);
+
+            Base.DeactiveObjectStatic(DownloadPanel);
+
             Transform go = MusicSelectorPanel.transform.GetChild(3).GetChild(0).GetChild(3);
             bool FileExists = File.Exists(Application.persistentDataPath + "/Musics/" + SongArtist[SongOpened] + " - " + SongName[SongOpened]);
             go.GetChild(0).gameObject.SetActive(!FileExists);
             go.GetChild(1).gameObject.SetActive(FileExists);
         });
     }
-
 
     public void NewStart()
     {
@@ -196,19 +264,19 @@ public class Soundboard : MonoBehaviour {
         else Music.text = LangueAPI.StringWithArgument(ids[3], new string[1] { "No Music" });
 
         Transform go = MusicSelectorPanel.transform.GetChild(1);
-        for(int i = 0; i < go.childCount-1; i++)
+        for (int i = 0; i < go.childCount - 1; i++)
         {
-            float BoxHeight = Screen.height-250;
-            if(go.transform.lossyScale.y != 0)
+            float BoxHeight = Screen.height - 250;
+            if (go.transform.lossyScale.y != 0)
                 BoxHeight = 830 / go.transform.lossyScale.y;
 
             go.GetChild(i).GetComponent<RectTransform>().sizeDelta = new Vector2(0, BoxHeight / 3);
-            go.GetChild(i).GetComponent<RectTransform>().anchoredPosition = new Vector2(0, (BoxHeight / 6) * ((i*2) + 1)*-1);
+            go.GetChild(i).GetComponent<RectTransform>().anchoredPosition = new Vector2(0, (BoxHeight / 6) * ((i * 2) + 1) * -1);
         }
     }
 
     int SongOpened;
-	public void OpenSongInfoPanel(int panel)
+    public void OpenSongInfoPanel(int panel)
     {
         Transform go = MusicSelectorPanel.transform.GetChild(3);
         SongOpened = lastFirstLine + panel;
@@ -241,13 +309,13 @@ public class Soundboard : MonoBehaviour {
     }
 
     int lastFirstLine = 0;
-    public void ChangPage(int p) { Page(lastFirstLine + ((MusicSelectorPanel.transform.GetChild(1).childCount-1) * p)); }
+    public void ChangPage(int p) { Page(lastFirstLine + ((MusicSelectorPanel.transform.GetChild(1).childCount - 1) * p)); }
     void Page(int firstLine)
     {
         Transform ResultPanel = MusicSelectorPanel.transform.GetChild(1);
         lastFirstLine = firstLine;
         ResultPanel.GetChild(3).GetChild(0).GetComponent<Button>().interactable = firstLine > 0;
-        ResultPanel.GetChild(3).GetChild(1).GetComponent<Button>().interactable = firstLine+ ResultPanel.childCount-1 < SongName.Length;
+        ResultPanel.GetChild(3).GetChild(1).GetComponent<Button>().interactable = firstLine + ResultPanel.childCount - 1 < SongName.Length;
 
         for (int i = 0; i < ResultPanel.childCount - 1; i++)
         {
@@ -289,7 +357,8 @@ public class Soundboard : MonoBehaviour {
         }
 
     }
-    public void StopSong() {
+    public void StopSong()
+    {
         if (GameObject.Find("Audio") != null)
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
         MusicPos = 0;
@@ -322,7 +391,7 @@ public class Soundboard : MonoBehaviour {
 
     public void Search(InputField IF)
     {
-        if(IF == null)
+        if (IF == null)
         {
             SongPath = BasePath;
             SongName = BaseName;
@@ -330,7 +399,7 @@ public class Soundboard : MonoBehaviour {
             Licences = BaseLicence;
             Page(0);
         }
-        else if(string.IsNullOrEmpty(IF.text) & SongName != BaseName)
+        else if (string.IsNullOrEmpty(IF.text) & SongName != BaseName)
         {
             SongPath = BasePath;
             SongName = BaseName;
@@ -338,7 +407,7 @@ public class Soundboard : MonoBehaviour {
             Licences = BaseLicence;
             Page(0);
         }
-        else if(!string.IsNullOrEmpty(IF.text))
+        else if (!string.IsNullOrEmpty(IF.text))
         {
             int[] Result = new int[0];
             for (int i = 0; i < BaseName.Length; i++)

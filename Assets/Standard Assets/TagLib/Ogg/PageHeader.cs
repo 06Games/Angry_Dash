@@ -452,7 +452,8 @@ namespace TagLib.Ogg
 		///    A <see cref="int" /> value containing the hash code for
 		///    the current instance.
 		/// </returns>
-		public override int GetHashCode ()		{
+		public override int GetHashCode ()
+		{
 			unchecked {
 				return (int) (LacingValues.GetHashCode () ^
 					version ^ (int) flags ^

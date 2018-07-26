@@ -222,8 +222,15 @@ public class EditorSelect : MonoBehaviour
                     Songs[i] = "No Music";
                 else if (!File.Exists(Application.persistentDataPath + "/Musics/" + a[m].Replace("music = ", "")))
                     Songs[i] = "Unkown Music";
-                else Songs[i] = TagLib.File.Create(Application.persistentDataPath + "/Musics/" + a[m].Replace("music = ", ""), "audio/mpeg", TagLib.ReadStyle.None).Tag.Title;
-
+                else
+                {
+                    String AT = "audio/x-wav";
+                    if (Soundboard.NativeFileFormat() == AudioType.OGGVORBIS)
+                        AT = "application/ogg";
+                    else if (Soundboard.NativeFileFormat() == AudioType.MPEG)
+                        AT = "audio/mpeg";
+                    Songs[i] = TagLib.File.Create(Application.persistentDataPath + "/Musics/" + a[m].Replace("music = ", ""), AT, TagLib.ReadStyle.None).Tag.Title;
+                }
                 f = f + 1;
             }
             else go.gameObject.SetActive(false);
