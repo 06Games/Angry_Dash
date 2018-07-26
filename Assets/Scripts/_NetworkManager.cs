@@ -220,6 +220,8 @@ public class _NetworkManager : NetworkBehaviour
     {
         NM.StartHost();
         StartData(true);
+
+        Discord.Presence("Play in a server", "", new DiscordClasses.Img("default"), null, -1, 0);
     }
 
     public void Join()
@@ -232,6 +234,8 @@ public class _NetworkManager : NetworkBehaviour
         NC.RegisterHandler(MsgType.Error, Error);
         StartData(false);
         mapRequested = false;
+
+        Discord.Presence("Play in a server", "", new DiscordClasses.Img("default", "Server : "+adress+":"+port), null, -1, 0);
     }
 
     void Error(NetworkMessage netMsg)
@@ -259,6 +263,8 @@ public class _NetworkManager : NetworkBehaviour
 
         for (int i = 0; i < Items.transform.childCount; i++)
             Destroy(Items.transform.GetChild(i).gameObject);
+
+        Discord.Presence("In the home menu", "", new DiscordClasses.Img("default"));
     }
 
     private bool isSetup = false;

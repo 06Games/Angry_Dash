@@ -73,6 +73,7 @@ public class LevelPlayer : MonoBehaviour {
                 string[] fileDir = file.Split(new string[1] { "/" }, System.StringSplitOptions.None);
                 Base.GetChild(3).GetChild(0).GetComponent<Text>().text = fileDir[fileDir.Length - 1].Replace(".level", "");
                 Parse();
+                Discord.Presence("Play a level", "", new DiscordClasses.Img("default", "Level : " + fileDir[fileDir.Length - 1].Replace(".level", "")), null, -1, 0);
             }
             else
             {

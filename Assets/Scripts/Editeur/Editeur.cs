@@ -71,6 +71,10 @@ public class Editeur : MonoBehaviour
 
         Grille(false, true);
         GrilleOnOff(transform.GetChild(0).GetChild(5).GetComponent<Image>());
+
+
+        string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
+        Discord.Presence("In the editor", "Editing " + dirToPath[dirToPath.Length - 1].Replace(".level", ""), new DiscordClasses.Img("default"));
     }
 
     public void EditFile(string txt)
@@ -113,7 +117,7 @@ public class Editeur : MonoBehaviour
         if (GameObject.Find("Audio") != null)
         {
             menuMusic mm = GameObject.Find("Audio").GetComponent<menuMusic>();
-            mm.LoadMusic(mm.GetComponent<AudioSource>().clip);
+            mm.StartDefault();
         }
         Selection.SetActive(true);
         Selection.GetComponent<EditorSelect>().NewStart();
@@ -130,6 +134,7 @@ public class Editeur : MonoBehaviour
         transform.GetChild(0).GetChild(2).GetChild(1).GetComponent<CreatorManager>().array = 3;
         newblockid = -1;
         gameObject.SetActive(false);
+        Discord.Presence("In the editor", "", new DiscordClasses.Img("default"));
     }
     #endregion
 
