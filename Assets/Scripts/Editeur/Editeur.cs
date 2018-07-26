@@ -35,6 +35,7 @@ public class Editeur : MonoBehaviour
     public Sprite[] BulleDeveloppementCatSp;
 
     public Sprite GrilleSp;
+    public Sprite[] GrilleBtn;
     
 #if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
     public int CameraMouvementSpeed = 1;
@@ -101,6 +102,10 @@ public class Editeur : MonoBehaviour
 
         Grille(false, true);
         GrilleOnOff(transform.GetChild(0).GetChild(5).GetComponent<Image>());
+
+
+        string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
+        Discord.Presence("In the editor", "Editing " + dirToPath[dirToPath.Length-1].Replace(".level", ""), new DiscordClasses.Img("default"));
     }
 
     public void ExitEdit()
@@ -130,6 +135,7 @@ public class Editeur : MonoBehaviour
 
     private void Start()
     {
+        Discord.Presence("In the editor", "", new DiscordClasses.Img("default"));
         cam = Selection.GetComponent<EditorSelect>().Cam.GetComponent<Camera>();
         zoomIndicator.gameObject.SetActive(false);
         BulleDeveloppementCat.SetActive(false);
@@ -381,12 +387,12 @@ public class Editeur : MonoBehaviour
         Transform _Grille = BD.GetChild(BD.childCount - 1);
         if (_Grille.childCount > 0)
         {
-            Img.color = new Color32(255, 0, 0, 255);
+            Img.sprite = GrilleBtn[1];
             Grille(false, true);
         }
         else
         {
-            Img.color = new Color32(0, 255, 0, 255);
+            Img.sprite = GrilleBtn[0];
             Grille(true, false);
         }
     }
@@ -685,27 +691,30 @@ public class Editeur : MonoBehaviour
         if (Bloc == -1)
             Bloc = SelectedBlock;
 
-        string[] b = component[Bloc].Split(new string[] { "; " }, System.StringSplitOptions.None);
-
-        string[] Pos = b[1].Split(new string[] { ", " }, System.StringSplitOptions.None);
-        if (StatusID == 1.1F)
-            _component = "(" + _component + ", " + Pos[2];
-        else if (StatusID == 1.2F)
-            _component = Pos[0] + ", " + Pos[1] + ", " + _component + ")";
-
-        string c = "";
-        for (int i = 0; i < b.Length; i++)
+        if (Bloc != -1)
         {
-            if (i == (int)StatusID)
-                c = c + _component;
-            else c = c + b[i];
+            string[] b = component[Bloc].Split(new string[] { "; " }, System.StringSplitOptions.None);
 
-            if (i < b.Length - 1)
-                c = c + "; ";
+            string[] Pos = b[1].Split(new string[] { ", " }, System.StringSplitOptions.None);
+            if (StatusID == 1.1F)
+                _component = "(" + _component + ", " + Pos[2];
+            else if (StatusID == 1.2F)
+                _component = Pos[0] + ", " + Pos[1] + ", " + _component + ")";
+
+            string c = "";
+            for (int i = 0; i < b.Length; i++)
+            {
+                if (i == (int)StatusID)
+                    c = c + _component;
+                else c = c + b[i];
+
+                if (i < b.Length - 1)
+                    c = c + "; ";
+            }
+
+            component[Bloc] = c;
+            Instance(Bloc, true);
         }
-
-        component[Bloc] = c;
-        Instance(Bloc, true);
     }
     public string GetBlocStatus(float StatusID, int Bloc = -1)
     {
