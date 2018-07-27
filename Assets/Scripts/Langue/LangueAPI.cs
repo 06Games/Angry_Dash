@@ -32,6 +32,7 @@ public class LangueAPI : MonoBehaviour
         string what = "|" + id + " = ";
         return FormatString(Cherche(path, what));
     }
+    public static string StringWithArgument(string id, float arg) { return StringWithArgument(id, new string[] { arg.ToString() }); }
     public static string StringWithArgument(string id, string arg) { return StringWithArgument(id, new string[] { arg }); }
     public static string StringWithArgument(string id, string[] arg)
     {

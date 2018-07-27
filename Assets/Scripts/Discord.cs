@@ -59,9 +59,11 @@ public class Discord : MonoBehaviour
     /// <param name="detail">Titre 2 (null pour le désactiver)</param>
     /// <param name="lImage">Image 1 (null pour garder l'image actuelle)</param>
     /// <param name="sImage">Image 2 (null pour désactiver)</param>
-    /// <param name="remainingTime">Temps restant avant la fin de la partie (-1 pour le désactiver, 0 pour actuelement)</param>
-    /// <param name="startTime">Temps en seconde depuis le démarage de la partie (-1 pour le désactiver, 0 pour actuelement)</param>
-    public static void Presence(string state, string detail = null, Img lImage = null, Img sImage = null, int remainingTime = -1, long startTime = -1)
+    /// <param name="remainingTime">Temps restant avant la fin de la partie (-2 keep, -1 pour le désactiver, 0 pour actuelement)</param>
+    /// <param name="startTime">Temps en seconde depuis le démarage de la partie (-2 keep, -1 pour le désactiver, 0 pour actuelement)</param>
+    /// <param name="minPartySize">Taille actuelle de la partie, du lobby ou du groupe (-1 pour le désactiver)</param>
+    /// <param name="maxPartySize">Taille maximale de la partie, du lobby ou du groupe (-1 pour le désactiver)</param>
+    public static void Presence(string state, string detail = null, Img lImage = null, Img sImage = null, int remainingTime = -1, long startTime = -1, int minPartySize = -1, int maxPartySize = -1)
     {
 #if UNITY_STANDALONE
         GameObject go = GameObject.Find("Discord");
@@ -108,7 +110,8 @@ public class Discord : MonoBehaviour
         //End Timestamp
         if (remainingTime >= 0)
             presence.endTimestamp = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds) + remainingTime;
-        else presence.endTimestamp = 0;
+        else if(remainingTime == -1)
+            presence.endTimestamp = 0;
         
         //Start Timestamp
         if (startTime == 0)

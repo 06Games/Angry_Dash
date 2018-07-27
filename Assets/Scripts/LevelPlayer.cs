@@ -5,7 +5,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LevelPlayer : MonoBehaviour {
+public class LevelPlayer : MonoBehaviour
+{
 
 
     string file;
@@ -44,7 +45,7 @@ public class LevelPlayer : MonoBehaviour {
         cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;
 
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
-             FromFile();
+            FromFile();
     }
     void FromFile()
     {
@@ -219,7 +220,7 @@ public class LevelPlayer : MonoBehaviour {
         float[] c = new float[] { float.Parse(b[0]) * 50 + 25, float.Parse(b[1]) * 50 + 25, float.Parse(b[2]) };
         return new Vector3(c[0], c[1], c[2]);
     }
-    public static UnityEngine.Color HexToColor(string hex)
+    public static Color HexToColor(string hex)
     {
         byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
         byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
