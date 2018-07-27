@@ -302,7 +302,7 @@ public class Editeur : MonoBehaviour
 #elif UNITY_ANDROID || UNITY_IOS
         bool isSimple = !AddBlocking & (Input.touchCount == 1 | Input.touchCount == 2);
         bool isAdvence = AddBlocking & (Input.touchCount == 2 | Input.touchCount == 3);
-        if (isSimple | isAdvence)
+        if (isAdvence)
         {
             // Store both touches.
             Touch touchZero = Input.GetTouch(0);
@@ -326,6 +326,32 @@ public class Editeur : MonoBehaviour
             if (touchZero.position.y > screenCenterY & touchOne.position.y > screenCenterY)
                 MoveY = 1;
             else if (touchZero.position.y < screenCenterY & touchOne.position.y < screenCenterY)
+                MoveY = -1;
+
+            Deplacer(MoveX * Speed, MoveY * Speed);
+        }
+        else if (isSimple)
+        {
+            Touch touchZero = Input.GetTouch(0);
+
+            float screenCenterX = Screen.width * 0.5f;
+            float screenCenterY = Screen.height * 0.5f;
+
+            int MoveX = 0;
+            int MoveY = 0;
+
+            int Speed = CameraMouvementSpeed;
+            if (Input.touchCount == 3)
+                Speed = CameraMouvementSpeed * 2;
+
+            if (touchZero.position.x > screenCenterX)
+                MoveX = 1;
+            else if (touchZero.position.x < screenCenterX)
+                MoveX = -1;
+
+            if (touchZero.position.y > screenCenterY)
+                MoveY = 1;
+            else if (touchZero.position.y < screenCenterY)
                 MoveY = -1;
 
             Deplacer(MoveX * Speed, MoveY * Speed);
