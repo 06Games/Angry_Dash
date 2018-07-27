@@ -75,7 +75,7 @@ public class Editeur : MonoBehaviour
 
 
         string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
-        Discord.Presence("In the editor", "Editing " + dirToPath[dirToPath.Length - 1].Replace(".level", ""), new DiscordClasses.Img("default"));
+        Discord.Presence(LangueAPI.String("discordEditor_title"), LangueAPI.StringWithArgument("discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
     }
 
     public void EditFile(string txt)
@@ -110,7 +110,7 @@ public class Editeur : MonoBehaviour
 
 
         string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
-        Discord.Presence("In the editor", "Editing " + dirToPath[dirToPath.Length - 1].Replace(".level", ""), new DiscordClasses.Img("default"));
+        Discord.Presence(LangueAPI.String("discordEditor_title"), LangueAPI.StringWithArgument("discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
     }
 
     public void ExitEdit()
@@ -133,13 +133,13 @@ public class Editeur : MonoBehaviour
         transform.GetChild(0).GetChild(2).GetChild(1).GetComponent<CreatorManager>().array = 3;
         newblockid = -1;
         gameObject.SetActive(false);
-        Discord.Presence("In the editor", "", new DiscordClasses.Img("default"));
+        Discord.Presence(LangueAPI.String("discordEditor_title"), "", new DiscordClasses.Img("default"));
     }
     #endregion
 
     private void Start()
     {
-        Discord.Presence("In the editor", "", new DiscordClasses.Img("default"));
+        Discord.Presence(LangueAPI.String("discordEditor_title"), "", new DiscordClasses.Img("default"));
         cam = Selection.GetComponent<EditorSelect>().Cam.GetComponent<Camera>();
         zoomIndicator.gameObject.SetActive(false);
         BulleDeveloppementCat.SetActive(false);

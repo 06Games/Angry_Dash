@@ -32,6 +32,7 @@ public class LangueAPI : MonoBehaviour
         string what = "|" + id + " = ";
         return FormatString(Cherche(path, what));
     }
+    public static string StringWithArgument(string id, string arg) { return StringWithArgument(id, new string[] { arg }); }
     public static string StringWithArgument(string id, string[] arg)
     {
         string path = Application.persistentDataPath + "/Languages/" + ConfigAPI.GetString("Language") + ".lang";

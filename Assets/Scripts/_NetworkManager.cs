@@ -221,7 +221,7 @@ public class _NetworkManager : NetworkBehaviour
         NM.StartHost();
         StartData(true);
 
-        Discord.Presence("Play in a server", "", new DiscordClasses.Img("default"), null, -1, 0);
+        Discord.Presence(LangueAPI.String("discordServer_title"), "", new DiscordClasses.Img("default"), null, -1, 0);
     }
 
     public void Join()
@@ -235,7 +235,7 @@ public class _NetworkManager : NetworkBehaviour
         StartData(false);
         mapRequested = false;
 
-        Discord.Presence("Play in a server", "", new DiscordClasses.Img("default", "Server : "+adress+":"+port), null, -1, 0);
+        Discord.Presence(LangueAPI.String("discordServer_title"), "", new DiscordClasses.Img("default",LangueAPI.StringWithArgument("discordServer_caption", new string[] { adress, port.ToString() })), null, -1, 0);
     }
 
     void Error(NetworkMessage netMsg)
@@ -264,7 +264,7 @@ public class _NetworkManager : NetworkBehaviour
         for (int i = 0; i < Items.transform.childCount; i++)
             Destroy(Items.transform.GetChild(i).gameObject);
 
-        Discord.Presence("In the home menu", "", new DiscordClasses.Img("default"));
+        Discord.Presence(LangueAPI.String("discordHome_title"), "", new DiscordClasses.Img("default"));
     }
 
     private bool isSetup = false;

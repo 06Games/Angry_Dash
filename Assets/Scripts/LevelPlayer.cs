@@ -73,7 +73,7 @@ public class LevelPlayer : MonoBehaviour {
                 string[] fileDir = file.Split(new string[1] { "/" }, System.StringSplitOptions.None);
                 Base.GetChild(3).GetChild(0).GetComponent<Text>().text = fileDir[fileDir.Length - 1].Replace(".level", "");
                 Parse();
-                Discord.Presence("Play a level", "", new DiscordClasses.Img("default", "Level : " + fileDir[fileDir.Length - 1].Replace(".level", "")), null, -1, 0);
+                Discord.Presence(LangueAPI.String("discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("discordPlaying_caption", fileDir[fileDir.Length - 1].Replace(".level", ""))), null, -1, 0);
             }
             else
             {
@@ -204,7 +204,7 @@ public class LevelPlayer : MonoBehaviour {
                 GameObject go = null;
                 try
                 {
-                    go = Instantiate(Prefabs[(int)id - 1], pos, rot, place);
+                    go = Instantiate(TriggerPref[0], pos, rot, place);
                 }
                 catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
                 go.name = "Trigger n° " + num;

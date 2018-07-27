@@ -63,7 +63,7 @@ public class BaseControl : MonoBehaviour
             Screen.fullScreen = !Screen.fullScreen;
 
         if (SceneManager.GetActiveScene().name == "Home")
-            Discord.Presence("In the home menu", "", new DiscordClasses.Img("default"));
+            Discord.Presence(LangueAPI.String("discordHome_title"), "", new DiscordClasses.Img("default"));
     }
 
     public static bool CheckTex()
