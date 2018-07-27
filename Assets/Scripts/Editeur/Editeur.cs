@@ -728,13 +728,17 @@ public class Editeur : MonoBehaviour
 
         if (file != "" & component.Length > Bloc)
         {
-            string[] a = component[Bloc].Split(new string[] { "; " }, System.StringSplitOptions.None);
+            try
+            {
+                string[] a = component[Bloc].Split(new string[] { "; " }, System.StringSplitOptions.None);
 
-            if (StatusID < a.Length & StatusID == (int)StatusID)
-                return a[(int)StatusID];
-            else if (StatusID < a.Length)
-                return a[(int)StatusID].Split(new string[] { ", " }, System.StringSplitOptions.None)[(int)(StatusID * 10 - (int)StatusID * 10)].Replace(")", "").Replace("(", "");
-            else return "";
+                if (StatusID < a.Length & StatusID == (int)StatusID)
+                    return a[(int)StatusID];
+                else if (StatusID < a.Length)
+                    return a[(int)StatusID].Split(new string[] { ", " }, System.StringSplitOptions.None)[(int)(StatusID * 10 - (int)StatusID * 10)].Replace(")", "").Replace("(", "");
+                else return "";
+            }
+            catch { return ""; }
         }
         else return "";
     }
