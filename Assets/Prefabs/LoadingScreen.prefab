@@ -251,6 +251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: loadingScene
+  keepIfNotExist: 1
   arg: []
 --- !u!114 &114503613566305770
 MonoBehaviour:
@@ -271,7 +272,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 0f835ce518f0a24419a6aae973493044, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 40bb10ca360725945af0e40accd2e8a6, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -448,6 +449,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadingScreenObj: {fileID: 1957322146981096}
   slider: {fileID: 114564806027056226}
+  Backgrounds:
+  - {fileID: 21300000, guid: 0f835ce518f0a24419a6aae973493044, type: 3}
+  - {fileID: 21300000, guid: 40bb10ca360725945af0e40accd2e8a6, type: 3}
 --- !u!114 &114912795952852872
 MonoBehaviour:
   m_ObjectHideFlags: 1
