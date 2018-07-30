@@ -79,6 +79,15 @@ public class EditorSelect : MonoBehaviour
 
     public void ChangLevel(int button)
     {
+        if (button != -1)
+        {
+            SongUsed.transform.parent.gameObject.SetActive(true);
+            transform.GetChild(2).GetChild(2).gameObject.SetActive(true);
+            Info.SetActive(true);
+            Selector.transform.parent.position = new Vector2((Screen.width / 2) - 308.5F, Screen.height / 2);
+            Selector.transform.parent.GetChild(2).gameObject.SetActive(false);
+        }
+
         SelectedLevel = button + (lastItem - 4);
 
         for (int i = 1; i < 6; i++)
@@ -89,9 +98,15 @@ public class EditorSelect : MonoBehaviour
         }
         if (button != -1)
         {
-            if (button != -1 & Desc[button] != "")
+            if (Desc[button] != "")
                 Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = Desc[button];
             else Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = "Description incompatible";
+
+            string[] Name = file[SelectedLevel].Split(new string[] { "/", "\\" }, StringSplitOptions.None);
+            string fileName = Name[Name.Length - 1].Replace(".level", "");
+            if (fileName != "")
+                Info.transform.GetChild(0).GetChild(0).gameObject.GetComponent<InputField>().text = fileName;
+            else Info.transform.GetChild(0).GetChild(0).gameObject.GetComponent<InputField>().text = "";
 
             SongUsed.text = Songs[button];
         }
@@ -123,6 +138,21 @@ public class EditorSelect : MonoBehaviour
                 IF.text = "Description incompatible";
             }
             File.WriteAllLines(file[SelectedLevel], a);
+        }
+    }
+    public void ChangName(InputField IF)
+    {
+        if (SelectedLevel != -1 & !string.IsNullOrEmpty(IF.text))
+        {
+            if (!File.Exists(Application.persistentDataPath + "/Saved Level/" + IF.text.ToLower() + ".level"))
+            {
+                string newFile = Application.persistentDataPath + "/Saved Level/" + IF.text + ".level";
+                File.Move(file[SelectedLevel], newFile);
+                file[SelectedLevel] = newFile;
+                Page(0);
+
+                ChangLevel(4-(lastItem-SelectedLevel));
+            }
         }
     }
 
@@ -181,10 +211,18 @@ public class EditorSelect : MonoBehaviour
 
     public void Page(int v)
     {
+        SongUsed.transform.parent.gameObject.SetActive(false);
+        transform.GetChild(2).GetChild(2).gameObject.SetActive(false);
+        Info.SetActive(false);
+        Selector.transform.parent.position = new Vector2(Screen.width / 2, Screen.height / 2);
+        Selector.transform.parent.GetChild(2).gameObject.SetActive(true);
+
         int f = lastItem + 1;
 
         if (v == -1)
             f = lastItem - 9;
+        else if (v == 0)
+            f = lastItem - 4;
 
         lastItem = f + 4;
 

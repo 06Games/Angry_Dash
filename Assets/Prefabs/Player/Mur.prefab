@@ -105,6 +105,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trigger: 0
+  colider: 0
+  boostMultiplier: 0
 --- !u!212 &212114417043945686
 SpriteRenderer:
   m_ObjectHideFlags: 1
