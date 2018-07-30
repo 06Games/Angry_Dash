@@ -34,26 +34,20 @@ public class EditorOnline : MonoBehaviour
     public void Search(InputField IF)
     {
         files = new string[0];
-
-        if (IF != null)
+        if (InternetAPI.IsConnected())
         {
-            if (!string.IsNullOrEmpty(IF.text))
-            {
-                if (InternetAPI.IsConnected())
-                {
-                    rZone.gameObject.SetActive(true);
-                    string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + IF.text;
-                    WebClient client = new WebClient();
-                    ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            rZone.gameObject.SetActive(true);
+            string key = "";
+            if (IF != null) key = IF.text;
+            if (string.IsNullOrEmpty(key)) key = "/";
+            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + key;
+            WebClient client = new WebClient();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-                    string Result = "";
-                    try { Result = client.DownloadString(URL.Replace(" ", "%20")); } catch {}
-                    files = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
-                }
-            }
-            else rZone.gameObject.SetActive(false);
+            string Result = "";
+            try { Result = client.DownloadString(URL.Replace(" ", "%20")); } catch { }
+            files = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
         }
-        else rZone.gameObject.SetActive(false);
 
         int item = 0;
         int length = files.Length;
@@ -97,17 +91,17 @@ public class EditorOnline : MonoBehaviour
                 if (string.IsNullOrEmpty(music[item])) { music[item] = ""; }
                 if (string.IsNullOrEmpty(author[item])) { author[item] = LangueAPI.String(ids[0]); }
                 if (string.IsNullOrEmpty(id[item])) { id[item] = LangueAPI.String(ids[1]); }
-            
+
 
                 item = item + 1;
             }
         }
 
         rZone.GetChild(4).GetChild(0).GetComponent<Button>().interactable = page > 0;
-        rZone.GetChild(4).GetChild(1).GetComponent<Button>().interactable = page+4 < level.Length;
-        for (int i = page; i < page+4; i++)
+        rZone.GetChild(4).GetChild(1).GetComponent<Button>().interactable = page + 4 < level.Length;
+        for (int i = page; i < page + 4; i++)
         {
-            Transform go = rZone.GetChild(i-page);
+            Transform go = rZone.GetChild(i - page);
 
             if (i < item)
             {
@@ -127,7 +121,7 @@ public class EditorOnline : MonoBehaviour
 
         for (int i = page; i < page + 4; i++)
         {
-            Transform go = rZone.GetChild(i-page);
+            Transform go = rZone.GetChild(i - page);
             if (i < level.Length)
             {
                 go.gameObject.SetActive(true);
@@ -142,7 +136,7 @@ public class EditorOnline : MonoBehaviour
     int actual = 0;
     public void OpenLevelMenu(int l)
     {
-        actual = page+l;
+        actual = page + l;
         levelPanel.GetChild(1).GetChild(0).GetComponent<Text>().text = level[actual];
         levelPanel.GetChild(1).GetChild(2).GetComponent<Text>().text = author[actual];
 
@@ -167,7 +161,7 @@ public class EditorOnline : MonoBehaviour
             if (!Directory.Exists(Application.persistentDataPath + "/Musics/"))
                 Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
 
-            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/mp3/"+music[actual].Replace(" ", "%20") + ".mp3";
+            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/mp3/" + music[actual].Replace(" ", "%20") + ".mp3";
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
             URL = URL.Replace("/mp3/", "/ogg/").Replace(".mp3", ".ogg");
 #endif
