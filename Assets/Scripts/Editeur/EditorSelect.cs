@@ -8,6 +8,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 using Crosstales.FB;
+using System.Net;
 
 public class EditorSelect : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class EditorSelect : MonoBehaviour
     public GameObject Info;
     public GameObject Cam;
     public GameObject _NewG;
+    public GameObject UploadPanel;
     InputField[] _New = new InputField[2];
     public Editeur editeur;
     public Soundboard SoundBoard;
@@ -33,7 +35,7 @@ public class EditorSelect : MonoBehaviour
         _New[0] = _NewG.transform.GetChild(0).GetChild(2).gameObject.GetComponent<InputField>();
         _New[1] = _NewG.transform.GetChild(0).GetChild(3).gameObject.GetComponent<InputField>();
         transform.GetChild(0).gameObject.SetActive(true);
-        for(int i = 1; i < transform.childCount; i++)
+        for (int i = 1; i < transform.childCount; i++)
             transform.GetChild(i).gameObject.SetActive(false);
         NewStart();
     }
@@ -106,7 +108,7 @@ public class EditorSelect : MonoBehaviour
         {
             Desc[SelectedLevel] = IF.text;
             string[] a = File.ReadAllLines(file[SelectedLevel]);
-            
+
             int d = -1;
             for (int x = 0; x < a.Length; x++)
             {
@@ -115,7 +117,8 @@ public class EditorSelect : MonoBehaviour
             }
             if (d != -1)
                 a[d] = "description = " + Desc[SelectedLevel];
-            else {
+            else
+            {
                 Desc[SelectedLevel] = "";
                 IF.text = "Description incompatible";
             }
@@ -125,7 +128,7 @@ public class EditorSelect : MonoBehaviour
 
     public void Play()
     {
-        if(GameObject.Find("Audio") != null)
+        if (GameObject.Find("Audio") != null)
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
         editeur.EditFile(file[SelectedLevel]);
     }
@@ -178,9 +181,9 @@ public class EditorSelect : MonoBehaviour
 
     public void Page(int v)
     {
-       int f = lastItem + 1;
+        int f = lastItem + 1;
 
-        if(v == -1)
+        if (v == -1)
             f = lastItem - 9;
 
         lastItem = f + 4;
@@ -285,10 +288,10 @@ public class EditorSelect : MonoBehaviour
 
     public void Share()
     {
-        string[] dirToPath = file[SelectedLevel].Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
-
         string filePath = file[SelectedLevel];
-        string fileName = dirToPath[dirToPath.Length - 1].Replace(".level", "");
+
+        string[] Name = filePath.Split(new string[] { "/", "\\" }, StringSplitOptions.None);
+        string fileName = Name[Name.Length - 1].Replace(".level", "");
         ExtensionFilter[] extensionFilter = new ExtensionFilter[] { new ExtensionFilter("level file", "level") }; //Windows filter
 
 #if UNITY_STANDALONE || UNITY_EDITOR
@@ -303,5 +306,127 @@ public class EditorSelect : MonoBehaviour
         "Select sharing app" //chooserText
         );
 #endif
+    }
+
+    public void Publish()
+    {
+        UploadPanel.transform.GetChild(0).gameObject.SetActive(false);
+        UploadPanel.transform.GetChild(1).gameObject.SetActive(false);
+        UploadPanel.SetActive(true);
+
+        WebClient client = new WebClient();
+        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        string Result = "";
+
+        string[] Name = file[SelectedLevel].Split(new string[] { "/", "\\" }, StringSplitOptions.None);
+        string fileName = Name[Name.Length - 1].Replace(".level", "");
+        try { Result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + ConfigAPI.GetString("Account.Username") + "/" + fileName); } catch { UploadPanel.SetActive(false); return; }
+        string[] keyFiles = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
+
+        int length = keyFiles.Length;
+        if (length > 0)
+        {
+            if (keyFiles[length - 1] == "")
+                length = length - 1;
+        }
+
+        for (int i = 0; i < length; i++)
+        {
+            if (!string.IsNullOrEmpty(keyFiles[i]))
+            {
+                string[] keyFile = new string[1] { keyFiles[i] };
+                if (keyFiles[i].Contains(" ; "))
+                    keyFile = keyFiles[i].Split(new string[1] { " ; " }, System.StringSplitOptions.None);
+
+                string level = "";
+                string author = "";
+                string description = "";
+                float stars = 0;
+                for (int l = 0; l < keyFile.Length; l++)
+                {
+
+                    string[] line = keyFile[l].Split(new string[1] { " = " }, System.StringSplitOptions.None);
+                    if (line[0] == "level")
+                        level = keyFile[l].Replace("level = ", "");
+                    else if (line[0] == "author")
+                        author = keyFile[l].Replace("author = ", "");
+                    else if (line[0] == "description")
+                        description = keyFile[l].Replace("description = ", "");
+                }
+
+                if (level == fileName & author == ConfigAPI.GetString("Account.Username"))
+                {
+                    Transform Uploaded = UploadPanel.transform.GetChild(1);
+                    Uploaded.GetChild(1).GetChild(0).GetComponent<Text>().text = level;
+                    Uploaded.GetChild(2).GetChild(0).GetComponent<Text>().text = description;
+                    Uploaded.GetChild(3).GetComponent<Dropdown>().value = 0;
+                    Uploaded.GetChild(3).GetComponent<Dropdown>().interactable = true;
+                    Uploaded.GetChild(4).gameObject.SetActive(stars > 0);
+                    for (int s = 0; s < 5; s++)
+                    {
+                        Transform go = Uploaded.GetChild(4).GetChild(s);
+                        if (stars > s)
+                            go.GetComponent<Image>().color = new Color32(255, 255, 0, 255);
+                        else go.GetComponent<Image>().color = new Color32(180, 180, 180, 255);
+                        if (stars > s + 0.5F)
+                            go.GetChild(0).GetComponent<Image>().color = new Color32(255, 255, 0, 255);
+                        else go.GetChild(0).GetComponent<Image>().color = new Color32(180, 180, 180, 255);
+                    }
+                    Uploaded.GetChild(5).GetComponent<Button>().interactable = false;
+                    Uploaded.GetChild(5).GetComponent<Image>().color = new Color32(0, 255, 0, 255);
+                    Uploaded.gameObject.SetActive(true);
+                    return;
+                }
+            }
+        }
+
+        Transform FirstTime = UploadPanel.transform.GetChild(0);
+        FirstTime.GetChild(2).GetComponent<InputField>().text = fileName;
+        FirstTime.GetChild(3).GetComponent<InputField>().text = Desc[SelectedLevel];
+        FirstTime.gameObject.SetActive(true);
+    }
+
+    public void Publish_Upload()
+    {
+        Transform FirstTime = UploadPanel.transform.GetChild(0);
+        string lvlName = FirstTime.GetChild(2).GetComponent<InputField>().text;
+        string lvlDesc = FirstTime.GetChild(3).GetComponent<InputField>().text;
+        FirstTime.gameObject.SetActive(false);
+
+        Transform Uploaded = UploadPanel.transform.GetChild(1);
+        Uploaded.GetChild(1).GetChild(0).GetComponent<Text>().text = lvlName;
+        Uploaded.GetChild(2).GetChild(0).GetComponent<Text>().text = lvlDesc;
+        Uploaded.GetChild(3).GetComponent<Dropdown>().value = 0;
+        Uploaded.GetChild(3).GetComponent<Dropdown>().interactable = false;
+        Uploaded.GetChild(4).gameObject.SetActive(false);
+        Uploaded.GetChild(5).GetComponent<Button>().interactable = false;
+        Uploaded.GetChild(5).GetComponent<Image>().color = new Color32(180, 180, 180, 255);
+        Uploaded.gameObject.SetActive(true);
+
+        WebClient client = new WebClient();
+        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
+#if UNITY_EDITOR || UNITY_STANDALONE
+        string accPath = Application.persistentDataPath.Replace("Angry Dash", "06Games Launcher/") + "account.account";
+#elif UNITY_ANDROID
+        string accPath = Application.persistentDataPath.Replace("AngryDash", "Launcher") + "/account.account";
+#endif
+        string[] details = File.ReadAllLines(accPath);
+        string id = details[0].Replace("1 = ", "");
+        string mdp = details[1].Replace("2 = ", "");
+        string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/upload.php?id=" + id + "&mdp=" + mdp + "&level=" + lvlName;
+        byte[] responseArray = client.UploadData(URL, File.ReadAllBytes(file[SelectedLevel]));
+        string Result = System.Text.Encoding.ASCII.GetString(responseArray);
+
+        if (Result.Contains("Sucess"))
+        {
+            Uploaded.GetChild(5).GetComponent<Button>().interactable = false;
+            Uploaded.GetChild(5).GetComponent<Image>().color = new Color32(0, 255, 0, 255);
+        }
+        else
+        {
+            Uploaded.GetChild(5).GetComponent<Button>().interactable = true;
+            Uploaded.GetChild(5).GetComponent<Image>().color = new Color32(255, 0, 0, 255);
+        }
     }
 }
