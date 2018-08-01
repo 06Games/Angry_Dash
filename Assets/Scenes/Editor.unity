@@ -13702,6 +13702,7 @@ GameObject:
   m_Component:
   - component: {fileID: 606843291}
   - component: {fileID: 606843292}
+  - component: {fileID: 606843293}
   m_Layer: 5
   m_Name: Contenu
   m_TagString: Untagged
@@ -13750,6 +13751,24 @@ MonoBehaviour:
   - {fileID: 1307086004}
   - {fileID: 398817256}
   array: 3
+--- !u!114 &606843293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 606843290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf4dc1bdd8ccc60498b6a9fdf6d99e91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menu: 0300000002000000040000000100000000000000
+  keys:
+  - Alpha1
+  - Alpha2
+  - Alpha3 | Delete
+  - Alpha4
+  - Alpha5
 --- !u!1 &617188651
 GameObject:
   m_ObjectHideFlags: 0
