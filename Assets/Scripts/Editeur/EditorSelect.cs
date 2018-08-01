@@ -102,9 +102,7 @@ public class EditorSelect : MonoBehaviour
         }
         if (button != -1)
         {
-            if (Desc[button] != "")
-                Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = Desc[button];
-            else Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = "Description incompatible";
+            Info.transform.GetChild(1).GetChild(0).gameObject.GetComponent<InputField>().text = Desc[button];
 
             string[] Name = file[SelectedLevel].Split(new string[] { "/", "\\" }, StringSplitOptions.None);
             string fileName = Name[Name.Length - 1].Replace(".level", "");
@@ -183,32 +181,20 @@ public class EditorSelect : MonoBehaviour
     public void New()
     {
         bool n = File.Exists(Application.persistentDataPath + "/Saved Level/" + _New[0].text.ToLower() + ".level");
-        bool d = _New[1].text == "" | _New[1].text == null;
 
-        if (!n & !d)
+        if (!n)
         {
             editeur.CreateFile(_New[0].text.ToLower(), Application.persistentDataPath + "/Saved Level/", _New[1].text);
 
             if (GameObject.Find("Audio") != null)
                 GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
         }
-        else
-        {
-            CheckNewLevelName(_New[0]);
-            CheckNewLevelDesc(_New[1]);
-        }
+        else CheckNewLevelName(_New[0]);
     }
     public void CheckNewLevelName(InputField IF)
     {
         Image i = IF.transform.GetChild(3).gameObject.GetComponent<Image>();
         if (File.Exists(Application.persistentDataPath + "/Saved Level/" + IF.text.ToLower() + ".level") | IF.text == "")
-            i.color = new Color32(163, 0, 0, 255);
-        else i.color = new Color32(129, 129, 129, 255);
-    }
-    public void CheckNewLevelDesc(InputField IF)
-    {
-        Image i = IF.transform.GetChild(3).gameObject.GetComponent<Image>();
-        if (IF.text == "" | IF.text == null)
             i.color = new Color32(163, 0, 0, 255);
         else i.color = new Color32(129, 129, 129, 255);
     }
@@ -255,7 +241,7 @@ public class EditorSelect : MonoBehaviour
                         d = x;
                 }
                 if (d == -1)
-                    Desc[i] = "";
+                    Desc[i] = "Description incompatible";
                 else Desc[i] = a[d].Replace("description = ", "");
 
                 int m = -1;
