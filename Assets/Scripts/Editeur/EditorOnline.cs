@@ -162,9 +162,6 @@ public class EditorOnline : MonoBehaviour
                 Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
 
             string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/mp3/" + music[actual].Replace(" ", "%20") + ".mp3";
-#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
-            URL = URL.Replace("/mp3/", "/ogg/").Replace(".mp3", ".ogg");
-#endif
 
             levelPanel.GetChild(4).GetChild(1).gameObject.SetActive(false);
             levelPanel.GetChild(4).GetChild(2).gameObject.SetActive(true);
@@ -174,7 +171,11 @@ public class EditorOnline : MonoBehaviour
                 sw.Start();
                 wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                 wc.DownloadFileCompleted += wc_DownloadFileCompleted;
-                wc.DownloadFileAsync(new Uri(URL), Application.persistentDataPath + "/Musics/" + music[actual]);
+
+                string path = Application.persistentDataPath + "/Musics/";
+                if (Soundboard.NativeFileFormat() == AudioType.OGGVORBIS)
+                    path = Application.temporaryCachePath + "/";
+                wc.DownloadFileAsync(new Uri(URL), path + music[actual]);
             }
         }
     }
@@ -221,6 +222,22 @@ public class EditorOnline : MonoBehaviour
             print("An error ocurred while trying to download file\n" + e.Error);
             return;
         }
+        else if (Soundboard.NativeFileFormat() == AudioType.OGGVORBIS)
+        {
+            string fileName = music[actual];
+            UnityThread.executeInUpdate(() =>
+            {
+                if (File.Exists(Application.temporaryCachePath + "/" + fileName + ".mp3"))
+                    File.Delete(Application.temporaryCachePath + "/" + fileName + ".mp3");
+                File.Move(Application.temporaryCachePath + "/" + fileName, Application.temporaryCachePath + "/" + fileName + ".mp3");
+
+                if (File.Exists(Application.persistentDataPath + "/Musics/" + fileName + ".ogg"))
+                    File.Delete(Application.persistentDataPath + "/Musics/" + fileName + ".ogg");
+
+
+                FFmpeg.FFmpegAPI.Convert(Application.temporaryCachePath + "/" + fileName + ".mp3", Application.temporaryCachePath + "/" + fileName + ".ogg", new FFmpeg.handler(ConvertEnd));
+            });
+        }
         else
         {
             UnityThread.executeInUpdate(() =>
@@ -229,6 +246,21 @@ public class EditorOnline : MonoBehaviour
                 levelPanel.GetChild(4).GetChild(2).gameObject.SetActive(false);
             });
         }
+    }
+    void ConvertEnd(object sender, EventArgs e)
+    {
+        UnityThread.executeInUpdate(() =>
+        {
+            string fileName = music[actual];
+            if (File.Exists(Application.temporaryCachePath + "/" + fileName + ".mp3"))
+                File.Delete(Application.temporaryCachePath + "/" + fileName + ".mp3");
+            if (File.Exists(Application.persistentDataPath + "/Musics/" + fileName))
+                File.Delete(Application.persistentDataPath + "/Musics/" + fileName);
+            File.Move(Application.temporaryCachePath + "/" + fileName + ".ogg", Application.persistentDataPath + "/Musics/" + fileName);
+
+            levelPanel.GetChild(4).GetChild(1).gameObject.SetActive(false);
+            levelPanel.GetChild(4).GetChild(2).gameObject.SetActive(false);
+        });
     }
 
     public void PlayLevel()
