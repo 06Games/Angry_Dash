@@ -14,6 +14,7 @@ public class EditorSelect : MonoBehaviour
 {
     public Text SongUsed;
     public GameObject Selector;
+    public Sprite[] SelectorSp;
     public GameObject Info;
     public GameObject Cam;
     public GameObject _NewG;
@@ -85,6 +86,9 @@ public class EditorSelect : MonoBehaviour
             transform.GetChild(2).GetChild(2).gameObject.SetActive(true);
             Info.SetActive(true);
             Selector.transform.parent.position = new Vector2((Screen.width / 2) - 308.5F, Screen.height / 2);
+            Selector.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(617, 1008);
+            Selector.GetComponent<Image>().sprite = SelectorSp[0];
+            Selector.transform.parent.GetChild(1).GetComponent<RectTransform>().anchoredPosition = new Vector2(43.5F - (Selector.transform.parent.GetComponent<RectTransform>().sizeDelta.x / 2), -37.5F);
             Selector.transform.parent.GetChild(2).gameObject.SetActive(false);
         }
 
@@ -151,7 +155,7 @@ public class EditorSelect : MonoBehaviour
                 file[SelectedLevel] = newFile;
                 Page(0);
 
-                ChangLevel(4-(lastItem-SelectedLevel));
+                ChangLevel(4 - (lastItem - SelectedLevel));
             }
         }
     }
@@ -215,6 +219,9 @@ public class EditorSelect : MonoBehaviour
         transform.GetChild(2).GetChild(2).gameObject.SetActive(false);
         Info.SetActive(false);
         Selector.transform.parent.position = new Vector2(Screen.width / 2, Screen.height / 2);
+        Selector.transform.parent.GetComponent<RectTransform>().sizeDelta = new Vector2(1234, 1008);
+        Selector.GetComponent<Image>().sprite = SelectorSp[1];
+        Selector.transform.parent.GetChild(1).GetComponent<RectTransform>().anchoredPosition = new Vector2(-250, -37.5F);
         Selector.transform.parent.GetChild(2).gameObject.SetActive(true);
 
         int f = lastItem + 1;
