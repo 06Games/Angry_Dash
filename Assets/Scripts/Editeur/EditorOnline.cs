@@ -15,6 +15,7 @@ public class EditorOnline : MonoBehaviour
     public Transform levelPanel;
     public Transform CommentPanel;
     public Transform InfoPanel;
+    public Transform loadingPanel;
     public Editeur Editor;
     public string[] ids;
     string[] files;
@@ -45,7 +46,12 @@ public class EditorOnline : MonoBehaviour
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
             string Result = "";
+            loadingPanel.gameObject.SetActive(true);
+            loadingPanel.GetChild(0).GetComponent<GIF_Reader>().StartGIF();
             try { Result = client.DownloadString(URL.Replace(" ", "%20")); } catch { }
+            loadingPanel.gameObject.SetActive(false);
+            loadingPanel.GetChild(0).GetComponent<GIF_Reader>().StopGIF();
+
             files = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
         }
 
@@ -272,12 +278,23 @@ public class EditorOnline : MonoBehaviour
             WebClient client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-            string file = client.DownloadString(url.Replace(" ", "%20"));
+
+            loadingPanel.gameObject.SetActive(true);
+            loadingPanel.GetChild(0).GetComponent<GIF_Reader>().StartGIF();
+            string file = "";
+            try { file = client.DownloadString(url.Replace(" ", "%20")); } catch { }
+            loadingPanel.gameObject.SetActive(false);
+            loadingPanel.GetChild(0).GetComponent<GIF_Reader>().StopGIF();
+
             if (File.Exists(path))
                 File.Delete(path);
-            File.WriteAllText(path, file);
-            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { path, "Editor/Online" });
-            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
+
+            if (!string.IsNullOrEmpty(file))
+            {
+                File.WriteAllText(path, file);
+                File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { path, "Editor/Online" });
+                GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
+            }
         }
     }
 }
