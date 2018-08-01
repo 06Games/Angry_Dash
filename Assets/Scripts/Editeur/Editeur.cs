@@ -71,7 +71,7 @@ public class Editeur : MonoBehaviour
         OpenCat(-1);
 
         Grille(false, true);
-        GrilleOnOff(transform.GetChild(0).GetChild(5).GetComponent<Image>());
+        GrilleOnOff(ConfigAPI.GetBool("editor.Grid"), transform.GetChild(0).GetChild(5).GetComponent<Image>());
 
 
         string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
@@ -106,7 +106,7 @@ public class Editeur : MonoBehaviour
         OpenCat(-1);
 
         Grille(false, true);
-        GrilleOnOff(transform.GetChild(0).GetChild(5).GetComponent<Image>());
+        GrilleOnOff(ConfigAPI.GetBool("editor.Grid"), transform.GetChild(0).GetChild(5).GetComponent<Image>());
 
 
         string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
@@ -415,7 +415,12 @@ public class Editeur : MonoBehaviour
     {
         Transform BD = GameObject.Find("BackgroundDiv").transform;
         Transform _Grille = BD.GetChild(BD.childCount - 1);
-        if (_Grille.childCount > 0)
+        GrilleOnOff(!(_Grille.childCount > 0), Img);
+    }
+    void GrilleOnOff(bool on, Image Img) { 
+        Transform BD = GameObject.Find("BackgroundDiv").transform;
+        Transform _Grille = BD.GetChild(BD.childCount - 1);
+        if (!on)
         {
             Img.sprite = GrilleBtn[1];
             Grille(false, true);
@@ -425,9 +430,11 @@ public class Editeur : MonoBehaviour
             Img.sprite = GrilleBtn[0];
             Grille(true, false);
         }
+        ConfigAPI.SetBool("editor.Grid", on);
     }
     void Grille(bool needRespawn, bool del = false)
     {
+        if (!ConfigAPI.GetBool("editor.Grid")) return;
         Transform BD = GameObject.Find("BackgroundDiv").transform;
         Transform _Grille = BD.GetChild(BD.childCount - 1);
 
