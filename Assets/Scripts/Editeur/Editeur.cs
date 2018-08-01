@@ -424,6 +424,7 @@ public class Editeur : MonoBehaviour
     }
     void GrilleOnOff(bool on, Image Img)
     {
+        ConfigAPI.SetBool("editor.Grid", on);
         if (on) //Grid ON
         {
             Img.sprite = GrilleBtn[0];
@@ -434,11 +435,10 @@ public class Editeur : MonoBehaviour
             Img.sprite = GrilleBtn[1];
             Grille(false, true);
         }
-        ConfigAPI.SetBool("editor.Grid", on);
     }
     void Grille(bool needRespawn, bool del = false)
     {
-        if (!ConfigAPI.GetBool("editor.Grid")) return;
+        if (!ConfigAPI.GetBool("editor.Grid") & needRespawn) return;
         Transform BD = GameObject.Find("BackgroundDiv").transform;
         Transform _Grille = BD.GetChild(BD.childCount - 1);
 
