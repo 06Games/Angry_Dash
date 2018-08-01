@@ -3,27 +3,31 @@
 ## Introduction
 Le Gameplay d'Angry Dash est simple, on doit tirer pour traverser une « map » contenant des murs, pièges et effets.
 Un mode éditeur sera présent afin de créer ses propres niveaux. <br/>
+Le jeu aura une esthétique simple et moderne. Les graphismes varieront dans ce style.<br/>
 
 ## Fonctionalité
-1. Le jeu aura une esthétique simple et moderne. Les graphismes varieront dans ce style.
-2. Le mode éditeur sera ergonomique et complet. Les blocs auront chacun leurs fonctionnalités et seront modifiable (voir section Meta-données sur le [wiki](https://06games.ddns.net:8888/06Games/Angry_Dash/wiki/Méta-Données)). 
-3. Des triggers seront mis en place pour faire changer de couleur l’arrière-plan ou les blocs. D’autre trigger serviront à faire bouger ou pivoter les blocs.
-4. La communauté pourra partager ses niveaux et jouer au niveaux d'autre personnes. (**Prochainement**)
-5. Il y aura un multijoueur avec plusieurs modes de jeux pour vous amuser. (**Prochainement**)
-6. Le personnage ainsi que le tracet et leur couleurs seront personnalisable grace au magasin présent en jeu. La monnaie du magasin sera gagnée en terminant certain niveau.
-7. Un gestionnaire d’amis via le compte 06Games (associable avec un compte Google Jeux ou GameCenter) sera ajouté pour rejoindre vos amis facilement en jeu.
-8. Plusieurs thème « UI » de couleurs différentes seront proposés dans les paramètre du jeu (comme le thème foncé activé par défaut).
-9. Une API sera mise à disposition des développeurs afin de pouvoir créer des mods ajoutant de nouvelles fonctionnalités au jeu ainsi que pouvoir modifier certains aspects du jeu
+1. Le mode éditeur sera ergonomique et complet. Les blocs auront chacun leurs fonctionnalités et seront modifiables (voir section Meta-données sur le [wiki](https://06games.ddns.net:8888/06Games/Angry_Dash/wiki/Méta-Données)). 
+2. Des déclancheurs (triggers) seront mis en place pour faire changer de couleur l’arrière-plan ou les blocs. D’autre déclancheurs serviront à faire bouger ou pivoter les blocs.
+3. La communauté pourra partager ses niveaux et jouer au niveaux d'autre personnes.
+4. Il y aura un multijoueur avec plusieurs modes de jeux pour vous amuser.
+5. Le personnage, son tracet et ses couleurs seront personnalisable grace au magasin présent en jeu. La monnaie du magasin sera gagnée en terminant certain niveau.
+6. Un gestionnaire d’amis via le compte 06Games (associable avec un compte Google Jeux ou GameCenter) sera ajouté pour rejoindre vos amis facilement en jeu.
+7. Plusieurs thème « UI » seront proposés dans les paramètre du jeu (comme le thème foncé activé par défaut).
+8. Une API sera mise à disposition des développeurs afin de pouvoir créer des mods ajoutant de nouvelles fonctionnalités au jeu ainsi que pouvoir modifier certains aspects du jeu
 
 ## Credits
 
+*Les listes sont classées de la personne qui a le plus participé à la personne qui a le moins participé*
+
 |  | Réalisation / Maintien |
 | -------- | -------- |
+| Idées | **MazeWave, Evan Galli** |
 | Scripts | **Evan Galli** |
-| Musiques | **Evan Galli, MazeWave, LeoVideo, et autres artistes** |
+| Textures | **MazeWave, Evan Galli** |
 | Mise en page | **Evan Galli** |
-| Textures | **MazeWave** |
-| Idées | **Evan Galli, MazeWave** |
+| Musiques | **LeoVideo, MazeWave, Evan Galli, et autres artistes** |
+| Niveaux officiels | **LeoVideo, MazeWave** |
+| Tests | **Evan Galli, MazeWave, LeoVideo** |
 | Repos Git | **Evan Galli** |
 | Documentation | **Evan Galli** |
 
