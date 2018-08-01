@@ -21,7 +21,7 @@ Le jeu aura une esthétique simple et moderne. Les graphismes varieront dans ce 
 
 |  | Réalisation / Maintien |
 | -------- | -------- |
-| Idées | **MazeWave, Evan Galli** |
+| Concept | **MazeWave, Evan Galli, LeoVideo** |
 | Scripts | **Evan Galli** |
 | Textures | **MazeWave, Evan Galli** |
 | Mise en page | **Evan Galli** |
