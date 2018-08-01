@@ -47,9 +47,9 @@ public class LevelPlayer : MonoBehaviour
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
             FromFile();
     }
-    void FromFile()
+    void FromFile(string _file = null, string _fromScene = null)
     {
-        if (File.Exists(Application.temporaryCachePath + "/play.txt"))
+        if (File.Exists(Application.temporaryCachePath + "/play.txt") & string.IsNullOrEmpty(_file))
         {
             if (File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 1)
             {
@@ -81,6 +81,26 @@ public class LevelPlayer : MonoBehaviour
                 File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/Level 1.level", "Home" });
                 FromFile();
             }
+        }
+        else if (!string.IsNullOrEmpty(_file))
+        {
+            file = _file;
+            FromScene = _fromScene;
+            string scene = FromScene;
+            if (FromScene == "")
+                scene = "Home";
+            if (file == "")
+                GetComponent<BaseControl>().LSC.LoadScreen(scene);
+
+            component = File.ReadAllLines(file);
+
+            if (file.Contains(Application.temporaryCachePath))
+                File.Delete(file);
+
+            string[] fileDir = file.Split(new string[1] { "/" }, System.StringSplitOptions.None);
+            Base.GetChild(3).GetChild(0).GetComponent<Text>().text = fileDir[fileDir.Length - 1].Replace(".level", "");
+            Parse();
+            Discord.Presence(LangueAPI.String("discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("discordPlaying_caption", fileDir[fileDir.Length - 1].Replace(".level", ""))), null, -1, 0);
         }
         else
         {
@@ -258,7 +278,9 @@ public class LevelPlayer : MonoBehaviour
         GameObject.Find("Player").GetComponent<Player>().PeutAvancer = true;
         nbLancer = 0;
         Base.GetChild(3).gameObject.SetActive(false);
-        File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, FromScene });
-        FromFile();
+        //File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, FromScene });
+        if (!File.Exists(file))
+            File.WriteAllLines(file, component);
+        FromFile(file, FromScene);
     }
 }
