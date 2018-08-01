@@ -383,6 +383,7 @@ public class Soundboard : MonoBehaviour
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
 
         MusicPos = 0;
+        editor.bloqueSelect = false;
         gameObject.SetActive(false);
     }
 

@@ -191,7 +191,6 @@ public class Editeur : MonoBehaviour
         }
 
         //Détection de la localisation lors de l'ajout d'un bloc
-
         if (AddBlocking & !bloqueSelect)
         {
             KeyCode clic = KeyCode.Mouse0;
@@ -856,4 +855,5 @@ public class Editeur : MonoBehaviour
     }
 
     public void SelectModeChang(bool enable) { SelectMode = enable; }
+    public void BloqueActions(bool on) { bloqueSelect = on; }
 }
