@@ -334,27 +334,32 @@ public class Editeur : MonoBehaviour
         {
             Touch touchZero = Input.GetTouch(0);
 
-            float screenCenterX = Screen.width * 0.5f;
-            float screenCenterY = Screen.height * 0.5f;
+            bool isInTop = touchZero.position.y > Screen.height - (Screen.height / 10);
+            bool isInRightTop = touchZero.position.x > Screen.width - (Screen.width / 6);
+            if (touchZero.position.y > Screen.height / 4 & !(isInTop & isInRightTop))
+            {
+                float screenCenterX = Screen.width * 0.5f;
+                float screenCenterY = Screen.height * 0.5f;
 
-            int MoveX = 0;
-            int MoveY = 0;
+                int MoveX = 0;
+                int MoveY = 0;
 
-            int Speed = CameraMouvementSpeed;
-            if (Input.touchCount == 3)
-                Speed = CameraMouvementSpeed * 2;
+                int Speed = CameraMouvementSpeed;
+                if (Input.touchCount == 3)
+                    Speed = CameraMouvementSpeed * 2;
 
-            if (touchZero.position.x > screenCenterX)
-                MoveX = 1;
-            else if (touchZero.position.x < screenCenterX)
-                MoveX = -1;
+                if (touchZero.position.x > screenCenterX)
+                    MoveX = 1;
+                else if (touchZero.position.x < screenCenterX)
+                    MoveX = -1;
 
-            if (touchZero.position.y > screenCenterY)
-                MoveY = 1;
-            else if (touchZero.position.y < screenCenterY)
-                MoveY = -1;
+                if (touchZero.position.y > screenCenterY)
+                    MoveY = 1;
+                else if (touchZero.position.y < screenCenterY)
+                    MoveY = -1;
 
-            Deplacer(MoveX * Speed, MoveY * Speed);
+                Deplacer(MoveX * Speed, MoveY * Speed);
+            }
         }
 #endif
     }
@@ -419,15 +424,15 @@ public class Editeur : MonoBehaviour
     }
     void GrilleOnOff(bool on, Image Img)
     {
-        if (!on)
-        {
-            Img.sprite = GrilleBtn[1];
-            Grille(false, true);
-        }
-        else
+        if (on) //Grid ON
         {
             Img.sprite = GrilleBtn[0];
             Grille(true, false);
+        }
+        else //Grid OFF
+        {
+            Img.sprite = GrilleBtn[1];
+            Grille(false, true);
         }
         ConfigAPI.SetBool("editor.Grid", on);
     }
