@@ -120,10 +120,12 @@ public class EditorSelect : MonoBehaviour
     }
 
     public void ChangDesc(InputField IF)
+    { ChangDesc(IF.text); }
+    void ChangDesc(string IF)
     {
         if (SelectedLevel != -1)
         {
-            Desc[SelectedLevel] = IF.text;
+            Desc[SelectedLevel] = IF;
             string[] a = File.ReadAllLines(file[SelectedLevel]);
 
             int d = -1;
@@ -137,18 +139,20 @@ public class EditorSelect : MonoBehaviour
             else
             {
                 Desc[SelectedLevel] = "";
-                IF.text = "Description incompatible";
+                IF = "Description incompatible";
             }
             File.WriteAllLines(file[SelectedLevel], a);
         }
     }
     public void ChangName(InputField IF)
+    { ChangName(IF.text); }
+    void ChangName(string IF)
     {
-        if (SelectedLevel != -1 & !string.IsNullOrEmpty(IF.text))
+        if (SelectedLevel != -1 & !string.IsNullOrEmpty(IF))
         {
-            if (!File.Exists(Application.persistentDataPath + "/Saved Level/" + IF.text.ToLower() + ".level"))
+            if (!File.Exists(Application.persistentDataPath + "/Saved Level/" + IF.ToLower() + ".level"))
             {
-                string newFile = Application.persistentDataPath + "/Saved Level/" + IF.text + ".level";
+                string newFile = Application.persistentDataPath + "/Saved Level/" + IF + ".level";
                 File.Move(file[SelectedLevel], newFile);
                 file[SelectedLevel] = newFile;
                 Page(0);
@@ -405,6 +409,16 @@ public class EditorSelect : MonoBehaviour
                     }
                     Uploaded.GetChild(5).GetComponent<Button>().interactable = false;
                     Uploaded.GetChild(5).GetComponent<Image>().color = new Color32(0, 255, 0, 255);
+
+                    string result = "";
+                    try { result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + ConfigAPI.GetString("Account.Username") + "/" + fileName + ".level"); } catch { UploadPanel.SetActive(false); return; }
+                    if (result != File.ReadAllText(file[SelectedLevel]))
+                    {
+                        Uploaded.GetChild(6).gameObject.SetActive(true);
+                        Uploaded.GetChild(5).GetComponent<Button>().interactable = true;
+                        Uploaded.GetChild(5).GetComponent<Image>().color = new Color32(255, 255, 255, 255);
+                    }
+                    else Uploaded.GetChild(6).gameObject.SetActive(false);
                     Uploaded.gameObject.SetActive(true);
                     return;
                 }
@@ -417,12 +431,39 @@ public class EditorSelect : MonoBehaviour
         FirstTime.gameObject.SetActive(true);
     }
 
-    public void Publish_Upload()
+    public void Publish_Upload(bool isNew)
     {
-        Transform FirstTime = UploadPanel.transform.GetChild(0);
-        string lvlName = FirstTime.GetChild(2).GetComponent<InputField>().text;
-        string lvlDesc = FirstTime.GetChild(3).GetComponent<InputField>().text;
-        FirstTime.gameObject.SetActive(false);
+        string lvlName = "";
+        string lvlDesc = "";
+        if (isNew)
+        {
+            Transform FirstTime = UploadPanel.transform.GetChild(0);
+            lvlName = FirstTime.GetChild(2).GetComponent<InputField>().text;
+            lvlDesc = FirstTime.GetChild(3).GetComponent<InputField>().text;
+            FirstTime.gameObject.SetActive(false);
+
+            ChangName(lvlName);
+            ChangDesc(lvlDesc);
+        }
+        else
+        {
+            if (SelectedLevel != -1)
+            {
+                string[] a = File.ReadAllLines(file[SelectedLevel]);
+
+                int d = -1;
+                for (int x = 0; x < a.Length; x++)
+                {
+                    if (a[x].Contains("description = ") & d == -1)
+                        d = x;
+                }
+                if (d != -1)
+                    lvlDesc = a[d].Replace("description = ", "");
+
+                string[] Name = file[SelectedLevel].Split(new string[] { "/", "\\" }, StringSplitOptions.None);
+                lvlName = Name[Name.Length - 1].Replace(".level", "");
+            }
+        }
 
         Transform Uploaded = UploadPanel.transform.GetChild(1);
         Uploaded.GetChild(1).GetChild(0).GetComponent<Text>().text = lvlName;
@@ -432,6 +473,7 @@ public class EditorSelect : MonoBehaviour
         Uploaded.GetChild(4).gameObject.SetActive(false);
         Uploaded.GetChild(5).GetComponent<Button>().interactable = false;
         Uploaded.GetChild(5).GetComponent<Image>().color = new Color32(180, 180, 180, 255);
+        Uploaded.GetChild(6).gameObject.SetActive(false);
         Uploaded.gameObject.SetActive(true);
 
         WebClient client = new WebClient();
