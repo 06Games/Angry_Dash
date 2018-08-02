@@ -16,6 +16,10 @@ using System.Linq;
 public class BaseControl : MonoBehaviour
 {
     public string scene = "Home";
+    public bool returnScene = true;
+    [Serializable] public class OnCompleteEvent : UnityEvent{ }
+    [SerializeField] private OnCompleteEvent OnEchap;
+
     public LoadingScreenControl LSC;
 
     GameObject DownloadPanel;
@@ -86,16 +90,15 @@ public class BaseControl : MonoBehaviour
     bool sceneChanging = false;
     void Update()
     {
-        if (Input.GetKey(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (scene == "")
-            {
+            if (scene == "" & returnScene)
                 Base.Quit(true);
-            }
-            else if(!sceneChanging)
+            else if (!sceneChanging & returnScene)
                 LSC.LoadScreen(scene);
 
-            sceneChanging = true;
+            if (returnScene) sceneChanging = true;
+            OnEchap.Invoke();
         }
     }
 

@@ -76,6 +76,7 @@ public class Editeur : MonoBehaviour
 
         string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
         Discord.Presence(LangueAPI.String("discordEditor_title"), LangueAPI.StringWithArgument("discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
+        cam.GetComponent<BaseControl>().returnScene = false;
     }
 
     public void EditFile(string txt)
@@ -111,6 +112,7 @@ public class Editeur : MonoBehaviour
 
         string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
         Discord.Presence(LangueAPI.String("discordEditor_title"), LangueAPI.StringWithArgument("discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
+        cam.GetComponent<BaseControl>().returnScene = false;
     }
 
     public void ExitEdit()
@@ -134,6 +136,7 @@ public class Editeur : MonoBehaviour
         newblockid = -1;
         gameObject.SetActive(false);
         Discord.Presence(LangueAPI.String("discordEditor_title"), "", new DiscordClasses.Img("default"));
+        cam.GetComponent<BaseControl>().returnScene = true;
     }
     #endregion
 
@@ -856,4 +859,5 @@ public class Editeur : MonoBehaviour
 
     public void SelectModeChang(bool enable) { SelectMode = enable; }
     public void BloqueActions(bool on) { bloqueSelect = on; }
+    public void OnEchap() { if (!string.IsNullOrEmpty(file)) ExitEdit(); cam.GetComponent<BaseControl>().returnScene = true; }
 }
