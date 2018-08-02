@@ -43,7 +43,7 @@ public class LangueAPI : MonoBehaviour
         int i;
         for (i = 0; i < arg.Length; i++)
         {
-            c = c.Replace("[" + i + "]", arg[i]);
+            if(c != null) c = c.Replace("[" + i + "]", arg[i]);
         }
         return FormatString(c);
     }
@@ -98,7 +98,7 @@ public class LangueAPI : MonoBehaviour
         bool FilesExists = Directory.GetFiles(Application.persistentDataPath + "/Languages/").Length > 0;
         
         Base.ActiveObjectStatic(DownloadingFilesPanel.gameObject);
-
+        
         WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/index");
         yield return www;
         string[] All = www.text.Split(new string[] { "\n" }, StringSplitOptions.None);
