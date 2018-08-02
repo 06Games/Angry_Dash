@@ -44,9 +44,25 @@ public class Base : MonoBehaviour {
 
     public void PlayNewLevel(string LevelName)
     {
-        GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
-        File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/" +LevelName+".level", "Home" });
-        GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
+        if (File.Exists(Application.persistentDataPath + "/Level/Solo/" + LevelName + ".level"))
+        {
+            GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
+            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/" + LevelName + ".level", "Home" });
+            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
+        }
+        else
+        {
+            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/solo/";
+            WebClient client = new WebClient();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            string result = client.DownloadString(new Uri(url));
+            string[] results = result.Split(new string[] { "\n"}, StringSplitOptions.None);
+            int lenght = results.Length - 14;
+            if(string.IsNullOrEmpty(results[results.Length-1]))
+                lenght = results.Length - 15;
+
+            downloadFile(0, lenght);
+        }
     }
     
 

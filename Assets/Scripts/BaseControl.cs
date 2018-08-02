@@ -258,7 +258,7 @@ public class BaseControl : MonoBehaviour
             return;
         }
 
-        if (e.Error != null) // We have an error! Retry a few times, then abort.
+        if (e.Error != null) // We have an error ! Retry a few times, then abort.
         {
             print("An error ocurred while trying to download file\n" + e.Error);
 
@@ -291,7 +291,16 @@ public class BaseControl : MonoBehaviour
             }
             else
             {
-                Base.downloadFile(0, 1);
+                string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/solo/";
+                WebClient client = new WebClient();
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                string result = client.DownloadString(new Uri(url));
+                string[] results = result.Split(new string[] { "\n" }, StringSplitOptions.None);
+                int lenght = results.Length - 14;
+                if (string.IsNullOrEmpty(results[results.Length - 1]))
+                    lenght = results.Length - 15;
+                Base.downloadFile(0, lenght);
+
                 Base.DeactiveObjectStatic(DownloadPanel);
                 string[] lines = new string[2];
                 lines[0] = "[database]";
