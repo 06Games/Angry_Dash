@@ -244,7 +244,7 @@ public class Soundboard : MonoBehaviour
             if (editor.component[x].Contains("music = ") & d == -1)
                 d = x;
         }
-        if (d > -1)
+        if (d > -1 & !string.IsNullOrEmpty(editor.component[d].Replace("music = ", "")))
         {
             int p = -1;
             for (int i = 0; i < SongPath.Length; i++)
