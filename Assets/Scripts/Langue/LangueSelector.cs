@@ -5,7 +5,8 @@ using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LangueSelector : MonoBehaviour {
+public class LangueSelector : MonoBehaviour
+{
 
     public Transform Langues;
     public GameObject RestartRequire;
@@ -21,14 +22,16 @@ public class LangueSelector : MonoBehaviour {
 
     void Start() { NewStart(); transform.GetChild(0).gameObject.SetActive(false); }
 
-	void NewStart () {
+    void NewStart()
+    {
         if (string.IsNullOrEmpty(LangueAPI.LangGet()))
             ReloadScene();
 
         if (AutomatiqueUpdate)
             StartCoroutine(LangueAPI.UpdateFiles(DownloadingFilesPanel, this));
-        if(Langues.childCount <= 1)
-            StartCoroutine(GetLangDispo(AutomatiqueUpdate));
+        if (Langues != null)
+            if (Langues.childCount <= 1)
+                StartCoroutine(GetLangDispo(AutomatiqueUpdate));
 
         for (int i = 0; i < LangueDispo.Length; i++)
         {
@@ -44,13 +47,14 @@ public class LangueSelector : MonoBehaviour {
             for (int i = 0; i < LangueDispo.Length; i++)
             {
                 if (i == actuel)
-                    Langues.GetChild(i+1).GetChild(0).gameObject.SetActive(true);
-                else Langues.GetChild(i+1).GetChild(0).gameObject.SetActive(false);
+                    Langues.GetChild(i + 1).GetChild(0).gameObject.SetActive(true);
+                else Langues.GetChild(i + 1).GetChild(0).gameObject.SetActive(false);
             }
         }
     }
 
-    public void Chang(int i){
+    public void Chang(int i)
+    {
         if (i != actuel)
         {
             actuel = i;
@@ -100,7 +104,7 @@ public class LangueSelector : MonoBehaviour {
             go.GetComponent<Image>().sprite = LangFlag[dispo];
             go.gameObject.SetActive(true);
         }
-        
+
         int paddingX = (int)((Langues.GetComponent<RectTransform>().sizeDelta.x - (167 * lines)) / 2); ;
         Langues.GetComponent<HorizontalLayoutGroup>().padding.left = paddingX;
         Langues.GetComponent<HorizontalLayoutGroup>().padding.right = paddingX;

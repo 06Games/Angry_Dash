@@ -17,7 +17,7 @@ public class BaseControl : MonoBehaviour
 {
     public string scene = "Home";
     public bool returnScene = true;
-    [Serializable] public class OnCompleteEvent : UnityEvent{ }
+    [Serializable] public class OnCompleteEvent : UnityEvent { }
     [SerializeField] private OnCompleteEvent OnEchap;
 
     public LoadingScreenControl LSC;
@@ -41,7 +41,7 @@ public class BaseControl : MonoBehaviour
         if (GameObject.Find("Audio") == null)
             Instantiate(AudioPrefs).name = "Audio";
 
-        if(GameObject.Find("Discord") == null)
+        if (GameObject.Find("Discord") == null)
             Instantiate(DiscordPref).name = "Discord";
 
         if (LSC == null)
@@ -62,9 +62,6 @@ public class BaseControl : MonoBehaviour
         GameObject[] gos = GameObject.FindGameObjectsWithTag("Button With Click");
         for (int i = 0; i < gos.Length; i++)
             gos[i].GetComponent<Button>().onClick.AddListener(() => GetComponent<AudioSource>().PlayOneShot(ButtonSoundOnClick));
-
-        if (Input.GetKeyDown(KeyCode.F11))
-            Screen.fullScreen = !Screen.fullScreen;
 
         if (SceneManager.GetActiveScene().name == "Home")
             Discord.Presence(LangueAPI.String("discordHome_title"), "", new DiscordClasses.Img("default"));
@@ -99,6 +96,12 @@ public class BaseControl : MonoBehaviour
 
             if (returnScene) sceneChanging = true;
             OnEchap.Invoke();
+        }
+        if (Input.GetKeyDown(KeyCode.F11))
+        {
+            if (!Screen.fullScreen)
+                Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
+            else Screen.SetResolution(1366, 768, false);
         }
     }
 
