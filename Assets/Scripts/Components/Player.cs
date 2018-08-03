@@ -8,7 +8,8 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using PlayerPrefs = PreviewLabs.PlayerPrefs;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour
+{
 
     //Dépendances
     public LevelPlayer LP;
@@ -31,7 +32,7 @@ public class Player : MonoBehaviour {
     //Avancer
     public bool PeutAvancer; //Pas de mur
     public Vector2 PositionInitiale; //Dernier point d'arrivé valide
-    
+
     public int move = 0;
     public float vitesse = 1;
 
@@ -87,7 +88,7 @@ public class Player : MonoBehaviour {
             float py = pos.y - transform.position.y;
 
             PositionInitiale = transform.position;
-                StartCoroutine(Navigate(px, py));
+            StartCoroutine(Navigate(px, py));
         }
 
         x = xa; //x d'avant
@@ -100,21 +101,23 @@ public class Player : MonoBehaviour {
 
         float adjacent = Ar.x - transform.position.x;
         float oppose = Ar.y - transform.position.y;
-        float hypothenuse = (float)Math.Sqrt(Math.Pow(adjacent,2) + Math.Pow(oppose, 2));
+        float hypothenuse = (float)Math.Sqrt(Math.Pow(adjacent, 2) + Math.Pow(oppose, 2));
         float cos = adjacent / hypothenuse;
         double z = (Math.Acos(cos) * 180) / Mathf.PI;
-        
+
         if (transform.position.y < Ar.y)
             z = z - 90;
         else z = z * -1 - 90;
-        
+
         Quaternion rot = new Quaternion();
-        rot.eulerAngles = new Vector3(0,0,(float)z);
+        rot.eulerAngles = new Vector3(0, 0, (float)z);
         transform.rotation = rot;
 
         int FPS = int.Parse(Parents.GetChild(1).GetComponent<Text>().text.Replace(" FPS", ""));
         Speed = FPS;
-        while (move < Speed)
+        float diviseur = 1.5F;
+
+        while (move < Speed / diviseur)
         {
             if (PeutAvancer)
             {
@@ -123,7 +126,7 @@ public class Player : MonoBehaviour {
                     v = vitesse * (move / -(Speed / 2) + 2);
                 v = 5;
                 float Mouvement = (1 / (FPS / 60F)) * v;
-                transform.Translate(new Vector2(0, Mouvement), Space.Self);
+                transform.Translate(new Vector2(0, Mouvement * diviseur), Space.Self);
                 move++;
                 yield return new WaitForSeconds(0.00001F);
             }
@@ -133,4 +136,4 @@ public class Player : MonoBehaviour {
         vitesse = 1;
         Ar = new Vector2();
     }
-}   
+}
