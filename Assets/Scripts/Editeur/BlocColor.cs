@@ -33,13 +33,25 @@ public class BlocColor : MonoBehaviour {
 
     public void Expend(bool expend)
     {
-        transform.GetChild(0).gameObject.SetActive(!expend);
-        cpExpend.gameObject.SetActive(expend);
+        if (gameObject.activeInHierarchy)
+        {
+            transform.GetChild(0).gameObject.SetActive(!expend);
+            cpExpend.gameObject.SetActive(expend);
+            CP.transform.GetChild(0).GetChild(1).GetComponent<HexColorField>().displayAlpha = true;
+            CP.transform.GetChild(3).GetChild(3).gameObject.SetActive(true);
+            cpExpend.transform.GetChild(2).gameObject.SetActive(false);
 
-        CP.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc));
-        cpExpend.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc));
-        editeur.SelectBlocking = false;
-        editeur.bloqueSelect = expend;
-        editeur.SelectedBlock = Bloc;
+            CP.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc));
+            cpExpend.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc));
+            editeur.SelectBlocking = false;
+            editeur.bloqueSelect = expend;
+            editeur.SelectedBlock = Bloc;
+        }
+        else
+        {
+            cpExpend.gameObject.SetActive(expend);
+            cpExpend.transform.GetChild(2).gameObject.SetActive(false);
+            editeur.bloqueSelect = false;
+        }
     }
 }

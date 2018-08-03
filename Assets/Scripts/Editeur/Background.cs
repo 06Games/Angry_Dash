@@ -10,7 +10,14 @@ public class Background : MonoBehaviour {
     public Editeur Editor;
     string file;
     Sprite[] sp;
-    
+
+    public ColorPicker CP;
+
+    private void Start()
+    {
+        if (string.IsNullOrEmpty(Editor.file)) gameObject.SetActive(false);
+    }
+
     public void Charg()
     {
             File.WriteAllBytes(Application.persistentDataPath + "/Textures/2/0.png", Texture2D.whiteTexture.EncodeToPNG());
@@ -30,7 +37,6 @@ public class Background : MonoBehaviour {
     }
 
     void Update () {
-        Transform _Color = transform.GetChild(1);
         if (file != Editor.file)
         {
             int d = -1;
@@ -43,10 +49,7 @@ public class Background : MonoBehaviour {
             if (d != -1)
             {
                 Selected = int.Parse(Editor.component[d].Replace("background = ", "").Split(new string[1] { "; " }, System.StringSplitOptions.None)[0]);
-                Color32 rgb = Editeur.HexToColor(Editor.component[d].Replace("background = ", "").Split(new string[1] { "; " }, System.StringSplitOptions.None)[1]);
-                _Color.GetChild(0).GetComponent<InputField>().text = rgb.r.ToString();
-                _Color.GetChild(1).GetComponent<InputField>().text = rgb.g.ToString();
-                _Color.GetChild(2).GetComponent<InputField>().text = rgb.b.ToString();
+                CP.CurrentColor = Editeur.HexToColor(Editor.component[d].Replace("background = ", "").Split(new string[1] { "; " }, System.StringSplitOptions.None)[1]);
                 Page(0);
             }
         }
@@ -54,36 +57,7 @@ public class Background : MonoBehaviour {
         file = Editor.file;
         if (Editor.file != "")
         {
-            
-            byte r = 0;
-            byte g = 0;
-            byte b = 0;
-
-            if (int.Parse(_Color.GetChild(0).GetComponent<InputField>().text) > 255)
-                _Color.GetChild(0).GetComponent<InputField>().text = "255";
-            if (int.Parse(_Color.GetChild(1).GetComponent<InputField>().text) > 255)
-                _Color.GetChild(1).GetComponent<InputField>().text = "255";
-            if (int.Parse(_Color.GetChild(2).GetComponent<InputField>().text) > 255)
-                _Color.GetChild(2).GetComponent<InputField>().text = "255";
-
-            if (int.Parse(_Color.GetChild(0).GetComponent<InputField>().text) < 0)
-                _Color.GetChild(0).GetComponent<InputField>().text = "0";
-            if (int.Parse(_Color.GetChild(1).GetComponent<InputField>().text) < 0)
-                _Color.GetChild(1).GetComponent<InputField>().text = "0";
-            if (int.Parse(_Color.GetChild(2).GetComponent<InputField>().text) < 0)
-                _Color.GetChild(2).GetComponent<InputField>().text = "0";
-
-
-            if (_Color.GetChild(0).GetComponent<InputField>().text != "")
-                r = byte.Parse(_Color.GetChild(0).GetComponent<InputField>().text);
-            if (_Color.GetChild(1).GetComponent<InputField>().text != "")
-                g = byte.Parse(_Color.GetChild(1).GetComponent<InputField>().text);
-            if (_Color.GetChild(2).GetComponent<InputField>().text != "")
-                b = byte.Parse(_Color.GetChild(2).GetComponent<InputField>().text);
-            
-
-            Color32 color = new Color32(r, g, b, 255);
-
+            Color32 color = CP.CurrentColor;
             for (int i = 0; i < transform.GetChild(0).childCount-2; i++)
             {
                 Transform trans = transform.GetChild(0).GetChild(i+1);
@@ -146,5 +120,13 @@ public class Background : MonoBehaviour {
 
         transform.GetChild(0).GetChild(0).GetComponent<Button>().interactable = j > 0;
         transform.GetChild(0).GetChild(7).GetComponent<Button>().interactable = (j + 6) < sp.Length;
+    }
+
+    public void ChangeColorPickerBG(GameObject BG)
+    {
+        CP.transform.GetChild(0).GetChild(1).GetComponent<HexColorField>().displayAlpha = false;
+        CP.transform.GetChild(4).GetChild(3).gameObject.SetActive(false);
+        BG.SetActive(true);
+        BG.GetComponent<Image>().sprite = sp[Selected];
     }
 }

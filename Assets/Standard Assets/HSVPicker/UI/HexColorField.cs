@@ -9,7 +9,7 @@ public class HexColorField : MonoBehaviour
 {
     public ColorPicker hsvpicker;
 
-    public bool displayAlpha;
+    public bool displayAlpha = true;
 
     private InputField hexInputField;
 
