@@ -112,6 +112,8 @@ public class Player : MonoBehaviour {
         rot.eulerAngles = new Vector3(0,0,(float)z);
         transform.rotation = rot;
 
+        int FPS = int.Parse(Parents.GetChild(1).GetComponent<Text>().text.Replace(" FPS", ""));
+        Speed = FPS;
         while (move < Speed)
         {
             if (PeutAvancer)
@@ -119,20 +121,16 @@ public class Player : MonoBehaviour {
                 float v = vitesse * (move * 20 / (Speed / 2));
                 if (move > Speed / 2)
                     v = vitesse * (move / -(Speed / 2) + 2);
-                transform.Translate(Vector3.up * v, Space.Self);
+                v = 5;
+                float Mouvement = (1 / (FPS / 60F)) * v;
+                transform.Translate(new Vector2(0, Mouvement), Space.Self);
                 move++;
-                yield return new WaitForSeconds(0.01F);
+                yield return new WaitForSeconds(0.00001F);
             }
             else move = (int)Speed;
         }
         move = 0;
         vitesse = 1;
         Ar = new Vector2();
-        //StartCoroutine(destroy());
-    }
-
-    public IEnumerator destroy()
-    {
-        yield return new WaitForSeconds(0.5F);
     }
 }   
