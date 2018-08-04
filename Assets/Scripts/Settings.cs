@@ -6,12 +6,33 @@ public class Settings : MonoBehaviour
 {
     public Transform GraphicalOptions;
 
+    public static bool mobile() {
+#if UNITY_ANDROID || UNITY_IOS
+        return true;
+#else 
+        return false;
+#endif
+    }
+
     private void Start()
     {
         ShowFPS(ConfigAPI.GetBool("FPS.show"));
-        MaxFPS(ConfigAPI.GetInt("FPS.maxValue"));
+
+        if (mobile())
+        {
+            MaxFPS(0);
+            GraphicalOptions.GetChild(1).gameObject.SetActive(false);
+        }
+        else MaxFPS(ConfigAPI.GetInt("FPS.maxValue"));
+
         MSAA(ConfigAPI.GetInt("MSAA.level"));
-        FullScreen(ConfigAPI.GetBool("window.fullscreen"));
+
+        if (mobile())
+        {
+            FullScreen(true);
+            GraphicalOptions.GetChild(3).gameObject.SetActive(false);
+        }
+        else FullScreen(ConfigAPI.GetBool("window.fullscreen"));
     }
 
     public void ShowFPS(Toggle _Toggle) { ShowFPS(_Toggle.isOn, _Toggle); }

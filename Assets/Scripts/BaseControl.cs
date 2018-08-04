@@ -97,11 +97,12 @@ public class BaseControl : MonoBehaviour
             if (returnScene) sceneChanging = true;
             OnEchap.Invoke();
         }
-        if (Input.GetKeyDown(KeyCode.F11))
+        if (Input.GetKeyDown(KeyCode.F11) & !Settings.mobile())
         {
             if (!Screen.fullScreen)
                 Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
             else Screen.SetResolution(1366, 768, false);
+            ConfigAPI.SetBool("window.fullscreen", Screen.fullScreen);
         }
     }
 
