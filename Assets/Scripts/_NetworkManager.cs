@@ -135,7 +135,10 @@ public class _NetworkManager : NetworkBehaviour
             for (int v = 0; v < 4; v++)
             {
                 Transform go = trans.GetChild(v);
-                go.gameObject.SetActive(fav.Length > v);
+                go.gameObject.SetActive(true);
+                go.GetComponent<Button>().interactable = fav.Length > v;
+                for (int c = 0; c < go.childCount; c++)
+                    go.GetChild(c).gameObject.SetActive(fav.Length > v);
                 if (v < fav.Length)
                 {
                     go.GetChild(0).GetComponent<Image>().sprite = DefaultServerIcon;
