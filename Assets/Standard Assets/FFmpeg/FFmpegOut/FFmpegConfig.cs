@@ -7,7 +7,7 @@ namespace FFmpegOut
         public static string BinaryPath
         {
             get {
-                var basePath = Application.streamingAssetsPath + "/FFmpegOut";
+                var basePath = Application.streamingAssetsPath + "/FFmpegOut~";
                 
                 if (Application.platform == RuntimePlatform.OSXPlayer ||
                     Application.platform == RuntimePlatform.OSXEditor)

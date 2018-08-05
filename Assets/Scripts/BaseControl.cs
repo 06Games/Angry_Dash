@@ -31,10 +31,10 @@ public class BaseControl : MonoBehaviour
 
     public GameObject DiscordPref;
 
-    private void OnApplicationQuit()
-    {
-        File.Delete(Application.temporaryCachePath + "/ac.txt");
-    }
+
+    void Awake() { UnityThread.initUnityThread(); }
+    private void OnApplicationQuit() { File.Delete(Application.temporaryCachePath + "/ac.txt"); }
+    public void ChangeReturnSceneValue(bool value) { returnScene = value; }
 
     void Start()
     {
@@ -249,9 +249,7 @@ public class BaseControl : MonoBehaviour
         downData[4] = MasterCat[1].ToString();
     }
 
-    private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-    {
-    }
+    private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) { }
 
     private void wc_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
     {
@@ -312,10 +310,5 @@ public class BaseControl : MonoBehaviour
                 File.WriteAllLines(Application.persistentDataPath + "/Textures/info.ini", lines);
             }
         });
-    }
-
-    void Awake()
-    {
-        UnityThread.initUnityThread();
     }
 }
