@@ -148,7 +148,7 @@ public class Editeur : MonoBehaviour
 
     public static string SHA_PublicID(System.DateTime Date, string User)
     {
-        string input = Date.ToString("yyyyMMddHHmm") + "_" + User;
+        string input = Date.ToString("yyyyMMddHHmmss") + "_" + User;
         return Security.Hashing.SHA1(input);
     }
     public static bool CheckPublicID(string txt)

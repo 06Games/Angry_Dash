@@ -90,7 +90,7 @@ public class EditorOnline : MonoBehaviour
                     else if (line[0] == "music")
                         music[item] = file[l].Replace("music = ", "");
                     else if (line[0] == "publicID")
-                        id[item] = file[l].Replace("publicID = ", "");
+                        id[item] = file[l].Replace("publicID = ", "").Substring(0, 10);
                 }
                 if (string.IsNullOrEmpty(level[item])) { level[item] = ""; }
                 if (string.IsNullOrEmpty(description[item])) { description[item] = ""; }
