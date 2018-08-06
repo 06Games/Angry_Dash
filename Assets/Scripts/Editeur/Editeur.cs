@@ -167,7 +167,7 @@ public class Editeur : MonoBehaviour
             if (f[x].Contains("author = ") & u == -1)
                 u = x;
         }
-        if (l != -1) return f[l].Replace("publicID = ", "") == SHA_PublicID(File.GetCreationTimeUtc(txt),f[u].Replace("author = ", ""));
+        if (l != -1) return f[l].Replace("publicID = ", "") == SHA_PublicID(File.GetCreationTimeUtc(txt), f[u].Replace("author = ", ""));
         else return false;
     }
 
@@ -514,49 +514,49 @@ public class Editeur : MonoBehaviour
         if (Input.touchCount == 1)
         {
 #endif
-            if (newblockid <= 0)
-                return;
+        if (newblockid <= 0)
+            return;
 
-            Vector3 a = new Vector3(x, y, 0);
-            string color = ColorToHex(_Color);
+        Vector3 a = new Vector3(x, y, 0);
+        string color = ColorToHex(_Color);
 
-            float id = newblockid;
-            if (id > 10000)
-                id = (newblockid - 10000F) / 10F;
+        float id = newblockid;
+        if (id > 10000)
+            id = (newblockid - 10000F) / 10F;
 
-            int start = -1;
-            for (int i = 0; i < component.Length; i++)
-            {
-                if (component[i].Contains("Blocks {") & start == -1)
-                    start = i + 1;
-            }
-            int end = -1;
-            for (int i = start; i < component.Length; i++)
-            {
-                if (component[i].Contains("}") & end == -1)
-                    end = i;
-            }
-            string[] newComponent = new string[component.Length + 1];
-            for (int i = 0; i < newComponent.Length; i++)
-            {
-                if (i < end)
-                    newComponent[i] = component[i];
-                else if (i == end)
-                    newComponent[i] = id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0";
-                else newComponent[i] = component[i - 1];
-            }
+        int start = -1;
+        for (int i = 0; i < component.Length; i++)
+        {
+            if (component[i].Contains("Blocks {") & start == -1)
+                start = i + 1;
+        }
+        int end = -1;
+        for (int i = start; i < component.Length; i++)
+        {
+            if (component[i].Contains("}") & end == -1)
+                end = i;
+        }
+        string[] newComponent = new string[component.Length + 1];
+        for (int i = 0; i < newComponent.Length; i++)
+        {
+            if (i < end)
+                newComponent[i] = component[i];
+            else if (i == end)
+                newComponent[i] = id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0";
+            else newComponent[i] = component[i - 1];
+        }
 
-            bool t = true;
-            for (int i = 0; i < component.Length; i++)
-            {
-                if (component[i] == newComponent[end])
-                    t = false;
-            }
-            if (t)
-            {
-                component = newComponent;
-                Instance(end);
-            }
+        bool t = true;
+        for (int i = 0; i < component.Length; i++)
+        {
+            if (component[i] == newComponent[end])
+                t = false;
+        }
+        if (t)
+        {
+            component = newComponent;
+            Instance(end);
+        }
 #if UNITY_ANDROID || UNITY_IOS
         }
 #endif

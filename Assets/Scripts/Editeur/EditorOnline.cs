@@ -274,9 +274,9 @@ public class EditorOnline : MonoBehaviour
         if (InternetAPI.IsConnected())
         {
             string pID = "_" + id[actual];
-            if (pID == "_"+LangueAPI.String(ids[1])) pID = "";
+            if (pID == "_" + LangueAPI.String(ids[1])) pID = "";
 
-            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + author[actual] + "/" + level[actual] + pID +".level";
+            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + author[actual] + "/" + level[actual] + pID + ".level";
             string path = Application.temporaryCachePath + "/" + level[actual] + ".level";
             WebClient client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ParticulesManagerWithoutRandom : MonoBehaviour {
+public class ParticulesManagerWithoutRandom : MonoBehaviour
+{
 
     public Sprite _Particule;
     public GameObject Prefab;
@@ -22,38 +23,41 @@ public class ParticulesManagerWithoutRandom : MonoBehaviour {
     }
 
 
-    public void StartSpawn ()
+    public void StartSpawn()
     {
-        if(transform.childCount == 0)
+        if (transform.childCount > 0)
         {
-            Size = Screen.height / 5;
-            total = (Size / FallSpeed);
-            e = total;
-            float xNbPart = (Screen.width * SpawnZoneMultiplier.x) / Size;
-            int yNbPart = ((Screen.height * (int)SpawnZoneMultiplier.y) / Size);
+            for (int i = 0; i < transform.childCount; i++)
+                Destroy(transform.GetChild(i).gameObject);
+        }
+        Size = Screen.height / 5;
+        total = (Size / FallSpeed);
+        e = total;
+        float xNbPart = (Screen.width * SpawnZoneMultiplier.x) / Size;
+        int yNbPart = ((Screen.height * (int)SpawnZoneMultiplier.y) / Size);
 
-            for (int i = yNbPart; i > 0; i = i-1)
+        for (int i = yNbPart; i > 0; i = i - 1)
+        {
+            for (int width = 0; width <= xNbPart; width++)
             {
-                for (int width = 0; width <= xNbPart; width++)
-                {
-                    float decalage = (yNbPart - i) * Size + Size/2;
-                    Vector2 pos = new Vector2((width * Size) - decalage, Screen.height - ((yNbPart-i) * Size) - Size/2);
-                    GameObject go = Instantiate(Prefab, pos, new Quaternion(), transform);
-                    float scale = Size;
-                    go.transform.localScale = new Vector2(scale, scale);
-                    Quaternion rot = new Quaternion();
-                    rot.eulerAngles = new Vector3(0, 0, 0);
-                    go.transform.rotation = rot;
-                    go.GetComponent<Image>().sprite = _Particule;
-                    go.GetComponent<Image>().color = color;
+                float decalage = (yNbPart - i) * Size + Size / 2;
+                Vector2 pos = new Vector2((width * Size) - decalage, Screen.height - ((yNbPart - i) * Size) - Size / 2);
+                GameObject go = Instantiate(Prefab, pos, new Quaternion(), transform);
+                float scale = Size;
+                go.transform.localScale = new Vector2(scale, scale);
+                Quaternion rot = new Quaternion();
+                rot.eulerAngles = new Vector3(0, 0, 0);
+                go.transform.rotation = rot;
+                go.GetComponent<Image>().sprite = _Particule;
+                go.GetComponent<Image>().color = color;
 
-                    Particules pa = go.GetComponent<Particules>();
-                    pa.RotateSpeed = 0;
-                    pa.FallSpeed = FallSpeed;
-                    pa.FallDirection = FallDirector;
-                    pa.Static = false;
-                }
+                Particules pa = go.GetComponent<Particules>();
+                pa.RotateSpeed = 0;
+                pa.FallSpeed = FallSpeed;
+                pa.FallDirection = FallDirector;
+                pa.Static = false;
             }
+
         }
         gameObject.SetActive(true);
     }
@@ -67,7 +71,7 @@ public class ParticulesManagerWithoutRandom : MonoBehaviour {
             float xNbPart = (Screen.width * SpawnZoneMultiplier.x) / Size;
             for (int width = 0; width <= xNbPart; width++)
             {
-                Vector2 pos = new Vector2(width*Size + (Size/2), Screen.height + Size/2);
+                Vector2 pos = new Vector2(width * Size + (Size / 2), Screen.height + Size / 2);
                 GameObject go = Instantiate(Prefab, pos, new Quaternion(), transform);
                 float scale = Size;
                 go.transform.localScale = new Vector2(scale, scale);

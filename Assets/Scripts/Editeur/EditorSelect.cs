@@ -188,7 +188,7 @@ public class EditorSelect : MonoBehaviour
                     fileID = f[pID].Replace("publicID = ", "");
 
                 string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + ConfigAPI.GetString("Account.Username") + "/" + fileName + "_" + fileID;
-                try { Result = client.DownloadString(URL); } catch {  }
+                try { Result = client.DownloadString(URL); } catch { }
                 if (Result.Contains("level = " + fileName + " ;")) return;
 
 

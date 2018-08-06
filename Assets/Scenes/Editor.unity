@@ -19448,7 +19448,7 @@ MonoBehaviour:
   SpawnZoneMultiplier: {x: 2, y: 1}
   color:
     serializedVersion: 2
-    rgba: 0
+    rgba: 4294967295
   total: 0
   e: 0
 --- !u!1 &900288932
@@ -34452,7 +34452,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1586914526
