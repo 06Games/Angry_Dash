@@ -203,9 +203,33 @@ namespace Security
 
     public static class Hashing
     {
+        public static string SHA1(string value)
+        {
+            SHA1 sha = System.Security.Cryptography.SHA1.Create();
+            byte[] data = sha.ComputeHash(Encoding.Default.GetBytes(value));
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sb.Append(data[i].ToString("x2"));
+            }
+            return sb.ToString();
+        }
+
         public static string SHA384(string value)
         {
             SHA384 sha = System.Security.Cryptography.SHA384.Create();
+            byte[] data = sha.ComputeHash(Encoding.Default.GetBytes(value));
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sb.Append(data[i].ToString("x2"));
+            }
+            return sb.ToString();
+        }
+
+        public static string SHA512(string value)
+        {
+            SHA512 sha = System.Security.Cryptography.SHA512.Create();
             byte[] data = sha.ComputeHash(Encoding.Default.GetBytes(value));
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < data.Length; i++)

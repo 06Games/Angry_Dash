@@ -110,6 +110,23 @@ public class EditorSelect : MonoBehaviour
                 Info.transform.GetChild(0).GetChild(0).gameObject.GetComponent<InputField>().text = fileName;
             else Info.transform.GetChild(0).GetChild(0).gameObject.GetComponent<InputField>().text = "";
 
+            WebClient client = new WebClient();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            string Result = "";
+            string fileID = "";
+            string[] f = File.ReadAllLines(file[SelectedLevel]);
+            int pID = -1;
+            for (int x = 0; x < f.Length; x++)
+            {
+                if (f[x].Contains("publicID = ") & pID == -1)
+                    pID = x;
+            }
+            if (pID != -1)
+                fileID = f[pID].Replace("publicID = ", "");
+            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + ConfigAPI.GetString("Account.Username") + "/" + fileName + "_" + fileID;
+            try { Result = client.DownloadString(URL); } catch { }
+            Info.transform.GetChild(0).GetChild(0).gameObject.GetComponent<InputField>().interactable = !Result.Contains("level = " + fileName + " ;");
+
             SongUsed.text = Songs[button];
         }
         else
@@ -152,6 +169,29 @@ public class EditorSelect : MonoBehaviour
         {
             if (!File.Exists(Application.persistentDataPath + "/Saved Level/" + IF.ToLower() + ".level"))
             {
+                WebClient client = new WebClient();
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                string Result = "";
+
+                string[] Name = file[SelectedLevel].Split(new string[] { "/", "\\" }, StringSplitOptions.None);
+                string fileName = Name[Name.Length - 1].Replace(".level", "");
+
+                string fileID = "";
+                string[] f = File.ReadAllLines(file[SelectedLevel]);
+                int pID = -1;
+                for (int x = 0; x < f.Length; x++)
+                {
+                    if (f[x].Contains("publicID = ") & pID == -1)
+                        pID = x;
+                }
+                if (pID != -1)
+                    fileID = f[pID].Replace("publicID = ", "");
+
+                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + ConfigAPI.GetString("Account.Username") + "/" + fileName + "_" + fileID;
+                try { Result = client.DownloadString(URL); } catch {  }
+                if (Result.Contains("level = " + fileName + " ;")) return;
+
+
                 string newFile = Application.persistentDataPath + "/Saved Level/" + IF + ".level";
                 File.Move(file[SelectedLevel], newFile);
                 file[SelectedLevel] = newFile;
@@ -345,6 +385,9 @@ public class EditorSelect : MonoBehaviour
 
     public void Publish()
     {
+        if (!Editeur.CheckPublicID(file[SelectedLevel]))
+            return;
+
         UploadPanel.transform.GetChild(0).gameObject.SetActive(false);
         UploadPanel.transform.GetChild(1).gameObject.SetActive(false);
         UploadPanel.SetActive(true);
@@ -355,7 +398,19 @@ public class EditorSelect : MonoBehaviour
 
         string[] Name = file[SelectedLevel].Split(new string[] { "/", "\\" }, StringSplitOptions.None);
         string fileName = Name[Name.Length - 1].Replace(".level", "");
-        try { Result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + ConfigAPI.GetString("Account.Username") + "/" + fileName); } catch { UploadPanel.SetActive(false); return; }
+
+        string fileID = "";
+        string[] f = File.ReadAllLines(file[SelectedLevel]);
+        int pID = -1;
+        for (int x = 0; x < f.Length; x++)
+        {
+            if (f[x].Contains("publicID = ") & pID == -1)
+                pID = x;
+        }
+        if (pID != -1)
+            fileID = f[pID].Replace("publicID = ", "");
+
+        try { Result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + ConfigAPI.GetString("Account.Username") + "/" + fileName + "_" + fileID); } catch { UploadPanel.SetActive(false); return; }
         string[] keyFiles = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
 
         int length = keyFiles.Length;
@@ -411,7 +466,7 @@ public class EditorSelect : MonoBehaviour
                     Uploaded.GetChild(5).GetComponent<Image>().color = new Color32(0, 255, 0, 255);
 
                     string result = "";
-                    try { result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + ConfigAPI.GetString("Account.Username") + "/" + fileName + ".level"); } catch { UploadPanel.SetActive(false); return; }
+                    try { result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + ConfigAPI.GetString("Account.Username") + "/" + fileName + "_" + fileID + ".level"); } catch { UploadPanel.SetActive(false); return; }
                     if (result != File.ReadAllText(file[SelectedLevel]))
                     {
                         Uploaded.GetChild(6).gameObject.SetActive(true);
@@ -433,8 +488,23 @@ public class EditorSelect : MonoBehaviour
 
     public void Publish_Upload(bool isNew)
     {
+        if (!Editeur.CheckPublicID(file[SelectedLevel]))
+            return;
+
         string lvlName = "";
         string lvlDesc = "";
+        string lvlID = "";
+
+        string[] f = File.ReadAllLines(file[SelectedLevel]);
+        int pID = -1;
+        for (int x = 0; x < f.Length; x++)
+        {
+            if (f[x].Contains("publicID = ") & pID == -1)
+                pID = x;
+        }
+        if (pID != -1)
+            lvlID = f[pID].Replace("publicID = ", "");
+
         if (isNew)
         {
             Transform FirstTime = UploadPanel.transform.GetChild(0);
@@ -487,7 +557,7 @@ public class EditorSelect : MonoBehaviour
         string[] details = File.ReadAllLines(accPath);
         string id = details[0].Replace("1 = ", "");
         string mdp = details[1].Replace("2 = ", "");
-        string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/upload.php?id=" + id + "&mdp=" + mdp + "&level=" + lvlName;
+        string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/upload.php?id=" + id + "&mdp=" + mdp + "&level=" + lvlName + "&levelID=" + lvlID;
         byte[] responseArray = client.UploadData(URL, File.ReadAllBytes(file[SelectedLevel]));
         string Result = System.Text.Encoding.ASCII.GetString(responseArray);
 
