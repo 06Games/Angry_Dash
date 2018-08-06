@@ -90,7 +90,7 @@ public class EditorOnline : MonoBehaviour
                     else if (line[0] == "music")
                         music[item] = file[l].Replace("music = ", "");
                     else if (line[0] == "publicID")
-                        id[item] = file[l].Replace("publicID = ", "").Substring(0, 10);
+                        id[item] = file[l].Replace("publicID = ", "");
                 }
                 if (string.IsNullOrEmpty(level[item])) { level[item] = ""; }
                 if (string.IsNullOrEmpty(description[item])) { description[item] = ""; }
@@ -114,7 +114,8 @@ public class EditorOnline : MonoBehaviour
                 go.gameObject.SetActive(true);
                 go.GetChild(0).GetComponent<Text>().text = level[i];
                 go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[2], new string[1] { author[i] });
-                go.GetChild(2).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[3], new string[1] { id[i] });
+                string lvlID = ""; if (id[i].Length > 10) lvlID = id[i].Substring(0, 10); else lvlID = id[i];
+                go.GetChild(2).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[3], new string[1] { lvlID });
             }
             else go.gameObject.SetActive(false);
         }
@@ -133,7 +134,8 @@ public class EditorOnline : MonoBehaviour
                 go.gameObject.SetActive(true);
                 go.GetChild(0).GetComponent<Text>().text = level[i];
                 go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[2], new string[1] { author[i] });
-                go.GetChild(2).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[3], new string[1] { id[i] });
+                string lvlID = "";  if (id[i].Length > 10) lvlID = id[i].Substring(0, 10); else lvlID = id[i];
+                go.GetChild(2).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[3], new string[1] { lvlID });
             }
             else go.gameObject.SetActive(false);
         }
