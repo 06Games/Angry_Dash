@@ -78,7 +78,7 @@ public class LevelPlayer : MonoBehaviour
             }
             else
             {
-                File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/Level 1.level", "Home" });
+                File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/Level 4.level", "Home" });
                 FromFile();
             }
         }
@@ -104,7 +104,7 @@ public class LevelPlayer : MonoBehaviour
         }
         else
         {
-            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/Level 1.level", "Home" });
+            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/Level 4.level", "Home" });
             FromFile();
         }
     }

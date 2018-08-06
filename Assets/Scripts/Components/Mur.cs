@@ -5,14 +5,12 @@ using UnityEngine;
 public class Mur : MonoBehaviour {
 
     Player player;
-    public bool trigger;
     public float colider;
     public float boostMultiplier = 0;
 
     void OnTriggerEnter2D(Collider2D collision)
     {
         player = collision.gameObject.GetComponent<Player>();
-        trigger = true;
 
         if ((int)colider == 0) //Stop
         {
@@ -61,7 +59,6 @@ public class Mur : MonoBehaviour {
     }
     void OnTriggerExit2D(Collider2D collision)
     {
-        trigger = false;
     }
 
     private void Start()
