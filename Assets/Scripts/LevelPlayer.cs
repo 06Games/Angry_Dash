@@ -200,7 +200,7 @@ public class LevelPlayer : MonoBehaviour
             }
             catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
             go.name = "Objet n° " + num;
-            go.transform.localScale = new Vector2(Screen.height / BlocSize, Screen.height / BlocSize);
+            go.transform.localScale = new Vector2(50, 50);
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
             try { SR.color = HexToColor(color); }
             catch
@@ -228,7 +228,7 @@ public class LevelPlayer : MonoBehaviour
                 }
                 catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
                 go.name = "Trigger n° " + num;
-                go.transform.localScale = new Vector2(Screen.height / BlocSize, Screen.height / BlocSize);
+                go.transform.localScale = new Vector2(50, 50);
             }
         }
     }
@@ -277,7 +277,6 @@ public class LevelPlayer : MonoBehaviour
         GameObject.Find("Player").GetComponent<Player>().PeutAvancer = true;
         nbLancer = 0;
         Base.GetChild(3).gameObject.SetActive(false);
-        //File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, FromScene });
         if (!File.Exists(file))
             File.WriteAllLines(file, component);
         FromFile(file, FromScene);
