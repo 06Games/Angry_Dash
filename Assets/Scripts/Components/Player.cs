@@ -115,18 +115,17 @@ public class Player : MonoBehaviour
 
         int FPS = int.Parse(Parents.GetChild(1).GetComponent<Text>().text.Replace(" FPS", ""));
         Speed = FPS;
-        float diviseur = 1.5F;
-
-        while (move < Speed / diviseur)
+        while (move < Speed)
         {
             if (PeutAvancer)
             {
-                float v = vitesse * (move * 20 / (Speed / 2));
+                float v = move + 1;
                 if (move > Speed / 2)
-                    v = vitesse * (move / -(Speed / 2) + 2);
-                v = 5;
-                float Mouvement = (1 / (FPS / 60F)) * v;
-                transform.Translate(new Vector2(0, Mouvement * diviseur), Space.Self);
+                    v = Speed - move;
+                v = 5 * (v / (Speed / 6));
+                
+                float Mouvement = vitesse * (1 / (FPS / 60F)) * v;
+                transform.Translate(new Vector2(0, Mouvement), Space.Self);
                 move++;
                 yield return new WaitForSeconds(0.00001F);
             }
