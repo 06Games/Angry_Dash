@@ -123,7 +123,7 @@ public class Player : MonoBehaviour
                 if (move > Speed / 2)
                     v = Speed - move;
                 v = 5 * (v / (Speed / 6));
-                
+
                 float Mouvement = vitesse * (1 / (FPS / 60F)) * v;
                 transform.Translate(new Vector2(0, Mouvement), Space.Self);
                 move++;

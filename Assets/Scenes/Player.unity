@@ -4518,6 +4518,11 @@ Prefab:
       propertyPath: vitesse
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 50529230989865952, guid: 79265f9128f23e74d89893cb362141a7,
+        type: 2}
+      propertyPath: m_BodyType
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 79265f9128f23e74d89893cb362141a7, type: 2}
   m_IsPrefabParent: 0

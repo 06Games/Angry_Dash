@@ -7,8 +7,6 @@ using UnityEngine.UI;
 
 public class LevelPlayer : MonoBehaviour
 {
-
-
     string file;
     string FromScene;
     public string[] component;
@@ -215,6 +213,7 @@ public class LevelPlayer : MonoBehaviour
             tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString(".0####") + ".png"));
             SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
             go.GetComponent<Mur>().colider = colid;
+            go.GetComponent<Mur>().blockID = id;
         }
         else
         {

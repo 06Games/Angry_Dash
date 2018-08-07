@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Mur : MonoBehaviour {
+public class Mur : MonoBehaviour
+{
 
     Player player;
     public float colider;
     public float boostMultiplier = 0;
+    public float blockID = 1;
 
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -32,24 +34,35 @@ public class Mur : MonoBehaviour {
             Vector3 rotpos = player.transform.rotation.eulerAngles;
             Quaternion rot = new Quaternion();
 
-            float z = rotpos.z;
-            if (z > 180)
-                z = 180 - z;
-            else if (z < -180)
-                z = 360 + z;
-            
-            if (rotpos.z < 90 & rotpos.z > 0)
-                z = z - 90;
-            else if (rotpos.z < -90 & rotpos.z > -180)
-                z = z - 90;
-            else if (rotpos.z > 90 & rotpos.z < 180)
-                z = z - 90;
-            else z = z + 90;
+            float z = rotpos.z + 180;
+            if ((int)blockID == 2 | (int)blockID == 3)
+            {            
+                Vector2 pos = player.transform.position;
+                Vector2 direction = new Vector2();
 
-            if (z > 180)
-                z = 180 - z;
-            else if (z < -180)
-                z = 360 + z;
+                if (pos.x > (transform.position.x + transform.lossyScale.x / 2))
+                    direction.x = 1;
+                else if (pos.x < (transform.position.x - transform.lossyScale.x / 2))
+                    direction.x = -1;
+                else direction.x = 0;
+
+                if (pos.y > (transform.position.y + transform.lossyScale.y / 2))
+                    direction.y = 1;
+                else if (pos.y < (transform.position.y - transform.lossyScale.y / 2))
+                    direction.y = -1;
+                else direction.y = 0;
+                
+
+                if (direction.x == 1 & direction.y == 0)
+                    z = 0;
+                else if (direction.x == 0 & direction.y == 1)
+                    z = -90;
+                else if (direction.x == 0 & direction.y == 0) //Bug, le player arrive trop vite
+                    z = 0;
+                else z = rotpos.z + 180;
+
+                z = z + (int)transform.rotation.eulerAngles.z;
+            }
 
             rot.eulerAngles = new Vector3(0, 0, z);
             player.transform.rotation = rot;
