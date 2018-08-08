@@ -10,7 +10,6 @@ public class LevelPlayer : MonoBehaviour
     string file;
     string FromScene;
     public string[] component;
-    int BlocSize = 24;
     Camera cam;
 
     public GameObject[] Prefabs;
@@ -36,8 +35,6 @@ public class LevelPlayer : MonoBehaviour
 
     private void Start()
     {
-        BlocSize = Screen.height / 50;
-
         cam = GetComponent<Camera>();
         cam.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, -10);
         cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;

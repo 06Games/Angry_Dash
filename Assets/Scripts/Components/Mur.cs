@@ -61,7 +61,9 @@ public class Mur : MonoBehaviour
                     z = 0;
                 else z = rotpos.z + 180;
 
+                if(transform.rotation.eulerAngles.z >= 0)
                 z = z + (int)transform.rotation.eulerAngles.z;
+                else z = z + 180 + ((int)transform.rotation.eulerAngles.z*-1);
             }
 
             rot.eulerAngles = new Vector3(0, 0, z);
