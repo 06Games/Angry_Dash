@@ -40,6 +40,8 @@ public class Base : MonoBehaviour {
     public void DeactiveObject(GameObject go) { go.SetActive(false); }
     public static void DeactiveObjectStatic(GameObject go) { UnityThread.executeInUpdate(() => go.SetActive(false)); }
 
+    public void OpenURL(string URL) { Application.OpenURL(URL); }
+
     public static string GetVersion() { return Application.version; }
 
     public void PlayNewLevel(string LevelName)
