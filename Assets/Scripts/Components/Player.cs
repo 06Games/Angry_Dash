@@ -21,9 +21,6 @@ public class Player : MonoBehaviour
     int x; //pos x du joystick
     int y; //pos y du joystick
 
-    //Paramètres
-    float Speed = 60; //Vitesse de déplacement
-
     //Point d'arrivé
     public GameObject Arrivé; //Prefab de l'arrivé
     public Transform Parents; //Zone Unity pour spawn de l'arrivé
@@ -33,8 +30,9 @@ public class Player : MonoBehaviour
     public bool PeutAvancer; //Pas de mur
     public Vector2 PositionInitiale; //Dernier point d'arrivé valide
 
-    public int move = 0;
-    public float vitesse = 1;
+    //Paramètres
+    public int move = 0; //Frame actuel du déplacemnt du joueur
+    public float vitesse = 1; //Multiplicateur de la vitesse du joueur
 
     void Start()
     {
@@ -62,6 +60,9 @@ public class Player : MonoBehaviour
         Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
         GetComponent<SpriteRenderer>().sprite = sprite;
         vitesse = 1;
+
+        float resolutionDecalage = ((Screen.height / 2F) - ((1080F / 1920F * Screen.width) / 2F)) / 2F;
+        JoyStick.GetComponent<RectTransform>().anchoredPosition = new Vector2(-110, -308 - resolutionDecalage);
     }
 
     void Update()
@@ -84,52 +85,47 @@ public class Player : MonoBehaviour
             Vector3 pos = new Vector3(transform.position.x - x, transform.position.y - y, 0);
             Ar = pos;
 
-            float px = pos.x - transform.position.x;
-            float py = pos.y - transform.position.y;
-
             PositionInitiale = transform.position;
-            StartCoroutine(Navigate(px, py));
+            StartCoroutine(Navigate());
         }
 
         x = xa; //x d'avant
         y = ya; //y d'avant
     }
 
-    public IEnumerator Navigate(float px, float py)
+    public IEnumerator Navigate()
     {
-        move = 0;
-
+        //Rotation du Player
         float adjacent = Ar.x - transform.position.x;
         float oppose = Ar.y - transform.position.y;
         float hypothenuse = (float)Math.Sqrt(Math.Pow(adjacent, 2) + Math.Pow(oppose, 2));
         float cos = adjacent / hypothenuse;
         double z = (Math.Acos(cos) * 180) / Mathf.PI;
-
         if (transform.position.y < Ar.y)
             z = z - 90;
         else z = z * -1 - 90;
-
         Quaternion rot = new Quaternion();
         rot.eulerAngles = new Vector3(0, 0, (float)z);
         transform.rotation = rot;
 
-        int FPS = int.Parse(Parents.GetChild(1).GetComponent<Text>().text.Replace(" FPS", ""));
-        Speed = FPS;
-        while (move < Speed)
+
+        move = 0; //Reset le nb de Frame du Player
+        int FPS = int.Parse(Parents.GetChild(1).GetComponent<Text>().text.Replace(" FPS", "")); //Recup le nombre de FPS
+        while (move < FPS)
         {
             if (PeutAvancer)
             {
                 float v = move + 1;
-                if (move > Speed / 2)
-                    v = Speed - move;
-                v = 5 * (v / (Speed / 6));
+                if (move > FPS / 2)
+                    v = FPS - move;
+                v = 5 * (v / (FPS / 6));
 
                 float Mouvement = vitesse * (1 / (FPS / 60F)) * v;
                 transform.Translate(new Vector2(0, Mouvement), Space.Self);
                 move++;
                 yield return new WaitForSeconds(0.00001F);
             }
-            else move = (int)Speed;
+            else move = FPS;
         }
         move = 0;
         vitesse = 1;
