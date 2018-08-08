@@ -43,6 +43,7 @@ public class EditorOnline : MonoBehaviour
             if (string.IsNullOrEmpty(key)) key = "/";
             string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + key;
             WebClient client = new WebClient();
+            client.Encoding = System.Text.Encoding.UTF8;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
             string Result = "";
@@ -134,7 +135,7 @@ public class EditorOnline : MonoBehaviour
                 go.gameObject.SetActive(true);
                 go.GetChild(0).GetComponent<Text>().text = level[i];
                 go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[2], new string[1] { author[i] });
-                string lvlID = "";  if (id[i].Length > 10) lvlID = id[i].Substring(0, 10); else lvlID = id[i];
+                string lvlID = ""; if (id[i].Length > 10) lvlID = id[i].Substring(0, 10); else lvlID = id[i];
                 go.GetChild(2).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[3], new string[1] { lvlID });
             }
             else go.gameObject.SetActive(false);
@@ -169,7 +170,8 @@ public class EditorOnline : MonoBehaviour
             if (!Directory.Exists(Application.persistentDataPath + "/Musics/"))
                 Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
 
-            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/mp3/" + music[actual].Replace(" ", "%20") + ".mp3";
+            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/mp3/" + Soundboard.WithoutSpecialCharacters(music[actual]).Replace(" ", "%20") + ".mp3";
+            UnityEngine.Debug.LogWarning(URL);
 
             levelPanel.GetChild(4).GetChild(1).gameObject.SetActive(false);
             levelPanel.GetChild(4).GetChild(2).gameObject.SetActive(true);
@@ -183,7 +185,7 @@ public class EditorOnline : MonoBehaviour
                 string path = Application.persistentDataPath + "/Musics/";
                 if (Soundboard.NativeFileFormat() == AudioType.OGGVORBIS)
                     path = Application.temporaryCachePath + "/";
-                wc.DownloadFileAsync(new Uri(URL), path + music[actual]);
+                wc.DownloadFileAsync(new Uri(URL), path + Soundboard.WithoutSpecialCharacters(music[actual]));
             }
         }
     }
@@ -232,7 +234,7 @@ public class EditorOnline : MonoBehaviour
         }
         else if (Soundboard.NativeFileFormat() == AudioType.OGGVORBIS)
         {
-            string fileName = music[actual];
+            string fileName = Soundboard.WithoutSpecialCharacters(music[actual]);
             UnityThread.executeInUpdate(() =>
             {
                 if (File.Exists(Application.temporaryCachePath + "/" + fileName + ".mp3"))
@@ -259,12 +261,12 @@ public class EditorOnline : MonoBehaviour
     {
         UnityThread.executeInUpdate(() =>
         {
-            string fileName = music[actual];
+            string fileName = Soundboard.WithoutSpecialCharacters(music[actual]);
             if (File.Exists(Application.temporaryCachePath + "/" + fileName + ".mp3"))
                 File.Delete(Application.temporaryCachePath + "/" + fileName + ".mp3");
             if (File.Exists(Application.persistentDataPath + "/Musics/" + fileName))
                 File.Delete(Application.persistentDataPath + "/Musics/" + fileName);
-            File.Move(Application.temporaryCachePath + "/" + fileName + ".ogg", Application.persistentDataPath + "/Musics/" + fileName);
+            File.Move(Application.temporaryCachePath + "/" + fileName + ".ogg", Application.persistentDataPath + "/Musics/" + music[actual]);
 
             levelPanel.GetChild(4).GetChild(1).gameObject.SetActive(false);
             levelPanel.GetChild(4).GetChild(2).gameObject.SetActive(false);
@@ -281,6 +283,7 @@ public class EditorOnline : MonoBehaviour
             string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + author[actual] + "/" + level[actual] + pID + ".level";
             string path = Application.temporaryCachePath + "/" + level[actual] + ".level";
             WebClient client = new WebClient();
+            client.Encoding = System.Text.Encoding.UTF8;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
 

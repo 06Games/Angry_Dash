@@ -42,6 +42,7 @@ public class Soundboard : MonoBehaviour
             MusicSelectorPanel.SetActive(false);
 
             WebClient client = new WebClient();
+            client.Encoding = System.Text.Encoding.UTF8;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             string Result = "";
             try { Result = client.DownloadString("https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/?min=0&max=-1"); } catch { }
@@ -60,12 +61,12 @@ public class Soundboard : MonoBehaviour
             {
                 string[] songInfo = song[i].Split(new string[1] { " ; " }, StringSplitOptions.None);
                 BasePath[i] = songInfo[0];
-                BaseArtist[i] = songInfo[1].Split(new string[1] { " / " }, StringSplitOptions.None)[0];
-                BaseName[i] = songInfo[2];
+                BaseArtist[i] = HtmlCodeParse(songInfo[1].Split(new string[1] { " / " }, StringSplitOptions.None)[0]);
+                BaseName[i] = HtmlCodeParse(songInfo[2]);
 
                 WebClient c = new WebClient();
                 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/licences/" + BaseArtist[i] + " - " + BaseName[i] + ".txt";
+                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/licences/" + WithoutSpecialCharacters(BaseArtist[i] + " - " + BaseName[i]) + ".txt";
                 URL = URL.Replace(" ", "%20");
                 try
                 {
@@ -73,7 +74,7 @@ public class Soundboard : MonoBehaviour
                 }
                 catch
                 {
-                    UnityEngine.Debug.LogWarning("404 Error : File doesn't exist \n" + URL);
+                    Debug.LogWarning("404 Error : File doesn't exist \n" + URL);
                     BaseLicence[i] = "Error";
                 }
             }
@@ -428,5 +429,39 @@ public class Soundboard : MonoBehaviour
             }
             Page(0);
         }
+    }
+
+    public static string HtmlCodeParse(string s)
+    {
+        string[] code = s.Split(new string[] { "&" }, System.StringSplitOptions.None);
+        string newString = code[0];
+        if (code.Length > 1)
+        {
+            for (int i = 1; i < code.Length; i++)
+            {
+                string c = s.Replace(newString, "").Replace("amp", "").Replace("&", "").Replace("#", "").Replace(";", "");
+                newString = newString + code[i].Replace(code[i], Char.ConvertFromUtf32(int.Parse(c)));
+            }
+            s = newString;
+        }
+        
+        return s;
+    }
+
+    public static string WithoutSpecialCharacters(string s)
+    {
+        string formD = s.Normalize(System.Text.NormalizationForm.FormD);
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+        foreach (char ch in formD)
+        {
+            System.Globalization.UnicodeCategory uc = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch);
+            if (uc != System.Globalization.UnicodeCategory.NonSpacingMark)
+            {
+                sb.Append(ch);
+            }
+        }
+
+        return sb.ToString().Normalize(System.Text.NormalizationForm.FormC);
     }
 }
