@@ -28,7 +28,7 @@ public class Mur : MonoBehaviour
             StartCoroutine(colid(0.1F));
         }
         else if (colider >= 2.1F & colider < 3) //No Collision + Boost
-            player.vitesse = boostMultiplier;
+            player.vitesse = (boostMultiplier/10F) + 1;
         else if ((int)colider == 3) //Bounce
         {
             Vector3 rotpos = player.transform.rotation.eulerAngles;
