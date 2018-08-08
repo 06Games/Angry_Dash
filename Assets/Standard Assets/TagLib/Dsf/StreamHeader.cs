@@ -33,25 +33,26 @@ namespace TagLib.Dsf
 	/// </summary>
 	public struct StreamHeader : IAudioCodec, ILosslessAudioCodec
 	{
-		#region Private Fields
+        #region Private Fields
 
-		/// <summary>
-		///    Contains the version.
-		/// </summary>
-		/// <remarks>
-		///    This value is stored in bytes (12-15).
-		///    Currently only value of 1 is valid.
-		/// </remarks>
-		private ushort version;
+#pragma warning disable 414
+        /// <summary>
+        ///    Contains the version.
+        /// </summary>
+        /// <remarks>
+        ///    This value is stored in bytes (12-15).
+        ///    Currently only value of 1 is valid.
+        /// </remarks>
+        private ushort version;
 
-		/// <summary>
-		///    The Format Id.
-		/// </summary>
-		/// <remarks>
-		///    This value is stored in bytes (16-19).
-		///    0: DSD Raw
-		/// </remarks>
-		private ushort format_id;
+        /// <summary>
+        ///    The Format Id.
+        /// </summary>
+        /// <remarks>
+        ///    This value is stored in bytes (16-19).
+        ///    0: DSD Raw
+        /// </remarks>
+        private ushort format_id;
 
 		/// <summary>
 		///    The Channel Type.
@@ -121,15 +122,16 @@ namespace TagLib.Dsf
 		///    This value is provided by the constructor.
 		/// </remarks>
 		private long stream_length;
+#pragma warning restore 414
 
-		#endregion
+        #endregion
 
-		#region Public Static Fields
+        #region Public Static Fields
 
-		/// <summary>
-		///    The size of an DSF Format chunk
-		/// </summary>
-		public const uint Size = 52;
+        /// <summary>
+        ///    The size of an DSF Format chunk
+        /// </summary>
+        public const uint Size = 52;
 
 		/// <summary>
 		///    The identifier used to recognize a DSF file.
