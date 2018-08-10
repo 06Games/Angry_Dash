@@ -68,9 +68,30 @@ public class LangueSelector : MonoBehaviour
 
     IEnumerator GetLangDispo(bool forceUpdate = false)
     {
-        WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/index");
-        yield return www;
-        string[] All = www.text.Split(new string[] { "\n" }, StringSplitOptions.None);
+        string[] All = new string[0];
+        if (InternetAPI.IsConnected())
+        {
+            WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/index");
+            yield return www;
+            All = www.text.Split(new string[] { "\n" }, StringSplitOptions.None);
+        }
+
+        if (All.Length == 0)
+        {
+            string[] langFiles = Directory.GetFiles(Application.persistentDataPath + "/Languages/");
+            string[] flagFiles = Directory.GetFiles(Application.persistentDataPath + "/Languages/Flags/");
+            All = new string[langFiles.Length];
+            
+            for(int i = 0; i < All.Length; i++)
+            {
+                string[] pathToFile = langFiles[i].Split(new string[2] { "/", "\\" }, StringSplitOptions.None);
+
+                string flag = flagFiles[i];
+                if (!flag.Contains(pathToFile[pathToFile.Length - 1].Replace(".lang", ""))) flag = "";
+                All[i] = pathToFile[pathToFile.Length-1] + "[" + langFiles[0] + "]["+flag+"]";
+                Debug.LogWarning(All[i]);
+            }
+        }
 
         int lines = All.Length;
         if (string.IsNullOrEmpty(All[lines - 1]))
@@ -89,7 +110,8 @@ public class LangueSelector : MonoBehaviour
 
                 WebClient client = new WebClient();
                 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                client.DownloadFile(param[2].Replace("]", ""), Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png");
+                if(param.Length>2)
+                    client.DownloadFile(param[2].Replace("]", ""), Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png");
             }
 
             Transform go = Instantiate(Langues.GetChild(0).gameObject, new Vector3(), new Quaternion(), Langues).transform;
