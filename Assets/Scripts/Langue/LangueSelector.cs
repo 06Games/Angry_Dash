@@ -44,7 +44,7 @@ public class LangueSelector : MonoBehaviour
     {
         if (Langues != null & LangFlag != null)
         {
-            for (int i = 0; i < LangueDispo.Length; i++)
+            for (int i = 0; i < LangueDispo.Length & i < Langues.childCount-1; i++)
             {
                 if (i == actuel)
                     Langues.GetChild(i + 1).GetChild(0).gameObject.SetActive(true);
@@ -79,17 +79,14 @@ public class LangueSelector : MonoBehaviour
         if (All.Length == 0)
         {
             string[] langFiles = Directory.GetFiles(Application.persistentDataPath + "/Languages/");
-            string[] flagFiles = Directory.GetFiles(Application.persistentDataPath + "/Languages/Flags/");
             All = new string[langFiles.Length];
             
             for(int i = 0; i < All.Length; i++)
             {
                 string[] pathToFile = langFiles[i].Split(new string[2] { "/", "\\" }, StringSplitOptions.None);
-
-                string flag = flagFiles[i];
-                if (!flag.Contains(pathToFile[pathToFile.Length - 1].Replace(".lang", ""))) flag = "";
-                All[i] = pathToFile[pathToFile.Length-1] + "[" + langFiles[0] + "]["+flag+"]";
-                Debug.LogWarning(All[i]);
+                string flag = langFiles[i].Replace("/Languages/", "/Languages/Flags/").Replace(".lang", ".png");
+                if (!File.Exists(flag)) flag = "";
+                All[i] = pathToFile[pathToFile.Length-1].Replace(".lang", "") + "[" + langFiles[0] + "]["+flag+"]";
             }
         }
 
@@ -110,8 +107,9 @@ public class LangueSelector : MonoBehaviour
 
                 WebClient client = new WebClient();
                 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                if(param.Length>2)
-                    client.DownloadFile(param[2].Replace("]", ""), Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png");
+                if(param.Length > 2)
+                    if(param[2] != "]")
+                        client.DownloadFile(param[2].Replace("]", ""), Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png");
             }
 
             Transform go = Instantiate(Langues.GetChild(0).gameObject, new Vector3(), new Quaternion(), Langues).transform;
@@ -120,9 +118,13 @@ public class LangueSelector : MonoBehaviour
             go.GetComponent<Button>().onClick.RemoveAllListeners();
             go.GetComponent<Button>().onClick.AddListener(() => Chang(i));
 
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png"));
-            LangFlag[dispo] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+            if (File.Exists(Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png"))
+            {
+                Texture2D tex = new Texture2D(1, 1);
+                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png"));
+                LangFlag[dispo] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+            }
+            else LangFlag[dispo] = Langues.GetChild(0).GetComponent<Image>().sprite;
             go.GetComponent<Image>().sprite = LangFlag[dispo];
             go.gameObject.SetActive(true);
         }
