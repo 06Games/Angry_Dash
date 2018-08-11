@@ -45,8 +45,9 @@ public class Account : MonoBehaviour
         transform.GetChild(0).GetChild(4).gameObject.SetActive(false);
         Connect(transform.GetChild(0).GetChild(1).GetComponent<InputField>().text, transform.GetChild(0).GetChild(2).GetComponent<InputField>().text, false);
     }
-    public bool Connect(string user, string mdp, bool hash)
-    {
+    public bool Connect(string user, string mdp, bool hash) { return Connect(user, mdp, hash, true); }
+    public bool Connect(string user, string mdp, bool hash, bool showErrors = true)
+    { 
         string MDP = mdp;
         if (!hash)
             MDP = Security.Hashing.SHA384(mdp);
@@ -84,7 +85,7 @@ public class Account : MonoBehaviour
         }
         else
         {
-            BaseControl.LogNewMassage("06Games account connection failure", true);
+                if(showErrors) BaseControl.LogNewMassage("06Games account connection failure", true);
             transform.GetChild(0).gameObject.SetActive(true);
             if(!hash)
                 transform.GetChild(0).GetChild(4).gameObject.SetActive(true);
