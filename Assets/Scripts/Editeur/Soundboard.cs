@@ -111,6 +111,8 @@ public class Soundboard : MonoBehaviour
     {
         if (InternetAPI.IsConnected())
         {
+            editor.bloqueEchap = true;
+            //editor.Selection.GetComponent<EditorSelect>().Cam.GetComponent<BaseControl>().returnScene = false;
             if (!Directory.Exists(Application.persistentDataPath + "/Musics/"))
                 Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
 
@@ -213,6 +215,7 @@ public class Soundboard : MonoBehaviour
                 bool FileExists = File.Exists(Application.persistentDataPath + "/Musics/" + SongArtist[SongOpened] + " - " + SongName[SongOpened]);
                 go.GetChild(0).gameObject.SetActive(!FileExists);
                 go.GetChild(1).gameObject.SetActive(FileExists);
+                editor.bloqueEchap = false;
             });
         }
     }
@@ -234,6 +237,7 @@ public class Soundboard : MonoBehaviour
             bool FileExists = File.Exists(Application.persistentDataPath + "/Musics/" + SongArtist[SongOpened] + " - " + SongName[SongOpened]);
             go.GetChild(0).gameObject.SetActive(!FileExists);
             go.GetChild(1).gameObject.SetActive(FileExists);
+            editor.bloqueEchap = false;
         });
     }
 

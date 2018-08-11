@@ -38,6 +38,8 @@ public class Editeur : MonoBehaviour
     public Sprite GrilleSp;
     public Sprite[] GrilleBtn;
 
+    public bool bloqueEchap;
+
 #if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
     public int CameraMouvementSpeed = 1;
 #else
@@ -890,5 +892,5 @@ public class Editeur : MonoBehaviour
 
     public void SelectModeChang(bool enable) { SelectMode = enable; }
     public void BloqueActions(bool on) { bloqueSelect = on; }
-    public void OnEchap() { if (!string.IsNullOrEmpty(file)) ExitEdit(); cam.GetComponent<BaseControl>().returnScene = true; }
+    public void OnEchap() { if (!string.IsNullOrEmpty(file) & !bloqueEchap) { ExitEdit(); cam.GetComponent<BaseControl>().returnScene = true; } }
 }
