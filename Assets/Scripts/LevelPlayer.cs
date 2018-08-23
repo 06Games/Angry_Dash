@@ -197,7 +197,6 @@ public class LevelPlayer : MonoBehaviour
             }
             catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
             go.name = "Objet n° " + num;
-            go.transform.localScale = new Vector2(50, 50);
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
             try { SR.color = HexToColor(color); }
             catch
@@ -209,6 +208,9 @@ public class LevelPlayer : MonoBehaviour
             Texture2D tex = new Texture2D(1, 1);
             tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString(".0####") + ".png"));
             SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+
+            go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
+
             go.GetComponent<Mur>().colider = colid;
             go.GetComponent<Mur>().blockID = id;
         }
