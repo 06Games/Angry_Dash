@@ -146,6 +146,17 @@ public class LevelPlayer : MonoBehaviour
             }
         }
 
+        int respawnModeLine = -1;
+        for (int x = 0; x < component.Length; x++)
+        {
+            if (component[x].Contains("respawnMode = ") & respawnModeLine == -1)
+                respawnModeLine = x;
+        }
+        int respawnMode = 0;
+        if (respawnModeLine != -1)
+            respawnMode = int.Parse(component[respawnModeLine].Replace("respawnMode = ", ""));
+        GetComponent<MainCam>().Player.GetComponent<Player>().respawnMode = respawnMode;
+
         Transform place = new GameObject("Items").transform;
         for (int i = d; i < end; i++)
             Instance(i, place);
@@ -165,17 +176,6 @@ public class LevelPlayer : MonoBehaviour
 
         if (GameObject.Find("Audio") != null & music != "null")
             GameObject.Find("Audio").GetComponent<menuMusic>().LoadMusic(music);
-
-        int deathModeLine = -1;
-        for (int x = 0; x < component.Length; x++)
-        {
-            if (component[x].Contains("deathMode = ") & deathModeLine == -1)
-                deathModeLine = x;
-        }
-        int deathMode = 0;
-        if (deathModeLine != -1)
-            deathMode = int.Parse(component[deathModeLine].Replace("deathMode = ", ""));
-        GetComponent<MainCam>().Player.GetComponent<Player>().DeathMode = deathMode;
 
         Destroy(SummonPlace.gameObject);
         SummonPlace = place;
@@ -249,6 +249,7 @@ public class LevelPlayer : MonoBehaviour
                 go.name = "Trigger n° " + num;
                 Texture2D tex = go.GetComponent<SpriteRenderer>().sprite.texture;
                 go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
+                go.SetActive(GetComponent<MainCam>().Player.GetComponent<Player>().respawnMode == 1);
             }
         }
     }

@@ -66,7 +66,7 @@ public class Editeur : MonoBehaviour
             "author = " +ConfigAPI.GetString("Account.Username"),
             "//Please don't touch the publicID",
             "publicID = " + SHA_PublicID(createTime, ConfigAPI.GetString("Account.Username")),
-            "deathMode = 0",
+            "respawnMode = 0",
             " ",
             "Blocks {",
             "}"};
