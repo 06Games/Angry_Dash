@@ -162,7 +162,6 @@ public class Profile : MonoBehaviour
         string id = details[0].Replace("1 = ", "");
         string mdp = details[1].Replace("2 = ", "");
         string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/delete.php?id=" + id + "&mdp=" + mdp + "&level=" + lvlNames[levelNumber] + "&levelID=" + lvlID[levelNumber];
-        string path = Application.persistentDataPath + "/Saved Level/" + lvlNames[levelNumber] + ".level";
         WebClient client = new WebClient();
         client.Encoding = System.Text.Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };

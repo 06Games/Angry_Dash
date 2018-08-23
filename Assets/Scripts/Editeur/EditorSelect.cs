@@ -321,7 +321,7 @@ public class EditorSelect : MonoBehaviour
     }
     public void Search(InputField IF)
     {
-        lastItem = -1;
+        lastItem = 4;
         SelectedLevel = -1;
         _NewG.SetActive(false);
 
@@ -338,7 +338,7 @@ public class EditorSelect : MonoBehaviour
                     {
                         string[] file = files[i].Split(new string[1] { "/" }, System.StringSplitOptions.None);
                         string fileName = file[file.Length - 1].Replace(".level", "");
-                        fileList[i] = fileName.Contains(IF.text);
+                        fileList[i] = fileName.ToLower().Contains(IF.text.ToLower());
                     }
                 }
             }
@@ -357,8 +357,13 @@ public class EditorSelect : MonoBehaviour
             for (int i = 0; i < item; i++)
                 SearchResult[i] = fileCorresponding[i];
             file = SearchResult;
-            Page(0);
+            StartCoroutine(WaitAndPage(0.1F, 0));
         }
+    }
+    IEnumerator WaitAndPage(float time, int page)
+    {
+        yield return new WaitForSeconds(time);
+        Page(page);
     }
 
     public void Share()
