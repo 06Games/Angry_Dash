@@ -42,6 +42,8 @@ public class _NetworkManager : NetworkBehaviour
 
     public void OnValueChang(InputField IF)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         if (isInFav(IF.text))
             Selection.transform.GetChild(2).GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.String("multiplayerRemove");
         else Selection.transform.GetChild(2).GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.String("multiplayerAdd");
@@ -52,11 +54,15 @@ public class _NetworkManager : NetworkBehaviour
     }
     public void OpenFavServ(int f)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         if (fav.Length > f)
             Selection.transform.GetChild(2).GetChild(1).GetChild(0).GetComponent<InputField>().text = fav[f];
     }
     public void AddToFav(InputField IF)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         int f = whereIsItInFav(IF.text);
 
         if (f == -1) //Add
@@ -114,6 +120,8 @@ public class _NetworkManager : NetworkBehaviour
     }
     public void RefreshFavorite(InputField IF)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         if (!refreshing)
         {
             int f = whereIsItInFav(IF.text);
@@ -123,6 +131,8 @@ public class _NetworkManager : NetworkBehaviour
     }
     void RefreshFav(int last = -1, bool _onlyOne = false)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         onlyOne = _onlyOne;
         Transform trans = Selection.transform.GetChild(2).GetChild(0).GetChild(1);
 
@@ -183,6 +193,8 @@ public class _NetworkManager : NetworkBehaviour
     bool onlyOne = false;
     void InfoDisconnected(NetworkMessage netMsg)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         if (!onlyOne)
             RefreshFav(infoActual);
 
@@ -194,6 +206,8 @@ public class _NetworkManager : NetworkBehaviour
     }
     public void ServInfoRecup(NetworkMessage netMsg)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         ServInfo msg = netMsg.ReadMessage<ServInfo>();
         Transform go = Selection.transform.GetChild(2).GetChild(0).GetChild(1).GetChild(infoActual);
         Texture2D text = new Texture2D(1, 1);
@@ -221,6 +235,8 @@ public class _NetworkManager : NetworkBehaviour
 
     public void StartHost()
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         NM.StartHost();
         StartData(true);
 
@@ -229,6 +245,8 @@ public class _NetworkManager : NetworkBehaviour
 
     public void Join()
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         NM.networkAddress = adress;
         NM.networkPort = port;
         NetworkClient NC = NM.StartClient();
@@ -243,11 +261,15 @@ public class _NetworkManager : NetworkBehaviour
 
     void Error(NetworkMessage netMsg)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         print("Client connection error !");
     }
 
     void Disconnected(NetworkMessage netMsg)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         if (Selection.GetComponent<CreatorManager>().array == 3)
             Selection.GetComponent<CreatorManager>().ChangArray(2);
         else if (netMsg.msgType == 33)
@@ -257,6 +279,8 @@ public class _NetworkManager : NetworkBehaviour
 
     public void Disconnect()
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         NM.StopHost();
         NM.StopClient();
         Selection.GetComponent<CreatorManager>().ChangArray(0);
@@ -275,12 +299,16 @@ public class _NetworkManager : NetworkBehaviour
     
     public void StartData(bool serv)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         if (!isSetup)
             SetupClient(serv);
     }
     public MyMsgBase m_Message;
     public void SetupClient(bool server)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         player = 0;
         NetworkManager net = NM;
         Client = net.client;
@@ -325,6 +353,8 @@ public class _NetworkManager : NetworkBehaviour
 
     public void OnConnected(NetworkMessage netMsg)
     {
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
+
         if (GameObject.Find("Audio") != null)
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
 
