@@ -33,6 +33,8 @@ public class Player : MonoBehaviour
     //Paramètres
     public int move = 0; //Frame actuel du déplacemnt du joueur
     public float vitesse = 1; //Multiplicateur de la vitesse du joueur
+    public int DeathMode = 0; //Action à effectuer en cas de mort
+
 
     void Start()
     {
@@ -63,6 +65,8 @@ public class Player : MonoBehaviour
 
         float resolutionDecalage = ((Screen.height / 2F) - ((1080F / 1920F * Screen.width) / 2F)) / 2F;
         JoyStick.GetComponent<RectTransform>().anchoredPosition = new Vector2(-110, -308 - resolutionDecalage);
+
+        PositionInitiale = transform.position;
     }
 
     void Update()
@@ -85,7 +89,7 @@ public class Player : MonoBehaviour
             Vector3 pos = new Vector3(transform.position.x - x, transform.position.y - y, 0);
             Ar = pos;
 
-            PositionInitiale = transform.position;
+            if(DeathMode == 0) PositionInitiale = transform.position;
             StartCoroutine(Navigate());
         }
 

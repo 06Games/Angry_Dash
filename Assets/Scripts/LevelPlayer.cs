@@ -166,6 +166,17 @@ public class LevelPlayer : MonoBehaviour
         if (GameObject.Find("Audio") != null & music != "null")
             GameObject.Find("Audio").GetComponent<menuMusic>().LoadMusic(music);
 
+        int deathModeLine = -1;
+        for (int x = 0; x < component.Length; x++)
+        {
+            if (component[x].Contains("deathMode = ") & deathModeLine == -1)
+                deathModeLine = x;
+        }
+        int deathMode = 0;
+        if (deathModeLine != -1)
+            deathMode = int.Parse(component[deathModeLine].Replace("deathMode = ", ""));
+        GetComponent<MainCam>().Player.GetComponent<Player>().DeathMode = deathMode;
+
         Destroy(SummonPlace.gameObject);
         SummonPlace = place;
     }
@@ -217,17 +228,27 @@ public class LevelPlayer : MonoBehaviour
         else
         {
             if (id == 0.1F)
+            {
                 GetComponent<MainCam>().Player.transform.position = pos;
+                GetComponent<MainCam>().Player.GetComponent<Player>().PositionInitiale = pos;
+            }
             else if (id == 0.2F)
             {
                 GameObject go = null;
-                try
-                {
-                    go = Instantiate(TriggerPref[0], pos, rot, place);
-                }
+                try { go = Instantiate(TriggerPref[0], pos, rot, place); }
                 catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
                 go.name = "Trigger n° " + num;
-                go.transform.localScale = new Vector2(50, 50);
+                Texture2D tex = go.GetComponent<SpriteRenderer>().sprite.texture;
+                go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
+            }
+            else if (id == 0.3F)
+            {
+                GameObject go = null;
+                try { go = Instantiate(TriggerPref[1], pos, rot, place); }
+                catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
+                go.name = "Trigger n° " + num;
+                Texture2D tex = go.GetComponent<SpriteRenderer>().sprite.texture;
+                go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
             }
         }
     }

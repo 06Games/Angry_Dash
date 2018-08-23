@@ -36,10 +36,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4819370758646188}
   - component: {fileID: 212365093723734734}
-  - component: {fileID: 114988632485819124}
   - component: {fileID: 61061381081675624}
+  - component: {fileID: 114012091588355532}
   m_Layer: 0
-  m_Name: Stop
+  m_Name: 0.3 CheckPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -97,7 +97,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.2, y: 1.2}
   m_EdgeRadius: 0
---- !u!114 &114988632485819124
+--- !u!114 &114012091588355532
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -105,7 +105,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1981134399792410}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa1eeada7461bb64a810f87ee44c2ef4, type: 3}
+  m_Script: {fileID: 11500000, guid: d3955e08799a13544b13ee050a4cf894, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!212 &212365093723734734
@@ -140,7 +140,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 2606d6255de341b4aa72902dca22d8b7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d63a3b4a2d8a1524582a25741b8ad832, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
