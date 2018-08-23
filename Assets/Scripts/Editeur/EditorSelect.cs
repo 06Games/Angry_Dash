@@ -391,7 +391,7 @@ public class EditorSelect : MonoBehaviour
     public void Publish()
     {
         if (!Editeur.CheckPublicID(file[SelectedLevel]))
-            return;
+        { Debug.LogWarning("Can't publish a level without Public ID or with a corrupted Public ID"); return; }
 
         UploadPanel.transform.GetChild(0).gameObject.SetActive(false);
         UploadPanel.transform.GetChild(1).gameObject.SetActive(false);
