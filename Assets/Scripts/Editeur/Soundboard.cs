@@ -271,9 +271,6 @@ public class Soundboard : MonoBehaviour
             float BoxHeight = Screen.height - 250;
             if (go.transform.lossyScale.y != 0)
                 BoxHeight = 830 / go.transform.lossyScale.y;
-
-            go.GetChild(i).GetComponent<RectTransform>().sizeDelta = new Vector2(0, BoxHeight / 3);
-            go.GetChild(i).GetComponent<RectTransform>().anchoredPosition = new Vector2(0, (BoxHeight / 6) * ((i * 2) + 1) * -1);
         }
     }
 
@@ -316,8 +313,8 @@ public class Soundboard : MonoBehaviour
     {
         Transform ResultPanel = MusicSelectorPanel.transform.GetChild(1);
         lastFirstLine = firstLine;
-        ResultPanel.GetChild(3).GetChild(0).GetComponent<Button>().interactable = firstLine > 0;
-        ResultPanel.GetChild(3).GetChild(1).GetComponent<Button>().interactable = firstLine + ResultPanel.childCount - 1 < SongName.Length;
+        ResultPanel.GetChild(ResultPanel.childCount-1).GetChild(0).GetComponent<Button>().interactable = firstLine > 0;
+        ResultPanel.GetChild(ResultPanel.childCount - 1).GetChild(1).GetComponent<Button>().interactable = firstLine + ResultPanel.childCount - 1 < SongName.Length;
 
         for (int i = 0; i < ResultPanel.childCount - 1; i++)
         {
