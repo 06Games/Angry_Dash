@@ -11,13 +11,18 @@ public class SurClique : MonoBehaviour {
         Droit
     }
     bool clic;
+    public bool WantKeyUp = false;
 
     public QuelClique SurQuelClique;
 	void Update () {
 #if UNITY_STANDALONE || UNITY_EDITOR
-        if (SurQuelClique == QuelClique.Gauche)
+        if (SurQuelClique == QuelClique.Gauche & !WantKeyUp)
             clic = Input.GetKey(KeyCode.Mouse0);
-        else clic = Input.GetKey(KeyCode.Mouse1);
+        else if(SurQuelClique == QuelClique.Gauche)
+            clic = Input.GetKeyDown(KeyCode.Mouse0);
+        else if(!WantKeyUp)
+            clic = Input.GetKey(KeyCode.Mouse1);
+        else clic = Input.GetKeyDown(KeyCode.Mouse1);
 
         if (clic)
             OnCompleteMethods.Invoke();

@@ -7,21 +7,23 @@ public class Rotation : MonoBehaviour {
 
     public InputField IF;
     public Editeur editeur;
-    int Bloc;
+    int[] Bloc;
     public Button[] Button;
 
     void Update()
     {
+        if (editeur.SelectedBlock.Length == 0) { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
+
         if (Bloc != editeur.SelectedBlock)
         {
             Bloc = editeur.SelectedBlock;
-            IF.text = editeur.GetBlocStatus(2F).Replace(")", "");
+            IF.text = editeur.GetBlocStatus(2F, Bloc[0]).Replace(")", "");
             if (IF.text == "")
                 IF.text = "0";
         }
         else
         {
-            editeur.ChangBlocStatus(2, IF.text);
+            editeur.ChangBlocStatus(2, IF.text, Bloc);
 
             if (IF.text == "180")
                 Button[1].interactable = false;

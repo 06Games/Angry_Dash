@@ -52,9 +52,11 @@ public class Player : MonoBehaviour
                 LP.GetComponent<MainCam>().Player = gameObject;
                 GetComponent<SpriteRenderer>().color = new Color32(255, 185, 0, 255);
                 GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+                PeutAvancer = false; //Le niveau n'est pas encore chargé, le joueur attends
             }
             else GetComponent<Player>().enabled = false;
         }
+        else PeutAvancer = false; //Le niveau n'est pas encore chargé, le joueur attends
 
         int playerSkin = PlayerPrefs.GetInt("PlayerSkin");
         Texture2D tex = new Texture2D(1, 1);
@@ -90,7 +92,7 @@ public class Player : MonoBehaviour
             Ar = pos;
 
             if(respawnMode == 0) PositionInitiale = transform.position;
-            StartCoroutine(Navigate());
+            if(PeutAvancer) StartCoroutine(Navigate());
         }
 
         x = xa; //x d'avant

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class BlocColor : MonoBehaviour {
 
     public Editeur editeur;
-    public int Bloc = -1;
+    public int[] Bloc;
     ColorPicker CP;
     public ColorPicker cpExpend;
 
@@ -18,6 +18,8 @@ public class BlocColor : MonoBehaviour {
 
     private void Update()
     {
+        if (editeur.SelectedBlock.Length == 0) { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
+
         if (Bloc != editeur.SelectedBlock)
         {
             Bloc = editeur.SelectedBlock;
@@ -25,7 +27,7 @@ public class BlocColor : MonoBehaviour {
         }
         else
         {
-            if(transform.GetChild(0).gameObject.activeInHierarchy)
+            if (transform.GetChild(0).gameObject.activeInHierarchy)
                 editeur.ChangBlocStatus(3, Editeur.ColorToHex(CP.CurrentColor), Bloc);
             else editeur.ChangBlocStatus(3, Editeur.ColorToHex(cpExpend.CurrentColor), Bloc);
         }
@@ -41,8 +43,9 @@ public class BlocColor : MonoBehaviour {
             CP.transform.GetChild(3).GetChild(3).gameObject.SetActive(true);
             cpExpend.transform.GetChild(2).gameObject.SetActive(false);
 
-            CP.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc));
-            cpExpend.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc));
+            if (Bloc.Length == 0) { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
+            CP.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc[0]));
+            cpExpend.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc[0]));
             editeur.SelectBlocking = false;
             editeur.bloqueSelect = expend;
             editeur.SelectedBlock = Bloc;

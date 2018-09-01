@@ -7,22 +7,24 @@ public class Layer : MonoBehaviour {
 
     public InputField IF;
     public Editeur editeur;
-    int Bloc;
+    int[] Bloc;
     public Button[] Button;
 
-	void Update () {
+	void Update ()
+    {
+        if (editeur.SelectedBlock.Length == 0) { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
+
         if (Bloc != editeur.SelectedBlock)
         {
             Bloc = editeur.SelectedBlock;
-            IF.text = editeur.GetBlocStatus(1.2F);
+            IF.text = editeur.GetBlocStatus(1.2F, Bloc[0]);
         }
         else {
             try
             {
                 IF.text = IF.text.Replace(".0", "");
                 int.Parse(IF.text);
-
-                editeur.ChangBlocStatus(1.2F, float.Parse(IF.text).ToString("0.0"));
+                editeur.ChangBlocStatus(1.2F, float.Parse(IF.text).ToString("0.0"), Bloc);
 
                 if (IF.text == "999")
                     Button[1].interactable = false;

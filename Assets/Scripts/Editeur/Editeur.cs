@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Boo.Lang;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class Editeur : MonoBehaviour
     public GameObject Prefab;
 
     public bool SelectBlocking;
-    public int SelectedBlock;
+    public int[] SelectedBlock;
     public GameObject NoBlocSelectedPanel;
     public GameObject[] Contenu;
     GameObject SelectedZone;
@@ -46,7 +47,11 @@ public class Editeur : MonoBehaviour
     public int CameraMouvementSpeed = 10;
 #endif
 
-    #region UI
+#if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
+    bool MultiSelect = false;
+#endif
+
+#region UI
     public void CreateFile(string fileName, string directory, string desc)
     {
         string txt = directory + fileName + ".level";
@@ -138,7 +143,7 @@ public class Editeur : MonoBehaviour
         SelectedZone = Instantiate(SelectedZonePref, Object.transform);
         SelectedZone.name = "Selected Block";
         SelectedZone.SetActive(false);
-        SelectedBlock = -1;
+        SelectedBlock = new int[0];
         SelectMode = false;
         component = new string[0];
         transform.GetChild(0).GetChild(2).GetChild(1).GetComponent<CreatorManager>().array = 3;
@@ -147,7 +152,7 @@ public class Editeur : MonoBehaviour
         Discord.Presence(LangueAPI.String("discordEditor_title"), "", new DiscordClasses.Img("default"));
         cam.GetComponent<BaseControl>().returnScene = true;
     }
-    #endregion
+#endregion
 
     public static string SHA_PublicID(System.DateTime Date, string User)
     {
@@ -199,12 +204,7 @@ public class Editeur : MonoBehaviour
 
     void Update()
     {
-        SurClique.QuelClique SelectClique = SurClique.QuelClique.Droit;
-        if (SelectMode)
-            SelectClique = SurClique.QuelClique.Gauche;
-        GetComponent<SurClique>().SurQuelClique = SelectClique;
-
-        int BlocScale = Screen.height / (Screen.height / 50);
+        GetComponent<SurClique>().enabled = SelectMode;
 
         if (SelectedZone == null)
         {
@@ -230,11 +230,7 @@ public class Editeur : MonoBehaviour
         //Détection de la localisation lors de l'ajout d'un bloc
         if (AddBlocking & !bloqueSelect)
         {
-            KeyCode clic = KeyCode.Mouse0;
-            if (SelectMode)
-                clic = KeyCode.Mouse1;
-
-            if (Input.GetKey(clic))
+            if (Input.GetKey(KeyCode.Mouse0) & !SelectMode)
             {
                 if (Input.mousePosition.y > Screen.height / 4)
                 {
@@ -260,25 +256,76 @@ public class Editeur : MonoBehaviour
             if (Input.mousePosition.y > Screen.height / 4)
             {
                 Vector2 pos = GetClicPos();
-                SelectedBlock = GetBloc((int)pos.x, (int)pos.y);
+                
+#if UNITY_ANDROID || UNITY_IOS
+                bool SelectCtrl = MultiSelect;
+#else
+                bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
+#endif
+
+                int[] SelectedBlocks = SelectedBlock;
+
+                int Selected = GetBloc((int)pos.x, (int)pos.y);
+
+                if (Selected == -1 & !SelectCtrl) SelectedBlock = new int[0];
+                else if (Selected != -1 & SelectCtrl) SelectedBlock = SelectedBlock.Union(new int[] { Selected }).ToArray();
+                else if (!SelectCtrl) SelectedBlock = new int[] { Selected };
+
+                for (int i = 0; i < SelectedBlocks.Length; i++)
+                {
+                    Transform obj = transform.GetChild(1).Find("Objet n° " + SelectedBlocks[i]);
+                    if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
+                }
+
+                SelectBlocking = false;
             }
-            SelectBlocking = false;
         }
 
-        NoBlocSelectedPanel.SetActive(!Contenu[3].activeInHierarchy & !Contenu[0].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock == -1);
-        if (SelectedBlock != -1)
+        
+#if UNITY_STANDALONE || UNITY_EDITOR
+            if (Input.GetKey(KeyCode.Mouse1)& !bloqueSelect & SelectMode)
+#else
+        SimpleGesture.OnLongTap(() =>
+#endif
         {
-            SelectedZone.SetActive(true);
-
-            try
+#if UNITY_ANDROID || UNITY_IOS
+            if (!bloqueSelect & SelectMode)
             {
-                string a = component[SelectedBlock].Split(new string[] { "; " }, System.StringSplitOptions.None)[1];
-                string[] b = a.Replace("(", "").Replace(" ", "").Replace(")", "").Split(new string[] { "," }, System.StringSplitOptions.None);
-                float[] c = new float[] { float.Parse(b[0]) * 50, float.Parse(b[1]) * 50, float.Parse(b[2]) };
-                SelectedZone.transform.position = new Vector3(c[0] + (BlocScale / 2), c[1] + (BlocScale / 2));
-                SelectedZone.transform.localScale = new Vector2(Screen.height / (Screen.height / 50) + 1, Screen.height / (Screen.height / 50) + 1);
+                bool SelectCtrl = MultiSelect;
+#else
+                bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
+#endif
+
+                Vector2 pos = GetClicPos();
+                int Selected = GetBloc((int)pos.x, (int)pos.y);
+                if (Selected != -1 & SelectCtrl)
+                {
+                    List<int> list = new List<int>(SelectedBlock);
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        if (SelectedBlock[i] == Selected)
+                        {
+                            list.RemoveAt(i);
+                            Transform obj = transform.GetChild(1).Find("Objet n° " + SelectedBlock[i]);
+                            SelectedBlock = list.ToArray();
+                            if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
+                        }
+                    }
+                    SelectedBlock = list.ToArray();
+                }
             }
-            catch { }
+#if UNITY_ANDROID || UNITY_IOS
+        });
+#endif
+
+        NoBlocSelectedPanel.SetActive(!Contenu[3].activeInHierarchy & !Contenu[0].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock.Length == 0);
+        if (SelectedBlock.Length > 0)
+        {
+            for (int i = 0; i < SelectedBlock.Length; i++)
+            {
+                Transform obj = transform.GetChild(1).Find("Objet n° " + SelectedBlock[i]);
+                if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(true);
+            }
         }
         else SelectedZone.SetActive(false);
 
@@ -324,14 +371,14 @@ public class Editeur : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift))
             Speed = CameraMouvementSpeed * 2;
 
-        if (Input.GetKey(KeyCode.RightArrow) & Ctrl)
+        if (Input.GetKey(KeyCode.RightArrow))
             MoveX = 1;
-        else if (Input.GetKey(KeyCode.LeftArrow) & Ctrl)
+        else if (Input.GetKey(KeyCode.LeftArrow))
             MoveX = -1;
 
-        if (Input.GetKey(KeyCode.UpArrow) & Ctrl)
+        if (Input.GetKey(KeyCode.UpArrow))
             MoveY = 1;
-        else if (Input.GetKey(KeyCode.DownArrow) & Ctrl)
+        else if (Input.GetKey(KeyCode.DownArrow))
             MoveY = -1;
 
         Deplacer(MoveX * Speed, MoveY * Speed);
@@ -422,6 +469,15 @@ public class Editeur : MonoBehaviour
         return new Vector2(x, y);
     }
 
+    public void ChangeMultiSelect(Image btn)
+    {
+#if UNITY_ANDROID || UNITY_IOS && !UNITY_EDITOR
+        MultiSelect = !MultiSelect;
+        if(MultiSelect) btn.color = new Color32(75, 75, 75, 255);
+        else btn.color = new Color32(125, 125, 125, 255);
+#endif
+    }
+
     void Zoom(int Z = 0)
     {
         if (Z == 0)
@@ -510,7 +566,7 @@ public class Editeur : MonoBehaviour
         }
     }
 
-    #region GestionBloc
+#region GestionBloc
     void CreateBloc(int x, int y, Color32 _Color)
     {
 #if UNITY_ANDROID || UNITY_IOS
@@ -718,6 +774,8 @@ public class Editeur : MonoBehaviour
             SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
 
             go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
+            Texture2D SelectedZoneSize = go.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite.texture;
+            go.transform.GetChild(0).localScale = new Vector2(tex.width / SelectedZoneSize.width, tex.height / SelectedZoneSize.height);
 
             try { SR.color = HexToColor(GetBlocStatus(3, num)); }
             catch
@@ -742,13 +800,15 @@ public class Editeur : MonoBehaviour
     }
     public static Color HexToColor(string hex)
     {
+        if (hex.Length < 6 | hex.Length > 9) return new Color32(190, 190, 190, 255);
+
         byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
         byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
         byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
         byte a = byte.Parse(hex.Substring(6), System.Globalization.NumberStyles.Number);
         return new Color32(r, g, b, a);
     }
-    #endregion
+#endregion
 
     public void SelectBloc()
     {
@@ -765,41 +825,53 @@ public class Editeur : MonoBehaviour
         return a;
     }
 
+
+    [System.Obsolete("Don't include the block id is no longer supported, use ChangBlocStatus(float StatusID, string _component, int[] Bloc = null) instead")]
+    public void ChangBlocStatus(float StatusID, string _component) { ChangBlocStatus(StatusID, _component, SelectedBlock); }
     public void ChangBlocStatus(float StatusID, string _component, int Bloc = -1)
     {
-        if (Bloc == -1)
-            Bloc = SelectedBlock;
-
-        if (Bloc != -1)
+        if (Bloc == -1) ChangBlocStatus(StatusID, _component, SelectedBlock);
+        else ChangBlocStatus(StatusID, _component, new int[] { Bloc });
+    }
+    public void ChangBlocStatus(float StatusID, string _component, int[] Bloc = null)
+    { 
+        if (Bloc != null)
         {
-            string[] b = component[Bloc].Split(new string[] { "; " }, System.StringSplitOptions.None);
-
-            string[] Pos = b[1].Split(new string[] { ", " }, System.StringSplitOptions.None);
-            if (StatusID == 1.1F)
-                _component = "(" + _component + ", " + Pos[2];
-            else if (StatusID == 1.2F)
-                _component = Pos[0] + ", " + Pos[1] + ", " + _component + ")";
-
-            string c = "";
-            for (int i = 0; i < b.Length; i++)
+            for (int i = 0; i < Bloc.Length; i++)
             {
-                if (i == (int)StatusID)
-                    c = c + _component;
-                else c = c + b[i];
+                if (Bloc[i] != -1)
+                {
+                    string[] b = component[Bloc[i]].Split(new string[] { "; " }, System.StringSplitOptions.None);
+                    string _componentModified = _component;
 
-                if (i < b.Length - 1)
-                    c = c + "; ";
+                    string[] Pos = b[1].Split(new string[] { ", " }, System.StringSplitOptions.None);
+                    if (StatusID == 1.1F)
+                        _componentModified = "(" + _component + ", " + Pos[2];
+                    else if (StatusID == 1.2F)
+                        _componentModified = Pos[0] + ", " + Pos[1] + ", " + _component + ")";
+
+                    string c = "";
+                    for (int v = 0; v < b.Length; v++)
+                    {
+                        if (v == (int)StatusID)
+                            c = c + _componentModified;
+                        else c = c + b[v];
+
+                        if (v < b.Length - 1)
+                            c = c + "; ";
+                    }
+
+                    component[Bloc[i]] = c;
+                    Instance(Bloc[i], true);
+                }
             }
-
-            component[Bloc] = c;
-            Instance(Bloc, true);
         }
     }
-    public string GetBlocStatus(float StatusID, int Bloc = -1)
-    {
-        if (Bloc == -1)
-            Bloc = SelectedBlock;
 
+    [System.Obsolete("Don't include the block id is no longer supported, use GetBlocStatus(float StatusID, int Bloc) instead")]
+    public string GetBlocStatus(float StatusID) { return GetBlocStatus(StatusID, SelectedBlock[0]); }
+    public string GetBlocStatus(float StatusID, int Bloc)
+    {
         if (file != "" & component.Length > Bloc)
         {
             try
@@ -819,37 +891,40 @@ public class Editeur : MonoBehaviour
 
     public void DeleteSelectedBloc(bool fromUpdateScript)
     {
-        if (SelectedBlock != -1)
+        for (int v = 0; v < SelectedBlock.Length; v++)
         {
-            int SB = SelectedBlock;
-            SelectedBlock = -1;
-            string[] NewComponent = new string[component.Length - 1];
-
-            Transform obj = transform.GetChild(1).Find("Objet n° " + SB);
-            if (obj != null)
-                Destroy(obj.gameObject);
-
-            for (int i = 0; i < NewComponent.Length; i++)
+            if (SelectedBlock[v] != -1)
             {
-                if (i < SB)
-                    NewComponent[i] = component[i];
-                else
-                {
-                    NewComponent[i] = component[i + 1];
+                int SB = SelectedBlock[v];
+                SelectedBlock[v] = -1;
+                string[] NewComponent = new string[component.Length - 1];
 
-                    Transform objet = transform.GetChild(1).Find("Objet n° " + (i + 1));
-                    if (objet != null)
-                        objet.name = "Objet n° " + i;
+                Transform obj = transform.GetChild(1).Find("Objet n° " + SB);
+                if (obj != null)
+                    Destroy(obj.gameObject);
+
+                for (int i = 0; i < NewComponent.Length; i++)
+                {
+                    if (i < SB)
+                        NewComponent[i] = component[i];
+                    else
+                    {
+                        NewComponent[i] = component[i + 1];
+
+                        Transform objet = transform.GetChild(1).Find("Objet n° " + (i + 1));
+                        if (objet != null)
+                            objet.name = "Objet n° " + i;
+                    }
                 }
+                component = NewComponent;
+                File.WriteAllLines(file, component);
+                SelectedBlock[v] = -1;
             }
-            component = NewComponent;
-            File.WriteAllLines(file, component);
-            SelectedBlock = -1;
-        }
-        else if (!fromUpdateScript)
-        {
-            NoBlocSelectedPanel.SetActive(true);
-            StartCoroutine(WaitForDesableNoBlocSelectedPanel(2F));
+            else if (!fromUpdateScript)
+            {
+                NoBlocSelectedPanel.SetActive(true);
+                StartCoroutine(WaitForDesableNoBlocSelectedPanel(2F));
+            }
         }
     }
     public IEnumerator WaitForDesableNoBlocSelectedPanel(float sec)

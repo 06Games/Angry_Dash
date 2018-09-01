@@ -179,6 +179,9 @@ public class LevelPlayer : MonoBehaviour
 
         Destroy(SummonPlace.gameObject);
         SummonPlace = place;
+
+
+        GetComponent<MainCam>().Player.GetComponent<Player>().PeutAvancer = true; //Le niveau est chargé, le joueur peut bouger
     }
 
     public void Instance(int num, Transform place)
