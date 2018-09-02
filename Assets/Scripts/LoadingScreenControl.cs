@@ -9,7 +9,23 @@ public class LoadingScreenControl : MonoBehaviour {
     public Sprite[] Backgrounds;
     AsyncOperation async;
 
-    public void LoadScreen(string Scene) {
+    public void LoadScreen(string Scene) { LoadScreen(Scene, null); }
+
+    public void LoadScreen(string Scene, string[] args)
+    {
+        if (GameObject.Find("Temp_var") != null)
+            Destroy(GameObject.Find("Temp_var"));
+        if (args == null) args = new string[0];
+        if (args.Length > 0)
+        {
+            GameObject var = new GameObject("Temp_var");
+            DontDestroyOnLoad(var);
+            Text txt = var.AddComponent<Text>();
+            if (args.Length > 0) txt.text = args[0];
+            for (int v = 1; v < args.Length; v++)
+                txt.text = txt.text + "\n" + args[v];
+        }
+        
         loadingScreenObj = transform.GetChild(0).gameObject;
         slider = loadingScreenObj.transform.GetChild(0).GetComponent<Slider>();
 
@@ -20,6 +36,15 @@ public class LoadingScreenControl : MonoBehaviour {
         loadingScreenObj.transform.GetChild(2).GetChild(0).GetComponent<Image>().sprite = Backgrounds[i];
 
         StartCoroutine(LoadingScreen(Scene));
+    }
+
+    public string[] GetArgs() {
+        if (GameObject.Find("Temp_var") == null) return null;
+        else {
+            string[] args = GameObject.Find("Temp_var").GetComponent<Text>().text.Split(new string[] { "\n" }, System.StringSplitOptions.None);
+            Destroy(GameObject.Find("Temp_var"));
+            return args;
+        }
     }
 
     IEnumerator LoadingScreen(string Scene) {
