@@ -1014,6 +1014,7 @@ MonoBehaviour:
   ArrierePlan: {fileID: 101583185}
   TriggerPref:
   - {fileID: 1981134399792410, guid: 114e3326e1783bc4d9643ecf50da48a8, type: 2}
+  - {fileID: 1981134399792410, guid: 9d8560a81c503bf4da28b06c579d65ff, type: 2}
   Base: {fileID: 1249314462}
   nbLancer: 0
   nbLancerTxt: {fileID: 964563685}
@@ -5664,6 +5665,7 @@ MonoBehaviour:
   Selection: {fileID: 98936781}
   DefaultServerIcon: {fileID: 21300000, guid: 90c87817c48078c499e43d548bddc408, type: 3}
   Items: {fileID: 206393264}
+  LSC: {fileID: 1460994162}
 --- !u!114 &1556125074
 MonoBehaviour:
   m_ObjectHideFlags: 0

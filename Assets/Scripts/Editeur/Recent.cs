@@ -17,7 +17,6 @@ public class Recent : MonoBehaviour
     {
         Initialise();
 
-
         Transform Content = transform.GetChild(1).GetChild(0).GetChild(0);
         for (int i = 1; i < Content.childCount; i++)
             Destroy(Content.GetChild(i).gameObject);
@@ -34,13 +33,15 @@ public class Recent : MonoBehaviour
 
             if (action == "U")
                 file = c[0].Split(new string[] { "/", "_" }, System.StringSplitOptions.None)[1];
+            else if (action == "S")
+                file = c[0];
             else
             {
                 string[] dirToFile = c[0].Split(new string[] { "/", "\\" }, System.StringSplitOptions.None);
                 file = dirToFile[dirToFile.Length - 1].Replace(".level", "");
             }
             string author = c[1].Replace("|", "");
-            
+
             Content.GetChild(0).gameObject.SetActive(false);
             Transform go = Instantiate(Content.GetChild(0).gameObject, Content).transform;
 
@@ -50,6 +51,7 @@ public class Recent : MonoBehaviour
             go.GetChild(3).GetChild(0).gameObject.SetActive(action == "P");
             go.GetChild(3).GetChild(1).gameObject.SetActive(action == "E");
             go.GetChild(3).GetChild(2).gameObject.SetActive(action == "U");
+            go.GetChild(3).GetChild(3).gameObject.SetActive(action == "S");
 
             int actual = history.Length - i;
             go.GetComponent<Button>().onClick.AddListener(() => Open(actual));
@@ -76,7 +78,7 @@ public class Recent : MonoBehaviour
             if (GameObject.Find("Audio") != null)
                 GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
             editeur.EditFile(file);
-            LvlPlayed(file, true);
+            LvlPlayed(file, "E");
 
             transform.parent.GetChild(0).gameObject.SetActive(true);
             gameObject.SetActive(false);
@@ -89,6 +91,8 @@ public class Recent : MonoBehaviour
             OnlinePanel.GetComponent<EditorOnline>().OpenLevelMenu(0);
             gameObject.SetActive(false);
         }
+        else if (action == "S")
+            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Online", new string[] { file });
     }
 
     void Initialise()
@@ -97,25 +101,25 @@ public class Recent : MonoBehaviour
             File.WriteAllLines(HistoryFile, new string[] { "# History of levels played" });
     }
 
-    public static void LvlPlayed(string name, bool edit, bool absolute = true)
-    {
+    [System.Obsolete("Use LvlPlayed(string name, string type) instead")]
+    public static void LvlPlayed(string name, bool edit, bool absolute = true) { if(edit) LvlPlayed(name, "E"); else LvlPlayed(name, "P"); }
+    public static void LvlPlayed(string file, string type, string author = "")
+    { 
         string date = System.DateTime.UtcNow.ToString();
-        string file = name;
-        if (!absolute) file = Application.persistentDataPath + "/Saved Level/" + name;
 
-        int u = -1;
-        string[] f = File.ReadAllLines(file);
-        for (int x = 0; x < f.Length; x++)
+        if ((type == "E" | type == "P") & author == "")
         {
-            if (f[x].Contains("author = ") & u == -1)
-                u = x;
+            int u = -1;
+            string[] f = File.ReadAllLines(file);
+            for (int x = 0; x < f.Length; x++)
+            {
+                if (f[x].Contains("author = ") & u == -1)
+                    u = x;
+            }
+            if (u != -1) author = f[u].Replace("author = ", "");
         }
-        string author = "";
-        if (u != -1) author = f[u].Replace("author = ", "");
 
-        string line = "[" + date + "] " + file + " |" + author + "|";
-        if (edit) line = "E" + line;
-        else line = "P" + line;
+        string line = type + "[" + date + "] " + file + " |" + author + "|";
 
         string[] history = File.ReadAllLines(HistoryFile);
         for (int i = 0; i < history.Length; i++)

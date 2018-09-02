@@ -207,7 +207,7 @@ public class EditorSelect : MonoBehaviour
         if (GameObject.Find("Audio") != null)
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
         editeur.EditFile(file[SelectedLevel]);
-        Recent.LvlPlayed(file[SelectedLevel], true);
+        Recent.LvlPlayed(file[SelectedLevel], "E");
     }
 
     public void Copy()

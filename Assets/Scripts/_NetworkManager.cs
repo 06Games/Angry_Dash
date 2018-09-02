@@ -34,6 +34,8 @@ public class _NetworkManager : NetworkBehaviour
     public Sprite DefaultServerIcon;
     public GameObject Items;
 
+    public LoadingScreenControl LSC;
+
     NetworkManager NM;
 
     string adress = "localhost";
@@ -228,8 +230,19 @@ public class _NetworkManager : NetworkBehaviour
 
         if (string.IsNullOrEmpty(ConfigAPI.GetString("online.favoriteServer")))
             ConfigAPI.SetString("online.favoriteServer", "");
+        
+        string[] launchArgs = LSC.GetArgs();
+        if (launchArgs == null) launchArgs = new string[0];
+        if (launchArgs.Length > 0)
+        {
+            string[] param = launchArgs[0].Split(new string[] { ":" }, StringSplitOptions.None);
+            adress = param[0];
+            port = int.Parse(param[1]);
+            
+            Join();
+        }
+        else RefreshFav();
 
-        RefreshFav();
         Client.RegisterHandler(MsgID.GetServerMap, OnConnected);
     }
 
@@ -257,6 +270,7 @@ public class _NetworkManager : NetworkBehaviour
         mapRequested = false;
 
         Discord.Presence(LangueAPI.String("discordServer_title"), "", new DiscordClasses.Img("default",LangueAPI.StringWithArgument("discordServer_caption", new string[] { adress, port.ToString() })), null, -1, 0);
+        Recent.LvlPlayed(adress + ":" + port, "S", "");
     }
 
     void Error(NetworkMessage netMsg)

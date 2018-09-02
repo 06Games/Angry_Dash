@@ -71,7 +71,7 @@ public class LevelPlayer : MonoBehaviour
                 Parse();
                 Discord.Presence(LangueAPI.String("discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("discordPlaying_caption", fileDir[fileDir.Length - 1].Replace(".level", ""))), null, -1, 0);
 
-                if (FromScene == "Home") Recent.LvlPlayed(file, false);
+                if (FromScene == "Home") Recent.LvlPlayed(file, "P");
             }
             else
             {
@@ -300,7 +300,8 @@ public class LevelPlayer : MonoBehaviour
 
     public void Replay()
     {
-        GameObject.Find("Player").GetComponent<Player>().PeutAvancer = true;
+        if(GameObject.Find("Player") != null) GameObject.Find("Player").GetComponent<Player>().PeutAvancer = true;
+        else if (GameObject.Find("Player(Clone)") != null) GameObject.Find("Player(Clone)").GetComponent<Player>().PeutAvancer = true;
         nbLancer = 0;
         Base.GetChild(3).gameObject.SetActive(false);
         if (!File.Exists(file))
