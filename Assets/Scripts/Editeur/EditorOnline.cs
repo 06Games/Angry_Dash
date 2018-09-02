@@ -20,10 +20,10 @@ public class EditorOnline : MonoBehaviour
     public string[] ids;
     string[] files;
 
-    void Start()
+    public void OpenPanel()
     {
         levelPanel.gameObject.SetActive(false);
-        Search(null);
+        Search("/");
     }
 
     string[] level = new string[0];
@@ -33,13 +33,15 @@ public class EditorOnline : MonoBehaviour
     string[] id = new string[0];
     int page = 0;
     public void Search(InputField IF)
-    {
+    { Search(IF.text); }
+    public void Search(string _key)
+    { 
         files = new string[0];
         if (InternetAPI.IsConnected())
         {
             rZone.gameObject.SetActive(true);
             string key = "";
-            if (IF != null) key = IF.text;
+            if (_key != null) key = _key;
             if (string.IsNullOrEmpty(key)) key = "/";
             string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + key;
             WebClient client = new WebClient();
@@ -301,6 +303,8 @@ public class EditorOnline : MonoBehaviour
             {
                 File.WriteAllText(path, file);
                 File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { path, "Editor/Online" });
+                Recent.OnlineLvlPlayed(author[actual] + "/" + level[actual] + pID, author[actual]);
+                Recent.OnlineLvlPlayed(author[actual] + "/" + level[actual] + pID, author[actual]);
                 GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
             }
         }

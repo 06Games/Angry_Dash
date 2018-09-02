@@ -70,6 +70,8 @@ public class LevelPlayer : MonoBehaviour
                 Base.GetChild(3).GetChild(0).GetComponent<Text>().text = fileDir[fileDir.Length - 1].Replace(".level", "");
                 Parse();
                 Discord.Presence(LangueAPI.String("discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("discordPlaying_caption", fileDir[fileDir.Length - 1].Replace(".level", ""))), null, -1, 0);
+
+                if (FromScene == "Home") Recent.LvlPlayed(file, false);
             }
             else
             {
@@ -279,7 +281,7 @@ public class LevelPlayer : MonoBehaviour
             string scene = FromScene;
             if (FromScene == "")
                 scene = "Home";
-            else if (FromScene == "Editor/Online")
+            else if (FromScene == "Editor/Online" | FromScene == "Editor/History")
                 scene = "Editor";
 
             if (scene == "Editor" & FromScene == "Editor")
