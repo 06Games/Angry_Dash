@@ -95,14 +95,22 @@ public class Recent : MonoBehaviour
             GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Online", new string[] { file });
     }
 
-    void Initialise()
+    static void Initialise()
     {
         if (!File.Exists(HistoryFile))
             File.WriteAllLines(HistoryFile, new string[] { "# History of levels played" });
     }
 
+    /// <summary>
+    /// Indexe le niveau qui vient d'être lancé
+    /// </summary>
+    /// <param name="file">Le chemin d'accès au fichier (Local, URL ou IP)</param>
+    /// <param name="type">L'identifiant de l'action (E: Edition, P: Jouer, O: En Ligne, S: Serveur)</param>
+    /// <param name="author">(Paramètre obligatoire pour le type O) Permet de définir l'auteur du niveau au lieu de scanner le fichier</param>
     public static void LvlPlayed(string file, string type, string author = "")
     {
+        Initialise();
+
         string date = System.DateTime.UtcNow.ToString();
 
         if ((type == "E" | type == "P") & author == "")
