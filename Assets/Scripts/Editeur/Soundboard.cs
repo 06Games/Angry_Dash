@@ -264,14 +264,6 @@ public class Soundboard : MonoBehaviour
                 Music.text = LangueAPI.StringWithArgument(ids[3], new string[1] { "Unkown Music" });
         }
         else Music.text = LangueAPI.StringWithArgument(ids[3], new string[1] { "No Music" });
-
-        Transform go = MusicSelectorPanel.transform.GetChild(1);
-        for (int i = 0; i < go.childCount - 1; i++)
-        {
-            float BoxHeight = Screen.height - 250;
-            if (go.transform.lossyScale.y != 0)
-                BoxHeight = 830 / go.transform.lossyScale.y;
-        }
     }
 
     int SongOpened;
