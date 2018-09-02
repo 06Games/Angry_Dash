@@ -207,6 +207,7 @@ public class EditorSelect : MonoBehaviour
         if (GameObject.Find("Audio") != null)
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
         editeur.EditFile(file[SelectedLevel]);
+        Recent.LvlPlayed(file[SelectedLevel], true);
     }
 
     public void Copy()
@@ -238,7 +239,7 @@ public class EditorSelect : MonoBehaviour
     public void CheckNewLevelName(InputField IF)
     {
         Image i = IF.transform.GetChild(3).gameObject.GetComponent<Image>();
-        if (File.Exists(Application.persistentDataPath + "/Saved Level/" + IF.text.ToLower() + ".level") | IF.text == "")
+        if (File.Exists(Application.persistentDataPath + "/Saved Level/" + IF.text.ToLower() + ".level") | IF.text == "" | IF.text.Contains(".level"))
             i.color = new Color32(163, 0, 0, 255);
         else i.color = new Color32(129, 129, 129, 255);
     }
