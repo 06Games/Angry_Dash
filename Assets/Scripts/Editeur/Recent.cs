@@ -31,7 +31,7 @@ public class Recent : MonoBehaviour
             System.DateTime time = System.DateTime.Parse(b[0]).ToLocalTime();
             string file = c[0];
 
-            if (action == "U")
+            if (action == "O")
                 file = c[0].Split(new string[] { "/", "_" }, System.StringSplitOptions.None)[1];
             else if (action == "S")
                 file = c[0];
@@ -50,7 +50,7 @@ public class Recent : MonoBehaviour
             go.GetChild(2).GetComponent<Text>().text = time.ToString("dd/MM/yyyy HH:mm");
             go.GetChild(3).GetChild(0).gameObject.SetActive(action == "P");
             go.GetChild(3).GetChild(1).gameObject.SetActive(action == "E");
-            go.GetChild(3).GetChild(2).gameObject.SetActive(action == "U");
+            go.GetChild(3).GetChild(2).gameObject.SetActive(action == "O");
             go.GetChild(3).GetChild(3).gameObject.SetActive(action == "S");
 
             int actual = history.Length - i;
@@ -83,7 +83,7 @@ public class Recent : MonoBehaviour
             transform.parent.GetChild(0).gameObject.SetActive(true);
             gameObject.SetActive(false);
         }
-        else if (action == "U")
+        else if (action == "O")
         {
             Transform OnlinePanel = transform.parent.GetChild(3);
             OnlinePanel.gameObject.SetActive(true);
@@ -101,10 +101,8 @@ public class Recent : MonoBehaviour
             File.WriteAllLines(HistoryFile, new string[] { "# History of levels played" });
     }
 
-    [System.Obsolete("Use LvlPlayed(string name, string type) instead")]
-    public static void LvlPlayed(string name, bool edit, bool absolute = true) { if(edit) LvlPlayed(name, "E"); else LvlPlayed(name, "P"); }
     public static void LvlPlayed(string file, string type, string author = "")
-    { 
+    {
         string date = System.DateTime.UtcNow.ToString();
 
         if ((type == "E" | type == "P") & author == "")
@@ -120,35 +118,6 @@ public class Recent : MonoBehaviour
         }
 
         string line = type + "[" + date + "] " + file + " |" + author + "|";
-
-        string[] history = File.ReadAllLines(HistoryFile);
-        for (int i = 0; i < history.Length; i++)
-        {
-            string[] b = history[i].Split(new string[] { "] " }, System.StringSplitOptions.None);
-            if (b.Length >= 2)
-            {
-                string[] splited = b[1].Split(new string[] { " |" }, System.StringSplitOptions.None);
-                if (splited.Length >= 2)
-                {
-                    if (splited[0] == file)
-                    {
-                        List<string> historyList = history.ToList();
-                        historyList.RemoveAt(i);
-                        history = historyList.ToArray();
-                        i = i - 1;
-                    }
-                }
-            }
-        }
-        File.WriteAllLines(HistoryFile, history.Union(new string[] { line }).ToArray());
-    }
-
-    public static void OnlineLvlPlayed(string URL, string author)
-    {
-        string date = System.DateTime.UtcNow.ToString();
-        string file = URL;
-
-        string line = "U[" + date + "] " + file + " |" + author + "|";
 
         string[] history = File.ReadAllLines(HistoryFile);
         for (int i = 0; i < history.Length; i++)

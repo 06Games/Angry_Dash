@@ -303,8 +303,8 @@ public class EditorOnline : MonoBehaviour
             {
                 File.WriteAllText(path, file);
                 File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { path, "Editor/Online" });
-                Recent.OnlineLvlPlayed(author[actual] + "/" + level[actual] + pID, author[actual]);
-                Recent.OnlineLvlPlayed(author[actual] + "/" + level[actual] + pID, author[actual]);
+                Recent.LvlPlayed(author[actual] + "/" + level[actual] + pID, "O", author[actual]);
+                Recent.LvlPlayed(author[actual] + "/" + level[actual] + pID, "O", author[actual]);
                 GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
             }
         }
