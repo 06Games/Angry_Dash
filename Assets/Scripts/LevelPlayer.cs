@@ -157,6 +157,7 @@ public class LevelPlayer : MonoBehaviour
         int respawnMode = 0;
         if (respawnModeLine != -1)
             respawnMode = int.Parse(component[respawnModeLine].Replace("respawnMode = ", ""));
+        while (GetComponent<MainCam>().Player == null) {  }
         GetComponent<MainCam>().Player.GetComponent<Player>().respawnMode = respawnMode;
 
         Transform place = new GameObject("Items").transform;
