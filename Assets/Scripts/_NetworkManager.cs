@@ -246,16 +246,6 @@ public class _NetworkManager : NetworkBehaviour
         Client.RegisterHandler(MsgID.GetServerMap, OnConnected);
     }
 
-    public void StartHost()
-    {
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
-
-        NM.StartHost();
-        StartData(true);
-
-        Discord.Presence(LangueAPI.String("discordServer_title"), "", new DiscordClasses.Img("default"), null, -1, 0);
-    }
-
     public void Join()
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
@@ -266,7 +256,7 @@ public class _NetworkManager : NetworkBehaviour
         Selection.GetComponent<CreatorManager>().ChangArray(3);
         NC.RegisterHandler(MsgType.Disconnect, Disconnected);
         NC.RegisterHandler(MsgType.Error, Error);
-        StartData(false);
+        StartData();
         mapRequested = false;
 
         Discord.Presence(LangueAPI.String("discordServer_title"), "", new DiscordClasses.Img("default",LangueAPI.StringWithArgument("discordServer_caption", new string[] { adress, port.ToString() })), null, -1, 0);
@@ -300,7 +290,6 @@ public class _NetworkManager : NetworkBehaviour
         Selection.GetComponent<CreatorManager>().ChangArray(0);
         Selection.SetActive(true);
         isSetup = false;
-        player = 0;
 
         for (int i = 0; i < Items.transform.childCount; i++)
             Destroy(Items.transform.GetChild(i).gameObject);
@@ -311,45 +300,30 @@ public class _NetworkManager : NetworkBehaviour
     private bool isSetup = false;
     private NetworkClient Client;
     
-    public void StartData(bool serv)
+    public void StartData()
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
 
         if (!isSetup)
-            SetupClient(serv);
+            SetupClient();
     }
     public MyMsgBase m_Message;
-    public void SetupClient(bool server)
+    public void SetupClient()
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online") return;
-
-        player = 0;
+        
         NetworkManager net = NM;
         Client = net.client;
         Client.RegisterHandler(MsgID.GetServerMap, OnConnected);
         
-        if (server)
-        {
-            m_Message = new MyMsgBase();
-            m_Message.map = "Blocks {\n}";
-        }
         isSetup = true;
-        serv = server;
     }
-
-    int player = 0;
-    bool serv = false;
+    
     bool mapRequested = true;
     private void Update()
     {
         if (Items == null)
             Items = GameObject.Find("Main Camera").GetComponent<LevelPlayer>().SummonPlace.gameObject;
-
-        if (NM.numPlayers != player & serv)
-        {
-            NetworkServer.SendToAll(MsgID.GetServerMap, m_Message);
-            player = NM.numPlayers;
-        }
 
         if(NM.IsClientConnected() & refreshing)
         {
@@ -361,7 +335,6 @@ public class _NetworkManager : NetworkBehaviour
         {
             Client.Send(MsgID.AskForServerMap, new ServRequest());
             mapRequested = true;
-            //Selection.GetComponent<CreatorManager>().array = 2;
         }
     }
 
