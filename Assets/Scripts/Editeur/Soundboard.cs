@@ -426,19 +426,25 @@ public class Soundboard : MonoBehaviour
 
     public static string HtmlCodeParse(string s)
     {
-        string[] code = s.Split(new string[] { "&" }, System.StringSplitOptions.None);
-        string newString = code[0];
-        if (code.Length > 1)
+        string s2 = s;
+        try
         {
-            for (int i = 1; i < code.Length; i++)
+            string[] code = s.Split(new string[] { "&" }, System.StringSplitOptions.None);
+            string newString = code[0];
+            if (code.Length > 1)
             {
-                string c = s.Replace(newString, "").Replace("amp", "").Replace("&", "").Replace("#", "").Replace(";", "");
-                newString = newString + code[i].Replace(code[i], Char.ConvertFromUtf32(int.Parse(c)));
+                for (int i = 1; i < code.Length; i++)
+                {
+                    string[] t = s.Split(new string[] { ";" }, System.StringSplitOptions.None);
+                    string c = System.Text.RegularExpressions.Regex.Replace(s, "[^0-9]", "");
+                    newString = newString + code[i].Replace(code[i], Char.ConvertFromUtf32(int.Parse(c))) + t[2];
+                }
+                s = newString;
             }
-            s = newString;
+
+            return s;
         }
-        
-        return s;
+        catch { return s2; }
     }
 
     public static string WithoutSpecialCharacters(string s)
