@@ -47,7 +47,7 @@ public class Editeur : MonoBehaviour
     public int CameraMouvementSpeed = 10;
 #endif
 
-#if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
+#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
     bool MultiSelect = false;
 #endif
 
@@ -256,8 +256,8 @@ public class Editeur : MonoBehaviour
             if (Input.mousePosition.y > Screen.height / 4)
             {
                 Vector2 pos = GetClicPos();
-                
-#if UNITY_ANDROID || UNITY_IOS
+
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
                 bool SelectCtrl = MultiSelect;
 #else
                 bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
@@ -283,17 +283,16 @@ public class Editeur : MonoBehaviour
 
         
 #if UNITY_STANDALONE || UNITY_EDITOR
-            if (Input.GetKey(KeyCode.Mouse1)& !bloqueSelect & SelectMode)
+            if (Input.GetKey(KeyCode.Mouse1)& !bloqueSelect & SelectMode) {
 #else
-        SimpleGesture.OnLongTap(() =>
+        SimpleGesture.OnLongTap(() => {
 #endif
-        {
-#if UNITY_ANDROID || UNITY_IOS
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
             if (!bloqueSelect & SelectMode)
             {
                 bool SelectCtrl = MultiSelect;
 #else
-                bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
+            bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
 #endif
 
                 Vector2 pos = GetClicPos();
@@ -314,8 +313,8 @@ public class Editeur : MonoBehaviour
                     SelectedBlock = list.ToArray();
                 }
             }
-#if UNITY_ANDROID || UNITY_IOS
-        });
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+        }});
 #endif
 
         NoBlocSelectedPanel.SetActive(!Contenu[3].activeInHierarchy & !Contenu[0].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock.Length == 0);
@@ -471,7 +470,7 @@ public class Editeur : MonoBehaviour
 
     public void ChangeMultiSelect(Image btn)
     {
-#if UNITY_ANDROID || UNITY_IOS && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         MultiSelect = !MultiSelect;
         if(MultiSelect) btn.color = new Color32(75, 75, 75, 255);
         else btn.color = new Color32(125, 125, 125, 255);
