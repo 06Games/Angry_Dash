@@ -314,7 +314,7 @@ public class Editeur : MonoBehaviour
                 }
             }
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-        }});
+        });
 #endif
 
         NoBlocSelectedPanel.SetActive(!Contenu[3].activeInHierarchy & !Contenu[0].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock.Length == 0);
