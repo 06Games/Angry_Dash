@@ -9,7 +9,6 @@ public class Editeur : MonoBehaviour
 {
 
     public GameObject Selection;
-    //public int ortho;
 
     public string file;
     public string[] component;
