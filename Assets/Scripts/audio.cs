@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
-using UnityEngine.Events;
-using System;
-//using PlayerPrefs = PreviewLabs.PlayerPrefs;
 
 public class audio : MonoBehaviour {
 

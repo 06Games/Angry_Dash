@@ -390,9 +390,6 @@ public class Editeur : MonoBehaviour
             Touch touchZero = Input.GetTouch(0);
             Touch touchOne = Input.GetTouch(1);
 
-            float screenCenterX = Screen.width * 0.5f;
-            float screenCenterY = Screen.height * 0.5f;
-
             int MoveX = 0;
             int MoveY = 0;
 
@@ -400,14 +397,18 @@ public class Editeur : MonoBehaviour
             if (Input.touchCount == 3)
                 Speed = CameraMouvementSpeed * 2;
 
-            if (touchZero.position.x > screenCenterX & touchOne.position.x > screenCenterX)
+            // Find the position in the previous frame of each touch.
+            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+            if (touchZero.position.x > touchZeroPrevPos.x & touchOne.position.x > touchOnePrevPos.x)
                 MoveX = 1;
-            else if (touchZero.position.x < screenCenterX & touchOne.position.x < screenCenterX)
+            else if (touchZero.position.x < touchZeroPrevPos.x & touchOne.position.x < touchOnePrevPos.x)
                 MoveX = -1;
 
-            if (touchZero.position.y > screenCenterY & touchOne.position.y > screenCenterY)
+            if (touchZero.position.y > touchZeroPrevPos.y & touchOne.position.y > touchOnePrevPos.y)
                 MoveY = 1;
-            else if (touchZero.position.y < screenCenterY & touchOne.position.y < screenCenterY)
+            else if (touchZero.position.y < touchZeroPrevPos.y & touchOne.position.y < touchOnePrevPos.y)
                 MoveY = -1;
 
             Deplacer(MoveX * Speed, MoveY * Speed);
@@ -420,9 +421,6 @@ public class Editeur : MonoBehaviour
             bool isInRightTop = touchZero.position.x > Screen.width - (Screen.width / 6);
             if (touchZero.position.y > Screen.height / 4 & !(isInTop & isInRightTop))
             {
-                float screenCenterX = Screen.width * 0.5f;
-                float screenCenterY = Screen.height * 0.5f;
-
                 int MoveX = 0;
                 int MoveY = 0;
 
@@ -430,14 +428,16 @@ public class Editeur : MonoBehaviour
                 if (Input.touchCount == 3)
                     Speed = CameraMouvementSpeed * 2;
 
-                if (touchZero.position.x > screenCenterX)
+                Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+
+                if (touchZero.position.x > touchZeroPrevPos.x)
                     MoveX = 1;
-                else if (touchZero.position.x < screenCenterX)
+                else if (touchZero.position.x < touchZeroPrevPos.x)
                     MoveX = -1;
 
-                if (touchZero.position.y > screenCenterY)
+                if (touchZero.position.y > touchZeroPrevPos.y)
                     MoveY = 1;
-                else if (touchZero.position.y < screenCenterY)
+                else if (touchZero.position.y < touchZeroPrevPos.y)
                     MoveY = -1;
 
                 Deplacer(MoveX * Speed, MoveY * Speed);
