@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
     public Vector2 Ar = new Vector2(); //Pt d'arrivé actuel
 
     //Avancer
-    public bool PeutAvancer; //Pas de mur
+    public bool PeutAvancer = false; //Pas de mur
     public Vector2 PositionInitiale; //Dernier point d'arrivé valide
 
     //Paramètres
@@ -52,11 +52,9 @@ public class Player : MonoBehaviour
                 LP.GetComponent<MainCam>().Player = gameObject;
                 GetComponent<SpriteRenderer>().color = new Color32(255, 185, 0, 255);
                 GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
-                PeutAvancer = false; //Le niveau n'est pas encore chargé, le joueur attends
             }
             else GetComponent<Player>().enabled = false;
         }
-        else PeutAvancer = false; //Le niveau n'est pas encore chargé, le joueur attends
 
         int playerSkin = PlayerPrefs.GetInt("PlayerSkin");
         Texture2D tex = new Texture2D(1, 1);
@@ -85,14 +83,15 @@ public class Player : MonoBehaviour
             JoyStick.SetActive(true);
         else JoyStick.SetActive(false);
 
-        if (xa == 0 & ya == 0 & t & Ar == new Vector2() & move == 0) //si le joueur a laché le joystick
+        
+        if (xa == 0 & ya == 0 & t & Ar == new Vector2() & move == 0 & PeutAvancer) //si le joueur a laché le joystick
         {
             LP.nbLancer = LP.nbLancer + 1;
             Vector3 pos = new Vector3(transform.position.x - x, transform.position.y - y, 0);
             Ar = pos;
 
             if(respawnMode == 0) PositionInitiale = transform.position;
-            if(PeutAvancer) StartCoroutine(Navigate());
+            StartCoroutine(Navigate());
         }
 
         x = xa; //x d'avant
