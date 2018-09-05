@@ -142,3 +142,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioClip: {fileID: 8300000, guid: a5a522dc2b133104f908583cc96cbf02, type: 3}
+  mixer: {fileID: 24100000, guid: 33f1cf7ab0890254680ad802d8577964, type: 2}

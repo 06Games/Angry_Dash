@@ -42,9 +42,9 @@ namespace UnityStandardAssets.Utility
                     m_FpsAccumulator = 0;
                     m_FpsNextPeriod += fpsMeasurePeriod;
 
-                    if (ConfigAPI.GetBool("FPS.show"))
-                        m_Text.text = string.Format(display, m_CurrentFps);
-                    else m_Text.text = "";
+                    m_Text.text = string.Format(display, m_CurrentFps);
+
+                    GetComponent<Text>().enabled = ConfigAPI.GetBool("FPS.show");
                 }
             }
             else ConfigAPI.SetBool("FPS.show", GetComponent<Toggle>().isOn);

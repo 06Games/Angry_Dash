@@ -7,8 +7,16 @@ public class menuMusic : MonoBehaviour
     static bool AudioBegin = false;
 
     public AudioClip audioClip;
+
+    public UnityEngine.Audio.AudioMixer mixer;
+
     void Awake()
     {
+        string[] parametersNames = new string[3] { "Master", "Musique", "FX" };
+        string[] parametersConfigNames = new string[] { "audio.master", "audio.music", "audio.fx" };
+        for (int i = 0; i < parametersNames.Length; i++)
+            mixer.SetFloat(parametersNames[i], ConfigAPI.GetInt(parametersConfigNames[i]));
+
         if (!AudioBegin)
             StartDefault();
     }
