@@ -98,8 +98,8 @@ public class LangueAPI : MonoBehaviour
         bool FilesExists = Directory.GetFiles(Application.persistentDataPath + "/Languages/").Length > 0;
         
         Base.ActiveObjectStatic(DownloadingFilesPanel.gameObject);
-        
-        WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/index");
+
+        WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/" + Application.version + "/index");
         yield return www;
         string[] All = www.text.Split(new string[] { "\n" }, StringSplitOptions.None);
 
