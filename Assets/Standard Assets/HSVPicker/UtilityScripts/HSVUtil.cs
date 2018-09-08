@@ -55,6 +55,8 @@ public static class HSVUtil
 
     }
 
+    public static Color ConvertHsvToRgb(HsvColor hsvColor) { return ConvertHsvToRgb(hsvColor.H, hsvColor.S, hsvColor.V, 255); }
+    public static Color ConvertHsvToRgb(HsvColor hsvColor, float alpha) { return ConvertHsvToRgb(hsvColor.H, hsvColor.S, hsvColor.V, alpha); }
     // Converts an HSV color to an RGB color.
     public static Color ConvertHsvToRgb(double h, double s, double v, float alpha)
     {

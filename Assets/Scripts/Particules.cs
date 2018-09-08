@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Particules : MonoBehaviour
 {
@@ -9,6 +11,7 @@ public class Particules : MonoBehaviour
     public int FallSpeed = 5;
     public Vector2 FallDirection = new Vector3(0, 1);
     public bool Static;
+    public int Mode = 1;
 
     void Start() { StartCoroutine(Move()); }
     IEnumerator Move() { 
@@ -19,7 +22,18 @@ public class Particules : MonoBehaviour
         if (transform.position.y < -500)
             Destroy(gameObject);
 
-        yield return new WaitForSeconds(1 / 60F);
+        if (Mode == 2)
+        {
+            HsvColor hsv = HSVUtil.ConvertRgbToHsv(GetComponent<Image>().color);
+
+            if (hsv.S == 0) hsv.S = 1;
+            if (hsv.H < 360) hsv.H = hsv.H + 1;
+            else hsv.H = 0;
+
+            GetComponent<Image>().color = HSVUtil.ConvertHsvToRgb(hsv, 255);
+        }
+
+            yield return new WaitForSeconds(1 / 60F);
         StartCoroutine(Move());
     }
 }
