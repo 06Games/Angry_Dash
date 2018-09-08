@@ -361,7 +361,7 @@ public class Editeur : MonoBehaviour
         }
 #endif
 
-#if UNITY_STANDALONE || !UNITY_EDITOR
+#if UNITY_STANDALONE || UNITY_EDITOR
         int MoveX = 0;
         int MoveY = 0;
 
