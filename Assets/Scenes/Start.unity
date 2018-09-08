@@ -2607,6 +2607,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scene: Home
+  returnScene: 1
+  OnEchap:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: BaseControl+OnCompleteEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
   LSC: {fileID: 327852930}
   BigSlider: {fileID: 0}
   SmallSlider: {fileID: 0}
@@ -2625,7 +2631,6 @@ GameObject:
   - component: {fileID: 2109641237}
   - component: {fileID: 2109641239}
   - component: {fileID: 2109641238}
-  - component: {fileID: 2109641240}
   m_Layer: 5
   m_Name: Title
   m_TagString: Untagged
@@ -2693,20 +2698,6 @@ CanvasRenderer:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2109641236}
---- !u!114 &2109641240
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2109641236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  id: downloadLangTitle
-  keepIfNotExist: 1
-  arg: []
 --- !u!1 &2119409146
 GameObject:
   m_ObjectHideFlags: 0

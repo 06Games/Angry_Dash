@@ -28,7 +28,14 @@ public class LangueSelector : MonoBehaviour
             ReloadScene();
 
         if (AutomatiqueUpdate)
+        {
+            string title = "";
+            if (Directory.GetFiles(Application.persistentDataPath + "/Languages/").Length > 1)
+                title = LangueAPI.String("downloadLangTitleUpdate");
+            else title = LangueAPI.String("downloadLangTitle");
+            if(!string.IsNullOrEmpty(title)) DownloadingFilesPanel.GetChild(2).GetComponent<Text>().text = title;
             StartCoroutine(LangueAPI.UpdateFiles(DownloadingFilesPanel, this));
+        }
         if (Langues != null)
             if (Langues.childCount <= 1)
                 StartCoroutine(GetLangDispo(AutomatiqueUpdate));
