@@ -361,7 +361,7 @@ public class Editeur : MonoBehaviour
         }
 #endif
 
-#if UNITY_STANDALONE || UNITY_EDITOR
+#if UNITY_STANDALONE || !UNITY_EDITOR
         int MoveX = 0;
         int MoveY = 0;
 
@@ -383,36 +383,7 @@ public class Editeur : MonoBehaviour
 #elif UNITY_ANDROID || UNITY_IOS
         bool isSimple = !AddBlocking & (Input.touchCount == 1 | Input.touchCount == 2);
         bool isAdvence = AddBlocking & (Input.touchCount == 2 | Input.touchCount == 3);
-        if (isAdvence)
-        {
-            // Store both touches.
-            Touch touchZero = Input.GetTouch(0);
-            Touch touchOne = Input.GetTouch(1);
-
-            int MoveX = 0;
-            int MoveY = 0;
-
-            int Speed = CameraMouvementSpeed;
-            if (Input.touchCount == 3)
-                Speed = CameraMouvementSpeed * 2;
-
-            // Find the position in the previous frame of each touch.
-            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
-
-            if (touchZero.position.x > touchZeroPrevPos.x & touchOne.position.x > touchOnePrevPos.x)
-                MoveX = 1;
-            else if (touchZero.position.x < touchZeroPrevPos.x & touchOne.position.x < touchOnePrevPos.x)
-                MoveX = -1;
-
-            if (touchZero.position.y > touchZeroPrevPos.y & touchOne.position.y > touchOnePrevPos.y)
-                MoveY = 1;
-            else if (touchZero.position.y < touchZeroPrevPos.y & touchOne.position.y < touchOnePrevPos.y)
-                MoveY = -1;
-
-            Deplacer(MoveX * Speed, MoveY * Speed);
-        }
-        else if (isSimple)
+        if (isAdvence | isSimple)
         {
             Touch touchZero = Input.GetTouch(0);
 
@@ -420,26 +391,12 @@ public class Editeur : MonoBehaviour
             bool isInRightTop = touchZero.position.x > Screen.width - (Screen.width / 6);
             if (touchZero.position.y > Screen.height / 4 & !(isInTop & isInRightTop))
             {
-                int MoveX = 0;
-                int MoveY = 0;
-
                 int Speed = CameraMouvementSpeed;
                 if (Input.touchCount == 3)
                     Speed = CameraMouvementSpeed * 2;
 
-                Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-
-                if (touchZero.position.x > touchZeroPrevPos.x)
-                    MoveX = 1;
-                else if (touchZero.position.x < touchZeroPrevPos.x)
-                    MoveX = -1;
-
-                if (touchZero.position.y > touchZeroPrevPos.y)
-                    MoveY = 1;
-                else if (touchZero.position.y < touchZeroPrevPos.y)
-                    MoveY = -1;
-
-                Deplacer(MoveX * Speed, MoveY * Speed);
+                Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition; // Find the position in the previous frame.
+                Deplacer(touchZeroPrevPos.x * Speed, touchZeroPrevPos.y * Speed);
             }
         }
 #endif
@@ -931,7 +888,7 @@ public class Editeur : MonoBehaviour
         NoBlocSelectedPanel.SetActive(false);
     }
 
-    public void Deplacer(int x, int y)
+    public void Deplacer(float x, float y)
     {
         if (x != 0 | y != 0)
         {
