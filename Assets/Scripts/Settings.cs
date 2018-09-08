@@ -7,7 +7,7 @@ public class Settings : MonoBehaviour
     public Transform GraphicalOptions;
 
     public static bool mobile() {
-#if UNITY_ANDROID || UNITY_IOS
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         return true;
 #else 
         return false;
