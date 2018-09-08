@@ -119,7 +119,10 @@ public class LevelPlayer : MonoBehaviour
         for (int x = 0; x < component.Length; x++)
         {
             if (component[x].Contains("background = ") & a == -1)
+            {
                 a = x;
+                x = component.Length;
+            }
         }
         string back = "1; 4B4B4B255";
         if (a != -1)
@@ -136,15 +139,21 @@ public class LevelPlayer : MonoBehaviour
         for (int x = 0; x < component.Length; x++)
         {
             if (component[x].Contains("Blocks {") & d == -1)
+            {
                 d = x + 1;
+                x = component.Length;
+            }
         }
         int end = -1;
         if (d != -1)
         {
-            for (int i = d; i < component.Length; i++)
+            for (int i = component.Length - 1; i >= d; i--)
             {
                 if (component[i].Contains("}") & end == -1)
+                {
                     end = i;
+                    i = component.Length;
+                }
             }
         }
 
@@ -152,7 +161,10 @@ public class LevelPlayer : MonoBehaviour
         for (int x = 0; x < component.Length; x++)
         {
             if (component[x].Contains("respawnMode = ") & respawnModeLine == -1)
+            {
                 respawnModeLine = x;
+                x = component.Length;
+            }
         }
         int respawnMode = 0;
         if (respawnModeLine != -1)
@@ -171,7 +183,10 @@ public class LevelPlayer : MonoBehaviour
         for (int x = 0; x < component.Length; x++)
         {
             if (component[x].Contains("music = ") & m == -1)
+            {
                 m = x;
+                x = component.Length;
+            }
         }
         string music = "";
         if (m != -1)

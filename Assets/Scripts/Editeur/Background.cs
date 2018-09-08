@@ -43,7 +43,10 @@ public class Background : MonoBehaviour {
             for (int x = 0; x < Editor.component.Length; x++)
             {
                 if (Editor.component[x].Contains("background = ") & d == -1)
+                {
                     d = x;
+                    x = Editor.component.Length;
+                }
             }
 
             if (d != -1)
@@ -72,7 +75,10 @@ public class Background : MonoBehaviour {
             for (int x = 0; x < Editor.component.Length; x++)
             {
                 if (Editor.component[x].Contains("background = ") & d == -1)
+                {
                     d = x;
+                    x = Editor.component.Length;
+                }
             }
             if(d != -1)
                 Editor.component[d] = "background = " + Selected.ToString("0") + "; " + Editeur.ColorToHex(color);
@@ -92,7 +98,10 @@ public class Background : MonoBehaviour {
         for (int x = 0; x < Editor.component.Length; x++)
         {
             if (Editor.component[x].Contains("background = ") & d == -1)
+            {
                 d = x;
+                x = Editor.component.Length;
+            }
         }
         string back = "1; 4B4B4B255";
         if (d != -1)

@@ -103,13 +103,19 @@ public class Editeur : MonoBehaviour
         for (int x = 0; x < component.Length; x++)
         {
             if (component[x].Contains("Blocks {") & d == -1)
+            {
                 d = x + 1;
+                x = component.Length;
+            }
         }
         int end = -1;
-        for (int i = d; i < component.Length; i++)
+        for (int i = component.Length-1; i >= d; i--)
         {
             if (component[i].Contains("}") & end == -1)
+            {
                 end = i;
+                i = component.Length;
+            }
         }
 
         for (int i = d; i < end; i++)
@@ -166,13 +172,19 @@ public class Editeur : MonoBehaviour
         for (int x = 0; x < f.Length; x++)
         {
             if (f[x].Contains("publicID = ") & l == -1)
+            {
                 l = x;
+                x = f.Length;
+            }
         }
         int u = -1;
         for (int x = 0; x < f.Length; x++)
         {
             if (f[x].Contains("author = ") & u == -1)
+            {
                 u = x;
+                x = f.Length;
+            }
         }
         if (l != -1) return f[l].Replace("publicID = ", "") == SHA_PublicID(File.GetCreationTimeUtc(txt), f[u].Replace("author = ", ""));
         else return false;
@@ -524,7 +536,7 @@ public class Editeur : MonoBehaviour
 #region GestionBloc
     void CreateBloc(int x, int y, Color32 _Color)
     {
-#if UNITY_ANDROID || UNITY_IOS
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         if (Input.touchCount == 1)
         {
 #endif
@@ -571,7 +583,7 @@ public class Editeur : MonoBehaviour
             component = newComponent;
             Instance(end);
         }
-#if UNITY_ANDROID || UNITY_IOS
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         }
 #endif
     }

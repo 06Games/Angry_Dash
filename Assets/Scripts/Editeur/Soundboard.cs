@@ -35,7 +35,8 @@ public class Soundboard : MonoBehaviour
 
     public GameObject MusicSelectorPanel;
 
-    public void RefreshList()
+    bool Refreshed = false;
+    public void RefreshList(bool DesactiveGO = true)
     {
         if (InternetAPI.IsConnected())
         {
@@ -80,8 +81,9 @@ public class Soundboard : MonoBehaviour
             }
 
             Search(null);
-            gameObject.SetActive(false);
+            if(DesactiveGO) gameObject.SetActive(false);
             if (lenght > 0) return;
+            Refreshed = true;
         }
 
             String AT = "audio/x-wav";
@@ -264,6 +266,8 @@ public class Soundboard : MonoBehaviour
                 Music.text = LangueAPI.StringWithArgument(ids[3], new string[1] { "Unkown Music" });
         }
         else Music.text = LangueAPI.StringWithArgument(ids[3], new string[1] { "No Music" });
+
+        if (!Refreshed) RefreshList(false);
     }
 
     int SongOpened;

@@ -119,7 +119,10 @@ public class EditorSelect : MonoBehaviour
             for (int x = 0; x < f.Length; x++)
             {
                 if (f[x].Contains("publicID = ") & pID == -1)
+                {
                     pID = x;
+                    x = f.Length;
+                }
             }
             if (pID != -1)
                 fileID = f[pID].Replace("publicID = ", "");
