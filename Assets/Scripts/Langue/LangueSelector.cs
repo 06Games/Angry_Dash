@@ -12,7 +12,7 @@ public class LangueSelector : MonoBehaviour
     public GameObject RestartRequire;
     public LoadingScreenControl LS;
     public Transform DownloadingFilesPanel;
-    public Social _Social;
+    public DependenciesManager dependenciesManager;
 
     public bool AutomatiqueUpdate;
 
@@ -153,7 +153,7 @@ public class LangueSelector : MonoBehaviour
     public void End()
     {
         Base.DeactiveObjectStatic(DownloadingFilesPanel.gameObject);
-        if (_Social != null)
-            _Social.NewStart();
+        if (dependenciesManager != null)
+            dependenciesManager.DownloadAllRequiredTex();
     }
 }
