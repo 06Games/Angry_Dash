@@ -121,36 +121,52 @@ public class DependenciesManager : MonoBehaviour
     private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
         // vitesse
-        double speed = Math.Round((e.BytesReceived / 1024d / sw.Elapsed.TotalSeconds), 1);
+        double speed = Math.Round((e.BytesReceived / sw.Elapsed.TotalSeconds), 1);
+        int SpeedReduct = 0;
+        for (int i = 0; NbChiffreEntier(speed) > 3 & i < 20; i++)
+        {
+            speed = speed / 1024d;
+            SpeedReduct++;
+        }
+        speed = Math.Round(speed, 1);
+        string SpeedLangueID = "downloadSpeedB";
+        if (SpeedReduct == 0) SpeedLangueID = "downloadSpeedB";
+        else if (SpeedReduct == 1) SpeedLangueID = "downloadSpeedKB";
+        else if (SpeedReduct == 2) SpeedLangueID = "downloadSpeedMB";
+        else if (SpeedReduct == 3) SpeedLangueID = "downloadSpeedGB";
+        else if (SpeedReduct == 4) SpeedLangueID = "downloadSpeedTB";
 
-        string speedText = "";
-        if (NbChiffreEntier(speed) >= 0 & NbChiffreEntier(speed) < 4)
-            speedText = Math.Round(speed, 1) + " Ko/s";
-        else if (NbChiffreEntier(speed) >= 4)
-            speedText = Math.Round(speed / 1000, 1) + " Mo/s";
 
         int pourcentage = e.ProgressPercentage; //Progression
-        string pourcent = e.ProgressPercentage.ToString("00"); //Progression texte
 
-        string downloaded = "";
-        if (NbChiffreEntier(e.TotalBytesToReceive) >= 0 & NbChiffreEntier(e.TotalBytesToReceive) < 4)
-            downloaded = string.Format("{0} o sur {1} o", //Le nombre de B téléchargé sur le nombre de B total
-             e.BytesReceived.ToString("0"),
-             e.TotalBytesToReceive.ToString("0"));
-        else if (NbChiffreEntier(e.TotalBytesToReceive) >= 4 & NbChiffreEntier(e.TotalBytesToReceive) < 7)
-            downloaded = string.Format("{0} Ko sur {1} Ko", //Le nombre de KB téléchargé sur le nombre de KB total
-            (e.BytesReceived / 1024d).ToString("0.0"),
-            (e.TotalBytesToReceive / 1024d).ToString("0.0"));
-        else if (NbChiffreEntier(e.TotalBytesToReceive) >= 7)
-            downloaded = string.Format("{0} Mo sur {1} Mo", //Le nombre de MB téléchargé sur le nombre de MB total
-            (e.BytesReceived / 1024d / 1024d).ToString("0.0"),
-            (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.0"));
+        //Avancé (x Mo sur x Mo)
+        double Actual = e.BytesReceived;
+        double Total = e.TotalBytesToReceive;
+        int Reduct = 0;
+        for (int i = 0; NbChiffreEntier(Total) > 3 & i < 20; i++)
+        {
+            Actual = Actual / 1024d;
+            Total = Total / 1024d;
+            Reduct++;
+        }
+        Actual = Math.Round(Actual, 1);
+        Total = Math.Round(Total, 1);
+        string LangueID = "downloadStateB";
+        if (Reduct == 0) LangueID = "downloadStateB";
+        else if (Reduct == 1) LangueID = "downloadStateKB";
+        else if (Reduct == 2) LangueID = "downloadStateMB";
+        else if (Reduct == 3) LangueID = "downloadStateGB";
+        else if (Reduct == 4) LangueID = "downloadStateTB";
 
         UnityThread.executeInUpdate(() =>
         {
+            string speedText = LangueAPI.StringWithArgument(SpeedLangueID, speed);
+            string downloaded = LangueAPI.StringWithArgument(LangueID, new string[] { Actual.ToString("0.0"), Total.ToString("0.0") });
+            string pourcent = LangueAPI.StringWithArgument("downloadStatePercentage", pourcentage.ToString("00"));
+
             Text DownloadInfo = SmallSlider.transform.GetChild(4).GetComponent<Text>();
             DownloadInfo.gameObject.SetActive(true);
-            DownloadInfo.text = speedText + " - " + downloaded + " - <color=grey>" + pourcent + "%</color>";
+            DownloadInfo.text = speedText + " - " + downloaded + " - <color=grey>" + pourcent + "</color>";
 
             //Progression plus détaillée
             string name = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None)[int.Parse(downData[0])].Split(new string[] { "<name>" }, StringSplitOptions.None)[1].Split(new string[] { "</name>" }, StringSplitOptions.None)[0];
@@ -160,7 +176,6 @@ public class DependenciesManager : MonoBehaviour
             SmallSlider.value = baseValue + ((pourcentage / 100F) * oneValue);
         });
     }
-    int NbChiffreEntier(double d) { return ((int)d).ToString().Length; }
 
     private void wc_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
     {
@@ -309,5 +324,7 @@ public class DependenciesManager : MonoBehaviour
 
         return versionCompatibility;
     }
+
+    int NbChiffreEntier(double d) { return Math.Round(d, 0).ToString().Length; }
     #endregion
 }
