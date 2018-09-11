@@ -123,7 +123,7 @@ public class DependenciesManager : MonoBehaviour
         // vitesse
         double speed = Math.Round((e.BytesReceived / sw.Elapsed.TotalSeconds), 1);
         int SpeedReduct = 0;
-        for (int i = 0; NbChiffreEntier(speed) > 3 & i < 20; i++)
+        for (int i = 0; NbChiffreEntier(speed) > 3 & i <= 4; i++)
         {
             speed = speed / 1024d;
             SpeedReduct++;
@@ -143,7 +143,7 @@ public class DependenciesManager : MonoBehaviour
         double Actual = e.BytesReceived;
         double Total = e.TotalBytesToReceive;
         int Reduct = 0;
-        for (int i = 0; NbChiffreEntier(Total) > 3 & i < 20; i++)
+        for (int i = 0; NbChiffreEntier(Total) > 3 & i <= 4; i++)
         {
             Actual = Actual / 1024d;
             Total = Total / 1024d;

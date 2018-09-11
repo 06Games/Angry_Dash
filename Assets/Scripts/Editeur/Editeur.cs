@@ -40,14 +40,13 @@ public class Editeur : MonoBehaviour
 
     public bool bloqueEchap;
 
-#if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
-    public int CameraMouvementSpeed = 1;
-#else
+#if UNITY_STANDALONE || UNITY_EDITOR
     public int CameraMouvementSpeed = 10;
 #endif
 
 #if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
     bool MultiSelect = false;
+    Vector2 touchLastPosition;
 #endif
 
 #region UI
@@ -403,14 +402,17 @@ public class Editeur : MonoBehaviour
             bool isInRightTop = touchZero.position.x > Screen.width - (Screen.width / 6);
             if (touchZero.position.y > Screen.height / 4 & !(isInTop & isInRightTop))
             {
-                int Speed = CameraMouvementSpeed;
-                if (Input.touchCount == 3)
-                    Speed = CameraMouvementSpeed * 2;
-
-                Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition; // Find the position in the previous frame.
+                int Speed = 1;
+                if ((Input.touchCount == 2 & isSimple) | (Input.touchCount == 3 & isAdvence))
+                    Speed = 2;
+                
+                if(touchLastPosition == new Vector2(-50000, -50000))
+                    touchLastPosition = touchZero.position;
+                Vector2 touchZeroPrevPos = touchZero.position - touchLastPosition; // Find the diference between the last position.
                 Deplacer(touchZeroPrevPos.x * Speed, touchZeroPrevPos.y * Speed);
             }
         }
+        else touchLastPosition = new Vector2(-50000, -50000);
 #endif
     }
 
