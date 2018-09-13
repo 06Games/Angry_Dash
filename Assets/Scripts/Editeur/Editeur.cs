@@ -407,8 +407,8 @@ public class Editeur : MonoBehaviour
                     Speed = 2;
                 
                 if(touchLastPosition == new Vector2(-50000, -50000))
-                    touchLastPosition = touchZero.position;
-                Vector2 touchZeroPrevPos = touchZero.position - touchLastPosition; // Find the diference between the last position.
+                    touchLastPosition = cam.ScreenToWorldPoint(touchZero.position);
+                Vector2 touchZeroPrevPos = cam.ScreenToWorldPoint(touchZero.position) - touchLastPosition; // Find the diference between the last position.
                 Deplacer(touchZeroPrevPos.x * Speed, touchZeroPrevPos.y * Speed);
             }
         }
