@@ -406,9 +406,10 @@ public class Editeur : MonoBehaviour
                 if ((Input.touchCount == 2 & isSimple) | (Input.touchCount == 3 & isAdvence))
                     Speed = 2;
                 
+        Vector2 TouchPosition = new Vector2(cam.ScreenToWorldPoint(touchZero.position).x, cam.ScreenToWorldPoint(touchZero.position).y);
                 if(touchLastPosition == new Vector2(-50000, -50000))
-                    touchLastPosition = cam.ScreenToWorldPoint(touchZero.position);
-                Vector2 touchZeroPrevPos = cam.ScreenToWorldPoint(touchZero.position) - touchLastPosition; // Find the diference between the last position.
+                    touchLastPosition = TouchPosition;
+                Vector2 touchZeroPrevPos = TouchPosition - touchLastPosition; // Find the diference between the last position.
                 Deplacer(touchZeroPrevPos.x * Speed, touchZeroPrevPos.y * Speed);
             }
         }
