@@ -33,7 +33,7 @@ public class LangueSelector : MonoBehaviour
             if (Directory.GetFiles(Application.persistentDataPath + "/Languages/").Length > 1)
                 title = LangueAPI.String("downloadLangTitleUpdate");
             else title = LangueAPI.String("downloadLangTitle");
-            if(!string.IsNullOrEmpty(title)) DownloadingFilesPanel.GetChild(2).GetComponent<Text>().text = title;
+            if (!string.IsNullOrEmpty(title)) DownloadingFilesPanel.GetChild(2).GetComponent<Text>().text = title;
             StartCoroutine(LangueAPI.UpdateFiles(DownloadingFilesPanel, this));
         }
         if (Langues != null)
@@ -51,7 +51,7 @@ public class LangueSelector : MonoBehaviour
     {
         if (Langues != null & LangFlag != null)
         {
-            for (int i = 0; i < LangueDispo.Length & i < Langues.childCount-1; i++)
+            for (int i = 0; i < LangueDispo.Length & i < Langues.childCount - 1; i++)
             {
                 if (i == actuel)
                     Langues.GetChild(i + 1).GetChild(0).gameObject.SetActive(true);
@@ -87,13 +87,13 @@ public class LangueSelector : MonoBehaviour
         {
             string[] langFiles = Directory.GetFiles(Application.persistentDataPath + "/Languages/");
             All = new string[langFiles.Length];
-            
-            for(int i = 0; i < All.Length; i++)
+
+            for (int i = 0; i < All.Length; i++)
             {
                 string[] pathToFile = langFiles[i].Split(new string[2] { "/", "\\" }, StringSplitOptions.None);
                 string flag = langFiles[i].Replace("/Languages/", "/Languages/Flags/").Replace(".lang", ".png");
                 if (!File.Exists(flag)) flag = "";
-                All[i] = pathToFile[pathToFile.Length-1].Replace(".lang", "") + "[" + langFiles[0] + "]["+flag+"]";
+                All[i] = pathToFile[pathToFile.Length - 1].Replace(".lang", "") + "[" + langFiles[0] + "][" + flag + "]";
             }
         }
 
@@ -114,8 +114,8 @@ public class LangueSelector : MonoBehaviour
 
                 WebClient client = new WebClient();
                 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                if(param.Length > 2)
-                    if(param[2] != "]")
+                if (param.Length > 2)
+                    if (param[2] != "]")
                         client.DownloadFile(param[2].Replace("]", ""), Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png");
             }
 
@@ -152,8 +152,11 @@ public class LangueSelector : MonoBehaviour
 
     public void End()
     {
-        Base.DeactiveObjectStatic(DownloadingFilesPanel.gameObject);
-        if (dependenciesManager != null)
-            dependenciesManager.DownloadAllRequiredTex();
+        UnityThread.executeInUpdate(() =>
+        {
+            DownloadingFilesPanel.gameObject.SetActive(false);
+            if (dependenciesManager != null)
+                dependenciesManager.DownloadAllRequiredTex();
+        });
     }
 }

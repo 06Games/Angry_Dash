@@ -20,19 +20,21 @@ public class DependenciesManager : MonoBehaviour
     #region Textures
     public void DownloadAllRequiredTex()
     {
+        DownloadPanel = transform.GetChild(1).gameObject;
+        BigSlider = DownloadPanel.transform.GetChild(1).GetComponent<Slider>();
+        SmallSlider = DownloadPanel.transform.GetChild(2).GetComponent<Slider>();
+
         if (InternetAPI.IsConnected())
         {
             string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/items/";
             WebClient client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            string Result = client.DownloadString(URL).Replace("<BR />", "\n");
+            string Result = "";
+            try { Result = client.DownloadString(URL).Replace("<BR />", "\n"); } catch { wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); return; }
             string[] lines = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
             int CatNumber = int.Parse(lines[lines.Length - 1].Replace("<dir>", "").Replace("</dir>", ""));
 
-            DownloadPanel = transform.GetChild(1).gameObject;
             DownloadPanel.SetActive(true);
-            BigSlider = DownloadPanel.transform.GetChild(1).GetComponent<Slider>();
-            SmallSlider = DownloadPanel.transform.GetChild(2).GetComponent<Slider>();
             SmallSlider.transform.GetChild(4).gameObject.SetActive(false);
 
             fileCat = new int[CatNumber];
@@ -44,11 +46,11 @@ public class DependenciesManager : MonoBehaviour
 
             downloadFile(0, lines, Application.persistentDataPath + "/Textures/", CatNumber);
         }
-        else transform.GetChild(0).gameObject.SetActive(true);
+        else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
     }
 
     int[] fileCat = new int[0];
-    string[] downData = new string[5];
+    string[] downData = new string[5] { "", "", "", "", "" };
     Stopwatch sw = new Stopwatch();
     public void downloadFile(int actual, string[] lines, string mainPath, int CatNumber)
     {
@@ -197,12 +199,22 @@ public class DependenciesManager : MonoBehaviour
         {
             string[] s = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None);
 
-            if (int.Parse(downData[0]) < s.Length - 2)
-                downloadFile(int.Parse(downData[0]) + 1, s, downData[2], int.Parse(downData[4]));
+            if (sender.ToString() != "pass")
+            {
+                try
+                {
+                    if (int.Parse(downData[0]) < s.Length - 2)
+                        downloadFile(int.Parse(downData[0]) + 1, s, downData[2], int.Parse(downData[4]));
+                    else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
+                } catch { wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); }
+            }
             else
             {
-                downloadLevels();
-                Base.DeactiveObjectStatic(DownloadPanel);
+                UnityThread.executeInUpdate(() =>
+                {
+                    downloadLevels();
+                    DownloadPanel.SetActive(false);
+                });
             }
         });
     }
@@ -220,8 +232,9 @@ public class DependenciesManager : MonoBehaviour
                 string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/solo/";
                 WebClient client = new WebClient();
                 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                string Result = client.DownloadString(URL).Replace("<BR />", "\n");
-                lines = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
+                string Result = "";
+                try { Result = client.DownloadString(URL).Replace("<BR />", "\n"); } catch { levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); return; }
+            lines = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
             }
 
             UnityThread.executeInUpdate(() =>
@@ -262,6 +275,7 @@ public class DependenciesManager : MonoBehaviour
             data_actual = actual;
             data_lines = lines;
         }
+        else levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
     }
 
     private void levels_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
@@ -282,12 +296,23 @@ public class DependenciesManager : MonoBehaviour
 
         UnityThread.executeInUpdate(() =>
         {
-            if (data_actual < data_lines.Length - 1)
-                downloadLevels(data_actual + 1, data_lines);
+            if (sender.ToString() != "pass")
+            {
+                try
+                {
+                    if (data_actual < data_lines.Length - 1)
+                        downloadLevels(data_actual + 1, data_lines);
+                    else levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
+                }
+                catch { levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); }
+            }
             else
             {
-                Base.DeactiveObjectStatic(transform.GetChild(2).gameObject);
-                _Social.NewStart();
+                UnityThread.executeInUpdate(() =>
+                {
+                    transform.GetChild(2).gameObject.SetActive(false);
+                    _Social.NewStart();
+                });
             }
         });
     }
