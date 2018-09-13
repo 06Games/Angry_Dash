@@ -40,8 +40,6 @@ public class Soundboard : MonoBehaviour
     {
         if (InternetAPI.IsConnected())
         {
-            MusicSelectorPanel.SetActive(false);
-
             WebClient client = new WebClient();
             client.Encoding = System.Text.Encoding.UTF8;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
@@ -250,6 +248,7 @@ public class Soundboard : MonoBehaviour
         {
             if (editor.component[x].Contains("music = ") & d == -1)
                 d = x;
+            else if (d != -1) x = editor.component.Length;
         }
         if (d > -1 & !string.IsNullOrEmpty(editor.component[d].Replace("music = ", "")))
         {
@@ -261,6 +260,7 @@ public class Soundboard : MonoBehaviour
                     Music.text = LangueAPI.StringWithArgument(ids[3], new string[1] { SongName[i] });
                     p = i;
                 }
+                else if (p != -1) i = editor.component.Length;
             }
             if (p == -1)
                 Music.text = LangueAPI.StringWithArgument(ids[3], new string[1] { "Unkown Music" });
@@ -268,6 +268,7 @@ public class Soundboard : MonoBehaviour
         else Music.text = LangueAPI.StringWithArgument(ids[3], new string[1] { "No Music" });
 
         if (!Refreshed) RefreshList(false);
+        Page(0);
     }
 
     int SongOpened;
