@@ -199,15 +199,9 @@ public class DependenciesManager : MonoBehaviour
         {
             string[] s = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None);
 
-            if (sender.ToString() != "pass")
-            {
-                try
-                {
-                    if (int.Parse(downData[0]) < s.Length - 2)
-                        downloadFile(int.Parse(downData[0]) + 1, s, downData[2], int.Parse(downData[4]));
-                    else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
-                } catch { wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); }
-            }
+            bool c = false;
+            if (sender == null) c = true;
+            else if (sender.ToString() != "pass") c = true;
             else
             {
                 UnityThread.executeInUpdate(() =>
@@ -215,6 +209,17 @@ public class DependenciesManager : MonoBehaviour
                     downloadLevels();
                     DownloadPanel.SetActive(false);
                 });
+            }
+
+            if (c)
+            {
+                try
+                {
+                    if (int.Parse(downData[0]) < s.Length - 2)
+                        downloadFile(int.Parse(downData[0]) + 1, s, downData[2], int.Parse(downData[4]));
+                    else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
+                }
+                catch { wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); }
             }
         });
     }
@@ -234,7 +239,7 @@ public class DependenciesManager : MonoBehaviour
                 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
                 string Result = "";
                 try { Result = client.DownloadString(URL).Replace("<BR />", "\n"); } catch { levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); return; }
-            lines = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
+                lines = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
             }
 
             UnityThread.executeInUpdate(() =>
@@ -296,7 +301,19 @@ public class DependenciesManager : MonoBehaviour
 
         UnityThread.executeInUpdate(() =>
         {
-            if (sender.ToString() != "pass")
+            bool c = false;
+            if (sender == null) c = true;
+            else if (sender.ToString() != "pass") c = true;
+            else
+            {
+                UnityThread.executeInUpdate(() =>
+                {
+                    transform.GetChild(2).gameObject.SetActive(false);
+                    _Social.NewStart();
+                });
+            }
+
+            if (c)
             {
                 try
                 {
@@ -305,14 +322,6 @@ public class DependenciesManager : MonoBehaviour
                     else levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
                 }
                 catch { levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); }
-            }
-            else
-            {
-                UnityThread.executeInUpdate(() =>
-                {
-                    transform.GetChild(2).gameObject.SetActive(false);
-                    _Social.NewStart();
-                });
             }
         });
     }
