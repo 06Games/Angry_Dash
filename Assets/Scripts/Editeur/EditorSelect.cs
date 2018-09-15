@@ -241,7 +241,7 @@ public class EditorSelect : MonoBehaviour
     }
     public void CheckNewLevelName(InputField IF)
     {
-        Image i = IF.transform.GetChild(3).gameObject.GetComponent<Image>();
+        Image i = IF.transform.GetChild(2).gameObject.GetComponent<Image>();
         if (File.Exists(Application.persistentDataPath + "/Saved Level/" + IF.text.ToLower() + ".level") | IF.text == "" | IF.text.Contains(".level"))
             i.color = new Color32(163, 0, 0, 255);
         else i.color = new Color32(129, 129, 129, 255);
