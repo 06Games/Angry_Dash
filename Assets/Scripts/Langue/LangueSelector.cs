@@ -24,6 +24,9 @@ public class LangueSelector : MonoBehaviour
 
     void NewStart()
     {
+        if (!Directory.Exists(Application.persistentDataPath + "/Languages/"))
+            Directory.CreateDirectory(Application.persistentDataPath + "/Languages/");
+
         if (string.IsNullOrEmpty(LangueAPI.LangGet()))
             ReloadScene();
 
