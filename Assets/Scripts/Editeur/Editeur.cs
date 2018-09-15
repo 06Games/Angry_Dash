@@ -402,15 +402,16 @@ public class Editeur : MonoBehaviour
             bool isInRightTop = touchZero.position.x > Screen.width - (Screen.width / 6);
             if (touchZero.position.y > Screen.height / 4 & !(isInTop & isInRightTop))
             {
-                int Speed = 1;
+                float Speed = 1F;
                 if ((Input.touchCount == 2 & isSimple) | (Input.touchCount == 3 & isAdvence))
-                    Speed = 2;
+                    Speed = Speed * 2;
                 
-        Vector2 TouchPosition = new Vector2(cam.ScreenToWorldPoint(touchZero.position).x, cam.ScreenToWorldPoint(touchZero.position).y);
+        Vector2 TouchPosition = new Vector2(touchZero.position.x, touchZero.position.y);
                 if(touchLastPosition == new Vector2(-50000, -50000))
                     touchLastPosition = TouchPosition;
                 Vector2 touchZeroPrevPos = TouchPosition - touchLastPosition; // Find the diference between the last position.
                 Deplacer(touchZeroPrevPos.x * Speed, touchZeroPrevPos.y * Speed);
+                touchLastPosition = TouchPosition;
             }
         }
         else touchLastPosition = new Vector2(-50000, -50000);
