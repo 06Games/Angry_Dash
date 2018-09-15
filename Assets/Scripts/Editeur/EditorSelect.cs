@@ -19,7 +19,7 @@ public class EditorSelect : MonoBehaviour
     public GameObject Cam;
     public GameObject _NewG;
     public GameObject UploadPanel;
-    InputField[] _New = new InputField[2];
+    public InputField[] _New = new InputField[2];
     public Editeur editeur;
     public Soundboard SoundBoard;
 
@@ -228,9 +228,9 @@ public class EditorSelect : MonoBehaviour
 
     public void New()
     {
-        bool n = File.Exists(Application.persistentDataPath + "/Saved Level/" + _New[0].text.ToLower() + ".level");
+        bool n = CheckNewLevelName(_New[0].text);
 
-        if (!n)
+        if (n)
         {
             editeur.CreateFile(_New[0].text.ToLower(), Application.persistentDataPath + "/Saved Level/", _New[1].text);
 
@@ -241,10 +241,17 @@ public class EditorSelect : MonoBehaviour
     }
     public void CheckNewLevelName(InputField IF)
     {
-        Image i = IF.transform.GetChild(2).gameObject.GetComponent<Image>();
-        if (File.Exists(Application.persistentDataPath + "/Saved Level/" + IF.text.ToLower() + ".level") | IF.text == "" | IF.text.Contains(".level"))
-            i.color = new Color32(163, 0, 0, 255);
-        else i.color = new Color32(129, 129, 129, 255);
+        Image i = IF.transform.GetChild(IF.transform.childCount-1).GetComponent<Image>();
+        if (CheckNewLevelName(IF.text)) i.color = new Color32(129, 129, 129, 255);
+        else i.color = new Color32(163, 0, 0, 255);
+    }
+    public bool CheckNewLevelName(string name)
+    {
+        bool f = true;
+        if (File.Exists(Application.persistentDataPath + "/Saved Level/" + name.ToLower() + ".level")) f = false;
+        if (string.IsNullOrEmpty(name)) f = false;
+        if (name.Contains(".level")) f = false;
+        return f;
     }
 
     public void Page(int v)

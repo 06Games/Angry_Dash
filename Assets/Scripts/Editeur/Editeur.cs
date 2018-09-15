@@ -57,6 +57,7 @@ public class Editeur : MonoBehaviour
             Directory.CreateDirectory(directory);
 
         File.CreateText(txt).Close();
+        file = txt;
         Selection.SetActive(false);
         gameObject.SetActive(true);
 
@@ -73,7 +74,6 @@ public class Editeur : MonoBehaviour
             " ",
             "Blocks {",
             "}"};
-        file = txt;
         transform.GetChild(0).gameObject.SetActive(true);
 
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
