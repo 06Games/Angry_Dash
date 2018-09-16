@@ -1,30 +1,31 @@
 ﻿using LibAPNG;
 using System.Collections;
-using System.Drawing;
 using System.IO;
 using UnityEngine;
 
-public class APNG_Reader : MonoBehaviour {
-    
+public class APNG_Reader : MonoBehaviour
+{
+
     public string apngPath = "";
     public float FramesPerSeconds = 60;
 
-    public Sprite[] Frames;
+    Sprite[] Frames;
     public int Frame;
 
     void Start()
     {
         APNG apng = new APNG(apngPath);
-        Frames = new Sprite[apng.Frames.Length];
 
-        if (apng.IsSimplePNG)
+        if (apng.IsSimplePNG) //PNG
         {
             Frames = new Sprite[1];
             Texture2D tex = new Texture2D(1, 1);
             tex.LoadImage(File.ReadAllBytes(apngPath));
             Frames[0] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
         }
-        else { 
+        else //APNG
+        {
+            Frames = new Sprite[apng.Frames.Length];
             if (apng.DefaultImage.fcTLChunk.DelayNum == 0) FramesPerSeconds = 10000;
             else if (apng.DefaultImage.fcTLChunk.DelayDen == 0) FramesPerSeconds = 100F / apng.DefaultImage.fcTLChunk.DelayNum;
             else FramesPerSeconds = (float)apng.DefaultImage.fcTLChunk.DelayDen / apng.DefaultImage.fcTLChunk.DelayNum;
@@ -67,12 +68,23 @@ public class APNG_Reader : MonoBehaviour {
 
     public void StartAnimating()
     {
-        Frame = 0;
-        StartCoroutine(APNG());
+        if (Frames.Length > 1)
+        {
+            Frame = 0;
+            StartCoroutine(APNG());
+        }
+        else if (Frames.Length == 1)
+            GetComponent<UnityEngine.UI.Image>().sprite = Frames[0];
     }
-    public void StopAnimating() {
-        StopCoroutine(APNG());
-        Frame = -1;
+    public void StopAnimating()
+    {
+        if (Frames.Length > 1)
+        {
+            StopCoroutine(APNG());
+            Frame = -1;
+        }
+        else if (Frames.Length == 1)
+            GetComponent<UnityEngine.UI.Image>().sprite = Frames[0];
     }
 
     IEnumerator APNG()
