@@ -954,4 +954,70 @@ public class Editeur : MonoBehaviour
     public void SelectModeChang(bool enable) { SelectMode = enable; }
     public void BloqueActions(bool on) { bloqueSelect = on; }
     public void OnEchap() { if (!string.IsNullOrEmpty(file) & !bloqueEchap) { ExitEdit(); cam.GetComponent<BaseControl>().returnScene = true; } }
+
+    #region UpdateLevel
+    /// <summary>
+    /// Update a level to the newest version
+    /// Warning : The level will be imcompatible with older versions
+    /// </summary>
+    /// <param name="path">Path to the file</param>
+    public static void UpdateLevel(string path)
+    {
+        string[] fileLines = File.ReadAllLines(path);
+        File.WriteAllLines(path, UpdateLevel(fileLines));
+    }
+
+    /// <summary>
+    /// Update a level to the newest version
+    /// Warning : The level will be imcompatible with older versions
+    /// </summary>
+    /// <param name="fileLines">File content line by line</param>
+    public static string[] UpdateLevel(string[] fileLines)
+    {
+        string[] newFileLines = fileLines;
+
+        int v = -1;
+        for (int x = 0; x < newFileLines.Length; x++)
+        {
+            if (newFileLines[x].Contains("version = ") & v == -1)
+            {
+                v = x;
+                x = newFileLines.Length;
+            }
+        }
+        string version = "0.2";
+        if (v != -1)
+            version = newFileLines[v].Replace("version = ", "");
+
+        if(version == "0.2")
+        {
+            int d = -1;
+            for (int x = 0; x < newFileLines.Length; x++)
+            {
+                if (newFileLines[x].Contains("Blocks {") & d == -1)
+                {
+                    d = x + 1;
+                    x = newFileLines.Length;
+                }
+            }
+            if (d != -1)
+            {
+                for (int i = d; i < newFileLines.Length; i++)
+                {
+                    if (newFileLines[i] == "}") i = newFileLines.Length;
+                    else
+                    {
+                        newFileLines[i] = newFileLines[i] + "; {}";
+                    }
+                }
+            }
+
+
+
+            newFileLines[v] = "version = 0.2.1"; //Set new version number
+        }
+
+        return newFileLines;
+    }
+    #endregion
 }
