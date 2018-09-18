@@ -49,7 +49,7 @@ public class Editeur : MonoBehaviour
     Vector2 touchLastPosition;
 #endif
 
-#region UI
+    #region UI
     public void CreateFile(string fileName, string directory, string desc)
     {
         string txt = directory + fileName + ".level";
@@ -108,9 +108,9 @@ public class Editeur : MonoBehaviour
             }
         }
         int end = -1;
-        for (int i = component.Length-1; i >= d; i--)
+        for (int i = component.Length - 1; i >= d; i--)
         {
-            if (component[i].Contains("}") & end == -1)
+            if (component[i] == "}" & end == -1)
             {
                 end = i;
                 i = component.Length;
@@ -156,7 +156,7 @@ public class Editeur : MonoBehaviour
         Discord.Presence(LangueAPI.String("discordEditor_title"), "", new DiscordClasses.Img("default"));
         cam.GetComponent<BaseControl>().returnScene = true;
     }
-#endregion
+    #endregion
 
     public static string SHA_PublicID(System.DateTime Date, string User)
     {
@@ -287,7 +287,7 @@ public class Editeur : MonoBehaviour
                     bool pass = false;
                     if (blockId >= 1 & firstId >= 1) pass = true;
                     else if (blockId < 1 & blockId > 0 & blockId == firstId) pass = true;
-                    else if(firstId == -1) pass = true;
+                    else if (firstId == -1) pass = true;
 
                     if (pass) SelectedBlock = SelectedBlock.Union(new int[] { Selected }).ToArray();
                 }
@@ -303,9 +303,10 @@ public class Editeur : MonoBehaviour
             }
         }
 
-        
+
 #if UNITY_STANDALONE || UNITY_EDITOR
-            if (Input.GetKey(KeyCode.Mouse1)& !bloqueSelect & SelectMode) {
+        if (Input.GetKey(KeyCode.Mouse1) & !bloqueSelect & SelectMode)
+        {
 #else
         SimpleGesture.OnLongTap(() => {
 #endif
@@ -317,24 +318,24 @@ public class Editeur : MonoBehaviour
             bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
 #endif
 
-                Vector2 pos = GetClicPos();
-                int Selected = GetBloc((int)pos.x, (int)pos.y);
-                if (Selected != -1 & SelectCtrl)
+            Vector2 pos = GetClicPos();
+            int Selected = GetBloc((int)pos.x, (int)pos.y);
+            if (Selected != -1 & SelectCtrl)
+            {
+                List<int> list = new List<int>(SelectedBlock);
+                for (int i = 0; i < list.Count; i++)
                 {
-                    List<int> list = new List<int>(SelectedBlock);
-                    for (int i = 0; i < list.Count; i++)
+                    if (SelectedBlock[i] == Selected)
                     {
-                        if (SelectedBlock[i] == Selected)
-                        {
-                            list.RemoveAt(i);
-                            Transform obj = transform.GetChild(1).Find("Objet n° " + SelectedBlock[i]);
-                            SelectedBlock = list.ToArray();
-                            if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
-                        }
+                        list.RemoveAt(i);
+                        Transform obj = transform.GetChild(1).Find("Objet n° " + SelectedBlock[i]);
+                        SelectedBlock = list.ToArray();
+                        if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
                     }
-                    SelectedBlock = list.ToArray();
                 }
+                SelectedBlock = list.ToArray();
             }
+        }
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         });
 #endif
@@ -549,7 +550,7 @@ public class Editeur : MonoBehaviour
         }
     }
 
-#region GestionBloc
+    #region GestionBloc
     void CreateBloc(int x, int y, Color32 _Color)
     {
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
@@ -575,7 +576,7 @@ public class Editeur : MonoBehaviour
         int end = -1;
         for (int i = start; i < component.Length; i++)
         {
-            if (component[i].Contains("}") & end == -1)
+            if (component[i] == "}" & end == -1)
                 end = i;
         }
         string[] newComponent = new string[component.Length + 1];
@@ -791,7 +792,7 @@ public class Editeur : MonoBehaviour
         byte a = byte.Parse(hex.Substring(6), System.Globalization.NumberStyles.Number);
         return new Color32(r, g, b, a);
     }
-#endregion
+    #endregion
 
     public void SelectBloc()
     {
@@ -817,7 +818,7 @@ public class Editeur : MonoBehaviour
         else ChangBlocStatus(StatusID, _component, new int[] { Bloc });
     }
     public void ChangBlocStatus(float StatusID, string _component, int[] Bloc = null)
-    { 
+    {
         if (Bloc != null)
         {
             for (int i = 0; i < Bloc.Length; i++)

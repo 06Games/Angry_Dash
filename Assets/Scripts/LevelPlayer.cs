@@ -149,7 +149,7 @@ public class LevelPlayer : MonoBehaviour
         {
             for (int i = component.Length - 1; i >= d; i--)
             {
-                if (component[i].Contains("}") & end == -1)
+                if (component[i] == "}" & end == -1)
                 {
                     end = i;
                     i = component.Length;
@@ -169,7 +169,7 @@ public class LevelPlayer : MonoBehaviour
         int respawnMode = 0;
         if (respawnModeLine != -1)
             respawnMode = int.Parse(component[respawnModeLine].Replace("respawnMode = ", ""));
-        while (GetComponent<MainCam>().Player == null) {  }
+        while (GetComponent<MainCam>().Player == null) { }
         GetComponent<MainCam>().Player.GetComponent<Player>().respawnMode = respawnMode;
 
         Transform place = new GameObject("Items").transform;
@@ -316,7 +316,7 @@ public class LevelPlayer : MonoBehaviour
 
     public void Replay()
     {
-        if(GameObject.Find("Player") != null) GameObject.Find("Player").GetComponent<Player>().PeutAvancer = true;
+        if (GameObject.Find("Player") != null) GameObject.Find("Player").GetComponent<Player>().PeutAvancer = true;
         else if (GameObject.Find("Player(Clone)") != null) GameObject.Find("Player(Clone)").GetComponent<Player>().PeutAvancer = true;
         nbLancer = 0;
         Base.GetChild(3).gameObject.SetActive(false);
