@@ -18,7 +18,7 @@ public class BlocColor : MonoBehaviour {
 
     private void Update()
     {
-        if (editeur.SelectedBlock.Length == 0) { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
+        if (editeur.SelectedBlock.Length == 0) { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
 
         if (Bloc != editeur.SelectedBlock)
         {
@@ -43,7 +43,7 @@ public class BlocColor : MonoBehaviour {
             CP.transform.GetChild(3).GetChild(3).gameObject.SetActive(true);
             cpExpend.transform.GetChild(2).gameObject.SetActive(false);
 
-            if (Bloc.Length == 0) { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
+            if (Bloc.Length == 0) { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
             CP.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc[0]));
             cpExpend.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc[0]));
             editeur.SelectBlocking = false;

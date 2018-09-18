@@ -18,4 +18,20 @@ public class Edit : MonoBehaviour
         MultiSelectBtn.SetActive(true);
 #endif
     }
+
+    private void Update()
+    {
+        if (editeur.SelectedBlock.Length > 0)
+        {
+            float blocID = float.Parse(editeur.component[editeur.SelectedBlock[0]].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]);
+            if (blocID < 1)
+            {
+                float triggerID = blocID;
+                while (triggerID != (int)triggerID)
+                    triggerID = triggerID * 10;
+                GetComponent<CreatorManager>().ChangArray((int)triggerID);
+            }
+            else GetComponent<CreatorManager>().ChangArray(0);
+        }
+    }
 }

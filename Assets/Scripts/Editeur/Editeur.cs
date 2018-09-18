@@ -278,7 +278,19 @@ public class Editeur : MonoBehaviour
                 int Selected = GetBloc((int)pos.x, (int)pos.y);
 
                 if (Selected == -1 & !SelectCtrl) SelectedBlock = new int[0];
-                else if (Selected != -1 & SelectCtrl) SelectedBlock = SelectedBlock.Union(new int[] { Selected }).ToArray();
+                else if (Selected != -1 & SelectCtrl)
+                {
+                    float blockId = float.Parse(component[Selected].Split(new string[] { ";" }, System.StringSplitOptions.None)[0]);
+                    float firstId = -1;
+                    if (SelectedBlock.Length > 0) firstId = float.Parse(component[SelectedBlock[0]].Split(new string[] { ";" }, System.StringSplitOptions.None)[0]);
+
+                    bool pass = false;
+                    if (blockId >= 1 & firstId >= 1) pass = true;
+                    else if (blockId < 1 & blockId > 0 & blockId == firstId) pass = true;
+                    else if(firstId == -1) pass = true;
+
+                    if (pass) SelectedBlock = SelectedBlock.Union(new int[] { Selected }).ToArray();
+                }
                 else if (!SelectCtrl) SelectedBlock = new int[] { Selected };
 
                 for (int i = 0; i < SelectedBlocks.Length; i++)
@@ -326,7 +338,7 @@ public class Editeur : MonoBehaviour
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         });
 #endif
-
+        if (NoBlocSelectedPanel.activeInHierarchy & !(!Contenu[3].activeInHierarchy & !Contenu[0].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock.Length == 0)) Contenu[2].GetComponent<Edit>().EnterToEdit();
         NoBlocSelectedPanel.SetActive(!Contenu[3].activeInHierarchy & !Contenu[0].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock.Length == 0);
         if (SelectedBlock.Length > 0)
         {
@@ -572,7 +584,7 @@ public class Editeur : MonoBehaviour
             if (i < end)
                 newComponent[i] = component[i];
             else if (i == end)
-                newComponent[i] = id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0";
+                newComponent[i] = id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0; {}";
             else newComponent[i] = component[i - 1];
         }
 

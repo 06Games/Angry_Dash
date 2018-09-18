@@ -12,7 +12,7 @@ public class Layer : MonoBehaviour {
 
 	void Update ()
     {
-        if (editeur.SelectedBlock.Length == 0) { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
+        if (editeur.SelectedBlock.Length == 0) { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
 
         if (Bloc != editeur.SelectedBlock)
         {

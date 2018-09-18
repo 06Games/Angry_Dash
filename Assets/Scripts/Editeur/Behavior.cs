@@ -12,7 +12,7 @@ public class Behavior : MonoBehaviour
 
     void Update()
     {
-        if (editor.SelectedBlock.Length == 0) { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
+        if (editor.SelectedBlock.Length == 0) { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
 
         Toggle Boost = transform.GetChild(1).GetComponent<Toggle>();
         InputField t = Boost.transform.GetChild(2).GetComponent<InputField>();
@@ -32,7 +32,7 @@ public class Behavior : MonoBehaviour
                     t.text = id.ToString().Split(new string[1] { "." }, System.StringSplitOptions.None)[1];
                 else t.text = "";
             }
-            else { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
+            else { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
         }
 
         string col = GetComponent<ToggleGroup>().ActiveToggles().FirstOrDefault().name;
