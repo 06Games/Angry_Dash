@@ -29,9 +29,9 @@ public class Edit : MonoBehaviour
                 float triggerID = blocID;
                 while (triggerID != (int)triggerID)
                     triggerID = triggerID * 10;
-                GetComponent<CreatorManager>().ChangArray((int)triggerID);
+                GetComponent<CreatorManager>().Array((int)triggerID);
             }
-            else GetComponent<CreatorManager>().ChangArray(0);
+            else GetComponent<CreatorManager>().Array(0);
         }
     }
 }

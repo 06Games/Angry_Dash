@@ -20,4 +20,5 @@ public class CreatorManager : MonoBehaviour {
         array = a;
         transform.GetChild(0).gameObject.SetActive(false);
     }
+    public void Array(int a) { array = a; }
 }
