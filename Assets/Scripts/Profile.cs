@@ -126,7 +126,7 @@ public class Profile : MonoBehaviour
     {
         if (lvlNames.Length > levelNumber)
         {
-            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + ConfigAPI.GetString("Account.Username") + "/" + lvlNames[levelNumber] + lvlID[levelNumber] + ".level";
+            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + ConfigAPI.GetString("Account.Username") + "/" + lvlNames[levelNumber] + "_" + lvlID[levelNumber] + ".level";
             string path = Application.persistentDataPath + "/Saved Level/" + lvlNames[levelNumber] + ".level";
             WebClient client = new WebClient();
             client.Encoding = System.Text.Encoding.UTF8;
@@ -139,6 +139,7 @@ public class Profile : MonoBehaviour
                 File.WriteAllText(path, file);
                 Menu(0);
             }
+            else if (Application.isEditor) Debug.LogWarning("Failed to download :\n" + url);
         }
     }
     public void DeleteWarning(int levelNumber)
