@@ -28,8 +28,8 @@ public class BlocColor : MonoBehaviour {
         else
         {
             if (transform.GetChild(0).gameObject.activeInHierarchy)
-                editeur.ChangBlocStatus(3, Editeur.ColorToHex(CP.CurrentColor), Bloc);
-            else editeur.ChangBlocStatus(3, Editeur.ColorToHex(cpExpend.CurrentColor), Bloc);
+                editeur.ChangBlocStatus("Color", Editeur.ColorToHex(CP.CurrentColor), Bloc);
+            else editeur.ChangBlocStatus("Color", Editeur.ColorToHex(cpExpend.CurrentColor), Bloc);
         }
     }
 
@@ -44,8 +44,8 @@ public class BlocColor : MonoBehaviour {
             cpExpend.transform.GetChild(2).gameObject.SetActive(false);
 
             if (Bloc.Length == 0) { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
-            CP.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc[0]));
-            cpExpend.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus(3, Bloc[0]));
+            CP.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus("Color", Bloc[0]));
+            cpExpend.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus("Color", Bloc[0]));
             editeur.SelectBlocking = false;
             editeur.bloqueSelect = expend;
             editeur.SelectedBlock = Bloc;

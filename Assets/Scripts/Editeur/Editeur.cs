@@ -97,6 +97,7 @@ public class Editeur : MonoBehaviour
         component = File.ReadAllLines(txt);
 
         if (!CheckPublicID(txt)) Debug.LogError("The Public ID is invalid");
+        UpdateLevel(component);
 
         int d = -1;
         for (int x = 0; x < component.Length; x++)
@@ -282,7 +283,7 @@ public class Editeur : MonoBehaviour
                 {
                     float blockId = float.Parse(component[Selected].Split(new string[] { ";" }, System.StringSplitOptions.None)[0]);
                     float firstId = -1;
-                    if (SelectedBlock.Length > 0) firstId = float.Parse(component[SelectedBlock[0]].Split(new string[] { ";" }, System.StringSplitOptions.None)[0]);
+                    if (SelectedBlock.Length > 0) firstId = float.Parse(GetBlocStatus("ID", SelectedBlock[0]));
 
                     bool pass = false;
                     if (blockId >= 1 & firstId >= 1) pass = true;
@@ -585,7 +586,10 @@ public class Editeur : MonoBehaviour
             if (i < end)
                 newComponent[i] = component[i];
             else if (i == end)
-                newComponent[i] = id.ToString("0.0####") + "; " + a + "; 0; " + color + "; 0; {}";
+            {
+                if (id < 1 & id > 0) newComponent[i] = id.ToString("0.0####") + "; " + a + "; {}";
+                else if (id >= 1) newComponent[i] = id.ToString("0.0####") + "; " + a + "; {Rotate:0; Color:" + color + "; Behavior:0}";
+            }
             else newComponent[i] = component[i - 1];
         }
 
@@ -720,8 +724,8 @@ public class Editeur : MonoBehaviour
         catch { Debug.LogWarning("The block at the line " + num + " as an invalid position"); return; }
         Vector3 pos = new Vector3(p.x, p.y, 0);
         Quaternion rot = new Quaternion();
-        try { rot.eulerAngles = new Vector3(0, 0, int.Parse(GetBlocStatus(2, num))); }
-        catch { Debug.LogWarning("The block at the line " + num + " as an invalid rotation"); return; }
+        try { rot.eulerAngles = new Vector3(0, 0, int.Parse(GetBlocStatus("Rotate", num))); }
+        catch { rot.eulerAngles = new Vector3(0, 0, 0); }
         GameObject Pref = null;
 
         try
@@ -761,7 +765,7 @@ public class Editeur : MonoBehaviour
             Texture2D SelectedZoneSize = go.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite.texture;
             go.transform.GetChild(0).localScale = new Vector2(tex.width / SelectedZoneSize.width, tex.height / SelectedZoneSize.height);
 
-            try { SR.color = HexToColor(GetBlocStatus(3, num)); }
+            try { SR.color = HexToColor(GetBlocStatus("Color", num)); }
             catch
             {
                 SR.color = new Color32(190, 190, 190, 255);
@@ -810,14 +814,30 @@ public class Editeur : MonoBehaviour
     }
 
 
-    [System.Obsolete("Don't include the block id is no longer supported, use ChangBlocStatus(float StatusID, string _component, int[] Bloc = null) instead")]
+    [System.Obsolete("Don't include the block id is no longer supported, use ChangBlocStatus(string StatusID, string _component, int[] Bloc) instead")]
     public void ChangBlocStatus(float StatusID, string _component) { ChangBlocStatus(StatusID, _component, SelectedBlock); }
+
+    [System.Obsolete("Don't include an blocks id array is no longer supported, use ChangBlocStatus(string StatusID, string _component, int[] Bloc) instead")]
     public void ChangBlocStatus(float StatusID, string _component, int Bloc = -1)
     {
         if (Bloc == -1) ChangBlocStatus(StatusID, _component, SelectedBlock);
         else ChangBlocStatus(StatusID, _component, new int[] { Bloc });
     }
+    [System.Obsolete("Don't give a string id is no longer supported, use ChangBlocStatus(string StatusID, string _component, int[] Bloc) instead")]
     public void ChangBlocStatus(float StatusID, string _component, int[] Bloc = null)
+    {
+        string id = "";
+        if (StatusID == 0) id = "ID";
+        else if (StatusID == 1 | StatusID == 1.1) id = "Position";
+        else if (StatusID == 1.11) id = "PositionX";
+        else if (StatusID == 1.12) id = "PositionY";
+        else if (StatusID == 1.2) id = "Layer";
+        else if (StatusID == 2) id = "Rotate";
+        else if (StatusID == 3) id = "Color";
+        else if (StatusID == 4) id = "Behavior";
+        ChangBlocStatus(id, _component, Bloc);
+    }
+    public void ChangBlocStatus(string StatusID, string _component, int[] Bloc)
     {
         if (Bloc != null)
         {
@@ -825,36 +845,77 @@ public class Editeur : MonoBehaviour
             {
                 if (Bloc[i] != -1)
                 {
-                    string[] b = component[Bloc[i]].Split(new string[] { "; " }, System.StringSplitOptions.None);
-                    string _componentModified = _component;
+                    string[] a = component[Bloc[i]].Split(new string[] { "; " }, System.StringSplitOptions.None);
+                    string[] Pos = a[1].Split(new string[] { ", " }, System.StringSplitOptions.None);
+                    string[] b = component[Bloc[i]].Split(new string[] { "; {" }, System.StringSplitOptions.None)[1].Split(new string[] { "}" }, System.StringSplitOptions.None)[0].Split(new string[] { "; " }, System.StringSplitOptions.None);
 
-                    string[] Pos = b[1].Split(new string[] { ", " }, System.StringSplitOptions.None);
-                    if (StatusID == 1.1F)
-                        _componentModified = "(" + _component + ", " + Pos[2];
-                    else if (StatusID == 1.2F)
-                        _componentModified = Pos[0] + ", " + Pos[1] + ", " + _component + ")";
+                    string _Modified = "";
 
-                    string c = "";
-                    for (int v = 0; v < b.Length; v++)
-                    {
-                        if (v == (int)StatusID)
-                            c = c + _componentModified;
-                        else c = c + b[v];
+                    if (StatusID == "ID")
+                        a[0] = _component;
+                    else if (StatusID == "Position")
+                        a[1] = "(" + _component + ", " + Pos[2];
+                    else if (StatusID == "PositionX")
+                        a[1] = "(" + _component + ", " + Pos[1] + ", " + Pos[2] + ")";
+                    else if (StatusID == "PositionY")
+                        a[1] = Pos[0] + ", " + _component + ", " + Pos[2] + ")";
+                    else if (StatusID == "Layer")
+                        a[1] = Pos[0] + ", " + Pos[1] + ", " + _component + ")";
+                    else {
+                        int pNb = -1;
+                        for (int p = 0; p < b.Length; p++)
+                        {
+                            string[] param = b[p].Split(new string[] { ":" }, System.StringSplitOptions.None);
+                            if (param[0] == StatusID)
+                                pNb = p;
+                        }
+                        if(pNb == -1)
+                        {
 
-                        if (v < b.Length - 1)
-                            c = c + "; ";
+                        }
+                        else
+                        {
+                            string[] param = b[pNb].Split(new string[] { ":" }, System.StringSplitOptions.None);
+                            b[pNb] = param[0] + ":" + _component;
+                        }
                     }
 
-                    component[Bloc[i]] = c;
+                    _Modified = a[0] + "; " + a[1];
+                    for (int iB = 0; iB < b.Length; iB++)
+                    {
+                        if (iB == 0) _Modified = _Modified + "; {" + b[iB];
+                        else if (iB < b.Length - 1) _Modified = _Modified + "; " + b[iB];
+                        else _Modified = _Modified + "; " + b[iB] + "}";
+                    }
+
+
+                    component[Bloc[i]] = _Modified;
                     Instance(Bloc[i], true);
                 }
             }
         }
     }
 
-    [System.Obsolete("Don't include the block id is no longer supported, use GetBlocStatus(float StatusID, int Bloc) instead")]
-    public string GetBlocStatus(float StatusID) { return GetBlocStatus(StatusID, SelectedBlock[0]); }
+    [System.Obsolete("Don't include the block id is no longer supported, use GetBlocStatus(string StatusID, int Bloc) instead")]
+    public string GetBlocStatus(float StatusID) {
+        Debug.LogError("Don't include the block id is no longer supported, use GetBlocStatus(string StatusID, int Bloc) instead");
+        return GetBlocStatus(StatusID, SelectedBlock[0]);
+    }
+    [System.Obsolete("Don't give a string id is no longer supported, use GetBlocStatus(string StatusID, int Bloc) instead")]
     public string GetBlocStatus(float StatusID, int Bloc)
+    {
+        string id = "";
+        if (StatusID == 0) id = "ID";
+        else if (StatusID == 1) id = "Position";
+        else if (StatusID == 1.1) id = "PositionX";
+        else if (StatusID == 1.2) id = "PositionY";
+        else if (StatusID == 1.3) id = "Layer";
+        else if (StatusID == 2) id = "Rotate";
+        else if (StatusID == 3) id = "Color";
+        else if (StatusID == 4) id = "Behavior";
+        return GetBlocStatus(id, Bloc);
+    }
+    public string GetBlocStatus(string StatusID, int Bloc)
     {
         if (file != "" & component.Length > Bloc)
         {
@@ -862,11 +923,27 @@ public class Editeur : MonoBehaviour
             {
                 string[] a = component[Bloc].Split(new string[] { "; " }, System.StringSplitOptions.None);
 
-                if (StatusID < a.Length & StatusID == (int)StatusID)
-                    return a[(int)StatusID];
-                else if (StatusID < a.Length)
-                    return a[(int)StatusID].Split(new string[] { ", " }, System.StringSplitOptions.None)[(int)(StatusID * 10 - (int)StatusID * 10)].Replace(")", "").Replace("(", "");
-                else return "";
+                if (StatusID == "ID")
+                    return a[0];
+                else if (StatusID == "Position")
+                    return a[1];
+                else if (StatusID == "PositionX")
+                    return a[1].Split(new string[] { ", " }, System.StringSplitOptions.None)[0].Replace(")", "").Replace("(", "");
+                else if (StatusID == "PositionY")
+                    return a[1].Split(new string[] { ", " }, System.StringSplitOptions.None)[1].Replace(")", "").Replace("(", "");
+                else if (StatusID == "Layer")
+                    return a[1].Split(new string[] { ", " }, System.StringSplitOptions.None)[2].Replace(")", "").Replace("(", "");
+                else {
+                    string[] b = component[Bloc].Split(new string[] { "; {" }, System.StringSplitOptions.None)[1].Split(new string[] { "}" }, System.StringSplitOptions.None)[0].Split(new string[] { "; " }, System.StringSplitOptions.None);
+                    for(int i = 0; i < b.Length; i++)
+                    {
+                        string[] param = b[i].Split(new string[] { ":" }, System.StringSplitOptions.None);
+                        if (param[0] == StatusID)
+                            return param[1];
+                    }
+                    
+                    return "";
+                }
             }
             catch { return ""; }
         }
@@ -986,10 +1063,9 @@ public class Editeur : MonoBehaviour
             }
         }
         string version = "0.2";
-        if (v != -1)
-            version = newFileLines[v].Replace("version = ", "");
+        if (v != -1) version = newFileLines[v].Replace("version = ", "");
 
-        if(version == "0.2")
+        if (version == "0.2")
         {
             int d = -1;
             for (int x = 0; x < newFileLines.Length; x++)
@@ -1007,12 +1083,12 @@ public class Editeur : MonoBehaviour
                     if (newFileLines[i] == "}") i = newFileLines.Length;
                     else
                     {
-                        newFileLines[i] = newFileLines[i] + "; {}";
+                        string[] parm = newFileLines[i].Split(new string[] { "; " }, System.StringSplitOptions.None);
+                        if(float.Parse(parm[0]) >= 1) newFileLines[i] = parm[0] + "; " + parm[1] + "; {Rotate:" + parm[2] + "; Color:" + parm[3] + "; Behavior:" + parm[4] + "}";
+                        else newFileLines[i] = parm[0] + "; " + parm[1] + "; {}";
                     }
                 }
             }
-
-
 
             newFileLines[v] = "version = 0.2.1"; //Set new version number
         }

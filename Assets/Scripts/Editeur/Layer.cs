@@ -17,14 +17,14 @@ public class Layer : MonoBehaviour {
         if (Bloc != editeur.SelectedBlock)
         {
             Bloc = editeur.SelectedBlock;
-            IF.text = editeur.GetBlocStatus(1.2F, Bloc[0]);
+            IF.text = editeur.GetBlocStatus("Layer", Bloc[0]);
         }
         else {
             try
             {
                 IF.text = IF.text.Replace(".0", "");
                 int.Parse(IF.text);
-                editeur.ChangBlocStatus(1.2F, float.Parse(IF.text).ToString("0.0"), Bloc);
+                editeur.ChangBlocStatus("Layer", float.Parse(IF.text).ToString("0.0"), Bloc);
 
                 if (IF.text == "999")
                     Button[1].interactable = false;

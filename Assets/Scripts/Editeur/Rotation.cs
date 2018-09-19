@@ -17,13 +17,13 @@ public class Rotation : MonoBehaviour {
         if (Bloc != editeur.SelectedBlock)
         {
             Bloc = editeur.SelectedBlock;
-            IF.text = editeur.GetBlocStatus(2F, Bloc[0]).Replace(")", "");
+            IF.text = editeur.GetBlocStatus("Rotate", Bloc[0]).Replace(")", "");
             if (IF.text == "")
                 IF.text = "0";
         }
         else
         {
-            editeur.ChangBlocStatus(2, IF.text, Bloc);
+            editeur.ChangBlocStatus("Rotate", IF.text, Bloc);
 
             if (IF.text == "180")
                 Button[1].interactable = false;

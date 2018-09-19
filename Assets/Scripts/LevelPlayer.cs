@@ -207,21 +207,22 @@ public class LevelPlayer : MonoBehaviour
         float id = 0;
         try { id = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]); }
         catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
-        string rotZ = component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[2];
-        string color = component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[3];
-        float colid = 0;
-        try { colid = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[4]); }
-        catch { Debug.LogWarning("The block at the line " + num + " as an invalid behavior id"); return; }
         Vector3 p = new Vector3();
         try { p = GetObjectPos(num); }
         catch { Debug.LogWarning("The block at the line " + num + " as an invalid position"); return; }
         Vector3 pos = new Vector3(p.x, p.y, 0);
         Quaternion rot = new Quaternion();
-        try { rot.eulerAngles = new Vector3(0, 0, int.Parse(rotZ)); }
-        catch { Debug.LogWarning("The block at the line " + num + " as an invalid rotation"); return; }
 
         if (id >= 1)
         {
+            string color = GetBlocStatus("Color", num);
+            float colid = 0;
+            try { colid = float.Parse(GetBlocStatus("Behavior", num)); }
+            catch { Debug.LogWarning("The block at the line " + num + " as an invalid behavior id :\n" + GetBlocStatus("Behavior", num)); return; }
+            string rotZ = GetBlocStatus("Rotate", num);
+            try { rot.eulerAngles = new Vector3(0, 0, int.Parse(rotZ)); }
+            catch { Debug.LogWarning("The block at the line " + num + " as an invalid rotation"); return; }
+
             GameObject go = null;
             try
             {
@@ -289,6 +290,42 @@ public class LevelPlayer : MonoBehaviour
         byte a = byte.Parse(hex.Substring(6), System.Globalization.NumberStyles.Number);
         return new Color32(r, g, b, a);
     }
+    public string GetBlocStatus(string StatusID, int Bloc)
+    {
+        if (file != "" & component.Length > Bloc)
+        {
+            try
+            {
+                string[] a = component[Bloc].Split(new string[] { "; " }, System.StringSplitOptions.None);
+
+                if (StatusID == "ID")
+                    return a[0];
+                else if (StatusID == "Position")
+                    return a[1];
+                else if (StatusID == "PositionX")
+                    return a[1].Split(new string[] { ", " }, System.StringSplitOptions.None)[0].Replace(")", "").Replace("(", "");
+                else if (StatusID == "PositionY")
+                    return a[1].Split(new string[] { ", " }, System.StringSplitOptions.None)[1].Replace(")", "").Replace("(", "");
+                else if (StatusID == "Layer")
+                    return a[1].Split(new string[] { ", " }, System.StringSplitOptions.None)[2].Replace(")", "").Replace("(", "");
+                else
+                {
+                    string[] b = component[Bloc].Split(new string[] { "; {" }, System.StringSplitOptions.None)[1].Split(new string[] { "}" }, System.StringSplitOptions.None)[0].Split(new string[] { "; " }, System.StringSplitOptions.None);
+                    for (int i = 0; i < b.Length; i++)
+                    {
+                        string[] param = b[i].Split(new string[] { ":" }, System.StringSplitOptions.None);
+                        if (param[0] == StatusID)
+                            return param[1];
+                    }
+
+                    return "";
+                }
+            }
+            catch { return ""; }
+        }
+        else return "";
+    }
+
 
     public void Exit()
     {

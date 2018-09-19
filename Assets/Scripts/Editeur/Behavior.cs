@@ -23,8 +23,8 @@ public class Behavior : MonoBehaviour
             {
                 SB = editor.SelectedBlock;
                 float id = 0;
-                try { id = float.Parse(editor.GetBlocStatus(4, SB[0])); }
-                catch { Debug.LogWarning("The block at the line " + editor.SelectedBlock[0] + " as an invalid behavior id"); transform.parent.GetComponent<CreatorManager>().ChangArray(0); return; }
+                try { id = float.Parse(editor.GetBlocStatus("Behavior", SB[0])); }
+                catch { Debug.LogWarning("The block at the line " + editor.SelectedBlock[0] + " as an invalid behavior id :\n" + editor.GetBlocStatus("Behavior", SB[0])); transform.parent.GetComponent<CreatorManager>().ChangArray(0); return; }
                 transform.GetChild(0).GetChild((int)id).GetComponent<Toggle>().isOn = true;
 
                 Boost.isOn = id != (int)id;
@@ -65,7 +65,7 @@ public class Behavior : MonoBehaviour
 
         if (Boost.isOn & b != -1)
             col = col + "." + b;
-        editor.ChangBlocStatus(4, col, SB);
+        editor.ChangBlocStatus("Behavior", col, SB);
 
     }
 }
