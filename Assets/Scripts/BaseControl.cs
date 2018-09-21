@@ -38,6 +38,10 @@ public class BaseControl : MonoBehaviour
     private void OnApplicationQuit() { File.Delete(Application.temporaryCachePath + "/ac.txt"); }
     public void ChangeReturnSceneValue(bool value) { returnScene = value; }
 
+    public bool Controller = false;
+    UnityEngine.EventSystems.EventSystem eventSystem;
+    public Selectable baseSelectable;
+
     void Start()
     {
         if (GameObject.Find("Audio") == null)
@@ -53,13 +57,28 @@ public class BaseControl : MonoBehaviour
         for (int i = 0; i < gos.Length; i++)
             gos[i].GetComponent<Button>().onClick.AddListener(() => GetComponent<AudioSource>().PlayOneShot(ButtonSoundOnClick));
 
+        eventSystem = GameObject.Find("EventSystem").GetComponent<UnityEngine.EventSystems.EventSystem>();
+        baseSelectable = eventSystem.firstSelectedGameObject.GetComponent<Selectable>();
+
         if (SceneManager.GetActiveScene().name == "Home")
             Discord.Presence(LangueAPI.String("discordHome_title"), "", new DiscordClasses.Img("default"));
+    }
+
+    public void SelectButton(Selectable obj)
+    {
+        if (Controller) obj.Select();
+        baseSelectable = obj;
     }
 
     bool sceneChanging = false;
     void Update()
     {
+        bool newController = Input.GetJoystickNames().Length > 0 & !(Input.GetJoystickNames().Length == 1 & string.IsNullOrEmpty(Input.GetJoystickNames()[0]));
+        if (newController == true & Controller == false & baseSelectable != null) baseSelectable.Select();
+        if(Controller & eventSystem.currentSelectedGameObject == null) baseSelectable.Select();
+        Controller = newController;
+        if (!Controller) eventSystem.SetSelectedGameObject(null);
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (scene == "" & returnScene)
