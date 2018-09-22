@@ -17,6 +17,8 @@ public class Profile : MonoBehaviour
     Transform LevelContent;
     Transform LevelDeleteWarning;
 
+    public Selectable[] Default;
+
     void Start() { Open(false); }
     public void Open(bool open)
     {
@@ -32,7 +34,7 @@ public class Profile : MonoBehaviour
         if (open)
         {
             Main.GetChild(1).GetComponent<Text>().text = ConfigAPI.GetString("Account.Username");
-            Menu(2);
+            Menu(menu);
         }
     }
 
@@ -40,7 +42,12 @@ public class Profile : MonoBehaviour
     void Menu()
     {
         for (int i = 0; i < _Menu.childCount; i++)
+        {
             _Menu.GetChild(i).GetComponent<Button>().interactable = i != menu;
+            Navigation nav = _Menu.GetChild(i).GetComponent<Button>().navigation;
+            nav.selectOnDown = Default[menu];
+            _Menu.GetChild(i).GetComponent<Button>().navigation = nav;
+        }
 
         for (int i = 0; i < Categorie.childCount; i++)
             Categorie.GetChild(i).gameObject.SetActive(i == menu);
@@ -112,6 +119,18 @@ public class Profile : MonoBehaviour
 
             go.name = lvlNames[i];
             go.gameObject.SetActive(true);
+
+            if (i == 0)
+            {
+                Default[0] = go.GetChild(2).GetComponent<Button>();
+
+                for (int v = 0; v < _Menu.childCount; v++)
+                {
+                    Navigation nav = _Menu.GetChild(v).GetComponent<Button>().navigation;
+                    nav.selectOnDown = Default[menu];
+                    _Menu.GetChild(v).GetComponent<Button>().navigation = nav;
+                }
+            }
         }
     }
 
@@ -173,6 +192,7 @@ public class Profile : MonoBehaviour
         {
             LevelInitialise(true);
             LevelDeleteWarning.gameObject.SetActive(false);
+            GameObject.Find("Main Camera").GetComponent<BaseControl>().SelectButton(Default[menu]);
         }
     }
     #endregion

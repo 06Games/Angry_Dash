@@ -63,6 +63,16 @@ public class Shop : MonoBehaviour {
                 PlayerPrefs.SetString("Item" + cat, PlayerPrefs.GetString("Item" + cat) + " " + art);
                 print("Payé, article : " + cat + ":" + art + "\nFile :  " + PlayerPrefs.GetString("Item" + cat));
 
+                int selectable = 999;
+                for (int i = 1; i < 6; i++)
+                {
+                    Button button = transform.GetChild(0).GetChild(0).GetChild(2).GetChild(cat - 1).GetChild(i).GetComponent<Button>();
+                    int dif = art - i;
+                    if (dif < 0) dif = dif * -1;
+                    if (button.interactable & dif < selectable & i != art) selectable = i;
+                }
+                if(selectable < 999) GameObject.Find("Main Camera").GetComponent<BaseControl>().SelectButton(transform.GetChild(0).GetChild(0).GetChild(2).GetChild(cat - 1).GetChild(selectable).GetComponent<Button>());
+
                 RefreshArticle();
             }
             else print("Trop chère");

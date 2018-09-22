@@ -73,6 +73,11 @@ public class BaseControl : MonoBehaviour
     bool sceneChanging = false;
     void Update()
     {
+        if (eventSystem == null)
+        {
+            eventSystem = GameObject.Find("EventSystem").GetComponent<UnityEngine.EventSystems.EventSystem>();
+            baseSelectable = eventSystem.firstSelectedGameObject.GetComponent<Selectable>();
+        }
         bool newController = Input.GetJoystickNames().Length > 0 & !(Input.GetJoystickNames().Length == 1 & string.IsNullOrEmpty(Input.GetJoystickNames()[0]));
         if (newController == true & Controller == false & baseSelectable != null) baseSelectable.Select();
         if(Controller & eventSystem.currentSelectedGameObject == null) baseSelectable.Select();
