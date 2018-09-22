@@ -58,7 +58,7 @@ public class BaseControl : MonoBehaviour
             gos[i].GetComponent<Button>().onClick.AddListener(() => GetComponent<AudioSource>().PlayOneShot(ButtonSoundOnClick));
 
         eventSystem = GameObject.Find("EventSystem").GetComponent<UnityEngine.EventSystems.EventSystem>();
-        baseSelectable = eventSystem.firstSelectedGameObject.GetComponent<Selectable>();
+        if(eventSystem.firstSelectedGameObject != null) baseSelectable = eventSystem.firstSelectedGameObject.GetComponent<Selectable>();
 
         if (SceneManager.GetActiveScene().name == "Home")
             Discord.Presence(LangueAPI.String("discordHome_title"), "", new DiscordClasses.Img("default"));
@@ -80,7 +80,7 @@ public class BaseControl : MonoBehaviour
         }
         bool newController = Input.GetJoystickNames().Length > 0 & !(Input.GetJoystickNames().Length == 1 & string.IsNullOrEmpty(Input.GetJoystickNames()[0]));
         if (newController == true & Controller == false & baseSelectable != null) baseSelectable.Select();
-        if(Controller & eventSystem.currentSelectedGameObject == null) baseSelectable.Select();
+        if(Controller & eventSystem.currentSelectedGameObject == null & baseSelectable != null) baseSelectable.Select();
         Controller = newController;
         if (!Controller) eventSystem.SetSelectedGameObject(null);
 
