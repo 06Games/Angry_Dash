@@ -24,7 +24,8 @@ public class Edit : MonoBehaviour
     {
         if (editeur.SelectedBlock.Length > 0)
         {
-            float blocID = float.Parse(editeur.component[editeur.SelectedBlock[0]].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]);
+            float blocID = -1;
+            try { blocID = float.Parse(editeur.GetBlocStatus("ID", editeur.SelectedBlock[0])); } catch { }
             if (blocID < 1)
             {
                 float triggerID = blocID;
@@ -32,7 +33,7 @@ public class Edit : MonoBehaviour
                     triggerID = triggerID * 10;
                 GetComponent<CreatorManager>().Array((int)triggerID);
             }
-            else GetComponent<CreatorManager>().Array(0);
+            else if(blocID >= 0) GetComponent<CreatorManager>().Array(0);
         }
     }
 }
