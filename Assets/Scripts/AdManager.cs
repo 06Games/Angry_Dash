@@ -31,8 +31,9 @@ namespace AdManager
             IronSource.Agent.init(appKey);*/
 
             //For Rewarded Video
-            IronSource.Agent.setUserId(UserId);
-            IronSource.Agent.init(appKey);
+            //IronSource.Agent.setUserId(UserId);
+            //IronSource.Agent.init(appKey);
+            //IronSource.Agent.init(appKey);
 
             //IronSource.Agent.validateIntegration();
         }
