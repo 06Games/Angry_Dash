@@ -205,7 +205,7 @@ public class LevelPlayer : MonoBehaviour
     public void Instance(int num, Transform place)
     {
         float id = 0;
-        try { id = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]); }
+        try { id = float.Parse(GetBlocStatus("ID", num)); }
         catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
         Vector3 p = new Vector3();
         try { p = GetObjectPos(num); }
@@ -277,7 +277,7 @@ public class LevelPlayer : MonoBehaviour
     }
     public Vector3 GetObjectPos(int num)
     {
-        string a = component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[1];
+        string a = GetBlocStatus("Position", num);
         string[] b = a.Replace("(", "").Replace(" ", "").Replace(")", "").Replace(".0", "").Split(new string[] { "," }, System.StringSplitOptions.None);
         float[] c = new float[] { float.Parse(b[0]) * 50 + 25, float.Parse(b[1]) * 50 + 25, float.Parse(b[2]) };
         return new Vector3(c[0], c[1], c[2]);

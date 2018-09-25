@@ -27,8 +27,7 @@ public class Editeur : MonoBehaviour
 
     Camera cam;
     public int ZoomSensitive = 20;
-
-    public GameObject[] TriggerPrefabs;
+    
     public bool SelectMode = false;
     public bool bloqueSelect = false;
 
@@ -281,7 +280,7 @@ public class Editeur : MonoBehaviour
                 if (Selected == -1 & !SelectCtrl) SelectedBlock = new int[0];
                 else if (Selected != -1 & SelectCtrl)
                 {
-                    float blockId = float.Parse(component[Selected].Split(new string[] { ";" }, System.StringSplitOptions.None)[0]);
+                    float blockId = float.Parse(GetBlocStatus("ID", Selected));
                     float firstId = -1;
                     if (SelectedBlock.Length > 0) firstId = float.Parse(GetBlocStatus("ID", SelectedBlock[0]));
 
@@ -318,23 +317,25 @@ public class Editeur : MonoBehaviour
 #else
             bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
 #endif
-
-            Vector2 pos = GetClicPos();
-            int Selected = GetBloc((int)pos.x, (int)pos.y);
-            if (Selected != -1 & SelectCtrl)
+            if (Input.mousePosition.y > Screen.height / 4)
             {
-                List<int> list = new List<int>(SelectedBlock);
-                for (int i = 0; i < list.Count; i++)
+                Vector2 pos = GetClicPos();
+                int Selected = GetBloc((int)pos.x, (int)pos.y);
+                if (Selected != -1 & SelectCtrl)
                 {
-                    if (SelectedBlock[i] == Selected)
+                    List<int> list = new List<int>(SelectedBlock);
+                    for (int i = 0; i < list.Count; i++)
                     {
-                        list.RemoveAt(i);
-                        Transform obj = transform.GetChild(1).Find("Objet n° " + SelectedBlock[i]);
-                        SelectedBlock = list.ToArray();
-                        if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
+                        if (SelectedBlock[i] == Selected)
+                        {
+                            list.RemoveAt(i);
+                            Transform obj = transform.GetChild(1).Find("Objet n° " + SelectedBlock[i]);
+                            SelectedBlock = list.ToArray();
+                            if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
+                        }
                     }
+                    SelectedBlock = list.ToArray();
                 }
-                SelectedBlock = list.ToArray();
             }
         }
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
@@ -432,7 +433,7 @@ public class Editeur : MonoBehaviour
 #endif
     }
 
-    Vector2 GetClicPos()
+    public Vector2 GetClicPos()
     {
         float zoomRelatively = (Screen.height / 2) / cam.orthographicSize;
         float zoom = Screen.height / cam.orthographicSize;
@@ -596,7 +597,22 @@ public class Editeur : MonoBehaviour
         bool t = true;
         for (int i = 0; i < component.Length; i++)
         {
-            if (component[i] == newComponent[end])
+            string blockI = "";
+            string[] I = component[i].Split(new string[] { "; " }, System.StringSplitOptions.None);
+            for (int v = 1; v < I.Length; v++)
+            {
+                if(v > 1) blockI = blockI + "; " + I[v];
+                else blockI = I[v];
+            }
+            string blockNew = "";
+            string[] New = newComponent[end].Split(new string[] { "; " }, System.StringSplitOptions.None);
+            for (int v = 1; v < New.Length; v++)
+            {
+                if (v > 1) blockNew = blockNew + "; " + New[v];
+                else blockNew = New[v];
+            }
+            
+            if (blockI == blockNew)
                 t = false;
         }
         if (t)
@@ -717,7 +733,7 @@ public class Editeur : MonoBehaviour
     public void Instance(int num, bool keep = false)
     {
         float id = 0;
-        try { id = float.Parse(component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[0]); }
+        try { id = float.Parse(GetBlocStatus("ID", num)); }
         catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
         Vector3 p = new Vector3();
         try { p = GetObjectPos(num); }
@@ -726,15 +742,7 @@ public class Editeur : MonoBehaviour
         Quaternion rot = new Quaternion();
         try { rot.eulerAngles = new Vector3(0, 0, int.Parse(GetBlocStatus("Rotate", num))); }
         catch { rot.eulerAngles = new Vector3(0, 0, 0); }
-        GameObject Pref = null;
-
-        try
-        {
-            if (id < 1)
-                Pref = TriggerPrefabs[(int)(id * 10F) - 1];
-            else Pref = Prefab;
-        }
-        catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
+        GameObject Pref = Prefab;
 
         Transform g = transform.GetChild(1);
         bool b = true;
@@ -762,8 +770,11 @@ public class Editeur : MonoBehaviour
             SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
 
             go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
-            Texture2D SelectedZoneSize = go.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite.texture;
-            go.transform.GetChild(0).localScale = new Vector2(tex.width / SelectedZoneSize.width, tex.height / SelectedZoneSize.height);
+            for (int i = 0; i < go.transform.childCount; i++)
+            {
+                Texture2D SelectedZoneSize = go.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite.texture;
+                go.transform.GetChild(i).localScale = new Vector2(tex.width / SelectedZoneSize.width, tex.height / SelectedZoneSize.height);
+            }
 
             try { SR.color = HexToColor(GetBlocStatus("Color", num)); }
             catch
@@ -776,7 +787,7 @@ public class Editeur : MonoBehaviour
     }
     public Vector3 GetObjectPos(int num)
     {
-        string a = component[num].Split(new string[] { "; " }, System.StringSplitOptions.None)[1];
+        string a = GetBlocStatus("Position", num);
         string[] b = a.Replace("(", "").Replace(" ", "").Replace(")", "").Replace(".0", "").Split(new string[] { "," }, System.StringSplitOptions.None);
         float[] c = new float[] { float.Parse(b[0]) * 50 + 25, float.Parse(b[1]) * 50 + 25, float.Parse(b[2]) };
         return new Vector3(c[0], c[1], c[2]);
@@ -802,7 +813,7 @@ public class Editeur : MonoBehaviour
     {
         SelectBlocking = true;
     }
-    int GetBloc(int x, int y)
+    public int GetBloc(int x, int y)
     {
         int a = -1;
         for (int i = 0; i < component.Length; i++)
@@ -851,7 +862,9 @@ public class Editeur : MonoBehaviour
 
                     string _Modified = "";
 
-                    if (StatusID == "ID")
+                    if (StatusID == "UID")
+                        Debug.LogError("UID never exist xD");
+                    else if (StatusID == "ID")
                         a[0] = _component;
                     else if (StatusID == "Position")
                         a[1] = "(" + _component + ", " + Pos[2];
@@ -861,7 +874,8 @@ public class Editeur : MonoBehaviour
                         a[1] = Pos[0] + ", " + _component + ", " + Pos[2] + ")";
                     else if (StatusID == "Layer")
                         a[1] = Pos[0] + ", " + Pos[1] + ", " + _component + ")";
-                    else {
+                    else
+                    {
                         int pNb = -1;
                         for (int p = 0; p < b.Length; p++)
                         {
@@ -869,9 +883,12 @@ public class Editeur : MonoBehaviour
                             if (param[0] == StatusID)
                                 pNb = p;
                         }
-                        if(pNb == -1)
+                        if (pNb == -1)
                         {
-
+                            if (b.Length > 0)
+                                if (!string.IsNullOrEmpty(b[0])) b = b.Union(new string[] { StatusID + ":" + _component }).ToArray();
+                                else b = new string[] { StatusID + ":" + _component };
+                            else b = new string[] { StatusID + ":" + _component };
                         }
                         else
                         {
@@ -923,7 +940,9 @@ public class Editeur : MonoBehaviour
             {
                 string[] a = component[Bloc].Split(new string[] { "; " }, System.StringSplitOptions.None);
 
-                if (StatusID == "ID")
+                if (StatusID == "UID")
+                    return null;
+                else if (StatusID == "ID")
                     return a[0];
                 else if (StatusID == "Position")
                     return a[1];
@@ -933,7 +952,8 @@ public class Editeur : MonoBehaviour
                     return a[1].Split(new string[] { ", " }, System.StringSplitOptions.None)[1].Replace(")", "").Replace("(", "");
                 else if (StatusID == "Layer")
                     return a[1].Split(new string[] { ", " }, System.StringSplitOptions.None)[2].Replace(")", "").Replace("(", "");
-                else {
+                else
+                {
                     string[] b = component[Bloc].Split(new string[] { "; {" }, System.StringSplitOptions.None)[1].Split(new string[] { "}" }, System.StringSplitOptions.None)[0].Split(new string[] { "; " }, System.StringSplitOptions.None);
                     for(int i = 0; i < b.Length; i++)
                     {
@@ -967,14 +987,52 @@ public class Editeur : MonoBehaviour
                 for (int i = 0; i < NewComponent.Length; i++)
                 {
                     if (i < SB)
+                    {
+                        string[] Blocks = GetBlocStatus("Blocks", i).Split(new string[] { "," }, System.StringSplitOptions.None);
+                        if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
+                        if (Blocks.Length > 0)
+                        {
+                            for (int bloc = 0; bloc < Blocks.Length; bloc++)
+                            {
+                                List<string> list = new List<string>(Blocks);
+                                if (int.Parse(Blocks[bloc]) == SB) list.RemoveAt(bloc);
+                                else if (int.Parse(Blocks[bloc]) > SB) list[bloc] = (int.Parse(list[bloc]) - 1).ToString();
+                                Blocks = list.ToArray();
+                            }
+                            string blocks = "Null";
+                            if (Blocks.Length > 0) blocks = Blocks[0];
+                            for (int b = 1; b < Blocks.Length; b++)
+                                blocks = blocks + "," + Blocks[b];
+                            ChangBlocStatus("Blocks", blocks, new int[] { i });
+                        }
+
                         NewComponent[i] = component[i];
+                    }
                     else
                     {
-                        NewComponent[i] = component[i + 1];
+                        string[] Blocks = GetBlocStatus("Blocks", i + 1).Split(new string[] { "," }, System.StringSplitOptions.None);
+                        if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
+                        if (Blocks.Length > 0)
+                        {
+                            for (int bloc = 0; bloc < Blocks.Length; bloc++)
+                            {
+                                List<string> list = new List<string>(Blocks);
+                                if (int.Parse(Blocks[bloc]) == SB) list.RemoveAt(bloc);
+                                else if (int.Parse(Blocks[bloc]) > SB) list[bloc] = (int.Parse(list[bloc]) - 1).ToString();
+                                Blocks = list.ToArray();
+                            }
+                            string blocks = "Null";
+                            if (Blocks.Length > 0) blocks = Blocks[0];
+                            for (int b = 1; b < Blocks.Length; b++)
+                                blocks = blocks + "," + Blocks[b];
+                            ChangBlocStatus("Blocks", blocks, new int[] { i });
+                        }
 
                         Transform objet = transform.GetChild(1).Find("Objet n° " + (i + 1));
                         if (objet != null)
                             objet.name = "Objet n° " + i;
+
+                        NewComponent[i] = component[i + 1];
                     }
                 }
                 component = NewComponent;
