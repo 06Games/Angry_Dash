@@ -78,11 +78,12 @@ public class BaseControl : MonoBehaviour
             eventSystem = GameObject.Find("EventSystem").GetComponent<UnityEngine.EventSystems.EventSystem>();
             baseSelectable = eventSystem.firstSelectedGameObject.GetComponent<Selectable>();
         }
-        bool newController = Input.GetJoystickNames().Length > 0 & !(Input.GetJoystickNames().Length == 1 & string.IsNullOrEmpty(Input.GetJoystickNames()[0]));
+        bool newController = Input.GetJoystickNames().Length > 0;
+        if (newController) newController = !(Input.GetJoystickNames().Length == 1 & string.IsNullOrEmpty(Input.GetJoystickNames()[0]));
         if (newController == true & Controller == false & baseSelectable != null) baseSelectable.Select();
         if(Controller & eventSystem.currentSelectedGameObject == null & baseSelectable != null) baseSelectable.Select();
+        if (Controller & !newController) eventSystem.SetSelectedGameObject(null);
         Controller = newController;
-        if (!Controller) eventSystem.SetSelectedGameObject(null);
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
