@@ -1024,7 +1024,7 @@ public class Editeur : MonoBehaviour
                             if (Blocks.Length > 0) blocks = Blocks[0];
                             for (int b = 1; b < Blocks.Length; b++)
                                 blocks = blocks + "," + Blocks[b];
-                            ChangBlocStatus("Blocks", blocks, new int[] { i });
+                            ChangBlocStatus("Blocks", blocks, new int[] { i+1 });
                         }
 
                         Transform objet = transform.GetChild(1).Find("Objet n° " + (i + 1));

@@ -889,6 +889,8 @@ MonoBehaviour:
   ButtonSoundOnClick: {fileID: 8300000, guid: 7f487e4748fd40643adb86125a40f81e, type: 3}
   DiscordPref: {fileID: 1650686116138130, guid: 23fa7d3e42dcf5a489750d3576031f1e,
     type: 2}
+  Controller: 0
+  baseSelectable: {fileID: 0}
 --- !u!114 &191689105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -920,6 +922,7 @@ MonoBehaviour:
   TriggerPref:
   - {fileID: 1981134399792410, guid: 114e3326e1783bc4d9643ecf50da48a8, type: 2}
   - {fileID: 1981134399792410, guid: 9d8560a81c503bf4da28b06c579d65ff, type: 2}
+  - {fileID: 1981134399792410, guid: 05e40a2d5ab5da64c971709a5096771e, type: 2}
   Base: {fileID: 1249314462}
   nbLancer: 0
   nbLancerTxt: {fileID: 964563685}

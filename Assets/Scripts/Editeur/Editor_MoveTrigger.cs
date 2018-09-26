@@ -177,7 +177,7 @@ public class Editor_MoveTrigger : MonoBehaviour
     }
 
 
-    public Vector2 getVector2(string rString)
+    public static Vector2 getVector2(string rString)
     {
         string[] temp = rString.Substring(1, rString.Length - 2).Split(',');
         float x = System.Convert.ToSingle(temp[0]);

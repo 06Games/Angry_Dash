@@ -75,7 +75,7 @@ public class LevelPlayer : MonoBehaviour
             }
             else
             {
-                File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/Level 4.level", "Home" });
+                File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/4.level", "Home" });
                 FromFile();
             }
         }
@@ -101,7 +101,7 @@ public class LevelPlayer : MonoBehaviour
         }
         else
         {
-            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/Level 4.level", "Home" });
+            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/4.level", "Home" });
             FromFile();
         }
     }
@@ -115,6 +115,9 @@ public class LevelPlayer : MonoBehaviour
 
     void Parse()
     {
+        component = Editeur.UpdateLevel(component);
+
+
         int a = -1;
         for (int x = 0; x < component.Length; x++)
         {
@@ -247,31 +250,51 @@ public class LevelPlayer : MonoBehaviour
             go.GetComponent<Mur>().colider = colid;
             go.GetComponent<Mur>().blockID = id;
         }
-        else
+        else //Trigger
         {
-            if (id == 0.1F)
+            if (id == 0.1F) //Start
             {
                 GetComponent<MainCam>().Player.transform.position = pos;
                 GetComponent<MainCam>().Player.GetComponent<Player>().PositionInitiale = pos;
             }
-            else if (id == 0.2F)
+            else if (id == 0.2F) //Stop
             {
                 GameObject go = null;
                 try { go = Instantiate(TriggerPref[0], pos, rot, place); }
                 catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
-                go.name = "Trigger n° " + num;
-                Texture2D tex = go.GetComponent<SpriteRenderer>().sprite.texture;
+                go.name = "Objet n° " + num;
+                Texture2D tex = new Texture2D(1, 1);
+                if (go.GetComponent<SpriteRenderer>() != null) tex = go.GetComponent<SpriteRenderer>().sprite.texture;
                 go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
             }
-            else if (id == 0.3F)
+            else if (id == 0.3F) //Checkpoint
             {
                 GameObject go = null;
                 try { go = Instantiate(TriggerPref[1], pos, rot, place); }
                 catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
-                go.name = "Trigger n° " + num;
-                Texture2D tex = go.GetComponent<SpriteRenderer>().sprite.texture;
+                go.name = "Objet n° " + num;
+                Texture2D tex = new Texture2D(1, 1);
+                if (go.GetComponent<SpriteRenderer>() != null) tex = go.GetComponent<SpriteRenderer>().sprite.texture;
                 go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
                 go.SetActive(GetComponent<MainCam>().Player.GetComponent<Player>().respawnMode == 1);
+            }
+            else if (id == 0.4F) //Move
+            {
+                GameObject go = null;
+                try { go = Instantiate(TriggerPref[2], pos, rot, place); }
+                catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
+                go.name = "Objet n° " + num;
+                Texture2D tex = new Texture2D(100, 100);
+                if (go.GetComponent<SpriteRenderer>() != null) tex = go.GetComponent<SpriteRenderer>().sprite.texture;
+                go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
+
+                MoveTrigger moveTrigger = go.GetComponent<MoveTrigger>();
+                string[] Blocks = GetBlocStatus("Blocks", num).Split(new string[] { "," }, System.StringSplitOptions.None);
+                if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
+                moveTrigger.Blocks = Blocks;
+                moveTrigger.Range = Editor_MoveTrigger.getVector2(GetBlocStatus("Range", num));
+                moveTrigger.Speed = float.Parse(GetBlocStatus("Speed", num));
+                moveTrigger.Type = int.Parse(GetBlocStatus("Type", num));
             }
         }
     }
