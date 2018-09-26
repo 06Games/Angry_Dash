@@ -33,7 +33,7 @@ public class Edit : MonoBehaviour
                     triggerID = triggerID * 10;
                 GetComponent<CreatorManager>().Array((int)triggerID);
             }
-            else if(blocID >= 0) GetComponent<CreatorManager>().Array(0);
+            else if (blocID >= 0) GetComponent<CreatorManager>().Array(0);
         }
     }
 }

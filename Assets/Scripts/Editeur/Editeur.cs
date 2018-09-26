@@ -27,7 +27,7 @@ public class Editeur : MonoBehaviour
 
     Camera cam;
     public int ZoomSensitive = 20;
-    
+
     public bool SelectMode = false;
     public bool bloqueSelect = false;
 
@@ -601,7 +601,7 @@ public class Editeur : MonoBehaviour
             string[] I = component[i].Split(new string[] { "; " }, System.StringSplitOptions.None);
             for (int v = 1; v < I.Length; v++)
             {
-                if(v > 1) blockI = blockI + "; " + I[v];
+                if (v > 1) blockI = blockI + "; " + I[v];
                 else blockI = I[v];
             }
             string blockNew = "";
@@ -611,7 +611,7 @@ public class Editeur : MonoBehaviour
                 if (v > 1) blockNew = blockNew + "; " + New[v];
                 else blockNew = New[v];
             }
-            
+
             if (blockI == blockNew)
                 t = false;
         }
@@ -862,9 +862,7 @@ public class Editeur : MonoBehaviour
 
                     string _Modified = "";
 
-                    if (StatusID == "UID")
-                        Debug.LogError("UID never exist xD");
-                    else if (StatusID == "ID")
+                    if (StatusID == "ID")
                         a[0] = _component;
                     else if (StatusID == "Position")
                         a[1] = "(" + _component + ", " + Pos[2];
@@ -914,7 +912,8 @@ public class Editeur : MonoBehaviour
     }
 
     [System.Obsolete("Don't include the block id is no longer supported, use GetBlocStatus(string StatusID, int Bloc) instead")]
-    public string GetBlocStatus(float StatusID) {
+    public string GetBlocStatus(float StatusID)
+    {
         Debug.LogError("Don't include the block id is no longer supported, use GetBlocStatus(string StatusID, int Bloc) instead");
         return GetBlocStatus(StatusID, SelectedBlock[0]);
     }
@@ -955,13 +954,13 @@ public class Editeur : MonoBehaviour
                 else
                 {
                     string[] b = component[Bloc].Split(new string[] { "; {" }, System.StringSplitOptions.None)[1].Split(new string[] { "}" }, System.StringSplitOptions.None)[0].Split(new string[] { "; " }, System.StringSplitOptions.None);
-                    for(int i = 0; i < b.Length; i++)
+                    for (int i = 0; i < b.Length; i++)
                     {
                         string[] param = b[i].Split(new string[] { ":" }, System.StringSplitOptions.None);
                         if (param[0] == StatusID)
                             return param[1];
                     }
-                    
+
                     return "";
                 }
             }
@@ -1142,7 +1141,7 @@ public class Editeur : MonoBehaviour
                     else
                     {
                         string[] parm = newFileLines[i].Split(new string[] { "; " }, System.StringSplitOptions.None);
-                        if(float.Parse(parm[0]) >= 1) newFileLines[i] = parm[0] + "; " + parm[1] + "; {Rotate:" + parm[2] + "; Color:" + parm[3] + "; Behavior:" + parm[4] + "}";
+                        if (float.Parse(parm[0]) >= 1) newFileLines[i] = parm[0] + "; " + parm[1] + "; {Rotate:" + parm[2] + "; Color:" + parm[3] + "; Behavior:" + parm[4] + "}";
                         else newFileLines[i] = parm[0] + "; " + parm[1] + "; {}";
                     }
                 }
