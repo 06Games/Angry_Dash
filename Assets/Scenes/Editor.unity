@@ -16421,11 +16421,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menu: 0300000002000000040000000100000000000000
   keys:
-  - Alpha1
-  - Alpha2
-  - Alpha3 | Delete
-  - Alpha4
-  - Alpha5
+  - F1 | JoystickButton4
+  - F2 | JoystickButton5
+  - Delete
+  - F3
+  - F4
 --- !u!1 &617188651
 GameObject:
   m_ObjectHideFlags: 0
