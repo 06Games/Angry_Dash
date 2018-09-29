@@ -10,8 +10,26 @@ public class Mur : MonoBehaviour
     public float boostMultiplier = 0;
     public float blockID = 1;
 
+    public Vector2 Move;
+
+    bool Colliding = false;
+
+    private void Update()
+    {
+        if (Move != new Vector2() & Colliding & player != null)
+        {
+            Vector2 playerMove = new Vector2();
+            if (player.transform.position.x > transform.position.x & Move.x > 0) playerMove.x = Move.x * 50;
+            else if (player.transform.position.x < transform.position.x & Move.x < 0) playerMove.x = Move.x * 50;
+            if (player.transform.position.y > transform.position.y & Move.y > 0) playerMove.y = Move.y * 50;
+            else if (player.transform.position.y < transform.position.y & Move.y < 0) playerMove.y = Move.y * 50;
+            player.transform.Translate(playerMove, Space.World);
+        }
+    }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
+        Colliding = true;
         player = collision.gameObject.GetComponent<Player>();
 
         if ((int)colider == 0) //Stop
@@ -28,7 +46,7 @@ public class Mur : MonoBehaviour
             StartCoroutine(colid(0.1F));
         }
         else if (colider >= 2.1F & colider < 3) //No Collision + Boost
-            player.vitesse = (boostMultiplier/10F) + 1;
+            player.vitesse = (boostMultiplier / 10F) + 1;
         else if ((int)colider == 3) //Bounce
         {
             Vector3 rotpos = player.transform.rotation.eulerAngles;
@@ -36,7 +54,7 @@ public class Mur : MonoBehaviour
 
             float z = rotpos.z + 180;
             if ((int)blockID == 2 | (int)blockID == 3)
-            {            
+            {
                 Vector2 pos = player.transform.position;
                 Vector2 direction = new Vector2();
 
@@ -51,7 +69,7 @@ public class Mur : MonoBehaviour
                 else if (pos.y < (transform.position.y - transform.lossyScale.y / 2))
                     direction.y = -1;
                 else direction.y = 0;
-                
+
 
                 if (direction.x == 1 & direction.y == 0)
                     z = 0;
@@ -61,9 +79,9 @@ public class Mur : MonoBehaviour
                     z = 0;
                 else z = rotpos.z + 180;
 
-                if(transform.rotation.eulerAngles.z >= 0)
-                z = z + (int)transform.rotation.eulerAngles.z;
-                else z = z + 180 + ((int)transform.rotation.eulerAngles.z*-1);
+                if (transform.rotation.eulerAngles.z >= 0)
+                    z = z + (int)transform.rotation.eulerAngles.z;
+                else z = z + 180 + ((int)transform.rotation.eulerAngles.z * -1);
             }
 
             rot.eulerAngles = new Vector3(0, 0, z);
@@ -74,6 +92,7 @@ public class Mur : MonoBehaviour
     }
     void OnTriggerExit2D(Collider2D collision)
     {
+        Colliding = false;
     }
 
     private void Start()

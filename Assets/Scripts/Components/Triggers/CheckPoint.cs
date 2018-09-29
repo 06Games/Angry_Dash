@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 
-public class CheckPoint : MonoBehaviour {
-
+public class CheckPoint : MonoBehaviour
+{
     Player player;
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         player = collision.gameObject.GetComponent<Player>();
@@ -12,7 +13,7 @@ public class CheckPoint : MonoBehaviour {
 
     private void Update()
     {
-        if(player != null)
+        if (player != null)
             if (player.PositionInitiale != (Vector2)transform.position)
                 GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255);
     }

@@ -18979,7 +18979,7 @@ MonoBehaviour:
   m_FillRect: {fileID: 1627524964}
   m_HandleRect: {fileID: 41696563}
   m_Direction: 0
-  m_MinValue: 0
+  m_MinValue: 1
   m_MaxValue: 100
   m_WholeNumbers: 1
   m_Value: 0
@@ -49370,7 +49370,7 @@ MonoBehaviour:
   m_LineType: 0
   m_HideMobileInput: 0
   m_CharacterValidation: 2
-  m_CharacterLimit: 0
+  m_CharacterLimit: 4
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls: []
