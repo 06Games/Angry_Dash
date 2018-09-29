@@ -133,9 +133,9 @@ public class Editor_MoveTrigger : MonoBehaviour
 
     void Actualise()
     {
-        transform.GetChild(2).GetChild(0).GetComponent<Slider>().value = 100F + (Range.x * 10F);
-        transform.GetChild(2).GetChild(1).GetComponent<Slider>().value = 100F + (Range.y * 10F);
-        transform.GetChild(2).GetChild(2).GetComponent<Slider>().value = Speed * 10F;
+        transform.GetChild(2).GetChild(0).GetChild(3).GetComponent<InputField>().text = Range.x.ToString();
+        transform.GetChild(2).GetChild(1).GetChild(3).GetComponent<InputField>().text = Range.y.ToString();
+        transform.GetChild(2).GetChild(2).GetChild(3).GetComponent<InputField>().text = Speed.ToString();
         transform.GetChild(3).GetChild(0).GetComponent<Dropdown>().value = Type;
     }
 
@@ -144,15 +144,20 @@ public class Editor_MoveTrigger : MonoBehaviour
     {
         Slider slider = transform.GetChild(2).GetChild(ScrollID).GetComponent<Slider>();
 
-        float value = slider.value / 10F;
-        if (ScrollID >= 0 & ScrollID <= 1) value = (slider.value - (slider.maxValue / 2)) / 10F;
+        float value = slider.value;
+        float multiplier = 1;
+        if (ScrollID >= 0 & ScrollID <= 1)
+        {
+            multiplier = 0.05F;
+            value = (slider.value - (slider.maxValue / 2)) / 10F;
+        }
         int max = value.ToString().Length;
         if (max > 5) max = 5;
-        slider.transform.GetChild(3).GetComponent<InputField>().text = value.ToString().Substring(0, max);
 
-        if (ScrollID == 0) Range.x = value;
-        else if (ScrollID == 1) Range.y = value;
-        else if (ScrollID == 2) Speed = value;
+        float inputFieldValue = -1;
+        try { inputFieldValue = float.Parse(slider.transform.GetChild(3).GetComponent<InputField>().text); } catch { }
+        if (inputFieldValue <= (slider.maxValue * multiplier) | (int)value < (int)(slider.maxValue * multiplier))
+            slider.transform.GetChild(3).GetComponent<InputField>().text = value.ToString().Substring(0, max);
     }
     public void TextRangeValueChanged(int ScrollID)
     {
@@ -161,12 +166,15 @@ public class Editor_MoveTrigger : MonoBehaviour
         if (inputField.text.Length > 4 & !(inputField.text.Contains(".") | inputField.text.Contains("-"))) inputField.text = "9999";
         try
         {
-            float value = float.Parse(inputField.text) * 10F;
+            float value = float.Parse(inputField.text);
+
+            if (ScrollID == 0) Range.x = value;
+            else if (ScrollID == 1) Range.y = value;
+            else if (ScrollID == 2) Speed = value;
+
             if (ScrollID >= 0 & ScrollID <= 1) value = ((float.Parse(inputField.text) * 10F) + (slider.maxValue / 2));
 
-            if (float.Parse(inputField.text) <= 10)
-                slider.value = value;
-            else slider.value = slider.maxValue;
+            slider.value = value;
         }
         catch { }
     }
