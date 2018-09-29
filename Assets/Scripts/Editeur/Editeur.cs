@@ -1092,7 +1092,7 @@ public class Editeur : MonoBehaviour
     #region UpdateLevel
     /// <summary>
     /// Update a level to the newest version
-    /// Warning : The level will be imcompatible with older versions
+    /// Warning : The level will be incompatible with older versions
     /// </summary>
     /// <param name="path">Path to the file</param>
     public static void UpdateLevel(string path)
@@ -1103,7 +1103,7 @@ public class Editeur : MonoBehaviour
 
     /// <summary>
     /// Update a level to the newest version
-    /// Warning : The level will be imcompatible with older versions
+    /// Warning : The level will be incompatible with older versions
     /// </summary>
     /// <param name="fileLines">File content line by line</param>
     public static string[] UpdateLevel(string[] fileLines)

@@ -27,7 +27,7 @@ public class Editor_MoveTrigger : MonoBehaviour
 
         if (SB != editor.SelectedBlock)
         {
-            if (float.Parse(editor.GetBlocStatus("ID", editor.SelectedBlock[0])) < 1)
+            if (float.Parse(editor.GetBlocStatus("ID", editor.SelectedBlock[0])) == 0.4F)
             {
                 SB = editor.SelectedBlock;
                 Blocks = editor.GetBlocStatus("Blocks", SB[0]).Split(new string[] { "," }, System.StringSplitOptions.None);
