@@ -773,7 +773,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: editorMenuEditType
+  id: editorMenuEditTypeTitle
   keepIfNotExist: 1
   arg: []
 --- !u!1 &17825326
