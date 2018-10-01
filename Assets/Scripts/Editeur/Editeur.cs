@@ -1121,6 +1121,12 @@ public class Editeur : MonoBehaviour
         }
         string version = "0.2";
         if (v != -1) version = newFileLines[v].Replace("version = ", "");
+        else
+        {
+            newFileLines = new string[] { "version = 0.2" };
+            v = 0;
+            newFileLines = newFileLines.Union(fileLines).ToArray();
+        }
 
         if (version == "0.2")
         {
