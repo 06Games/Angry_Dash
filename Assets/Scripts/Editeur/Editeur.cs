@@ -95,7 +95,7 @@ public class Editeur : MonoBehaviour
 
         component = File.ReadAllLines(txt);
 
-        if (!CheckPublicID(txt)) Debug.LogError("The Public ID is invalid");
+        //if (!CheckPublicID(txt)) Debug.LogError("The Public ID is invalid");
         UpdateLevel(component);
 
         int d = -1;
