@@ -12,9 +12,11 @@ public class Editor_MoveTrigger : MonoBehaviour
     int array;
 
     public string[] Blocks;
-    public Vector2 Range;
-    public float Speed;
+    public Vector2 Translation;
     public int Type;
+    public float Speed;
+    public bool MultiUsage;
+    public Vector3 Rotation;
 
     private void Start()
     {
@@ -32,9 +34,11 @@ public class Editor_MoveTrigger : MonoBehaviour
                 SB = editor.SelectedBlock;
                 Blocks = editor.GetBlocStatus("Blocks", SB[0]).Split(new string[] { "," }, System.StringSplitOptions.None);
                 if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
-                try { Range = getVector2(editor.GetBlocStatus("Range", SB[0])); } catch { }
-                try { Speed = float.Parse(editor.GetBlocStatus("Speed", SB[0])); } catch { }
+                try { Translation = getVector2(editor.GetBlocStatus("Translation", SB[0])); } catch { }
                 try { Type = int.Parse(editor.GetBlocStatus("Type", SB[0])); } catch { }
+                try { Speed = float.Parse(editor.GetBlocStatus("Speed", SB[0])); } catch { }
+                try { MultiUsage = bool.Parse(editor.GetBlocStatus("MultiUsage", SB[0])); } catch { }
+                try { Rotation = getVector3(editor.GetBlocStatus("Rotation", SB[0])); } catch { }
                 Actualise();
             }
             else { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
@@ -126,31 +130,34 @@ public class Editor_MoveTrigger : MonoBehaviour
             blocks = blocks + "," + Blocks[i];
 
         editor.ChangBlocStatus("Blocks", blocks, SB);
-        editor.ChangBlocStatus("Range", Range.ToString(), SB);
-        editor.ChangBlocStatus("Speed", Speed.ToString(), SB);
+        editor.ChangBlocStatus("Translation", Translation.ToString(), SB);
         editor.ChangBlocStatus("Type", Type.ToString(), SB);
+        editor.ChangBlocStatus("Speed", Speed.ToString(), SB);
+        editor.ChangBlocStatus("MultiUsage", MultiUsage.ToString(), SB);
+        editor.ChangBlocStatus("Rotation", Rotation.ToString(), SB);
     }
 
     void Actualise()
     {
-        transform.GetChild(2).GetChild(0).GetChild(3).GetComponent<InputField>().text = Range.x.ToString();
-        transform.GetChild(2).GetChild(1).GetChild(3).GetComponent<InputField>().text = Range.y.ToString();
-        transform.GetChild(2).GetChild(2).GetChild(3).GetComponent<InputField>().text = Speed.ToString();
+        transform.GetChild(2).GetChild(1).GetChild(3).GetComponent<InputField>().text = Translation.x.ToString();
+        transform.GetChild(2).GetChild(2).GetChild(3).GetComponent<InputField>().text = Translation.y.ToString();
         transform.GetChild(3).GetChild(0).GetComponent<Dropdown>().value = Type;
+        transform.GetChild(3).GetChild(1).GetChild(3).GetComponent<InputField>().text = Speed.ToString();
+        transform.GetChild(3).GetChild(2).GetComponent<Toggle>().isOn = MultiUsage;
+        transform.GetChild(4).GetChild(1).GetChild(3).GetComponent<InputField>().text = Rotation.x.ToString();
+        transform.GetChild(4).GetChild(2).GetChild(3).GetComponent<InputField>().text = Rotation.y.ToString();
+        transform.GetChild(4).GetChild(3).GetChild(3).GetComponent<InputField>().text = Rotation.z.ToString();
     }
 
 
-    public void RangeValueChanged(int ScrollID)
+    public void RangeValueChanged(float ScrollID)
     {
-        Slider slider = transform.GetChild(2).GetChild(ScrollID).GetComponent<Slider>();
+        int Cat = (int)ScrollID;
+        int Child = Mathf.RoundToInt((ScrollID - (int)ScrollID) * 10F);
+        Slider slider = transform.GetChild(Cat).GetChild(Child).GetComponent<Slider>();
 
-        float value = slider.value;
-        float multiplier = 1;
-        if (ScrollID >= 0 & ScrollID <= 1)
-        {
-            multiplier = 0.05F;
-            value = (slider.value - (slider.maxValue / 2)) / 10F;
-        }
+        float value = (slider.value - (slider.maxValue / 2)) / 10F;
+        float multiplier = 0.05F;
         int max = value.ToString().Length;
         if (max > 5) max = 5;
 
@@ -159,21 +166,24 @@ public class Editor_MoveTrigger : MonoBehaviour
         if (inputFieldValue <= (slider.maxValue * multiplier) | (int)value < (int)(slider.maxValue * multiplier))
             slider.transform.GetChild(3).GetComponent<InputField>().text = value.ToString().Substring(0, max);
     }
-    public void TextRangeValueChanged(int ScrollID)
+    public void TextRangeValueChanged(float ScrollID)
     {
-        Slider slider = transform.GetChild(2).GetChild(ScrollID).GetComponent<Slider>();
+        int Cat = (int)ScrollID;
+        int Child = Mathf.RoundToInt((ScrollID - (int)ScrollID) * 10F);
+        Slider slider = transform.GetChild(Cat).GetChild(Child).GetComponent<Slider>();
         InputField inputField = slider.transform.GetChild(3).GetComponent<InputField>();
         if (inputField.text.Length > 4 & !(inputField.text.Contains(".") | inputField.text.Contains("-"))) inputField.text = "9999";
         try
         {
             float value = float.Parse(inputField.text);
 
-            if (ScrollID == 0) Range.x = value;
-            else if (ScrollID == 1) Range.y = value;
-            else if (ScrollID == 2) Speed = value;
+            if (ScrollID == 2.1F) Translation.x = value;
+            else if (ScrollID == 2.2F) Translation.y = value;
+            else if (ScrollID == 4.1F) Rotation.x = value;
+            else if (ScrollID == 4.2F) Rotation.y = value;
+            else if (ScrollID == 4.3F) Rotation.z = value;
 
-            if (ScrollID >= 0 & ScrollID <= 1) value = ((float.Parse(inputField.text) * 10F) + (slider.maxValue / 2));
-
+            value = ((float.Parse(inputField.text) * 10F) + (slider.maxValue / 2));
             slider.value = value;
         }
         catch { }
@@ -184,6 +194,39 @@ public class Editor_MoveTrigger : MonoBehaviour
         Type = dropdown.value;
     }
 
+    public void SpeedValueChanged()
+    {
+        Slider slider = transform.GetChild(3).GetChild(1).GetComponent<Slider>();
+
+        float value = slider.value;
+        float multiplier = 1;
+        int max = value.ToString().Length;
+        if (max > 5) max = 5;
+
+        float inputFieldValue = -1;
+        try { inputFieldValue = float.Parse(slider.transform.GetChild(3).GetComponent<InputField>().text); } catch { }
+        if (inputFieldValue <= (slider.maxValue * multiplier) | (int)value < (int)(slider.maxValue * multiplier))
+            slider.transform.GetChild(3).GetComponent<InputField>().text = value.ToString().Substring(0, max);
+    }
+    public void TextSpeedValueChanged()
+    {
+        Slider slider = transform.GetChild(3).GetChild(1).GetComponent<Slider>();
+        InputField inputField = slider.transform.GetChild(3).GetComponent<InputField>();
+        if (inputField.text.Length > 4 & !(inputField.text.Contains(".") | inputField.text.Contains("-"))) inputField.text = "9999";
+        try
+        {
+            float value = float.Parse(inputField.text);
+            Speed = value;
+            slider.value = value;
+        }
+        catch { }
+    }
+
+    public void MultiUsageChanged(Toggle toggle)
+    {
+        MultiUsage = toggle.isOn;
+    }
+
 
     public static Vector2 getVector2(string rString)
     {
@@ -191,6 +234,15 @@ public class Editor_MoveTrigger : MonoBehaviour
         float x = System.Convert.ToSingle(temp[0]);
         float y = System.Convert.ToSingle(temp[1]);
         Vector2 rValue = new Vector2(x, y);
+        return rValue;
+    }
+    public static Vector3 getVector3(string rString)
+    {
+        string[] temp = rString.Substring(1, rString.Length - 2).Split(',');
+        float x = System.Convert.ToSingle(temp[0]);
+        float y = System.Convert.ToSingle(temp[1]);
+        float z = System.Convert.ToSingle(temp[2]);
+        Vector3 rValue = new Vector3(x, y, z);
         return rValue;
     }
 }

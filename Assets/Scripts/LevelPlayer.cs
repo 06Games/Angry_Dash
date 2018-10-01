@@ -292,10 +292,11 @@ public class LevelPlayer : MonoBehaviour
                 string[] Blocks = GetBlocStatus("Blocks", num).Split(new string[] { "," }, System.StringSplitOptions.None);
                 if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
                 moveTrigger.Blocks = Blocks;
-                try { moveTrigger.Range = Editor_MoveTrigger.getVector2(GetBlocStatus("Range", num)); } catch { }
-                try { moveTrigger.Speed = float.Parse(GetBlocStatus("Speed", num)); } catch { }
+                try { moveTrigger.Translation = Editor_MoveTrigger.getVector2(GetBlocStatus("Translation", num)); } catch { }
                 try { moveTrigger.Type = int.Parse(GetBlocStatus("Type", num)); } catch { }
+                try { moveTrigger.Speed = float.Parse(GetBlocStatus("Speed", num)); } catch { }
                 try { moveTrigger.MultiUsage = bool.Parse(GetBlocStatus("MultiUsage", num)); } catch { }
+                try { moveTrigger.Rotation = Editor_MoveTrigger.getVector3(GetBlocStatus("Rotation", num)); } catch { }
             }
         }
     }
