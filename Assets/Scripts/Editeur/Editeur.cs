@@ -824,31 +824,21 @@ public class Editeur : MonoBehaviour
         return a;
     }
 
-
-    [System.Obsolete("Don't include the block id is no longer supported, use ChangBlocStatus(string StatusID, string _component, int[] Bloc) instead")]
-    public void ChangBlocStatus(float StatusID, string _component) { ChangBlocStatus(StatusID, _component, SelectedBlock); }
-
-    [System.Obsolete("Don't include an blocks id array is no longer supported, use ChangBlocStatus(string StatusID, string _component, int[] Bloc) instead")]
-    public void ChangBlocStatus(float StatusID, string _component, int Bloc = -1)
-    {
-        if (Bloc == -1) ChangBlocStatus(StatusID, _component, SelectedBlock);
-        else ChangBlocStatus(StatusID, _component, new int[] { Bloc });
-    }
-    [System.Obsolete("Don't give a string id is no longer supported, use ChangBlocStatus(string StatusID, string _component, int[] Bloc) instead")]
-    public void ChangBlocStatus(float StatusID, string _component, int[] Bloc = null)
-    {
-        string id = "";
-        if (StatusID == 0) id = "ID";
-        else if (StatusID == 1 | StatusID == 1.1) id = "Position";
-        else if (StatusID == 1.11) id = "PositionX";
-        else if (StatusID == 1.12) id = "PositionY";
-        else if (StatusID == 1.2) id = "Layer";
-        else if (StatusID == 2) id = "Rotate";
-        else if (StatusID == 3) id = "Color";
-        else if (StatusID == 4) id = "Behavior";
-        ChangBlocStatus(id, _component, Bloc);
-    }
+    /// <summary>
+    /// Chang Block Parameter
+    /// </summary>
+    /// <param name="StatusID">Parameter ID</param>
+    /// <param name="_component">Parameter Value</param>
+    /// <param name="Bloc">Blocks conserned</param>
     public void ChangBlocStatus(string StatusID, string _component, int[] Bloc)
+    { ChangBlocStatus(new string[] { StatusID }, new string[] { _component }, Bloc); }
+    /// <summary>
+    /// Chang Blocks Parameter
+    /// </summary>
+    /// <param name="StatusID">Parameters IDs</param>
+    /// <param name="_component">Parameters Values</param>
+    /// <param name="Bloc">Blocks conserned</param>
+    public void ChangBlocStatus(string[] StatusID, string[] _component, int[] Bloc)
     {
         if (Bloc != null)
         {
@@ -862,36 +852,39 @@ public class Editeur : MonoBehaviour
 
                     string _Modified = "";
 
-                    if (StatusID == "ID")
-                        a[0] = _component;
-                    else if (StatusID == "Position")
-                        a[1] = "(" + _component + ", " + Pos[2];
-                    else if (StatusID == "PositionX")
-                        a[1] = "(" + _component + ", " + Pos[1] + ", " + Pos[2] + ")";
-                    else if (StatusID == "PositionY")
-                        a[1] = Pos[0] + ", " + _component + ", " + Pos[2] + ")";
-                    else if (StatusID == "Layer")
-                        a[1] = Pos[0] + ", " + Pos[1] + ", " + _component + ")";
-                    else
+                    for (int s = 0; s < StatusID.Length & s < _component.Length; s++)
                     {
-                        int pNb = -1;
-                        for (int p = 0; p < b.Length; p++)
-                        {
-                            string[] param = b[p].Split(new string[] { ":" }, System.StringSplitOptions.None);
-                            if (param[0] == StatusID)
-                                pNb = p;
-                        }
-                        if (pNb == -1)
-                        {
-                            if (b.Length > 0)
-                                if (!string.IsNullOrEmpty(b[0])) b = b.Union(new string[] { StatusID + ":" + _component }).ToArray();
-                                else b = new string[] { StatusID + ":" + _component };
-                            else b = new string[] { StatusID + ":" + _component };
-                        }
+                        if (StatusID[s] == "ID")
+                            a[0] = _component[s];
+                        else if (StatusID[s] == "Position")
+                            a[1] = "(" + _component[s] + ", " + Pos[2];
+                        else if (StatusID[s] == "PositionX")
+                            a[1] = "(" + _component[s] + ", " + Pos[1] + ", " + Pos[2] + ")";
+                        else if (StatusID[s] == "PositionY")
+                            a[1] = Pos[0] + ", " + _component[s] + ", " + Pos[2] + ")";
+                        else if (StatusID[s] == "Layer")
+                            a[1] = Pos[0] + ", " + Pos[1] + ", " + _component[s] + ")";
                         else
                         {
-                            string[] param = b[pNb].Split(new string[] { ":" }, System.StringSplitOptions.None);
-                            b[pNb] = param[0] + ":" + _component;
+                            int pNb = -1;
+                            for (int p = 0; p < b.Length; p++)
+                            {
+                                string[] param = b[p].Split(new string[] { ":" }, System.StringSplitOptions.None);
+                                if (param[0] == StatusID[s])
+                                    pNb = p;
+                            }
+                            if (pNb == -1)
+                            {
+                                if (b.Length > 0)
+                                    if (!string.IsNullOrEmpty(b[0])) b = b.Union(new string[] { StatusID[s] + ":" + _component[s] }).ToArray();
+                                    else b = new string[] { StatusID[s] + ":" + _component[s] };
+                                else b = new string[] { StatusID[s] + ":" + _component[s] };
+                            }
+                            else
+                            {
+                                string[] param = b[pNb].Split(new string[] { ":" }, System.StringSplitOptions.None);
+                                b[pNb] = param[0] + ":" + _component[s];
+                            }
                         }
                     }
 
@@ -910,27 +903,7 @@ public class Editeur : MonoBehaviour
             }
         }
     }
-
-    [System.Obsolete("Don't include the block id is no longer supported, use GetBlocStatus(string StatusID, int Bloc) instead")]
-    public string GetBlocStatus(float StatusID)
-    {
-        Debug.LogError("Don't include the block id is no longer supported, use GetBlocStatus(string StatusID, int Bloc) instead");
-        return GetBlocStatus(StatusID, SelectedBlock[0]);
-    }
-    [System.Obsolete("Don't give a string id is no longer supported, use GetBlocStatus(string StatusID, int Bloc) instead")]
-    public string GetBlocStatus(float StatusID, int Bloc)
-    {
-        string id = "";
-        if (StatusID == 0) id = "ID";
-        else if (StatusID == 1) id = "Position";
-        else if (StatusID == 1.1) id = "PositionX";
-        else if (StatusID == 1.2) id = "PositionY";
-        else if (StatusID == 1.3) id = "Layer";
-        else if (StatusID == 2) id = "Rotate";
-        else if (StatusID == 3) id = "Color";
-        else if (StatusID == 4) id = "Behavior";
-        return GetBlocStatus(id, Bloc);
-    }
+    
     public string GetBlocStatus(string StatusID, int Bloc)
     {
         if (file != "" & component.Length > Bloc)

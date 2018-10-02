@@ -44,12 +44,9 @@ public class Editor_MoveTrigger : MonoBehaviour
             else { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
         }
 
-
-        if (GetComponent<CreatorManager>().array == 1)
         {
             editor.bloqueSelect = true;
 
-            if (array != GetComponent<CreatorManager>().array)
             {
                 for (int i = 0; i < Blocks.Length; i++)
                 {
@@ -64,7 +61,16 @@ public class Editor_MoveTrigger : MonoBehaviour
                 {
                     Vector2 pos = editor.GetClicPos();
                     int Selected = editor.GetBloc((int)pos.x, (int)pos.y);
-                    if (Selected != -1) Blocks = Blocks.Union(new string[] { Selected.ToString() }).ToArray();
+                    if (Selected != -1)
+                    {
+                        Blocks = Blocks.Union(new string[] { Selected.ToString() }).ToArray();
+
+                        string blocks = "Null";
+                        if (Blocks.Length > 0) blocks = Blocks[0];
+                        for (int i = 1; i < Blocks.Length; i++)
+                            blocks = blocks + "," + Blocks[i];
+                        editor.ChangBlocStatus("Blocks", blocks, SB);
+                    }
 
                     for (int i = 0; i < Blocks.Length; i++)
                     {
@@ -99,6 +105,12 @@ public class Editor_MoveTrigger : MonoBehaviour
                             }
                         }
                         Blocks = list.ToArray();
+
+                        string blocks = "Null";
+                        if (Blocks.Length > 0) blocks = Blocks[0];
+                        for (int i = 1; i < Blocks.Length; i++)
+                            blocks = blocks + "," + Blocks[i];
+                        editor.ChangBlocStatus("Blocks", blocks, SB);
                     }
                 }
             }
@@ -108,7 +120,6 @@ public class Editor_MoveTrigger : MonoBehaviour
         }
         else
         {
-            if (array == 1)
             {
                 for (int i = 0; i < editor.transform.GetChild(1).childCount; i++)
                 {
@@ -121,20 +132,7 @@ public class Editor_MoveTrigger : MonoBehaviour
         }
 
         array = GetComponent<CreatorManager>().array;
-
-
-
-        string blocks = "Null";
-        if (Blocks.Length > 0) blocks = Blocks[0];
-        for (int i = 1; i < Blocks.Length; i++)
-            blocks = blocks + "," + Blocks[i];
-
-        editor.ChangBlocStatus("Blocks", blocks, SB);
-        editor.ChangBlocStatus("Translation", Translation.ToString(), SB);
-        editor.ChangBlocStatus("Type", Type.ToString(), SB);
-        editor.ChangBlocStatus("Speed", Speed.ToString(), SB);
-        editor.ChangBlocStatus("MultiUsage", MultiUsage.ToString(), SB);
-        editor.ChangBlocStatus("Rotation", Rotation.ToString(), SB);
+        #endregion
     }
 
     void Actualise()
@@ -187,11 +185,15 @@ public class Editor_MoveTrigger : MonoBehaviour
             slider.value = value;
         }
         catch { }
+
+        if (Cat == 2) editor.ChangBlocStatus("Translation", Translation.ToString(), SB);
+        else if (Cat == 4) editor.ChangBlocStatus("Rotation", Rotation.ToString(), SB);
     }
 
     public void TypeValueChanged(Dropdown dropdown)
     {
         Type = dropdown.value;
+        editor.ChangBlocStatus("Type", Type.ToString(), SB);
     }
 
     public void SpeedValueChanged()
@@ -207,6 +209,8 @@ public class Editor_MoveTrigger : MonoBehaviour
         try { inputFieldValue = float.Parse(slider.transform.GetChild(3).GetComponent<InputField>().text); } catch { }
         if (inputFieldValue <= (slider.maxValue * multiplier) | (int)value < (int)(slider.maxValue * multiplier))
             slider.transform.GetChild(3).GetComponent<InputField>().text = value.ToString().Substring(0, max);
+
+        editor.ChangBlocStatus("Speed", Speed.ToString(), SB);
     }
     public void TextSpeedValueChanged()
     {
@@ -220,6 +224,8 @@ public class Editor_MoveTrigger : MonoBehaviour
             slider.value = value;
         }
         catch { }
+
+        editor.ChangBlocStatus("MultiUsage", MultiUsage.ToString(), SB);
     }
 
     public void MultiUsageChanged(Toggle toggle)
