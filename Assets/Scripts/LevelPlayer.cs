@@ -289,10 +289,27 @@ public class LevelPlayer : MonoBehaviour
                 go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
 
                 MoveTrigger moveTrigger = go.GetComponent<MoveTrigger>();
+                try { moveTrigger.AffectationType = int.Parse(GetBlocStatus("AffectationType", num)); } catch { }
                 string[] Blocks = GetBlocStatus("Blocks", num).Split(new string[] { "," }, System.StringSplitOptions.None);
                 if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
                 moveTrigger.Blocks = Blocks;
                 try { moveTrigger.Translation = Editor_MoveTrigger.getVector2(GetBlocStatus("Translation", num)); } catch { }
+                string translationFrom = GetBlocStatus("TranslationFrom", num);
+                try
+                {
+                    string[] translationFromArray = translationFrom.Substring(1, translationFrom.Length - 2).Split(',');
+                    for (int i = 0; i < translationFromArray.Length; i++)
+                        moveTrigger.TranslationFromPlayer[i] = bool.Parse(translationFromArray[i]);
+                }
+                catch { }
+                string reset = GetBlocStatus("Reset", num);
+                try
+                {
+                    string[] resetArray = reset.Substring(1, reset.Length - 2).Split(',');
+                    for (int i = 0; i < resetArray.Length; i++)
+                        moveTrigger.Reset[i] = bool.Parse(resetArray[i]);
+                }
+                catch { }
                 try { moveTrigger.Type = int.Parse(GetBlocStatus("Type", num)); } catch { }
                 try { moveTrigger.Speed = float.Parse(GetBlocStatus("Speed", num)); } catch { }
                 try { moveTrigger.MultiUsage = bool.Parse(GetBlocStatus("MultiUsage", num)); } catch { }

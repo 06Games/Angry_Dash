@@ -903,7 +903,14 @@ public class Editeur : MonoBehaviour
             }
         }
     }
-    
+
+
+    /// <summary>
+    /// Get Block Parameter
+    /// </summary>
+    /// <param name="StatusID">Parameter ID</param>
+    /// <param name="Bloc">Block conserned</param>
+    /// <returns></returns>
     public string GetBlocStatus(string StatusID, int Bloc)
     {
         if (file != "" & component.Length > Bloc)
@@ -912,9 +919,7 @@ public class Editeur : MonoBehaviour
             {
                 string[] a = component[Bloc].Split(new string[] { "; " }, System.StringSplitOptions.None);
 
-                if (StatusID == "UID")
-                    return null;
-                else if (StatusID == "ID")
+                if (StatusID == "ID")
                     return a[0];
                 else if (StatusID == "Position")
                     return a[1];

@@ -10,13 +10,17 @@ public class Editor_MoveTrigger : MonoBehaviour
     public Editeur editor;
     int[] SB;
     int array;
+    int affected;
 
+    public int AffectationType = 0;
     public string[] Blocks;
     public Vector2 Translation;
+    public bool[] TranslationFromPlayer = new bool[2];
     public int Type;
     public float Speed;
     public bool MultiUsage;
     public Vector3 Rotation;
+    public bool[] Reset = new bool[2];
 
     private void Start()
     {
@@ -32,21 +36,46 @@ public class Editor_MoveTrigger : MonoBehaviour
             if (float.Parse(editor.GetBlocStatus("ID", editor.SelectedBlock[0])) == 0.4F)
             {
                 SB = editor.SelectedBlock;
+
+                try { AffectationType = int.Parse(editor.GetBlocStatus("AffectationType", SB[0])); } catch { }
                 Blocks = editor.GetBlocStatus("Blocks", SB[0]).Split(new string[] { "," }, System.StringSplitOptions.None);
                 if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
+
                 try { Translation = getVector2(editor.GetBlocStatus("Translation", SB[0])); } catch { }
+                string translationFrom = editor.GetBlocStatus("TranslationFrom", SB[0]);
+                try
+                {
+                    string[] translationFromArray = translationFrom.Substring(1, translationFrom.Length - 2).Split(',');
+                    for (int i = 0; i < translationFromArray.Length; i++)
+                        TranslationFromPlayer[i] = bool.Parse(translationFromArray[i]);
+                }
+                catch { }
+                string reset = editor.GetBlocStatus("Reset", SB[0]);
+                try
+                {
+                    string[] resetArray = reset.Substring(1, translationFrom.Length - 2).Split(',');
+                    for (int i = 0; i < resetArray.Length; i++)
+                        Reset[i] = bool.Parse(resetArray[i]);
+                }
+                catch { }
+
                 try { Type = int.Parse(editor.GetBlocStatus("Type", SB[0])); } catch { }
                 try { Speed = float.Parse(editor.GetBlocStatus("Speed", SB[0])); } catch { }
                 try { MultiUsage = bool.Parse(editor.GetBlocStatus("MultiUsage", SB[0])); } catch { }
+
                 try { Rotation = getVector3(editor.GetBlocStatus("Rotation", SB[0])); } catch { }
+
                 Actualise();
             }
             else { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
         }
 
+        #region BlockSelection
+        if (GetComponent<CreatorManager>().array == 1 & AffectationType == 0)
         {
             editor.bloqueSelect = true;
 
+            if (array != GetComponent<CreatorManager>().array | AffectationType != affected)
             {
                 for (int i = 0; i < Blocks.Length; i++)
                 {
@@ -120,6 +149,7 @@ public class Editor_MoveTrigger : MonoBehaviour
         }
         else
         {
+            if (array == 1 & affected == 0)
             {
                 for (int i = 0; i < editor.transform.GetChild(1).childCount; i++)
                 {
@@ -132,21 +162,46 @@ public class Editor_MoveTrigger : MonoBehaviour
         }
 
         array = GetComponent<CreatorManager>().array;
+        affected = AffectationType;
         #endregion
     }
 
     void Actualise()
     {
+        //Blocks
+        ChangAffectationType(AffectationType);
+
+        //Translation
         transform.GetChild(2).GetChild(1).GetChild(3).GetComponent<InputField>().text = Translation.x.ToString();
+        transform.GetChild(2).GetChild(1).GetChild(5).GetComponent<Toggle>().isOn = TranslationFromPlayer[0];
         transform.GetChild(2).GetChild(2).GetChild(3).GetComponent<InputField>().text = Translation.y.ToString();
+        transform.GetChild(2).GetChild(2).GetChild(5).GetComponent<Toggle>().isOn = TranslationFromPlayer[1];
+        transform.GetChild(2).GetChild(3).GetComponent<Toggle>().isOn = Reset[0];
+
+        //Settings
         transform.GetChild(3).GetChild(0).GetComponent<Dropdown>().value = Type;
+        if (Speed <= 0) Speed = 1;
         transform.GetChild(3).GetChild(1).GetChild(3).GetComponent<InputField>().text = Speed.ToString();
         transform.GetChild(3).GetChild(2).GetComponent<Toggle>().isOn = MultiUsage;
+
+        //Rotation
         transform.GetChild(4).GetChild(1).GetChild(3).GetComponent<InputField>().text = Rotation.x.ToString();
         transform.GetChild(4).GetChild(2).GetChild(3).GetComponent<InputField>().text = Rotation.y.ToString();
         transform.GetChild(4).GetChild(3).GetChild(3).GetComponent<InputField>().text = Rotation.z.ToString();
+        transform.GetChild(4).GetChild(4).GetComponent<Toggle>().isOn = Reset[1];
     }
 
+
+    public void ChangAffectationType(int a)
+    {
+        AffectationType = a;
+        editor.ChangBlocStatus("AffectationType", AffectationType.ToString(), SB);
+
+        for (int i = 0; i < transform.GetChild(1).GetChild(0).childCount; i++)
+            transform.GetChild(1).GetChild(0).GetChild(i).gameObject.SetActive(i == a);
+        for (int i = 0; i < transform.GetChild(1).GetChild(1).childCount; i++)
+            transform.GetChild(1).GetChild(1).GetChild(i).GetComponent<Button>().interactable = !(i == a);
+    }
 
     public void RangeValueChanged(float ScrollID)
     {
@@ -188,6 +243,38 @@ public class Editor_MoveTrigger : MonoBehaviour
 
         if (Cat == 2) editor.ChangBlocStatus("Translation", Translation.ToString(), SB);
         else if (Cat == 4) editor.ChangBlocStatus("Rotation", Rotation.ToString(), SB);
+    }
+    public void ToggleRangeValueChanged(float ScrollID)
+    {
+        int Cat = (int)ScrollID;
+        int Child = Mathf.RoundToInt((ScrollID - (int)ScrollID) * 10F);
+        Toggle toggle = transform.GetChild(Cat).GetChild(Child).GetChild(5).GetComponent<Toggle>();
+
+        if (Cat == 2)
+        {
+            TranslationFromPlayer[Child - 1] = toggle.isOn;
+
+            string param = "(" + TranslationFromPlayer[0].ToString();
+            for (int i = 1; i < TranslationFromPlayer.Length; i++)
+                param = param + "," + TranslationFromPlayer[i].ToString();
+            param = param + ")";
+            editor.ChangBlocStatus("TranslationFrom", param, SB);
+        }
+    }
+    public void ToggleResetRangeValueChanged(int ScrollID)
+    {
+        Transform go = transform.GetChild(ScrollID);
+        Toggle reset = go.GetChild(go.childCount - 1).GetComponent<Toggle>();
+        for (int i = 1; i < go.childCount - 1; i++)
+            go.GetChild(i).gameObject.SetActive(!reset.isOn);
+
+        Reset[(ScrollID /2) -1] = reset.isOn;
+
+        string param = "(" + Reset[0].ToString();
+        for (int i = 1; i < Reset.Length; i++)
+            param = param + "," + Reset[i].ToString();
+        param = param + ")";
+        editor.ChangBlocStatus("Reset", param, SB);
     }
 
     public void TypeValueChanged(Dropdown dropdown)
