@@ -892,8 +892,8 @@ public class Editeur : MonoBehaviour
                     for (int iB = 0; iB < b.Length; iB++)
                     {
                         if (iB == 0) _Modified = _Modified + "; {" + b[iB];
-                        else if (iB < b.Length - 1) _Modified = _Modified + "; " + b[iB];
-                        else _Modified = _Modified + "; " + b[iB] + "}";
+                        else _Modified = _Modified + "; " + b[iB];
+                        if (iB == b.Length - 1) _Modified = _Modified + "}";
                     }
 
 
