@@ -53,7 +53,7 @@ public class Editor_MoveTrigger : MonoBehaviour
                 string reset = editor.GetBlocStatus("Reset", SB[0]);
                 try
                 {
-                    string[] resetArray = reset.Substring(1, translationFrom.Length - 2).Split(',');
+                    string[] resetArray = reset.Substring(1, reset.Length - 2).Split(',');
                     for (int i = 0; i < resetArray.Length; i++)
                         Reset[i] = bool.Parse(resetArray[i]);
                 }

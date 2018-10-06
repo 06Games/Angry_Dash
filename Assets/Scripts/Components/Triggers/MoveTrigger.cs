@@ -46,6 +46,14 @@ public class MoveTrigger : MonoBehaviour
 
             for (int b = 0; b < go.Length; b++)
             {
+                if (Reset[0] & AffectationType == 0)
+                    try { Translation = GameObject.Find("Main Camera").GetComponent<LevelPlayer>().GetObjectPos(int.Parse(Blocks[b])) - go[b].transform.position; } catch { }
+                else if(Reset[0] & AffectationType == 1)
+                    Translation = GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.position - go[b].transform.position;
+                if (Reset[1] & AffectationType == 0)
+                    try { Rotation = Editor_MoveTrigger.getVector3(GameObject.Find("Main Camera").GetComponent<LevelPlayer>().GetBlocStatus("Rotation", int.Parse(Blocks[b]))) - go[b].transform.rotation.eulerAngles; } catch { }
+                else if (Reset[0] & AffectationType == 1)
+                    Rotation = go[b].transform.rotation.eulerAngles - GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.rotation.eulerAngles;
                 Vector2 moveVector = new Vector2();
                 if (Type == 0) moveVector = Translation / Frame;
                 else if (Type == 1)
@@ -69,25 +77,18 @@ public class MoveTrigger : MonoBehaviour
                 if (go != null & Frame >= 1)
                 {
                     Vector3 pos = go[b].transform.position;
-                    if (Reset[0] & AffectationType == 0)
-                        try { pos = GameObject.Find("Main Camera").GetComponent<LevelPlayer>().GetObjectPos(int.Parse(Blocks[b])); } catch { }
-                    else if (Reset[0]) GameObject.Find("Main Camera").GetComponent<MainCam>().OnPlayer = true;
-                    else
-                    {
+                    
                         for (int m = 0; m < 2; m++)
                         {
                             if (TranslationFromPlayer[m])
                                 pos[m] = GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.position[m] + (Translation[m] * 50);
                             else pos[m] = pos[m] + moveVector[m] * 50;
                         }
-                    }
+                    
                     go[b].transform.position = pos;
 
                     Quaternion quaternion = new Quaternion();
-                    if (Reset[1] & AffectationType == 0)
-                        try { quaternion.eulerAngles = Editor_MoveTrigger.getVector3(GameObject.Find("Main Camera").GetComponent<LevelPlayer>().GetBlocStatus("Rotation", int.Parse(Blocks[b]))); } catch { }
-                    else if (Reset[1]) GameObject.Find("Main Camera").GetComponent<MainCam>().OnPlayer = true;
-                    else quaternion.eulerAngles = go[b].transform.rotation.eulerAngles + rotateVector;
+                    quaternion.eulerAngles = go[b].transform.rotation.eulerAngles + rotateVector;
                     go[b].transform.rotation = quaternion;
                 }
                 if (go[b].GetComponent<Mur>() != null) go[b].GetComponent<Mur>().Move = moveVector;
@@ -97,5 +98,7 @@ public class MoveTrigger : MonoBehaviour
         }
 
         Used = true;
+        if (Reset[0] & AffectationType == 1) GameObject.Find("Main Camera").GetComponent<MainCam>().OnPlayer = true;
+        if (Reset[1] & AffectationType == 1) GameObject.Find("Main Camera").transform.rotation = new Quaternion();
     }
 }
