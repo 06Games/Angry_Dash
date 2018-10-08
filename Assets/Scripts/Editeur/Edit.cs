@@ -11,7 +11,7 @@ public class Edit : MonoBehaviour
     public void EnterToEdit()
     {
         editeur.NoBlocSelectedPanel.SetActive(editeur.SelectedBlock.Length == 0);
-        transform.GetChild(GetComponent<CreatorManager>().array).GetComponent<CreatorManager>().Array(0);
+        try { transform.GetChild(GetComponent<CreatorManager>().array).GetComponent<CreatorManager>().Array(0); } catch { EnterToEdit(); return; }
 
 #if UNITY_STANDALONE || UNITY_EDITOR
         MultiSelectBtn.SetActive(false);

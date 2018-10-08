@@ -22,7 +22,6 @@ public class Player : MonoBehaviour
     int y; //pos y du joystick
 
     //Point d'arrivé
-    public GameObject Arrivé; //Prefab de l'arrivé
     public Transform Parents; //Zone Unity pour spawn de l'arrivé
     public Vector2 Ar = new Vector2(); //Pt d'arrivé actuel
 

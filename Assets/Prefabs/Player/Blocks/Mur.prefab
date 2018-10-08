@@ -9,33 +9,33 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1025315392189648}
+  m_RootGameObject: {fileID: 1063887458892150}
   m_IsPrefabParent: 1
---- !u!1 &1025315392189648
+--- !u!1 &1063887458892150
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4345830626900390}
-  - component: {fileID: 212410132485069816}
-  - component: {fileID: 114361999002161562}
-  - component: {fileID: 60533519290327036}
-  - component: {fileID: 60641615414373110}
+  - component: {fileID: 4466419856190470}
+  - component: {fileID: 212114417043945686}
+  - component: {fileID: 114181480247368928}
+  - component: {fileID: 61126092940773484}
+  - component: {fileID: 61248432005028946}
   m_Layer: 0
-  m_Name: Mur triangulaire
+  m_Name: Mur
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4345830626900390
+--- !u!4 &4466419856190470
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1025315392189648}
+  m_GameObject: {fileID: 1063887458892150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -43,12 +43,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!60 &60533519290327036
-PolygonCollider2D:
+--- !u!61 &61126092940773484
+BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1025315392189648}
+  m_GameObject: {fileID: 1063887458892150}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -65,17 +65,15 @@ PolygonCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: -0.5, y: 0.5}
-      - {x: -0.5, y: -0.5}
-      - {x: 0.5, y: -0.5}
---- !u!60 &60641615414373110
-PolygonCollider2D:
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
+--- !u!61 &61248432005028946
+BoxCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1025315392189648}
+  m_GameObject: {fileID: 1063887458892150}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -92,29 +90,30 @@ PolygonCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: -0.575, y: 0.7}
-      - {x: -0.575, y: -0.575}
-      - {x: 0.7, y: -0.575}
---- !u!114 &114361999002161562
+  serializedVersion: 2
+  m_Size: {x: 1.1, y: 1.1}
+  m_EdgeRadius: 0
+--- !u!114 &114181480247368928
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1025315392189648}
+  m_GameObject: {fileID: 1063887458892150}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 950e56545e840f34386d95b26c303c86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trigger: 0
---- !u!212 &212410132485069816
+  colider: 0
+  boostMultiplier: 0
+  blockID: 1
+  Move: {x: 0, y: 0}
+--- !u!212 &212114417043945686
 SpriteRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1025315392189648}
+  m_GameObject: {fileID: 1063887458892150}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -141,7 +140,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 94dcda13274e7544dac10c92a8351a1f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cb0318cec3495bf4d9bf660f2275b5c3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

@@ -21,10 +21,10 @@ GameObject:
   - component: {fileID: 4466419856190470}
   - component: {fileID: 212114417043945686}
   - component: {fileID: 114181480247368928}
-  - component: {fileID: 61126092940773484}
-  - component: {fileID: 61248432005028946}
+  - component: {fileID: 60697668626210616}
+  - component: {fileID: 60998797470382838}
   m_Layer: 0
-  m_Name: Mur
+  m_Name: Mur arroundi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -38,13 +38,13 @@ Transform:
   m_GameObject: {fileID: 1063887458892150}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 50, y: 50, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &61126092940773484
-BoxCollider2D:
+--- !u!60 &60697668626210616
+PolygonCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -65,11 +65,22 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
---- !u!61 &61248432005028946
-BoxCollider2D:
+  m_Points:
+    m_Paths:
+    - - {x: 0.41150242, y: 0.00177886}
+      - {x: 0.34893003, y: 0.12996422}
+      - {x: 0.25539005, y: 0.24828169}
+      - {x: 0.008823967, y: 0.40911227}
+      - {x: -0.12715115, y: 0.45671862}
+      - {x: -0.24920648, y: 0.47822115}
+      - {x: -0.38877392, y: 0.49177885}
+      - {x: -0.5, y: 0.5}
+      - {x: -0.5, y: -0.5}
+      - {x: 0.5, y: -0.5}
+      - {x: 0.48561308, y: -0.32205525}
+      - {x: 0.41150248, y: -0.0064422083}
+--- !u!60 &60998797470382838
+PolygonCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -90,9 +101,19 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.1, y: 1.1}
-  m_EdgeRadius: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.27905035, y: 0.29849756}
+      - {x: 0.018773917, y: 0.45466334}
+      - {x: -0.12588939, y: 0.50493985}
+      - {x: -0.3867187, y: 0.5246634}
+      - {x: -0.53082925, y: 0.5246634}
+      - {x: -0.5349398, y: -0.52877396}
+      - {x: 0.5287741, y: -0.53493977}
+      - {x: 0.5308293, y: -0.40267852}
+      - {x: 0.5328846, y: -0.31383413}
+      - {x: 0.52108234, y: -0.19536225}
+      - {x: 0.4793268, y: 0.022331672}
 --- !u!114 &114181480247368928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -104,9 +125,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 950e56545e840f34386d95b26c303c86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  trigger: 0
   colider: 0
   boostMultiplier: 0
+  blockID: 1
+  Move: {x: 0, y: 0}
 --- !u!212 &212114417043945686
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -139,7 +161,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: cb0318cec3495bf4d9bf660f2275b5c3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 84289303ec14658419d0c8eac5839010, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
