@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class EditMenus
+{
+    public float[] BlockID;
+    public int Object;
+}
+
 public class Edit : MonoBehaviour
 {
-
     public Editeur editeur;
     public GameObject MultiSelectBtn;
+    public EditMenus[] menus;
 
     public void EnterToEdit()
     {
@@ -26,14 +33,21 @@ public class Edit : MonoBehaviour
         {
             float blocID = -1;
             try { blocID = float.Parse(editeur.GetBlocStatus("ID", editeur.SelectedBlock[0])); } catch { }
-            if (blocID < 1)
+
+            bool find = false;
+            for (int i = 0; i < menus.Length & !find; i++)
             {
-                float triggerID = blocID;
-                while (triggerID != (int)triggerID)
-                    triggerID = triggerID * 10;
-                GetComponent<CreatorManager>().Array((int)triggerID);
+                for (int b = 0; b < menus[i].BlockID.Length & !find; b++)
+                {
+                    float bID = menus[i].BlockID[b];
+                    if ((bID < 0 & bID*-1 <= blocID) | (bID == blocID & bID >= 0))
+                    {
+                        GetComponent<CreatorManager>().Array(menus[i].Object);
+                        find = true;
+                    }
+                }
             }
-            else if (blocID >= 0) GetComponent<CreatorManager>().Array(0);
+            if (!find) GetComponent<CreatorManager>().Array(0);
         }
     }
 }
