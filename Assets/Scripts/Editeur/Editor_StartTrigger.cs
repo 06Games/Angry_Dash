@@ -3,15 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Editor_StartTrigger : MonoBehaviour {
+public class Editor_StartTrigger : MonoBehaviour
+{
 
     public Editeur editor;
     int[] SB;
 
+    string All { get {
+            if (!string.IsNullOrEmpty(LangueAPI.String("editorMenuEditPlayerInfinity")))
+                return LangueAPI.String("editorMenuEditPlayerInfinity");
+            else return "All";
+        }}
+
     public int[] Players = new int[2];
 
-    
-	void Update () {
+    void Update()
+    {
         if (editor.SelectedBlock.Length == 0) { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
 
         if (SB != editor.SelectedBlock)
@@ -44,14 +51,14 @@ public class Editor_StartTrigger : MonoBehaviour {
     {
         int actualValue = -1;
         if (inputField.text == "") actualValue = -1;
-        else if (inputField.text == "All") actualValue = 0;
-        else if (!int.TryParse(inputField.text, out actualValue)) { actualValue = 0; inputField.text = "All"; }
+        else if (inputField.text == All) actualValue = 0;
+        else if (!int.TryParse(inputField.text, out actualValue)) { actualValue = 0; inputField.text = All; }
         else if (actualValue < 0) actualValue = 0;
 
-        if (actualValue == 0) inputField.text = "All";
+        if (actualValue == 0) inputField.text = All;
 
         if (actualValue == -1) actualValue = 0;
-        Players[inputField.transform.parent.GetSiblingIndex() -1] = actualValue;
+        Players[inputField.transform.parent.GetSiblingIndex() - 1] = actualValue;
 
         string param = "(" + Players[0].ToString();
         for (int i = 1; i < Players.Length; i++)
@@ -61,15 +68,16 @@ public class Editor_StartTrigger : MonoBehaviour {
     }
     public void PlayerAdd(InputField inputField) { PlayerModif(inputField, 1); }
     public void PlayerRemove(InputField inputField) { PlayerModif(inputField, -1); }
-    public void PlayerModif(InputField inputField, int value) {
+    public void PlayerModif(InputField inputField, int value)
+    {
         int actualValue = -1;
         if (inputField.text == "") actualValue = 0;
-        else if(!int.TryParse(inputField.text, out actualValue)) actualValue = 0;
+        else if (!int.TryParse(inputField.text, out actualValue)) actualValue = 0;
 
-        if((actualValue > 0 & value < 0)| value > 0)
+        if ((actualValue > 0 & value < 0) | value > 0)
             actualValue = actualValue + value;
 
-        if (actualValue == 0) inputField.text = "All";
+        if (actualValue == 0) inputField.text = All;
         else inputField.text = actualValue.ToString();
     }
 }
