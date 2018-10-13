@@ -73,30 +73,34 @@ public class Editeur : MonoBehaviour
             " ",
             "Blocks {",
             "}"};
-        transform.GetChild(0).gameObject.SetActive(true);
-
-        transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
-        OpenCat(-1);
-
-        Grille(false, true);
-        GrilleOnOff(ConfigAPI.GetBool("editor.Grid"), transform.GetChild(0).GetChild(5).GetComponent<Image>());
-
-
-        string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
-        Discord.Presence(LangueAPI.String("discordEditor_title"), LangueAPI.StringWithArgument("discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
-        cam.GetComponent<BaseControl>().returnScene = false;
+        File.WriteAllLines(file, component);
+        EditFile(file);
     }
 
     public void EditFile(string txt)
     {
-        file = txt;
-        Selection.SetActive(false);
         gameObject.SetActive(true);
+        Selection.SetActive(true);
+        StartCoroutine(editFile(txt));
+    }
+    IEnumerator editFile(string txt) { 
+        Selection.GetComponent<EditorSelect>().LvlLoadingActivation(true);
+        int actualValue = 0;
+        int maxValue = 5;
+
+        file = txt;
 
         component = File.ReadAllLines(txt);
 
         //if (!CheckPublicID(txt)) Debug.LogError("The Public ID is invalid");
+        actualValue++;
+        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Check level version");
+        yield return new WaitForEndOfFrame();
         UpdateLevel(component);
+
+        actualValue++;
+        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Spawn Blocks");
+        yield return new WaitForEndOfFrame();
 
         int d = -1;
         for (int x = 0; x < component.Length; x++)
@@ -117,11 +121,34 @@ public class Editeur : MonoBehaviour
             }
         }
 
+        float each = (int)((end - d) * 0.25F);
+        if ((end - d) < 100) each = -1F;
         for (int i = d; i < end; i++)
+        {
+            if (each > 0 & (int)((i - d) / each) == (i - d) / each)
+            {
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Spawn Blocks : " + (i - d) + "/" + (end - d));
+                yield return new WaitForEndOfFrame();
+            }
             Instance(i);
+        }
         transform.GetChild(0).gameObject.SetActive(true);
 
-        transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this);
+
+
+        actualValue++;
+        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Caching Backgrounds");
+        yield return new WaitForEndOfFrame();
+        transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this); //Caching Backgrounds
+
+        actualValue++;
+        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Refresh musics list");
+        yield return new WaitForEndOfFrame();
+        Selection.GetComponent<EditorSelect>().SoundBoard.RefreshList(); //Refresh musics list
+
+
+        actualValue++;
+        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Openning Level");
         OpenCat(-1);
 
         Grille(false, true);
@@ -131,6 +158,9 @@ public class Editeur : MonoBehaviour
         string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
         Discord.Presence(LangueAPI.String("discordEditor_title"), LangueAPI.StringWithArgument("discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
         cam.GetComponent<BaseControl>().returnScene = false;
+
+        Selection.SetActive(false);
+        Selection.GetComponent<EditorSelect>().LvlLoadingActivation(false);
     }
 
     public void ExitEdit()
@@ -208,8 +238,6 @@ public class Editeur : MonoBehaviour
             else Selection.SetActive(true);
         }
         else Selection.SetActive(true);
-
-        transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().Charg();
     }
 
     void Update()

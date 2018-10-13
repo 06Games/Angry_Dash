@@ -20,10 +20,9 @@ public class Background : MonoBehaviour {
 
     public void Charg()
     {
-            File.WriteAllBytes(Application.persistentDataPath + "/Textures/2/0.png", Texture2D.whiteTexture.EncodeToPNG());
-
         if (sp == null)
         {
+            File.WriteAllBytes(Application.persistentDataPath + "/Textures/2/0.png", Texture2D.whiteTexture.EncodeToPNG());
             int f = Directory.GetFiles(Application.persistentDataPath + "/Textures/2/").Length;
             sp = new Sprite[f];
 

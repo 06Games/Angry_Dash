@@ -19,6 +19,7 @@ public class EditorSelect : MonoBehaviour
     public GameObject Cam;
     public GameObject _NewG;
     public GameObject UploadPanel;
+    public Transform LoadingLevel;
     public InputField[] _New = new InputField[2];
     public Editeur editeur;
     public Soundboard SoundBoard;
@@ -32,7 +33,6 @@ public class EditorSelect : MonoBehaviour
 
     void Start()
     {
-        SoundBoard.RefreshList();
         _New[0] = _NewG.transform.GetChild(0).GetChild(2).gameObject.GetComponent<InputField>();
         _New[1] = _NewG.transform.GetChild(0).GetChild(3).gameObject.GetComponent<InputField>();
         transform.GetChild(0).gameObject.SetActive(true);
@@ -73,7 +73,6 @@ public class EditorSelect : MonoBehaviour
 
     public static string FormatedDate(DateTime DT)
     {
-        //string a = CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.Replace("/", "'/'");
         string a = "dd'/'MM'/'yyyy";
         return DT.ToString(a);
     }
@@ -209,8 +208,30 @@ public class EditorSelect : MonoBehaviour
     {
         if (GameObject.Find("Audio") != null)
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
+
         editeur.EditFile(file[SelectedLevel]);
         Recent.LvlPlayed(file[SelectedLevel], "E");
+    }
+
+
+    /// <summary>
+    /// Change Loading Status,
+    /// return true when finished
+    /// </summary>
+    /// <param name="actualValue">Actual value</param>
+    /// <param name="maxValue">Max value</param>
+    /// <param name="text">Status Message</param>
+    public bool LvlLoadingStatus(float actualValue, float maxValue, string text)
+    {
+        LoadingLevel.GetChild(1).GetComponent<Text>().text = text;
+        LoadingLevel.GetChild(2).GetComponent<Scrollbar>().size = actualValue / maxValue;
+        return true;
+    }
+    public void LvlLoadingActivation(bool activate)
+    {
+        UnityThread.executeInUpdate(() => LoadingLevel.gameObject.SetActive(activate));
+        LoadingLevel.GetChild(1).GetComponent<Text>().text = "Initialisation";
+        LoadingLevel.GetChild(2).GetComponent<Scrollbar>().size = 0;
     }
 
     public void Copy()
