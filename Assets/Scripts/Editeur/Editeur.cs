@@ -277,7 +277,7 @@ public class Editeur : MonoBehaviour
 
                     if (!(isInTop & isInRightTop))
                     {
-                        Vector2 pos = GetClicPos();
+                        Vector2 pos = GetWorldPosition(Input.mousePosition);
 
                         float id = newblockid;
                         if (id > 10000)
@@ -293,7 +293,7 @@ public class Editeur : MonoBehaviour
         {
             if (Input.mousePosition.y > Screen.height / 4)
             {
-                Vector2 pos = GetClicPos();
+                Vector2 pos = GetWorldPosition(Input.mousePosition);
 
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
                 bool SelectCtrl = MultiSelect;
@@ -347,7 +347,7 @@ public class Editeur : MonoBehaviour
 #endif
             if (Input.mousePosition.y > Screen.height / 4)
             {
-                Vector2 pos = GetClicPos();
+                Vector2 pos = GetWorldPosition(Input.mousePosition);
                 int Selected = GetBloc((int)pos.x, (int)pos.y);
                 if (Selected != -1 & SelectCtrl)
                 {
@@ -460,26 +460,14 @@ public class Editeur : MonoBehaviour
         else touchLastPosition = new Vector2(-50000, -50000);
 #endif
     }
-
-    public Vector2 GetClicPos()
+    
+    public Vector2 GetWorldPosition(Vector2 pos)
     {
-        float zoomRelatively = (Screen.height / 2) / cam.orthographicSize;
-        float zoom = Screen.height / cam.orthographicSize;
+        float zoom = cam.orthographicSize / Screen.height * 2;
+        Vector2 Cam0 = new Vector2(cam.transform.position.x - (cam.pixelWidth * zoom / 2), cam.transform.position.y - (cam.pixelHeight * zoom / 2));
 
-        float camMoveX = cam.transform.position.x - (Screen.width / zoom);
-        float camMoveY = cam.transform.position.y - cam.orthographicSize;
-
-        float PosDoigtX = (camMoveX - (25 * zoomRelatively)) / 50;
-        float PosDoigtY = (camMoveY - (25 * zoomRelatively)) / 50;
-
-        float PosDoigtNoCamPosX = (Input.mousePosition.x - (25 * zoomRelatively)) / 50;
-        float PosDoigtNoCamPosY = (Input.mousePosition.y - (25 * zoomRelatively)) / 50;
-
-        float IndiceChangPosCamX = (Screen.width / zoom) / (Screen.width / 2);
-        float IndiceChangPosCamY = cam.orthographicSize / (Screen.height / 2);
-
-        int x = Mathf.RoundToInt(PosDoigtNoCamPosX * IndiceChangPosCamX) + (int)PosDoigtX;
-        int y = Mathf.RoundToInt(PosDoigtNoCamPosY * IndiceChangPosCamY) + (int)PosDoigtY;
+        int x = (int)(pos.x * zoom + Cam0.x) / 50;
+        int y = (int)(pos.y * zoom + Cam0.y) / 50;
         return new Vector2(x, y);
     }
 

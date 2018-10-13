@@ -88,7 +88,7 @@ public class Editor_MoveTrigger : MonoBehaviour
             {
                 if (Input.mousePosition.y > Screen.height / 4)
                 {
-                    Vector2 pos = editor.GetClicPos();
+                    Vector2 pos = editor.GetWorldPosition(Input.mousePosition);
                     int Selected = editor.GetBloc((int)pos.x, (int)pos.y);
                     if (Selected != -1)
                     {
@@ -118,7 +118,7 @@ public class Editor_MoveTrigger : MonoBehaviour
 #endif
                 if (Input.mousePosition.y > Screen.height / 4)
                 {
-                    Vector2 pos = editor.GetClicPos();
+                    Vector2 pos = editor.GetWorldPosition(Input.mousePosition);
                     int Selected = editor.GetBloc((int)pos.x, (int)pos.y);
                     if (Selected != -1)
                     {
