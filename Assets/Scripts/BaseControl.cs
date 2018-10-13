@@ -35,7 +35,11 @@ public class BaseControl : MonoBehaviour
 
 
     void Awake() { UnityThread.initUnityThread(); }
-    private void OnApplicationQuit() { File.Delete(Application.temporaryCachePath + "/ac.txt"); }
+    private void OnApplicationQuit() {
+        string[] files= Directory.GetFiles(Application.temporaryCachePath);
+        for (int i = 0; i < files.Length; i++)
+            File.Delete(files[i]);
+    }
     public void ChangeReturnSceneValue(bool value) { returnScene = value; }
 
     public bool Controller = false;
