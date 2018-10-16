@@ -170,6 +170,7 @@ public class Editeur : MonoBehaviour
             GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
         }
         Selection.SetActive(true);
+        Selection.transform.GetChild(0).gameObject.SetActive(true);
         Selection.GetComponent<EditorSelect>().NewStart();
         Destroy(transform.GetChild(1).gameObject);
         GameObject Object = new GameObject("Objects");

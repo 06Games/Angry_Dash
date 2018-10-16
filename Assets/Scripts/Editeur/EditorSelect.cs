@@ -229,7 +229,11 @@ public class EditorSelect : MonoBehaviour
     }
     public void LvlLoadingActivation(bool activate)
     {
-        UnityThread.executeInUpdate(() => LoadingLevel.gameObject.SetActive(activate));
+        UnityThread.executeInUpdate(() =>
+        {
+            transform.GetChild(2).gameObject.SetActive(activate);
+            LoadingLevel.gameObject.SetActive(activate);
+        });
         LoadingLevel.GetChild(1).GetComponent<Text>().text = "Initialisation";
         LoadingLevel.GetChild(2).GetComponent<Scrollbar>().size = 0;
     }
