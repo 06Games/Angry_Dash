@@ -177,6 +177,7 @@ public class Editeur : MonoBehaviour
         SelectedZone = Instantiate(SelectedZonePref, Object.transform);
         SelectedZone.name = "Selected Block";
         SelectedZone.SetActive(false);
+        new GameObject("Grid").transform.SetParent(Object.transform);
         SelectedBlock = new int[0];
         SelectMode = false;
         component = new string[0];
@@ -460,7 +461,7 @@ public class Editeur : MonoBehaviour
         else touchLastPosition = new Vector2(-50000, -50000);
 #endif
     }
-    
+
     public Vector2 GetWorldPosition(Vector2 pos)
     {
         float zoom = cam.orthographicSize / Screen.height * 2;
@@ -512,8 +513,7 @@ public class Editeur : MonoBehaviour
     }
     public void GrilleOnOff(Image Img)
     {
-        Transform BD = GameObject.Find("BackgroundDiv").transform;
-        Transform _Grille = BD.GetChild(BD.childCount - 1);
+        Transform _Grille = transform.GetChild(1).GetChild(1);
         GrilleOnOff(!(_Grille.childCount > 0), Img);
     }
     void GrilleOnOff(bool on, Image Img)
@@ -533,37 +533,38 @@ public class Editeur : MonoBehaviour
     void Grille(bool needRespawn, bool del = false)
     {
         if (!ConfigAPI.GetBool("editor.Grid") & needRespawn) return;
-        Transform BD = GameObject.Find("BackgroundDiv").transform;
-        Transform _Grille = BD.GetChild(BD.childCount - 1);
+        Transform _Grille = transform.GetChild(1).GetChild(1);
+        _Grille.localPosition = new Vector2((int)(cam.transform.position.x / 50) * 50, (int)(cam.transform.position.y / 50) * 50);
 
-        Vector3 GrillePos = new Vector2((int)(cam.transform.position.x / 50) * 50, (int)(cam.transform.position.y / 50) * 50);
-        _Grille.localPosition = new Vector2((cam.transform.position.x - GrillePos.x) * -1, (cam.transform.position.y - GrillePos.y) * -1);
-
-        if (needRespawn | del)
+        if (del)
         {
             for (int i = 0; i < _Grille.childCount; i++)
                 Destroy(_Grille.GetChild(i).gameObject);
-            if (del) return;
+        }
+        else if (needRespawn)
+        {
+            Vector2 GrilleOrigine = GetWorldPosition(new Vector2(0, 0));
+            Vector2 GrilleCarre = GetWorldPosition(new Vector2(Screen.width, Screen.height)) - GrilleOrigine;
+            GrilleCarre.x = GrilleCarre.x + 2;
+            GrilleCarre.y = GrilleCarre.y + 2;
+            int GrilleCarreNb = (int)(GrilleCarre.x * GrilleCarre.y);
 
-            float zoomRelatively = (Screen.height / 2) / cam.orthographicSize;
-            float zoom = Screen.height / cam.orthographicSize;
+            for (int i = GrilleCarreNb - _Grille.childCount; GrilleCarreNb > _Grille.childCount; i++)
+            {
+                GameObject go = Instantiate(Prefab, new Vector2(), new Quaternion(), _Grille);
+                go.GetComponent<SpriteRenderer>().sprite = GrilleSp;
+                go.transform.localScale = new Vector2(50, 50);
+                go.name = "Grid Element";
+            }
+            for (int i = 0; i < _Grille.childCount - GrilleCarreNb; i++)
+                Destroy(_Grille.GetChild(i).gameObject);
 
-            float PosDoigtNoCamPosX = (Screen.width - (25 * zoomRelatively)) / 50;
-            float PosDoigtNoCamPosY = (Screen.height - (25 * zoomRelatively)) / 50;
-
-            float IndiceChangPosCamX = (Screen.width / zoom) / (Screen.width / 2);
-            float IndiceChangPosCamY = cam.orthographicSize / (Screen.height / 2);
-
-            Vector2 GrilleCarre = new Vector2(Mathf.RoundToInt(PosDoigtNoCamPosX * IndiceChangPosCamX) + 2,
-                Mathf.RoundToInt(PosDoigtNoCamPosY * IndiceChangPosCamY) + 2);
-            int GrilleCarreNb = (int)GrilleCarre.x * (int)GrilleCarre.y;
             for (int i = 0; i < GrilleCarreNb; i++)
             {
                 int y = (int)(i / GrilleCarre.x);
                 int x = i - ((int)GrilleCarre.x * y);
-                GameObject go = Instantiate(Prefab, new Vector2((x - 1) * 50 + 25, (y - 1) * 50 + 25), new Quaternion(), _Grille);
-                go.GetComponent<SpriteRenderer>().sprite = GrilleSp;
-                go.transform.localScale = new Vector2(50, 50); //ToDo : ScaleWithZoom
+                Vector2 pos50 = new Vector2(x, y) + GrilleOrigine;
+                _Grille.GetChild(i).position = new Vector2((pos50.x - 1) * 50 + 25, (pos50.y - 1) * 50 + 25);
             }
         }
     }
