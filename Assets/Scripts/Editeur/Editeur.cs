@@ -469,7 +469,9 @@ public class Editeur : MonoBehaviour
         Vector2 Cam0 = new Vector2(cam.transform.position.x - (cam.pixelWidth * zoom / 2), cam.transform.position.y - (cam.pixelHeight * zoom / 2));
 
         int x = (int)(pos.x * zoom + Cam0.x) / 50;
+        if (Cam0.x < 0) x = x - 1;
         int y = (int)(pos.y * zoom + Cam0.y) / 50;
+        if (Cam0.y < 0) y = y - 1;
         return new Vector2(x, y);
     }
 
@@ -1054,21 +1056,11 @@ public class Editeur : MonoBehaviour
             float CamX = cam.transform.position.x;
             float CamY = cam.transform.position.y;
 
-            if (x < 0)
-            {
-                if (cam.transform.position.x > Screen.width / 2)
-                    CamX = cam.transform.position.x + x;
-            }
-            else if (x > 0)
-                CamX = cam.transform.position.x + x;
+            if (x < 0) CamX = cam.transform.position.x + x;
+            else if (x > 0) CamX = cam.transform.position.x + x;
 
-            if (y < 0)
-            {
-                if (cam.transform.position.y > Screen.height / 2)
-                    CamY = cam.transform.position.y + y;
-            }
-            else if (y > 0)
-                CamY = cam.transform.position.y + y;
+            if (y < 0) CamY = cam.transform.position.y + y;
+            else if (y > 0) CamY = cam.transform.position.y + y;
 
             cam.transform.position = new Vector3(CamX, CamY, -10);
             Grille(false);
