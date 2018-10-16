@@ -548,8 +548,8 @@ public class Editeur : MonoBehaviour
         {
             Vector2 GrilleOrigine = GetWorldPosition(new Vector2(0, 0));
             Vector2 GrilleCarre = GetWorldPosition(new Vector2(Screen.width, Screen.height)) - GrilleOrigine;
-            GrilleCarre.x = GrilleCarre.x + 2;
-            GrilleCarre.y = GrilleCarre.y + 2;
+            GrilleCarre.x = GrilleCarre.x + 4;
+            GrilleCarre.y = GrilleCarre.y + 4;
             int GrilleCarreNb = (int)(GrilleCarre.x * GrilleCarre.y);
 
             for (int i = GrilleCarreNb - _Grille.childCount; GrilleCarreNb > _Grille.childCount; i++)
