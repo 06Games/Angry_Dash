@@ -41,7 +41,7 @@ public class LangueSelector : MonoBehaviour
         }
         if (Langues != null)
             if (Langues.childCount <= 1)
-                StartCoroutine(GetLangDispo(AutomatiqueUpdate));
+                GetLangDispo(AutomatiqueUpdate);
 
         for (int i = 0; i < LangueDispo.Length; i++)
         {
@@ -76,70 +76,29 @@ public class LangueSelector : MonoBehaviour
     public void ReloadScene() { Apply(); LS.LoadScreen(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name); }
     void Apply() { if (LangueDispo.Length > actuel) LangueAPI.LangSet(LangueDispo[actuel]); else Debug.LogError((actuel + 1) + " is more than the number of language file : " + LangueDispo.Length); }
 
-    IEnumerator GetLangDispo(bool forceUpdate = false)
+    void GetLangDispo(bool forceUpdate = false)
     {
-        string[] All = new string[0];
-        if (InternetAPI.IsConnected())
+        string[] languages = Directory.GetFiles(Application.persistentDataPath + "/Languages/");
+        LangFlag = new Sprite[languages.Length];
+        for (int i = 0; i < languages.Length; i++)
         {
-            WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/index");
-            yield return www;
-            All = www.text.Split(new string[] { "\n" }, StringSplitOptions.None);
-        }
-
-        if (All.Length == 0)
-        {
-            string[] langFiles = Directory.GetFiles(Application.persistentDataPath + "/Languages/");
-            All = new string[langFiles.Length];
-
-            for (int i = 0; i < All.Length; i++)
-            {
-                string[] pathToFile = langFiles[i].Split(new string[2] { "/", "\\" }, StringSplitOptions.None);
-                string flag = langFiles[i].Replace("/Languages/", "/Languages/Flags/").Replace(".lang", ".png");
-                if (!File.Exists(flag)) flag = "";
-                All[i] = pathToFile[pathToFile.Length - 1].Replace(".lang", "") + "[" + langFiles[0] + "][" + flag + "]";
-            }
-        }
-
-        int lines = All.Length;
-        if (string.IsNullOrEmpty(All[lines - 1]))
-            lines = lines - 1;
-
-        LangueDispo = new string[lines];
-        LangFlag = new Sprite[lines];
-        for (int dispo = 0; dispo < lines; dispo++)
-        {
-            string[] param = All[dispo].Split(new string[] { "[" }, StringSplitOptions.None);
-            LangueDispo[dispo] = param[0];
-            if (!File.Exists(Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png") | forceUpdate)
-            {
-                if (!Directory.Exists(Application.persistentDataPath + "/Languages/Flags/"))
-                    Directory.CreateDirectory(Application.persistentDataPath + "/Languages/Flags/");
-
-                WebClient client = new WebClient();
-                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                if (param.Length > 2)
-                    if (param[2] != "]")
-                        client.DownloadFile(param[2].Replace("]", ""), Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png");
-            }
-
             Transform go = Instantiate(Langues.GetChild(0).gameObject, new Vector3(), new Quaternion(), Langues).transform;
-            go.name = LangueDispo[dispo];
-            int i = dispo;
+            go.name = Path.GetFileNameWithoutExtension(languages[i]);
             go.GetComponent<Button>().onClick.RemoveAllListeners();
             go.GetComponent<Button>().onClick.AddListener(() => Chang(i));
 
-            if (File.Exists(Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png"))
+            if (File.Exists(Application.persistentDataPath + "/Languages/Flags/" + Path.GetFileNameWithoutExtension(languages[i]) + ".png"))
             {
                 Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Languages/Flags/" + param[0] + ".png"));
-                LangFlag[dispo] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Languages/Flags/" + Path.GetFileNameWithoutExtension(languages[i]) + ".png"));
+                LangFlag[i] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
             }
-            else LangFlag[dispo] = Langues.GetChild(0).GetComponent<Image>().sprite;
-            go.GetComponent<Image>().sprite = LangFlag[dispo];
+            else LangFlag[i] = Langues.GetChild(0).GetComponent<Image>().sprite;
+            go.GetComponent<Image>().sprite = LangFlag[i];
             go.gameObject.SetActive(true);
         }
 
-        int paddingX = (int)((Langues.GetComponent<RectTransform>().sizeDelta.x - (167 * lines)) / 2); ;
+        int paddingX = (int)((Langues.GetComponent<RectTransform>().sizeDelta.x - (167 * languages.Length)) / 2); ;
         Langues.GetComponent<HorizontalLayoutGroup>().padding.left = paddingX;
         Langues.GetComponent<HorizontalLayoutGroup>().padding.right = paddingX;
 

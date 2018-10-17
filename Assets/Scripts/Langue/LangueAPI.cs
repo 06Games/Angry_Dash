@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+using System.Net;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -32,7 +33,7 @@ public class LangueAPI : MonoBehaviour
         string path = Application.persistentDataPath + "/Languages/" + ConfigAPI.GetString("Language") + ".lang";
         string what = "|" + id + " = ";
         string c = Cherche(path, what);
-        
+
         if (c == null & dontExists != null) c = dontExists;
         int i;
         for (i = 0; i < arg.Length; i++)
@@ -92,20 +93,20 @@ public class LangueAPI : MonoBehaviour
         Text Etat = _Slider.transform.GetChild(3).GetComponent<Text>();
         _Slider.value = 0;
         Etat.text = "";
-        
+
         instance.StartCoroutine(SliderInfini(_Slider));
 
         if (!Directory.Exists(Application.persistentDataPath + "/Languages/"))
             Directory.CreateDirectory(Application.persistentDataPath + "/Languages/");
 
         bool FilesExists = Directory.GetFiles(Application.persistentDataPath + "/Languages/").Length > 0;
-        
+
         Base.ActiveObjectStatic(DownloadingFilesPanel.gameObject);
 
         WWW www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/" + Application.version + "/index");
         yield return www;
         string webResult = www.text;
-        if(webResult.Contains("404: Not Found"))
+        if (webResult.Contains("404: Not Found"))
         {
             Debug.LogError("Index file not found");
             webResult = "";
@@ -140,6 +141,12 @@ public class LangueAPI : MonoBehaviour
             WWW www2 = new WWW(URL_To_Cheker[j]);
             yield return www2;
             Result[j] = www2.text;
+            if (!Directory.Exists(Application.persistentDataPath + "/Languages/Flags/"))
+                Directory.CreateDirectory(Application.persistentDataPath + "/Languages/Flags/");
+
+            WebClient client = new WebClient();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            client.DownloadFileAsync(new Uri(All[j].Split(new string[] { "[" }, StringSplitOptions.None)[2].Replace("]", "")), Application.persistentDataPath + "/Languages/Flags/" + LangueDispo[j] + ".png");
 
             string path = Application.persistentDataPath + "/Languages/";
             Directory.CreateDirectory(path);
