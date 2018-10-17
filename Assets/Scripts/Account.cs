@@ -25,11 +25,20 @@ public class Account : MonoBehaviour
         {
             if (File.Exists(path))
             {
-                string[] details = File.ReadAllLines(path);
-                if (!File.Exists(Application.temporaryCachePath + "/ac.txt"))
-                    Connect(details[0].Replace("1 = ", ""), details[1].Replace("2 = ", ""), true);
-                else if (Security.Encrypting.Decrypt(File.ReadAllLines(Application.temporaryCachePath + "/ac.txt")[0], details[1].Replace("2 = ", "")) != details[0].Replace("1 = ", "") + BaseControl.pathToActualLogMessage())
-                    Connect(details[0].Replace("1 = ", ""), details[1].Replace("2 = ", ""), true);
+                try
+                {
+                    string[] details = File.ReadAllLines(path);
+                    if (!File.Exists(Application.temporaryCachePath + "/ac.txt"))
+                        Connect(details[0].Replace("1 = ", ""), details[1].Replace("2 = ", ""), true);
+                    else if (Security.Encrypting.Decrypt(File.ReadAllLines(Application.temporaryCachePath + "/ac.txt")[0], details[1].Replace("2 = ", "")) != details[0].Replace("1 = ", "") + BaseControl.pathToActualLogMessage())
+                        Connect(details[0].Replace("1 = ", ""), details[1].Replace("2 = ", ""), true);
+                }
+                catch
+                {
+                    if (!Directory.Exists(path.Replace("account.account", "")))
+                        Directory.CreateDirectory(path.Replace("account.account", ""));
+                    transform.GetChild(0).gameObject.SetActive(true);
+                }
             }
             else
             {
