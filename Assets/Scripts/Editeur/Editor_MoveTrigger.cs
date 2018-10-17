@@ -268,7 +268,7 @@ public class Editor_MoveTrigger : MonoBehaviour
         for (int i = 1; i < go.childCount - 1; i++)
             go.GetChild(i).gameObject.SetActive(!reset.isOn);
 
-        Reset[(ScrollID /2) -1] = reset.isOn;
+        Reset[(ScrollID / 2) - 1] = reset.isOn;
 
         string param = "(" + Reset[0].ToString();
         for (int i = 1; i < Reset.Length; i++)

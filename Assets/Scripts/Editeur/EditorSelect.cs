@@ -266,7 +266,7 @@ public class EditorSelect : MonoBehaviour
     }
     public void CheckNewLevelName(InputField IF)
     {
-        Image i = IF.transform.GetChild(IF.transform.childCount-1).GetComponent<Image>();
+        Image i = IF.transform.GetChild(IF.transform.childCount - 1).GetComponent<Image>();
         if (CheckNewLevelName(IF.text)) i.color = new Color32(129, 129, 129, 255);
         else i.color = new Color32(163, 0, 0, 255);
     }

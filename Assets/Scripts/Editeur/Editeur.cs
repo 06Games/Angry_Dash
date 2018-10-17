@@ -83,7 +83,8 @@ public class Editeur : MonoBehaviour
         Selection.SetActive(true);
         StartCoroutine(editFile(txt));
     }
-    IEnumerator editFile(string txt) { 
+    IEnumerator editFile(string txt)
+    {
         Selection.GetComponent<EditorSelect>().LvlLoadingActivation(true);
         int actualValue = 0;
         int maxValue = 5;
@@ -94,12 +95,12 @@ public class Editeur : MonoBehaviour
 
         //if (!CheckPublicID(txt)) Debug.LogError("The Public ID is invalid");
         actualValue++;
-        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Check level version");
+        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingVersionCheck", "Checking the level version"));
         yield return new WaitForEndOfFrame();
         UpdateLevel(component);
 
         actualValue++;
-        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Spawn Blocks");
+        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingBlocks", "Placing Blocks"));
         yield return new WaitForEndOfFrame();
 
         int d = -1;
@@ -127,7 +128,7 @@ public class Editeur : MonoBehaviour
         {
             if (each > 0 & (int)((i - d) / each) == (i - d) / each)
             {
-                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Spawn Blocks : " + (i - d) + "/" + (end - d));
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.StringWithArgument("editorExploreLoadingBlocksStatus", new string[] { (i - d).ToString(), (end - d).ToString() }, "Placing Blocks : [0]/[1]"));
                 yield return new WaitForEndOfFrame();
             }
             Instance(i);
@@ -137,18 +138,18 @@ public class Editeur : MonoBehaviour
 
 
         actualValue++;
-        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Caching Backgrounds");
+        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingBackgrounds", "Caching Backgrounds"));
         yield return new WaitForEndOfFrame();
         transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this); //Caching Backgrounds
 
         actualValue++;
-        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Refresh musics list");
+        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingMusics", "Refreshing the list of music"));
         yield return new WaitForEndOfFrame();
         Selection.GetComponent<EditorSelect>().SoundBoard.RefreshList(); //Refresh musics list
 
 
         actualValue++;
-        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, "Openning Level");
+        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingOpen", "Opening Level"));
         OpenCat(-1);
 
         Grille(false, true);
