@@ -144,7 +144,7 @@ public class Editor_MoveTrigger : MonoBehaviour
                 }
             }
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-        });
+        );
 #endif
         }
         else
