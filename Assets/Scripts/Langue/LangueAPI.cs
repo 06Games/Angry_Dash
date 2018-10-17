@@ -7,40 +7,33 @@ using UnityEngine.UI;
 
 public class LangueAPI : MonoBehaviour
 {
-    public static void LangSet(string value)
-    {
-        ConfigAPI.SetString("Language", value);
-    }
+    public static void LangSet(string value) { ConfigAPI.SetString("Language", value); }
+    public static string LangGet() { return ConfigAPI.GetString("Language"); }
 
-    public static string LangGet()
-    {
-        return ConfigAPI.GetString("Language");
-    }
-
-    static string FormatString(string st)
-    {
-        if (st != null)
-        {
-            st = st.Replace("\\n", "\n");
-            st = st.Replace("\\t", "\t");
-        }
-        return st;
-    }
-    public static string String(string id)
+    /// <summary>
+    /// Get a text translation
+    /// </summary>
+    /// <param name="id">ID of the text</param>
+    /// <param name="dontExists">Text to display if the ID doesn't exists</param>
+    /// <returns></returns>
+    public static string String(string id, string dontExists = null)
     {
         string path = Application.persistentDataPath + "/Languages/" + ConfigAPI.GetString("Language") + ".lang";
         string what = "|" + id + " = ";
-        return FormatString(Cherche(path, what));
+        string txt = FormatString(Cherche(path, what));
+        if (txt == null & dontExists != null) return dontExists;
+        else return txt;
     }
     public static string StringWithArgument(string id, double arg) { return StringWithArgument(id, new string[] { arg.ToString() }); }
     public static string StringWithArgument(string id, float arg) { return StringWithArgument(id, new string[] { arg.ToString() }); }
     public static string StringWithArgument(string id, string arg) { return StringWithArgument(id, new string[] { arg }); }
-    public static string StringWithArgument(string id, string[] arg)
+    public static string StringWithArgument(string id, string[] arg, string dontExists = null)
     {
         string path = Application.persistentDataPath + "/Languages/" + ConfigAPI.GetString("Language") + ".lang";
         string what = "|" + id + " = ";
         string c = Cherche(path, what);
-
+        
+        if (c == null & dontExists != null) c = dontExists;
         int i;
         for (i = 0; i < arg.Length; i++)
         {
@@ -63,6 +56,15 @@ public class LangueAPI : MonoBehaviour
             file.Close();
         }
         return name;
+    }
+    static string FormatString(string st)
+    {
+        if (st != null)
+        {
+            st = st.Replace("\\n", "\n");
+            st = st.Replace("\\t", "\t");
+        }
+        return st;
     }
 
     static bool b = true;
