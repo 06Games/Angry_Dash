@@ -109,7 +109,10 @@ public class LangueAPI : MonoBehaviour
         if (webResult.Contains("404: Not Found"))
         {
             Debug.LogError("Index file not found");
-            webResult = "";
+            www = new WWW("https://raw.githubusercontent.com/06-Games/Angry-Dash/master/Langues/" + "/index");
+            yield return www;
+            webResult = www.text;
+            if (webResult.Contains("404: Not Found")) webResult = "";
         }
         string[] All = webResult.Split(new string[] { "\n" }, StringSplitOptions.None);
 
