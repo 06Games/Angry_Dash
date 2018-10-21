@@ -115,6 +115,7 @@ public class Recent : MonoBehaviour
 
         if ((type == "E" | type == "P") & author == "")
         {
+            if (!File.Exists(file)) return;
             int u = -1;
             string[] f = File.ReadAllLines(file);
             for (int x = 0; x < f.Length; x++)
@@ -147,5 +148,34 @@ public class Recent : MonoBehaviour
             }
         }
         File.WriteAllLines(HistoryFile, history.Union(new string[] { line }).ToArray());
+    }
+
+
+    /// <summary>
+    /// Supprime une entrée du menu récent
+    /// </summary>
+    /// <param name="file">Le chemin d'accès au fichier (Local, URL ou IP)</param>
+    public static void LvlRemoved(string file)
+    {
+        string[] history = File.ReadAllLines(HistoryFile);
+        for (int i = 0; i < history.Length; i++)
+        {
+            string[] b = history[i].Split(new string[] { "] " }, System.StringSplitOptions.None);
+            if (b.Length >= 2)
+            {
+                string[] splited = b[1].Split(new string[] { " |" }, System.StringSplitOptions.None);
+                if (splited.Length >= 2)
+                {
+                    if (splited[0] == file)
+                    {
+                        List<string> historyList = history.ToList();
+                        historyList.RemoveAt(i);
+                        history = historyList.ToArray();
+                        i = i - 1;
+                    }
+                }
+            }
+        }
+        File.WriteAllLines(HistoryFile, history);
     }
 }

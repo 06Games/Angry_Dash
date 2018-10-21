@@ -246,6 +246,7 @@ public class EditorSelect : MonoBehaviour
 
     public void Del()
     {
+        Recent.LvlRemoved(file[SelectedLevel]);
         File.Delete(file[SelectedLevel]);
         NewStart();
         ChangLevel(-1);
