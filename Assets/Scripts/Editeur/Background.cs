@@ -109,7 +109,7 @@ public class Background : MonoBehaviour {
 
         Sprite sprite = sp[int.Parse(Ar[0])];
         Color32 color = Editeur.HexToColor(Ar[1]);
-        for (int i = 0; i < go.childCount - 1; i++)
+        for (int i = 0; i < go.childCount; i++)
         {
             Image Im = go.GetChild(i).GetComponent<Image>();
             Im.sprite = sprite;
