@@ -246,7 +246,7 @@ public class DependenciesManager : MonoBehaviour
             {
                 GameObject go = transform.GetChild(2).gameObject;
                 go.SetActive(true);
-                go.transform.GetChild(0).GetComponent<Slider>().value = (actual + 1) / lines.Length;
+                go.transform.GetChild(0).GetComponent<Slider>().value = (float)actual / lines.Length;
                 go.transform.GetChild(2).GetComponent<Text>().text = actual + "/" + lines.Length;
             });
 
