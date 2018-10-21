@@ -90,7 +90,7 @@ public class Background : MonoBehaviour {
 
     public void ActualiseFond(Editeur Editor)
     {
-        Charg();
+        if (sp == null) Charg();
         Transform go = GameObject.Find("BackgroundDiv").transform;
 
         int d = -1;
@@ -107,11 +107,13 @@ public class Background : MonoBehaviour {
             back = Editor.component[d].Replace("background = ", "");
         string[] Ar = back.Split(new string[1] { "; " }, System.StringSplitOptions.None);
 
-        for (int i = 0; i < go.childCount-1; i++)
+        Sprite sprite = sp[int.Parse(Ar[0])];
+        Color32 color = Editeur.HexToColor(Ar[1]);
+        for (int i = 0; i < go.childCount - 1; i++)
         {
             Image Im = go.GetChild(i).GetComponent<Image>();
-            Im.sprite = sp[int.Parse(Ar[0])];
-            Im.color = Editeur.HexToColor(Ar[1]);
+            Im.sprite = sprite;
+            Im.color = color;
         }
     }
 

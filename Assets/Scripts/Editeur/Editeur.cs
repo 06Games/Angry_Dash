@@ -145,7 +145,6 @@ public class Editeur : MonoBehaviour
 
             actualValue++;
             Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingBackgrounds", "Caching Backgrounds"));
-            yield return new WaitForEndOfFrame();
             transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this); //Caching Backgrounds
 
             actualValue++;
