@@ -38,6 +38,9 @@ public class Soundboard : MonoBehaviour
     bool Refreshed = false;
     public void RefreshList(bool DesactiveGO = true)
     {
+        if (!Directory.Exists(Application.persistentDataPath + "/Musics/"))
+            Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
+
         if (InternetAPI.IsConnected())
         {
             WebClient client = new WebClient();
