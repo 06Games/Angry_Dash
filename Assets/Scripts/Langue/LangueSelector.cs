@@ -84,8 +84,9 @@ public class LangueSelector : MonoBehaviour
         {
             Transform go = Instantiate(Langues.GetChild(0).gameObject, new Vector3(), new Quaternion(), Langues).transform;
             go.name = Path.GetFileNameWithoutExtension(languages[i]);
+            int dispo = i;
             go.GetComponent<Button>().onClick.RemoveAllListeners();
-            go.GetComponent<Button>().onClick.AddListener(() => Chang(i));
+            go.GetComponent<Button>().onClick.AddListener(() => Chang(dispo));
 
             if (File.Exists(Application.persistentDataPath + "/Languages/Flags/" + Path.GetFileNameWithoutExtension(languages[i]) + ".png"))
             {
