@@ -285,7 +285,7 @@ public class EditorSelect : MonoBehaviour
                 go.gameObject.SetActive(true);
 
                 string[] Name = file[f].Split(new string[] { "/", "\\" }, StringSplitOptions.None);
-                DateTime UTC = File.GetLastWriteTime(file[i]);
+                DateTime UTC = File.GetLastWriteTime(file[f]);
 
                 go.GetChild(0).GetComponent<Text>().text = Name[Name.Length - 1].Replace(".level", "");
                 go.GetChild(1).GetComponent<Text>().text = FormatedDate(UTC);
