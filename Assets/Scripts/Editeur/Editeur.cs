@@ -424,10 +424,10 @@ public class Editeur : MonoBehaviour
                 if ((Input.touchCount == 2 & isSimple) | (Input.touchCount == 3 & isAdvence))
                     Speed = Speed * 2;
                 
-        Vector2 TouchPosition = new Vector2(touchZero.position.x, touchZero.position.y);
+                Vector2 TouchPosition =  touchZero.position;
                 if(touchLastPosition == new Vector2(-50000, -50000))
                     touchLastPosition = TouchPosition;
-                Vector2 touchZeroPrevPos = TouchPosition - touchLastPosition; // Find the diference between the last position.
+                Vector2 touchZeroPrevPos = touchLastPosition - TouchPosition; // Find the diference between the last position.
                 Deplacer(touchZeroPrevPos.x * Speed, touchZeroPrevPos.y * Speed);
                 touchLastPosition = TouchPosition;
             }
