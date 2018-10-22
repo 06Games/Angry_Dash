@@ -53,22 +53,18 @@ public class EditorSelect : MonoBehaviour
         string directory = Application.persistentDataPath + "/Saved Level/";
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
-        files = Directory.GetFiles(directory);
+        FileInfo[] FI = new DirectoryInfo(directory).GetFiles()
+                                                  .OrderByDescending(f => f.LastWriteTime)
+                                                  .ToArray();
+        files = new string[FI.Length];
+        for (int i = 0; i < FI.Length; i++)
+            files[i] = FI[i].FullName;
         file = files;
         int Files = file.Length;
         Desc = new string[Files];
         Songs = new string[Files];
 
         Page(1);
-    }
-
-    public void OpenMostRecentlevel()
-    {
-        string[] fileSort = files;
-        DateTime[] creationTimes = new DateTime[fileSort.Length];
-        for (int i = 0; i < fileSort.Length; i++)
-            creationTimes[i] = new FileInfo(fileSort[i]).CreationTime;
-        Array.Sort(creationTimes, fileSort);
     }
 
     public static string FormatedDate(DateTime DT)
