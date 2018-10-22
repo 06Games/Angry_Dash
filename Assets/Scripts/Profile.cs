@@ -58,7 +58,6 @@ public class Profile : MonoBehaviour
 
     #region MyLevel
     public string[] lvlNames = new string[0];
-    string[] lvlID = new string[0];
 
     void LevelInitialise(bool force = false)
     {
@@ -82,7 +81,6 @@ public class Profile : MonoBehaviour
             }
 
             lvlNames = new string[length];
-            lvlID = new string[length];
 
             for (int i = 0; i < length; i++)
             {
@@ -97,8 +95,6 @@ public class Profile : MonoBehaviour
                         string[] line = file[l].Split(new string[1] { " = " }, System.StringSplitOptions.None);
                         if (line[0] == "level")
                             lvlNames[i] = file[l].Replace("level = ", "");
-                        else if (line[0] == "publicID")
-                            lvlID[i] = file[l].Replace("publicID = ", "");
                     }
                 }
             }
@@ -145,7 +141,7 @@ public class Profile : MonoBehaviour
     {
         if (lvlNames.Length > levelNumber)
         {
-            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + ConfigAPI.GetString("Account.Username") + "/" + lvlNames[levelNumber] + "_" + lvlID[levelNumber] + ".level";
+            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + ConfigAPI.GetString("Account.Username") + "/" + lvlNames[levelNumber] + ".level";
             string path = Application.persistentDataPath + "/Saved Level/" + lvlNames[levelNumber] + ".level";
             WebClient client = new WebClient();
             client.Encoding = System.Text.Encoding.UTF8;
@@ -181,7 +177,7 @@ public class Profile : MonoBehaviour
         string[] details = File.ReadAllLines(accPath);
         string id = details[0].Replace("1 = ", "");
         string mdp = details[1].Replace("2 = ", "");
-        string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/delete.php?id=" + id + "&mdp=" + mdp + "&level=" + lvlNames[levelNumber] + "&levelID=" + lvlID[levelNumber];
+        string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/delete.php?id=" + id + "&mdp=" + mdp + "&level=" + lvlNames[levelNumber];
         WebClient client = new WebClient();
         client.Encoding = System.Text.Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };

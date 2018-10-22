@@ -67,8 +67,6 @@ public class Editeur : MonoBehaviour
             "music = ",
             "version = " + Application.version,
             "author = " + ConfigAPI.GetString("Account.Username"),
-            "//Please don't touch the publicID",
-            "publicID = " + SHA_PublicID(createTime, ConfigAPI.GetString("Account.Username")),
             "respawnMode = 0",
             " ",
             "Blocks {",
@@ -99,7 +97,6 @@ public class Editeur : MonoBehaviour
             file = txt;
             component = File.ReadAllLines(txt);
 
-            //if (!CheckPublicID(txt)) Debug.LogError("The Public ID is invalid");
             actualValue++;
             Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingVersionCheck", "Checking the level version"));
             yield return new WaitForEndOfFrame();
@@ -196,37 +193,6 @@ public class Editeur : MonoBehaviour
         cam.GetComponent<BaseControl>().returnScene = true;
     }
     #endregion
-
-    public static string SHA_PublicID(System.DateTime Date, string User)
-    {
-        string input = Date.ToString("yyyyMMddHHmmss") + "_" + User;
-        return Security.Hashing.SHA1(input);
-    }
-    public static bool CheckPublicID(string txt)
-    {
-        string[] f = File.ReadAllLines(txt);
-
-        int l = -1;
-        for (int x = 0; x < f.Length; x++)
-        {
-            if (f[x].Contains("publicID = ") & l == -1)
-            {
-                l = x;
-                x = f.Length;
-            }
-        }
-        int u = -1;
-        for (int x = 0; x < f.Length; x++)
-        {
-            if (f[x].Contains("author = ") & u == -1)
-            {
-                u = x;
-                x = f.Length;
-            }
-        }
-        if (l != -1) return f[l].Replace("publicID = ", "") == SHA_PublicID(File.GetCreationTimeUtc(txt), f[u].Replace("author = ", ""));
-        else return false;
-    }
 
     private void Start()
     {

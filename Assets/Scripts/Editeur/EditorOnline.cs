@@ -30,12 +30,11 @@ public class EditorOnline : MonoBehaviour
     string[] description = new string[0];
     string[] music = new string[0];
     string[] author = new string[0];
-    string[] id = new string[0];
     int page = 0;
     public void Search(InputField IF)
     { Search(IF.text); }
     public void Search(string _key)
-    { 
+    {
         files = new string[0];
         if (InternetAPI.IsConnected())
         {
@@ -70,7 +69,6 @@ public class EditorOnline : MonoBehaviour
         description = new string[length];
         music = new string[length];
         author = new string[length];
-        id = new string[length];
         page = 0;
 
         for (int i = 0; i < length; i++)
@@ -92,14 +90,11 @@ public class EditorOnline : MonoBehaviour
                         description[item] = file[l].Replace("description = ", "");
                     else if (line[0] == "music")
                         music[item] = file[l].Replace("music = ", "");
-                    else if (line[0] == "publicID")
-                        id[item] = file[l].Replace("publicID = ", "");
                 }
                 if (string.IsNullOrEmpty(level[item])) { level[item] = ""; }
                 if (string.IsNullOrEmpty(description[item])) { description[item] = ""; }
                 if (string.IsNullOrEmpty(music[item])) { music[item] = ""; }
                 if (string.IsNullOrEmpty(author[item])) { author[item] = LangueAPI.String(ids[0]); }
-                if (string.IsNullOrEmpty(id[item])) { id[item] = LangueAPI.String(ids[1]); }
 
 
                 item = item + 1;
@@ -117,8 +112,6 @@ public class EditorOnline : MonoBehaviour
                 go.gameObject.SetActive(true);
                 go.GetChild(0).GetComponent<Text>().text = level[i];
                 go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[2], new string[1] { author[i] });
-                string lvlID = ""; if (id[i].Length > 10) lvlID = id[i].Substring(0, 10); else lvlID = id[i];
-                go.GetChild(2).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[3], new string[1] { lvlID });
             }
             else go.gameObject.SetActive(false);
         }
@@ -137,8 +130,6 @@ public class EditorOnline : MonoBehaviour
                 go.gameObject.SetActive(true);
                 go.GetChild(0).GetComponent<Text>().text = level[i];
                 go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[2], new string[1] { author[i] });
-                string lvlID = ""; if (id[i].Length > 10) lvlID = id[i].Substring(0, 10); else lvlID = id[i];
-                go.GetChild(2).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[3], new string[1] { lvlID });
             }
             else go.gameObject.SetActive(false);
         }
@@ -279,10 +270,7 @@ public class EditorOnline : MonoBehaviour
     {
         if (InternetAPI.IsConnected())
         {
-            string pID = "_" + id[actual];
-            if (pID == "_" + LangueAPI.String(ids[1])) pID = "";
-
-            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + author[actual] + "/" + level[actual] + pID + ".level";
+            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + author[actual] + "/" + level[actual] + ".level";
             string path = Application.temporaryCachePath + "/" + level[actual] + ".level";
             WebClient client = new WebClient();
             client.Encoding = System.Text.Encoding.UTF8;
@@ -303,8 +291,8 @@ public class EditorOnline : MonoBehaviour
             {
                 File.WriteAllText(path, file);
                 File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { path, "Editor/Online" });
-                Recent.LvlPlayed(author[actual] + "/" + level[actual] + pID, "O", author[actual]);
-                Recent.LvlPlayed(author[actual] + "/" + level[actual] + pID, "O", author[actual]);
+                Recent.LvlPlayed(author[actual] + "/" + level[actual], "O", author[actual]);
+                Recent.LvlPlayed(author[actual] + "/" + level[actual], "O", author[actual]);
                 GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
             }
         }
