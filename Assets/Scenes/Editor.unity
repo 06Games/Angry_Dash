@@ -3502,6 +3502,7 @@ GameObject:
   - component: {fileID: 117224112}
   - component: {fileID: 117224114}
   - component: {fileID: 117224113}
+  - component: {fileID: 117224115}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -3566,6 +3567,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 117224111}
+--- !u!114 &117224115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 117224111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: editorMenuEditTargetsTypeCamera
+  keepIfNotExist: 1
+  arg: []
 --- !u!1 &118030142
 GameObject:
   m_ObjectHideFlags: 0
@@ -4278,6 +4293,7 @@ GameObject:
   - component: {fileID: 133147319}
   - component: {fileID: 133147321}
   - component: {fileID: 133147320}
+  - component: {fileID: 133147322}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -4342,6 +4358,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 133147318}
+--- !u!114 &133147322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 133147318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: editorMenuEditTargetsTypeBlock
+  keepIfNotExist: 1
+  arg: []
 --- !u!1 &135987705
 GameObject:
   m_ObjectHideFlags: 0
@@ -7812,6 +7842,7 @@ RectTransform:
   - {fileID: 2019448767}
   - {fileID: 1366116167}
   - {fileID: 170919135}
+  - {fileID: 1417156673}
   m_Father: {fileID: 97440586}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10605,7 +10636,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: editorMenuEditBlocksAssign
+  id: editorMenuEditTargetsBlocksAssign
   keepIfNotExist: 1
   arg: []
 --- !u!1 &370615494
@@ -15301,7 +15332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: editorMenuEditBlocks
+  id: editorMenuEditTargets
   keepIfNotExist: 1
   arg: []
 --- !u!114 &513941172
@@ -15336,7 +15367,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Blocks
+  m_Text: Targets
 --- !u!222 &513941173
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19724,6 +19755,7 @@ GameObject:
   - component: {fileID: 666548761}
   - component: {fileID: 666548763}
   - component: {fileID: 666548762}
+  - component: {fileID: 666548764}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -19788,6 +19820,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 666548760}
+--- !u!114 &666548764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 666548760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: editorMenuEditMoveReset
+  keepIfNotExist: 1
+  arg: []
 --- !u!1 &667372054
 GameObject:
   m_ObjectHideFlags: 0
@@ -24537,7 +24583,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: editorMenuEditCameraAssign
+  id: editorMenuEditTargetsCameraAssign
   keepIfNotExist: 1
   arg: []
 --- !u!114 &839661653
@@ -41057,6 +41103,7 @@ GameObject:
   - component: {fileID: 1423587355}
   - component: {fileID: 1423587357}
   - component: {fileID: 1423587356}
+  - component: {fileID: 1423587358}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -41121,6 +41168,20 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1423587354}
+--- !u!114 &1423587358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1423587354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: editorMenuEditMoveReset
+  keepIfNotExist: 1
+  arg: []
 --- !u!1 &1430146762
 GameObject:
   m_ObjectHideFlags: 0
