@@ -85,7 +85,8 @@ public class Editeur : MonoBehaviour
     {
         if (!File.Exists(txt))
         {
-            ExitEdit();
+            Selection.SetActive(true);
+            Selection.transform.GetChild(0).gameObject.SetActive(true);
             Selection.GetComponent<EditorSelect>().LvlLoadingActivation(false);
         }
         else
@@ -97,73 +98,83 @@ public class Editeur : MonoBehaviour
             file = txt;
             component = File.ReadAllLines(txt);
 
-            actualValue++;
-            Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingVersionCheck", "Checking the level version"));
-            yield return new WaitForEndOfFrame();
-            UpdateLevel(component);
-
-            actualValue++;
-            Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingBlocks", "Placing Blocks"));
-            yield return new WaitForEndOfFrame();
-
-            int d = -1;
-            for (int x = 0; x < component.Length; x++)
+            if (component.Length == 0)
             {
-                if (component[x].Contains("Blocks {") & d == -1)
-                {
-                    d = x + 1;
-                    x = component.Length;
-                }
+                file = "";
+                Selection.SetActive(true);
+                Selection.transform.GetChild(0).gameObject.SetActive(true);
+                Selection.GetComponent<EditorSelect>().LvlLoadingActivation(false);
             }
-            int end = -1;
-            for (int i = component.Length - 1; i >= d; i--)
+            else
             {
-                if (component[i] == "}" & end == -1)
+                actualValue++;
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingVersionCheck", "Checking the level version"));
+                yield return new WaitForEndOfFrame();
+                UpdateLevel(component);
+
+                actualValue++;
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingBlocks", "Placing Blocks"));
+                yield return new WaitForEndOfFrame();
+
+                int d = -1;
+                for (int x = 0; x < component.Length; x++)
                 {
-                    end = i;
-                    i = component.Length;
+                    if (component[x].Contains("Blocks {") & d == -1)
+                    {
+                        d = x + 1;
+                        x = component.Length;
+                    }
                 }
-            }
-
-            float each = (int)((end - d) * 0.25F);
-            if ((end - d) < 100) each = -1F;
-            for (int i = d; i < end; i++)
-            {
-                if (each > 0 & (int)((i - d) / each) == (i - d) / each)
+                int end = -1;
+                for (int i = component.Length - 1; i >= d; i--)
                 {
-                    Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.StringWithArgument("editorExploreLoadingBlocksStatus", new string[] { (i - d).ToString(), (end - d).ToString() }, "Placing Blocks : [0]/[1]"));
-                    yield return new WaitForEndOfFrame();
+                    if (component[i] == "}" & end == -1)
+                    {
+                        end = i;
+                        i = component.Length;
+                    }
                 }
-                Instance(i);
+
+                float each = (int)((end - d) * 0.25F);
+                if ((end - d) < 100) each = -1F;
+                for (int i = d; i < end; i++)
+                {
+                    if (each > 0 & (int)((i - d) / each) == (i - d) / each)
+                    {
+                        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.StringWithArgument("editorExploreLoadingBlocksStatus", new string[] { (i - d).ToString(), (end - d).ToString() }, "Placing Blocks : [0]/[1]"));
+                        yield return new WaitForEndOfFrame();
+                    }
+                    Instance(i);
+                }
+                transform.GetChild(0).gameObject.SetActive(true);
+
+
+
+                actualValue++;
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingBackgrounds", "Caching Backgrounds"));
+                transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this); //Caching Backgrounds
+
+                actualValue++;
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingMusics", "Refreshing the list of music"));
+                yield return new WaitForEndOfFrame();
+                Selection.GetComponent<EditorSelect>().SoundBoard.RefreshList(); //Refresh musics list
+
+
+                actualValue++;
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingOpen", "Opening Level"));
+                OpenCat(-1);
+
+                Grille(false, true);
+                GrilleOnOff(ConfigAPI.GetBool("editor.Grid"), transform.GetChild(0).GetChild(5).GetComponent<Image>());
+
+
+                string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
+                Discord.Presence(LangueAPI.String("discordEditor_title"), LangueAPI.StringWithArgument("discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
+                cam.GetComponent<BaseControl>().returnScene = false;
+
+                Selection.SetActive(false);
+                Selection.GetComponent<EditorSelect>().LvlLoadingActivation(false);
             }
-            transform.GetChild(0).gameObject.SetActive(true);
-
-
-
-            actualValue++;
-            Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingBackgrounds", "Caching Backgrounds"));
-            transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this); //Caching Backgrounds
-
-            actualValue++;
-            Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingMusics", "Refreshing the list of music"));
-            yield return new WaitForEndOfFrame();
-            Selection.GetComponent<EditorSelect>().SoundBoard.RefreshList(); //Refresh musics list
-
-
-            actualValue++;
-            Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingOpen", "Opening Level"));
-            OpenCat(-1);
-
-            Grille(false, true);
-            GrilleOnOff(ConfigAPI.GetBool("editor.Grid"), transform.GetChild(0).GetChild(5).GetComponent<Image>());
-
-
-            string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
-            Discord.Presence(LangueAPI.String("discordEditor_title"), LangueAPI.StringWithArgument("discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
-            cam.GetComponent<BaseControl>().returnScene = false;
-
-            Selection.SetActive(false);
-            Selection.GetComponent<EditorSelect>().LvlLoadingActivation(false);
         }
     }
 
