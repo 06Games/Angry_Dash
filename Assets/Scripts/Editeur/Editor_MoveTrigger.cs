@@ -21,6 +21,7 @@ public class Editor_MoveTrigger : MonoBehaviour
     public bool MultiUsage;
     public Vector3 Rotation;
     public bool[] Reset = new bool[2];
+    public bool GlobalRotation = false;
 
     private void Start()
     {
@@ -58,6 +59,7 @@ public class Editor_MoveTrigger : MonoBehaviour
                         Reset[i] = bool.Parse(resetArray[i]);
                 }
                 catch { }
+                try { GlobalRotation = bool.Parse(editor.GetBlocStatus("GlobalRotation", SB[0])); } catch { }
 
                 try { Type = int.Parse(editor.GetBlocStatus("Type", SB[0])); } catch { }
                 try { Speed = float.Parse(editor.GetBlocStatus("Speed", SB[0])); } catch { }
@@ -189,6 +191,7 @@ public class Editor_MoveTrigger : MonoBehaviour
         transform.GetChild(4).GetChild(2).GetChild(3).GetComponent<InputField>().text = Rotation.y.ToString();
         transform.GetChild(4).GetChild(3).GetChild(3).GetComponent<InputField>().text = Rotation.z.ToString();
         transform.GetChild(4).GetChild(4).GetComponent<Toggle>().isOn = Reset[1];
+        transform.GetChild(4).GetChild(5).GetComponent<Toggle>().isOn = GlobalRotation;
     }
 
 
@@ -264,9 +267,13 @@ public class Editor_MoveTrigger : MonoBehaviour
     public void ToggleResetRangeValueChanged(int ScrollID)
     {
         Transform go = transform.GetChild(ScrollID);
-        Toggle reset = go.GetChild(go.childCount - 1).GetComponent<Toggle>();
-        for (int i = 1; i < go.childCount - 1; i++)
-            go.GetChild(i).gameObject.SetActive(!reset.isOn);
+        Toggle reset = null;
+        if(ScrollID == 2) reset = go.GetChild(go.childCount - 1).GetComponent<Toggle>();
+        else if (ScrollID == 4) reset = go.GetChild(go.childCount - 2).GetComponent<Toggle>();
+
+        for (int i = 1; i < go.childCount; i++)
+            if(go.GetChild(i) != reset.transform)
+                go.GetChild(i).gameObject.SetActive(!reset.isOn);
 
         Reset[(ScrollID / 2) - 1] = reset.isOn;
 
@@ -275,6 +282,14 @@ public class Editor_MoveTrigger : MonoBehaviour
             param = param + "," + Reset[i].ToString();
         param = param + ")";
         editor.ChangBlocStatus("Reset", param, SB);
+    }
+    public void ToggleGlobalRotationRangeValueChanged()
+    {
+        Transform go = transform.GetChild(4);
+
+        GlobalRotation = go.GetChild(go.childCount - 1).GetComponent<Toggle>();
+        
+        editor.ChangBlocStatus("GlobalRotation", GlobalRotation.ToString(), SB);
     }
 
     public void TypeValueChanged(Dropdown dropdown)

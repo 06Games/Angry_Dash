@@ -310,6 +310,7 @@ public class LevelPlayer : MonoBehaviour
                         moveTrigger.Reset[i] = bool.Parse(resetArray[i]);
                 }
                 catch { }
+                try { moveTrigger.GlobalRotation = bool.Parse(GetBlocStatus("GlobalRotation", num)); } catch { }
                 try { moveTrigger.Type = int.Parse(GetBlocStatus("Type", num)); } catch { }
                 try { moveTrigger.Speed = float.Parse(GetBlocStatus("Speed", num)); } catch { }
                 try { moveTrigger.MultiUsage = bool.Parse(GetBlocStatus("MultiUsage", num)); } catch { }

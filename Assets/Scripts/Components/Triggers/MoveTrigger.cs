@@ -14,6 +14,7 @@ public class MoveTrigger : MonoBehaviour
     public bool MultiUsage = false;
     public Vector3 Rotation;
     public bool[] Reset = new bool[2];
+    public bool GlobalRotation = false;
 
     bool Used = false;
 
@@ -59,56 +60,138 @@ public class MoveTrigger : MonoBehaviour
                 Rotation = affectedRot - go[0].transform.rotation.eulerAngles;
         }
 
-
-        int FPS = 0;
-        try { FPS = int.Parse(GameObject.Find("Base").transform.GetChild(1).GetComponent<Text>().text.Replace(" FPS", "")); } catch { }
-        float Frame = Speed * FPS;
-        if ((int)(Frame / 2) == Frame / 2 & Type == 1) Frame = Frame + 1; //Support Frame pair si le type est Fluid
-        for (int i = 0; i < Frame; i++)
+        GameObject[] Objects = go;
+        if (GlobalRotation)
         {
-            for (int b = 0; b < go.Length; b++)
+            GameObject parent = new GameObject();
+            parent.transform.parent = GameObject.Find("Items").transform;
+            Vector3[] centerPoints = new Vector3[go.Length];
+            for (int i = 0; i < go.Length; i++)
+                centerPoints[i] = go[i].transform.position;
+            Vector3 centroid = new Vector3(0, 0, 0);
+            var numPoints = centerPoints.Length;
+            foreach (Vector3 point in centerPoints)
+                centroid += point;
+            centroid /= numPoints;
+
+            parent.transform.position = centroid;
+            for (int i = 0; i < go.Length; i++)
+                go[i].transform.parent = parent.transform;
+
+            Objects = new GameObject[] { parent };
+        }
+        Vector2[] InitialPos = new Vector2[Objects.Length];
+        Vector3[] InitialRot = new Vector3[Objects.Length];
+        for (int i = 0; i < Objects.Length; i++)
+        {
+            InitialPos[i] = Objects[i].transform.position;
+            InitialRot[i] = Objects[i].transform.eulerAngles;
+        }
+        Vector2 InitialPlayerPos = GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.position;
+
+
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        int l = 0;
+
+        float MoveTime_F = Speed;
+        if ((int)(MoveTime_F / 2) != MoveTime_F / 2 & Type == 1) MoveTime_F = MoveTime_F + 1; //Support Duration impair si le type est Fluid
+        System.TimeSpan MoveTime = System.TimeSpan.FromSeconds(MoveTime_F);
+        stopwatch.Start();
+        bool lastFrameNotRender = true;
+        while (stopwatch.Elapsed < MoveTime | lastFrameNotRender)
+        {
+            long Time = stopwatch.ElapsedMilliseconds;
+            if (stopwatch.Elapsed >= MoveTime)
+            {
+                lastFrameNotRender = false;
+                Time = (long)MoveTime.TotalMilliseconds;
+            }
+            for (int b = 0; b < Objects.Length; b++)
             {
                 Vector2 moveVector = new Vector2();
-                if (Type == 0) moveVector = Translation / Frame;
+                if (Type == 0)
+                {
+                    Vector2 millisecondMove = Translation / (float)MoveTime.TotalMilliseconds;
+                    Vector2 movedRange = ((Vector2)Objects[b].transform.position - InitialPos[b]) / 50F;
+                    moveVector = (millisecondMove * Time) - movedRange;
+                }
                 else if (Type == 1)
                 {
-                    float v = i + 1;
-                    if (i > Frame / 2)
-                        v = Frame - i;
-                    moveVector = (Translation / (((int)(Frame / 2) + 1) / v)) / ((int)(Frame / 2) + 1);
-                }
-
-                Vector3 rotateVector = new Vector3();
-                if (Type == 0) rotateVector = Rotation / Frame;
-                else if (Type == 1)
-                {
-                    float v = i + 1;
-                    if (i > Frame / 2)
-                        v = Frame - i;
-                    rotateVector = (Rotation / (((int)(Frame / 2) + 1) / v)) / ((int)(Frame / 2) + 1);
-                }
-
-                if (go != null & Frame >= 1)
-                {
-                    Vector3 pos = go[b].transform.position;
-
-                    for (int m = 0; m < 2; m++)
+                    float maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
+                    Vector2 moveFrame = new Vector2();
+                    for (int i = 0; i < Time + 1; i++)
                     {
-                        if (TranslationFromPlayer[m])
-                            pos[m] = GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.position[m] + (Translation[m] * 50);
-                        else pos[m] = pos[m] + moveVector[m] * 50;
+                        long vi = i + 1;
+                        if (i > MoveTime.TotalMilliseconds / 2F)
+                            vi = (long)MoveTime.TotalMilliseconds - i;
+                        moveFrame = moveFrame + ((Translation / ((maxDistance / vi) / maxDistance)) / (long)MoveTime.TotalMilliseconds / (maxDistance/2F));
                     }
-
-                    go[b].transform.position = pos;
-
-                    Quaternion quaternion = new Quaternion();
-                    quaternion.eulerAngles = go[b].transform.rotation.eulerAngles + rotateVector;
-                    go[b].transform.rotation = quaternion;
+                    
+                    Vector2 movedRange = ((Vector2)Objects[b].transform.position - InitialPos[b]) / 50F;
+                    moveVector = (moveFrame - movedRange);
                 }
-                if (go[b].GetComponent<Mur>() != null) go[b].GetComponent<Mur>().Move = moveVector;
-            }
 
-            yield return new WaitForSeconds(1F / FPS);
+                if (Objects != null)
+                {
+                    if (Objects[b] != null)
+                    {
+                        Vector3 pos = Objects[b].transform.position;
+                        for (int m = 0; m < 2; m++)
+                        {
+                            if (TranslationFromPlayer[m])
+                                pos[m] = (InitialPos[b][m] - InitialPlayerPos[m]) + GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.position[m] + (Translation[m] * 50);
+                            else pos[m] = pos[m] + moveVector[m] * 50;
+                        }
+                        Objects[b].transform.position = pos;
+                        if (Objects[b].GetComponent<Mur>() != null) Objects[b].GetComponent<Mur>().Move = moveVector;
+
+                        Vector3 rotateVector = new Vector3();
+                        if (Type == 0)
+                        {
+                            Vector3 millisecondMove = Rotation / (float)MoveTime.TotalMilliseconds;
+                            Vector3 movedRange = (Objects[b].transform.rotation.eulerAngles - InitialRot[b]) / 50F;
+                            rotateVector = (millisecondMove * Time) - movedRange;
+                        }
+                        else if (Type == 1)
+                        {
+                            long v = Time + 1;
+                            if (Time > MoveTime.TotalMilliseconds / 2F)
+                                v = (long)MoveTime.TotalMilliseconds - Time;
+
+                            float maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
+                            Vector3 moveFrame = new Vector3();
+                            for (int i = 0; i < Time + 1; i++)
+                            {
+                                long vi = i + 1;
+                                if (i > MoveTime.TotalMilliseconds / 2F)
+                                    vi = (long)MoveTime.TotalMilliseconds - i;
+                                moveFrame = moveFrame + ((Rotation / ((maxDistance / vi) / maxDistance)) / (long)MoveTime.TotalMilliseconds / (maxDistance / 2F));
+                            }
+
+                            Vector3 movedRange = (Objects[b].transform.rotation.eulerAngles - InitialRot[b]);
+                            rotateVector = (moveFrame - movedRange);
+
+                        }
+                        Quaternion quaternion = new Quaternion();
+                        quaternion.eulerAngles = Objects[b].transform.rotation.eulerAngles + rotateVector;
+                        Objects[b].transform.rotation = quaternion;
+                    }
+                }
+            }
+            
+            yield return new WaitForEndOfFrame();
+            l++;
+        }
+        stopwatch.Stop();
+
+
+        if (GlobalRotation)
+        {
+            GameObject tempParent = go[0].transform.parent.gameObject;
+            GameObject parent = GameObject.Find("Items");
+            for (int i = 0; i < go.Length; i++)
+                go[i].transform.parent = parent.transform;
+            Destroy(tempParent);
         }
 
         Used = true;
