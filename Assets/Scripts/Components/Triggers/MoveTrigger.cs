@@ -154,10 +154,6 @@ public class MoveTrigger : MonoBehaviour
                         }
                         else if (Type == 1)
                         {
-                            long v = Time + 1;
-                            if (Time > MoveTime.TotalMilliseconds / 2F)
-                                v = (long)MoveTime.TotalMilliseconds - Time;
-
                             float maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
                             Vector3 moveFrame = new Vector3();
                             for (int i = 0; i < Time + 1; i++)
@@ -170,7 +166,6 @@ public class MoveTrigger : MonoBehaviour
 
                             Vector3 movedRange = (Objects[b].transform.rotation.eulerAngles - InitialRot[b]);
                             rotateVector = (moveFrame - movedRange);
-
                         }
                         Quaternion quaternion = new Quaternion();
                         quaternion.eulerAngles = Objects[b].transform.rotation.eulerAngles + rotateVector;
