@@ -6,17 +6,52 @@ using UnityEngine;
 
 namespace Sprite_API
 {
+    /// <summary>
+    /// Contains animation information
+    /// </summary>
     public class Sprite_API_Data
     {
+        /// <summary>
+        /// Array of all the frames of the annimation
+        /// (If the ressource is only a sprite, the sprite will be returned at the index 0)
+        /// </summary>
         public Sprite[] Frames;
+        /// <summary>
+        /// Delay before each frame
+        /// </summary>
         public float[] Delay;
+        /// <summary>
+        /// Number of repetitions of the animation (0 being infinity)
+        /// </summary>
         public uint Repeat;
+
+        public Sprite_API_Data(){
+            Frames = new Sprite[0];
+            Delay = new float[0];
+            Repeat = 0;
+        }
+        public Sprite_API_Data(Sprite[] frames, float[] delay, uint repeat)
+        {
+            Frames = frames;
+            Delay = delay;
+            Repeat = repeat;
+        }
     }
+
 
     public class Sprite_API : MonoBehaviour
     {        
+        /// <summary>
+        /// Path to the Ressources
+        /// </summary>
         public static string spritesPath = Application.persistentDataPath + "/Ressources/default/textures/";
 
+        /// <summary>
+        /// Request an animation (or a sprite)
+        /// </summary>
+        /// <param name="id">ID of the ressources (can be the full path)</param>
+        /// <param name="isPath">Is the ID a full path ?</param>
+        /// <returns></returns>
         public static Sprite_API_Data GetSprites(string id, bool isPath = false)
         {
             string filePath = id;
@@ -25,22 +60,10 @@ namespace Sprite_API
             if (File.Exists(filePath))
             {
                 APNG apng = new APNG(filePath);
+                Sprite_API_Data SAD = new Sprite_API_Data();
+
                 float[] Delay = new float[apng.Frames.Length];
                 Sprite[] Frames = new Sprite[apng.Frames.Length];
-
-                /*Bitmap[] frames = UpdateUI(apng);
-                for (int i = 0; i < frames.Length; i++)
-                {
-                    Texture2D tex = new Texture2D(1, 1);
-                    tex.LoadImage(ToByteArray(frames[i], System.Drawing.Imaging.ImageFormat.Png));
-                    tex.Apply();
-                    Frames[i] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-
-                    if (apng.Frames[i].fcTLChunk.DelayNum == 0) Delay[i] = 10000;
-                    else if (apng.Frames[i].fcTLChunk.DelayDen == 0) Delay[i] = 100F / apng.Frames[i].fcTLChunk.DelayNum;
-                    else Delay[i] = (float)apng.Frames[i].fcTLChunk.DelayDen / apng.Frames[i].fcTLChunk.DelayNum;
-                    if (Delay[i] == 0) Delay[i] = 60;
-                }*/
 
                 if (apng.IsSimplePNG) //PNG
                 {
@@ -54,13 +77,14 @@ namespace Sprite_API
                 {
                     Frames = new Sprite[apng.Frames.Length];
                     Delay = new float[apng.Frames.Length];
+                    SAD.Repeat = apng.acTLChunk.NumPlays;
 
                     APNGFrameInfo info = new APNGFrameInfo(id, apng);
                     for (int i = 0; i < apng.Frames.Length; i++)
                     {
                         if (apng.Frames[i].fcTLChunk.DelayNum == 0) Delay[i] = 10000;
-                        else if (apng.Frames[i].fcTLChunk.DelayDen == 0) Delay[i] = 100F / apng.Frames[i].fcTLChunk.DelayNum;
-                        else Delay[i] = (float)apng.Frames[i].fcTLChunk.DelayDen / apng.Frames[i].fcTLChunk.DelayNum;
+                        else if (apng.Frames[i].fcTLChunk.DelayDen == 0) Delay[i] = apng.Frames[i].fcTLChunk.DelayNum / 100F;
+                        else Delay[i] = apng.Frames[i].fcTLChunk.DelayNum / (float)apng.Frames[i].fcTLChunk.DelayDen;
                         if (Delay[i] == 0) Delay[i] = 60;
 
                         info.index = i;
@@ -71,13 +95,11 @@ namespace Sprite_API
                         BaseControl.LogNewMassage(info.errors[i]);
                 }
 
-                Sprite_API_Data SAD = new Sprite_API_Data();
                 SAD.Frames = Frames;
                 SAD.Delay = Delay;
-                SAD.Repeat = apng.acTLChunk.NumPlays;
                 return SAD;
             }
-            else return null;
+            else return new Sprite_API_Data();
         }
 
         public class APNGFrameInfo
