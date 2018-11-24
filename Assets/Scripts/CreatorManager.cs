@@ -2,21 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CreatorManager : MonoBehaviour {
-
+public class CreatorManager : MonoBehaviour
+{
     public GameObject[] GO;
+    public UnityEngine.UI.Selectable[] Buttons;
     public int array;
 
-	void Update () {
-        for(int i = 0; i < GO.Length; i++)
+    void Update()
+    {
+        for (int i = 0; i < GO.Length; i++)
         {
-            if(i == array)
-                GO[i].SetActive(true);
-            else GO[i].SetActive(false);
+            GO[i].SetActive(i == array);
+            if (Buttons != null)
+            {
+                if (Buttons.Length > i)
+                    Buttons[i].interactable = !(i == array);
+            }
         }
-	}
+    }
 
-    public void ChangArray(int a) {
+    public void ChangArray(int a)
+    {
         array = a;
         transform.GetChild(0).gameObject.SetActive(false);
     }

@@ -9,7 +9,6 @@ public class LangueSelector : MonoBehaviour
 {
 
     public Transform Langues;
-    public GameObject RestartRequire;
     public LoadingScreenControl LS;
     public Transform DownloadingFilesPanel;
     public DependenciesManager dependenciesManager;
@@ -20,7 +19,7 @@ public class LangueSelector : MonoBehaviour
     public int actuel = 0;
     Sprite[] LangFlag;
 
-    void Start() { NewStart(); transform.GetChild(0).gameObject.SetActive(false); }
+    void Start() { NewStart(); Langues.GetChild(0).gameObject.SetActive(false); }
 
     void NewStart()
     {
@@ -66,14 +65,9 @@ public class LangueSelector : MonoBehaviour
     public void Chang(int i)
     {
         if (i != actuel)
-        {
             actuel = i;
-            if (Langues != null)
-                RestartRequire.SetActive(true);
-        }
     }
-    public void Cancel() { RestartRequire.SetActive(false); NewStart(); }
-    public void ReloadScene() { Apply(); LS.LoadScreen(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name); }
+    public void ReloadScene() { if (LangueAPI.LangGet() == LangueDispo[actuel]) return; Apply(); LS.LoadScreen(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, new string[] { "Settings", "Langues" }); }
     void Apply() { if (LangueDispo.Length > actuel) LangueAPI.LangSet(LangueDispo[actuel]); else Debug.LogError((actuel + 1) + " is more than the number of language file : " + LangueDispo.Length); }
 
     void GetLangDispo(bool forceUpdate = false)
@@ -98,10 +92,6 @@ public class LangueSelector : MonoBehaviour
             go.GetComponent<Image>().sprite = LangFlag[i];
             go.gameObject.SetActive(true);
         }
-
-        int paddingX = (int)((Langues.GetComponent<RectTransform>().sizeDelta.x - (167 * languages.Length)) / 2); ;
-        Langues.GetComponent<HorizontalLayoutGroup>().padding.left = paddingX;
-        Langues.GetComponent<HorizontalLayoutGroup>().padding.right = paddingX;
 
         if (LangueAPI.LangGet() == null)
             Apply();

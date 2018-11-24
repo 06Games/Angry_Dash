@@ -92,7 +92,7 @@ public class Recent : MonoBehaviour
             gameObject.SetActive(false);
         }
         else if (action == "S")
-            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Online", new string[] { file });
+            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Online", new string[] { "Connect", file });
     }
 
     static void Initialise()

@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Settings : MonoBehaviour
+public class VideoSettings : MonoBehaviour
 {
     public Transform GraphicalOptions;
 
@@ -69,11 +69,11 @@ public class Settings : MonoBehaviour
             if (value >= 0) _Slider.value = value / 60;
             else _Slider.value = 7;
         }
-        string Text = LangueAPI.StringWithArgument("graphicalMaximumFps", FPS);
+        string Text = LangueAPI.StringWithArgument("SettingsVideoFpsLimit", FPS);
         if (value == 0)
-            Text = LangueAPI.String("graphicalMaximumFpsV-Sync");
+            Text = LangueAPI.String("SettingsVideoFpsLimitV-Sync");
         else if (FPS == -1)
-            Text = LangueAPI.String("graphicalMaximumFpsUnlimited");
+            Text = LangueAPI.String("SettingsVideoFpsLimitUnlimited");
         _Slider.transform.GetChild(0).GetComponent<Text>().text = Text;
 
         ConfigAPI.SetInt("FPS.maxValue", FPS);
@@ -87,9 +87,9 @@ public class Settings : MonoBehaviour
             _Dropdown = GraphicalOptions.GetChild(2).GetComponent<Dropdown>();
             _Dropdown.value = (int)Mathf.Log(value, 2);
             List<Dropdown.OptionData> OD = _Dropdown.options;
-            OD[0].text = LangueAPI.String("graphicalAntiAliasingDisabled");
+            OD[0].text = LangueAPI.String("SettingsVideoAntiAliasingDisabled");
             for (int i = 1; i < OD.ToArray().Length; i++)
-                OD[i].text = LangueAPI.StringWithArgument("graphicalAntiAliasing", Mathf.Pow(2, i) + "x");
+                OD[i].text = LangueAPI.StringWithArgument("SettingsVideoAntiAliasing", Mathf.Pow(2, i));
 
             _Dropdown.options = OD;
         }

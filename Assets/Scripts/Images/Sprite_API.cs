@@ -44,7 +44,15 @@ namespace Sprite_API
         /// <summary>
         /// Path to the Ressources
         /// </summary>
-        public static string spritesPath = Application.persistentDataPath + "/Ressources/default/textures/";
+        public static string spritesPath
+        {
+            get
+            {
+                if (ConfigAPI.GetString("ressources.pack") == null)
+                    ConfigAPI.SetString("ressources.pack", "default");
+                return Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
+            }
+        }
 
         /// <summary>
         /// Request an animation (or a sprite)
