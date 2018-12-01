@@ -19,7 +19,7 @@ public class LangueSelector : MonoBehaviour
     public int actuel = 0;
     Sprite[] LangFlag;
 
-    void Start() { NewStart(); Langues.GetChild(0).gameObject.SetActive(false); }
+    void Start() { NewStart(); if(Langues != null) Langues.GetChild(0).gameObject.SetActive(false); }
 
     void NewStart()
     {

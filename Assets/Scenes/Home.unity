@@ -823,14 +823,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 22129891}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97df2c5750f629e4baf3e3c27ae9bff4, type: 3}
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id:
-  - native/GUI/Animated MainMenuButton
-  - native/GUI/Animated MainMenuButton Hover
-  - native/GUI/Animated MainMenuButton Pressed
-  - native/GUI/Animated MainMenuButton
+  baseID: native/GUI/Animated MainMenuButton
 --- !u!1 &24187624
 GameObject:
   m_ObjectHideFlags: 0
@@ -2083,7 +2079,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250.16797, y: -737.5}
+  m_AnchoredPosition: {x: 250.16675, y: -662.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &88935448
@@ -4179,7 +4175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: native/GUI/logo
+  baseID: native/GUI/logo
 --- !u!1 &227421474
 GameObject:
   m_ObjectHideFlags: 0
@@ -5902,7 +5898,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 800.16406, y: -737.5}
+  m_AnchoredPosition: {x: 800.16675, y: -662.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &322758192
@@ -13135,7 +13131,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 525.16406, y: -737.5}
+  m_AnchoredPosition: {x: 525.16675, y: -662.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &874403148
@@ -13712,7 +13708,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 800.16406, y: -462.5}
+  m_AnchoredPosition: {x: 800.16675, y: -387.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &909285046
@@ -14734,7 +14730,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1350.1667, y: -462.5}
+  m_AnchoredPosition: {x: 1350.1667, y: -387.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &997566720
@@ -17042,7 +17038,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -625}
+  m_SizeDelta: {x: 0, y: -775}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1165951803
 MonoBehaviour:
@@ -17834,7 +17830,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1075.1667, y: -462.5}
+  m_AnchoredPosition: {x: 1075.1667, y: -387.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1214713902
@@ -18239,7 +18235,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 525.16797, y: -212.5}
+  m_AnchoredPosition: {x: 525.16675, y: -212.5}
   m_SizeDelta: {x: 250, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1253251676
@@ -20677,7 +20673,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: native/GUI/background
+  baseID: native/GUI/background
 --- !u!1 &1400843140
 GameObject:
   m_ObjectHideFlags: 0
@@ -22031,7 +22027,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1350.1667, y: -737.5}
+  m_AnchoredPosition: {x: 1350.1667, y: -662.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1491557456
@@ -23510,6 +23506,7 @@ GameObject:
   - component: {fileID: 1588645074}
   - component: {fileID: 1588645073}
   - component: {fileID: 1588645072}
+  - component: {fileID: 1588645076}
   m_Layer: 5
   m_Name: Settings
   m_TagString: Button With Click
@@ -23569,7 +23566,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 2065246928}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 2
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -23628,7 +23625,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5735294, g: 0.5735294, b: 0.5735294, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -23649,6 +23646,18 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1588645070}
+--- !u!114 &1588645076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1588645070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/Animated MainMenuButton
 --- !u!1 &1601577207
 GameObject:
   m_ObjectHideFlags: 0
@@ -24995,7 +25004,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 525.16406, y: -462.5}
+  m_AnchoredPosition: {x: 525.16675, y: -387.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1682113632
@@ -27919,7 +27928,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250.16797, y: -462.5}
+  m_AnchoredPosition: {x: 250.16675, y: -387.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1847816631
@@ -30045,7 +30054,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1075.1667, y: -737.5}
+  m_AnchoredPosition: {x: 1075.1667, y: -662.5}
   m_SizeDelta: {x: 250, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1970695998
@@ -30458,7 +30467,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 800.16797, y: -212.5}
+  m_AnchoredPosition: {x: 800.16675, y: -212.5}
   m_SizeDelta: {x: 250, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1989709005
@@ -32972,6 +32981,7 @@ GameObject:
   - component: {fileID: 2110757789}
   - component: {fileID: 2110757788}
   - component: {fileID: 2110757787}
+  - component: {fileID: 2110757786}
   m_Layer: 5
   m_Name: Editor
   m_TagString: Button With Click
@@ -32998,6 +33008,18 @@ RectTransform:
   m_AnchoredPosition: {x: -387, y: 215}
   m_SizeDelta: {x: 600, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2110757786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2110757784}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/Animated MainMenuButton
 --- !u!114 &2110757787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33015,7 +33037,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 1588645073}
     m_SelectOnLeft: {fileID: 2065246928}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 2
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -33063,7 +33085,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.5735294, g: 0.5735294, b: 0.5735294, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
