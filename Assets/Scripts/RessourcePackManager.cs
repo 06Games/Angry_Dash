@@ -2,15 +2,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RessourcePackManager : MonoBehaviour {
-    
+public class RessourcePackManager : MonoBehaviour
+{
+
     public LoadingScreenControl LS;
     string[] RPs;
 
 
-    void Start () { Refresh(); }
-	
-	public void Refresh()
+    void Start() { Refresh(); }
+    public void Refresh()
     {
         RPs = Directory.GetDirectories(Application.persistentDataPath + "/Ressources/");
 
@@ -34,12 +34,12 @@ public class RessourcePackManager : MonoBehaviour {
             string description = "";
             string wallpaperPath = null;
 
-            for(int l = 0; l < data.Length; l++)
+            for (int l = 0; l < data.Length; l++)
             {
                 string[] infos = data[l].Split(new string[] { " = " }, System.StringSplitOptions.None);
                 infos[1] = Format(infos[1]);
 
-                if(infos.Length > 1)
+                if (infos.Length > 1)
                 {
                     if (infos[0] == "name") name = infos[1];
                     else if (infos[0] == "description") description = infos[1];
@@ -50,22 +50,19 @@ public class RessourcePackManager : MonoBehaviour {
             go.name = name;
             go.GetChild(0).GetComponent<Text>().text = name;
             go.GetChild(1).GetComponent<Text>().text = description;
-            if(!string.IsNullOrEmpty(wallpaperPath))
+            if (!string.IsNullOrEmpty(wallpaperPath))
             {
-                if(File.Exists(RPs[i] + "/" + wallpaperPath))
+                if (File.Exists(RPs[i] + "/" + wallpaperPath))
                 {
                     Texture2D tex = new Texture2D(1, 1);
                     tex.LoadImage(File.ReadAllBytes(RPs[i] + "/" + wallpaperPath));
 
-                    //Image.Type ImageType = Image.Type.Simple;
                     Vector4 border = new Vector4();
-
-                    go.GetComponent<Image>().sprite = Sprite.Create(tex, 
+                    go.GetComponent<Image>().sprite = Sprite.Create(tex,
                         new Rect(0, 0, tex.width, tex.height),
                         new Vector2(.5f, .5f),
                         100.0f, 0, SpriteMeshType.FullRect,
                         border);
-                    //go.GetComponent<Image>().type = ImageType;
                 }
             }
 

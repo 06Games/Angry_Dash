@@ -134,7 +134,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
     }
 
-    public void OnPointerEnter(PointerEventData eventData) { if(lastInteractable) StartAnimating(1, 1); }
+    public void OnPointerEnter(PointerEventData eventData) { if (lastInteractable) StartAnimating(1, 1); }
     public void OnPointerExit(PointerEventData eventData) { if (lastInteractable) StartAnimating(1, -1); }
     public void OnSelect(BaseEventData eventData) { if (lastInteractable) StartAnimating(2, 1); }
     public void OnDeselect(BaseEventData eventData) { if (lastInteractable) StartAnimating(2, -1); }
@@ -144,7 +144,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         if (component == null) return;
         if (component.interactable != lastInteractable)
         {
-            if(component.interactable) StartAnimating(3, -1);
+            if (component.interactable) StartAnimating(3, -1);
             else StartAnimating(3, 1);
             lastInteractable = component.interactable;
         }
@@ -154,11 +154,11 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void StartAnimating(int index, int frameAddition, bool keepFrame = true)
     {
         if (data[index] == null) return;
-        if(data[index].Frames[0].border != new Vector4()) GetComponent<Image>().type = Image.Type.Tiled;
+        if (data[index].Frames[0].border != new Vector4()) GetComponent<Image>().type = Image.Type.Tiled;
         else GetComponent<Image>().type = Image.Type.Simple;
         if (data[index].Frames.Length > 1)
         {
-            if(!keepFrame) Frame[index] = 0;
+            if (!keepFrame) Frame[index] = 0;
             Played[index] = 0;
             if (animation[index] != null) StopCoroutine(animation[index]);
 
@@ -169,7 +169,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         else if (data[index].Frames.Length == 1)
             GetComponent<Image>().sprite = data[index].Frames[0];
     }
-    public void StopAnimating(int index) { StopAnimating(index, false);  }
+    public void StopAnimating(int index) { StopAnimating(index, false); }
     public void StopAnimating(int index, bool keepFrame)
     {
         if (data[index] == null) return;
@@ -177,7 +177,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         {
             animationTime[index].Stop();
             if (animation[index] != null) StopCoroutine(animation[index]);
-            if(!keepFrame) Frame[index] = 0;
+            if (!keepFrame) Frame[index] = 0;
         }
 
         if (!keepFrame) StartAnimating(0);

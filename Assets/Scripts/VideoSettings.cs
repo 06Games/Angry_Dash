@@ -6,7 +6,8 @@ public class VideoSettings : MonoBehaviour
 {
     public Transform GraphicalOptions;
 
-    public static bool mobile() {
+    public static bool mobile()
+    {
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         return true;
 #else 
@@ -14,7 +15,8 @@ public class VideoSettings : MonoBehaviour
 #endif
     }
 
-    private void Start()
+    void Start() { NewStart(); }
+    public void NewStart()
     {
         ShowFPS(ConfigAPI.GetBool("FPS.show"));
 

@@ -2,7 +2,8 @@
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
-public class audio : MonoBehaviour {
+public class audio : MonoBehaviour
+{
 
     public AudioMixer mixer;
     public string[] parametersNames = new string[3] { "Master", "Musique", "FX" };
@@ -11,7 +12,8 @@ public class audio : MonoBehaviour {
     public int[] Value = new int[3] { -15, -15, -15 };
     public Scrollbar[] scroll;
 
-    void Start()
+    void Start() { NewStart(); }
+    void NewStart()
     {
         for (int i = 0; i < parametersNames.Length; i++)
         {
@@ -27,7 +29,7 @@ public class audio : MonoBehaviour {
     {
         if (scroll[i].value == 0)
             Value[i] = -80;
-        else Value[i] = (int)(scroll[i].value*30)-30;
+        else Value[i] = (int)(scroll[i].value * 30) - 30;
         mixer.SetFloat(parametersNames[i], Value[i]);
         ConfigAPI.SetInt(parametersConfigNames[i], Value[i]);
     }
