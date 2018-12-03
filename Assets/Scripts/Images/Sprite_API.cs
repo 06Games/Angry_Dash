@@ -105,7 +105,7 @@ namespace Sprite_API
                 SAD.Delay = Delay;
                 return SAD;
             }
-            else return new Sprite_API_Data();
+            else return null;
         }
 
         public class APNGFrameInfo

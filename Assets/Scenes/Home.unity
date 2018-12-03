@@ -826,7 +826,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/Animated MainMenuButton
+  baseID: native/GUI/mainMenuButton
 --- !u!1 &24187624
 GameObject:
   m_ObjectHideFlags: 0
@@ -23675,7 +23675,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/Animated MainMenuButton
+  baseID: native/GUI/mainMenuButton
 --- !u!1 &1601577207
 GameObject:
   m_ObjectHideFlags: 0
@@ -33037,7 +33037,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/Animated MainMenuButton
+  baseID: native/GUI/mainMenuButton
 --- !u!114 &2110757787
 MonoBehaviour:
   m_ObjectHideFlags: 0

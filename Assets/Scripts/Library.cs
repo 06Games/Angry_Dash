@@ -15,11 +15,14 @@ namespace FileFormat
             public JSON(string plainText)
             {
                 dynamic stuff = JsonConvert.DeserializeObject(plainText);
-                foreach (Newtonsoft.Json.Linq.JObject jobject in stuff)
-                    if (jObject == null) jObject = jobject;
+                if (stuff != null)
+                {
+                    foreach (Newtonsoft.Json.Linq.JObject jobject in stuff)
+                        if (jObject == null) jObject = jobject;
+                }
             }
 
-            public Category GetCategory(string token) { return new Category(jObject.SelectToken(token)); }
+            public Category GetCategory(string token) { if (jObject == null) return new Category(null); else return new Category(jObject.SelectToken(token)); }
         }
 
         public class Category
