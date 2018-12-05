@@ -38,9 +38,19 @@ namespace FileFormat
     }
 }
 
+namespace Display
+{
+    public static class Screen
+    {
+        public static Vector2 resolution {
+            get { return new Vector2(UnityEngine.Screen.width, UnityEngine.Screen.height); }
+            set { UnityEngine.Screen.SetResolution((int)resolution.x, (int)resolution.y, UnityEngine.Screen.fullScreen); }
+        }
+    }
+}
+
 namespace MessengerExtensions
 {
-
     /// <summary>
     /// Broadcast messages between objects and components, including inactive ones (which Unity doesn't do)
     /// </summary>

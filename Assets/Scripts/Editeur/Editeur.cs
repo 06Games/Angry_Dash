@@ -1100,6 +1100,7 @@ public class Editeur : MonoBehaviour
             newFileLines = newFileLines.Union(fileLines).ToArray();
         }
 
+        //Upgrade to 0.2.1
         if (version == "0.2")
         {
             int d = -1;
