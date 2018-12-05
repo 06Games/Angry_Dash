@@ -34,7 +34,11 @@ public class BaseControl : MonoBehaviour
     public GameObject DiscordPref;
 
 
-    void Awake() { UnityThread.initUnityThread(); }
+    void Awake()
+    {
+        UnityThread.initUnityThread();
+        System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+    }
     private void OnApplicationQuit() {
         string[] files= Directory.GetFiles(Application.temporaryCachePath);
         for (int i = 0; i < files.Length; i++)
