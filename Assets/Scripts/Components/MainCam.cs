@@ -10,6 +10,6 @@ public class MainCam : MonoBehaviour
     void Update()
     {
         if (Player != null & OnPlayer)
-            transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y + 300, -10);
+            transform.position = new Vector3(Player.transform.position.x, Player.transform.position.y + (Screen.height * 0.3F), -10);
     }
 }

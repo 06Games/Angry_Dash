@@ -61,9 +61,10 @@ public class Player : MonoBehaviour
         Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
         GetComponent<SpriteRenderer>().sprite = sprite;
         vitesse = 1;
-
-        float resolutionDecalage = ((Screen.height / 2F) - ((1080F / 1920F * Screen.width) / 2F)) / 2F;
-        JoyStick.GetComponent<RectTransform>().anchoredPosition = new Vector2(-110, -308 - resolutionDecalage);
+        
+        JoyStick.GetComponent<RectTransform>().position = new Vector2(
+            Screen.width/2 - (JoyStick.GetComponent<RectTransform>().rect.width * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2, 
+            Display.Screen.resolution.y * 0.2F - (JoyStick.GetComponent<RectTransform>().rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
 
         PositionInitiale = transform.position;
     }
