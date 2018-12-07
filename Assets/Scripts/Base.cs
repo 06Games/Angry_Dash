@@ -34,6 +34,40 @@ public class Base : MonoBehaviour {
 #endif
     }
 
+    public void OpenFolder(string path) { OpenFolderStatic(path); }
+    public static void OpenFolderStatic(string path)
+    {
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+        path = path.Replace("/", "\\");
+        path = path.Replace("%APPDATA%", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+
+        System.Diagnostics.Process.Start("explorer.exe", "\"" + path + "\"");
+#elif UNITY_STANDALONE_MACOS
+        bool openInsidesOfFolder = false;
+        string macPath = path.Replace("\\", "/"); // mac finder doesn't like backward slashes
+
+        if (System.IO.Directory.Exists(macPath)) // if path requested is a folder, automatically open insides of that folder
+        {
+            openInsidesOfFolder = true;
+        }
+
+        if (!macPath.StartsWith("\""))
+        {
+            macPath = "\"" + macPath;
+        }
+        if (!macPath.EndsWith("\""))
+        {
+            macPath = macPath + "\"";
+        }
+
+        string arguments = (openInsidesOfFolder ? "" : "-R ") + macPath;
+        System.Diagnostics.Process.Start("open", arguments);
+#elif UNITY_ANDROID
+        NativeShare.Share("", path);
+#endif
+    }
+
+
     public void ActiveObject(GameObject go) { go.SetActive(true); }
     public static void ActiveObjectStatic(GameObject go) { UnityThread.executeInUpdate(() => go.SetActive(true)); }
 
