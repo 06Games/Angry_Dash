@@ -32,7 +32,7 @@ public class LangueAPI : MonoBehaviour
         if (!category.EndsWith("/")) category = category + "/";
         string path = languePath(category + ConfigAPI.GetString("Language") + ".lang");
         string what = "|" + id + " = ";
-        string txt = FormatString(Cherche(path, what));
+        string txt = (new Tools.String(Cherche(path, what))).Format.GetString;
         if (txt == null & dontExists != null) return dontExists;
         else return txt;
     }
@@ -52,7 +52,7 @@ public class LangueAPI : MonoBehaviour
         {
             if (c != null) c = c.Replace("[" + i + "]", arg[i]);
         }
-        return FormatString(c);
+        return (new Tools.String(c)).Format.GetString;
     }
     static string Cherche(string path, string what)
     {
@@ -69,14 +69,5 @@ public class LangueAPI : MonoBehaviour
             file.Close();
         }
         return name;
-    }
-    static string FormatString(string st)
-    {
-        if (st != null)
-        {
-            st = st.Replace("\\n", "\n");
-            st = st.Replace("\\t", "\t");
-        }
-        return st;
     }
 }

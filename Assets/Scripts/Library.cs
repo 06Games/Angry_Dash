@@ -114,6 +114,28 @@ namespace Display
     }
 }
 
+namespace Tools
+{
+    public class String {
+        string str;
+        public String(string _string) { str = _string; }
+
+        public String Format
+        {
+            get
+            {
+                if (str != null)
+                {
+                    str = str.Replace("\\n", "\n");
+                    str = str.Replace("\\t", "\t");
+                }
+                return new String(str);
+            }
+        }
+        public string GetString { get { string st = str;  return st; } }
+        public T ParseTo<T>() { return (T)System.Convert.ChangeType(str, typeof(T)); }
+    }
+
 namespace MessengerExtensions
 {
     /// <summary>
