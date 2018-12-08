@@ -10,8 +10,8 @@ public class Editor_StartTrigger : MonoBehaviour
     int[] SB;
 
     string All { get {
-            if (!string.IsNullOrEmpty(LangueAPI.String("editorMenuEditPlayerInfinity")))
-                return LangueAPI.String("editorMenuEditPlayerInfinity");
+            if (!string.IsNullOrEmpty(LangueAPI.String("native", "editorMenuEditPlayerInfinity")))
+                return LangueAPI.String("native", "editorMenuEditPlayerInfinity");
             else return "All";
         }}
 

@@ -161,7 +161,7 @@ public class Profile : MonoBehaviour
     {
         if (lvlNames.Length > levelNumber)
         {
-            LevelDeleteWarning.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("profileMyLevelsDeleteWarningText", lvlNames[levelNumber]);
+            LevelDeleteWarning.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "profileMyLevelsDeleteWarningText", lvlNames[levelNumber]);
             LevelDeleteWarning.GetChild(2).GetComponent<Button>().onClick.RemoveAllListeners();
             LevelDeleteWarning.GetChild(2).GetComponent<Button>().onClick.AddListener(() => Delete(levelNumber));
             LevelDeleteWarning.gameObject.SetActive(true);

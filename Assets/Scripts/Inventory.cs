@@ -154,9 +154,9 @@ public class Inventory : MonoBehaviour {
                     }
                     transform.GetChild(0).GetChild(0).GetChild(2).GetChild(i).GetChild(v).GetComponent<Button>().interactable = f;
 
-                    string t = LangueAPI.String(ids[0]);
+                    string t = LangueAPI.String("native", ids[0]);
                     if (f & PlayerPrefs.GetInt("PlayerSkin") == (v - 1) + page[i + 1])
-                        t = LangueAPI.String(ids[1]);
+                        t = LangueAPI.String("native", ids[1]);
                     else if (f)
                         t = "";
 

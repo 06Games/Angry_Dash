@@ -4,6 +4,7 @@ using System.Text;
 using System.Reflection;
 using Newtonsoft.Json;
 using UnityEngine;
+using Ionic.Zip;
 
 namespace FileFormat
 {
@@ -34,6 +35,70 @@ namespace FileFormat
             public bool ContainsValues { get { if (jToken == null) return false; else return jToken.HasValues; } }
             public T Value<T>(string value) { return jToken.Value<T>(value); }
             public bool ValueExist(string value) { if (jToken == null) return false; else return jToken.Value<string>(value) != null; }
+        }
+    }
+
+    public static class ZIP
+    {
+
+#if UNITY_IPHONE
+	[DllImport("__Internal")]
+	private static extern void unzip (string zipFilePath, string location);
+
+	[DllImport("__Internal")]
+	private static extern void zip (string zipFilePath);
+
+	[DllImport("__Internal")]
+	private static extern void addZipFile (string addFile);
+
+#endif
+
+        public static void Compress(string unzipPath, string zipPath)
+        {
+            string[] files = Directory.GetFiles(unzipPath);
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX
+            string path = Path.GetDirectoryName(zipPath);
+            Directory.CreateDirectory(path);
+
+            using (ZipFile zip = new ZipFile())
+            {
+                foreach (string file in files)
+                {
+                    zip.AddFile(file, "");
+                }
+                zip.Save(zipPath);
+            }
+#elif UNITY_ANDROID
+		using (AndroidJavaClass zipper = new AndroidJavaClass ("com.tsw.zipper")) {
+			{
+				zipper.CallStatic ("zip", zipPath, files);
+			}
+		}
+#elif UNITY_IPHONE
+		foreach (string file in files) {
+			addZipFile (file);
+		}
+		zip (zipPath);
+#endif
+        }
+
+        public static void Decompress(string zipPath, string unzipPath)
+        {
+#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX
+            Directory.CreateDirectory(unzipPath);
+
+            using (ZipFile zip = ZipFile.Read(zipPath))
+            {
+
+                zip.ExtractAll(unzipPath, ExtractExistingFileAction.OverwriteSilently);
+            }
+#elif UNITY_ANDROID
+		using (AndroidJavaClass zipper = new AndroidJavaClass ("com.tsw.zipper")) {
+			zipper.CallStatic ("unzip", zipPath, unzipPath);
+		}
+#elif UNITY_IPHONE
+		unzip (zipPath, unzipPath);
+#endif
         }
     }
 }

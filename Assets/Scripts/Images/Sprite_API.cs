@@ -40,18 +40,17 @@ namespace Sprite_API
 
 
     public class Sprite_API : MonoBehaviour
-    {        
+    {
         /// <summary>
         /// Path to the Ressources
         /// </summary>
-        public static string spritesPath
+        public static string spritesPath(string id)
         {
-            get
-            {
-                if (ConfigAPI.GetString("ressources.pack") == null)
-                    ConfigAPI.SetString("ressources.pack", "default");
-                return Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
-            }
+            if (ConfigAPI.GetString("ressources.pack") == null)
+                ConfigAPI.SetString("ressources.pack", "default");
+            string path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/" + id;
+            if (File.Exists(path)) return path;
+            else return Application.persistentDataPath + "/Ressources/default/textures/" + id;
         }
 
         /// <summary>

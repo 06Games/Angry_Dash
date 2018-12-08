@@ -69,7 +69,7 @@ public class BaseControl : MonoBehaviour
         if(eventSystem.firstSelectedGameObject != null) baseSelectable = eventSystem.firstSelectedGameObject.GetComponent<Selectable>();
 
         if (SceneManager.GetActiveScene().name == "Home")
-            Discord.Presence(LangueAPI.String("discordHome_title"), "", new DiscordClasses.Img("default"));
+            Discord.Presence(LangueAPI.String("native", "discordHome_title"), "", new DiscordClasses.Img("default"));
 
         /*ModTool.ModManager mng = gameObject.AddComponent<ModTool.ModManager>();
         mng.AddSearchDirectory(@"C:\Users\evan\Documents\Unity\Projets\mods");

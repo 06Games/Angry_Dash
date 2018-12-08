@@ -94,7 +94,7 @@ public class EditorOnline : MonoBehaviour
                 if (string.IsNullOrEmpty(level[item])) { level[item] = ""; }
                 if (string.IsNullOrEmpty(description[item])) { description[item] = ""; }
                 if (string.IsNullOrEmpty(music[item])) { music[item] = ""; }
-                if (string.IsNullOrEmpty(author[item])) { author[item] = LangueAPI.String(ids[0]); }
+                if (string.IsNullOrEmpty(author[item])) { author[item] = LangueAPI.String("native", ids[0]); }
 
 
                 item = item + 1;
@@ -111,7 +111,7 @@ public class EditorOnline : MonoBehaviour
             {
                 go.gameObject.SetActive(true);
                 go.GetChild(0).GetComponent<Text>().text = level[i];
-                go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[2], new string[1] { author[i] });
+                go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", ids[2], new string[1] { author[i] });
             }
             else go.gameObject.SetActive(false);
         }
@@ -129,7 +129,7 @@ public class EditorOnline : MonoBehaviour
             {
                 go.gameObject.SetActive(true);
                 go.GetChild(0).GetComponent<Text>().text = level[i];
-                go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[2], new string[1] { author[i] });
+                go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", ids[2], new string[1] { author[i] });
             }
             else go.gameObject.SetActive(false);
         }
@@ -145,7 +145,7 @@ public class EditorOnline : MonoBehaviour
         if (!string.IsNullOrEmpty(music[actual]))
         {
             string[] a = music[actual].Split(new string[1] { " - " }, System.StringSplitOptions.None);
-            levelPanel.GetChild(4).GetChild(0).GetComponent<Text>().text = LangueAPI.StringWithArgument(ids[4], new string[2] { a[1], a[0] });
+            levelPanel.GetChild(4).GetChild(0).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", ids[4], new string[2] { a[1], a[0] });
             levelPanel.GetChild(4).GetChild(1).gameObject.SetActive(!File.Exists(Application.persistentDataPath + "/Musics/" + music[actual]));
             levelPanel.GetChild(4).gameObject.SetActive(true);
         }

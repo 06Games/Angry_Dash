@@ -29,7 +29,7 @@ public class Shop : MonoBehaviour {
             transform.GetChild(0).GetChild(0).gameObject.SetActive(true);
         else
         {
-            transform.GetChild(0).GetChild(2).GetChild(2).GetComponent<Text>().text = LangueAPI.String("shopInternetRequire");
+            transform.GetChild(0).GetChild(2).GetChild(2).GetComponent<Text>().text = LangueAPI.String("native", "shopInternetRequire");
             transform.GetChild(0).GetChild(2).gameObject.SetActive(true);
         }
     }
@@ -170,7 +170,7 @@ public class Shop : MonoBehaviour {
             try { Result = client.DownloadString(URL); }
             catch
             {
-                transform.GetChild(0).GetChild(2).GetChild(2).GetComponent<Text>().text = LangueAPI.String("shopServerError");
+                transform.GetChild(0).GetChild(2).GetChild(2).GetComponent<Text>().text = LangueAPI.String("native", "shopServerError");
                 transform.GetChild(0).GetChild(2).gameObject.SetActive(true);
             }
 

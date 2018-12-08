@@ -20,7 +20,7 @@ public class Social : MonoBehaviour
         LSC.LoadScreen("Home");
 #else
         transform.GetChild(0).gameObject.SetActive(true);
-        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("googleServiceAuthenticating");
+        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", "googleServiceAuthenticating");
         transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
         if (EditorContinue)
             LSC.LoadScreen("Home");

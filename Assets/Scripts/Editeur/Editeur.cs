@@ -141,7 +141,7 @@ public class Editeur : MonoBehaviour
                 {
                     if (each > 0 & (int)((i - d) / each) == (i - d) / each)
                     {
-                        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.StringWithArgument("editorExploreLoadingBlocksStatus", new string[] { (i - d).ToString(), (end - d).ToString() }, "Placing Blocks : [0]/[1]"));
+                        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.StringWithArgument("native", "editorExploreLoadingBlocksStatus", new string[] { (i - d).ToString(), (end - d).ToString() }, "Placing Blocks : [0]/[1]"));
                         yield return new WaitForEndOfFrame();
                     }
                     Instance(i);
@@ -169,7 +169,7 @@ public class Editeur : MonoBehaviour
 
 
                 string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
-                Discord.Presence(LangueAPI.String("discordEditor_title"), LangueAPI.StringWithArgument("discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
+                Discord.Presence(LangueAPI.String("native", "discordEditor_title"), LangueAPI.StringWithArgument("native", "discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
                 cam.GetComponent<BaseControl>().returnScene = false;
 
                 Selection.SetActive(false);
@@ -200,14 +200,14 @@ public class Editeur : MonoBehaviour
         transform.GetChild(0).GetChild(2).GetChild(1).GetComponent<CreatorManager>().array = 3;
         newblockid = -1;
         gameObject.SetActive(false);
-        Discord.Presence(LangueAPI.String("discordEditor_title"), "", new DiscordClasses.Img("default"));
+        Discord.Presence(LangueAPI.String("native", "discordEditor_title"), "", new DiscordClasses.Img("default"));
         cam.GetComponent<BaseControl>().returnScene = true;
     }
     #endregion
 
     private void Start()
     {
-        Discord.Presence(LangueAPI.String("discordEditor_title"), "", new DiscordClasses.Img("default"));
+        Discord.Presence(LangueAPI.String("native", "discordEditor_title"), "", new DiscordClasses.Img("default"));
         cam = Selection.GetComponent<EditorSelect>().Cam.GetComponent<Camera>();
         zoomIndicator.gameObject.SetActive(false);
         BulleDeveloppementCat.SetActive(false);

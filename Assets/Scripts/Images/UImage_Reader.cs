@@ -26,8 +26,8 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         component = GetComponent<Selectable>();
         FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
-        if (File.Exists(Sprite_API.Sprite_API.spritesPath + baseID + ".json"))
-            json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath + baseID + ".json"));
+        if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
+            json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
 
         if (true) //Textures
         {
@@ -39,7 +39,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             {
                 FileFormat.JSON.Category paramCategory = category.GetCategory(paramNames[i]);
 
-                string path = Sprite_API.Sprite_API.spritesPath + baseID + " " + paramNames[i] + ".png";
+                string path = Sprite_API.Sprite_API.spritesPath(baseID + " " + paramNames[i] + ".png");
                 Vector4 border = new Vector4();
                 if (paramCategory.ContainsValues)
                 {
@@ -55,7 +55,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
                     //Path
                     if (paramCategory.ValueExist("path"))
-                        path = new FileInfo(Sprite_API.Sprite_API.spritesPath + baseID + ".json").Directory.FullName +
+                        path = new FileInfo(Sprite_API.Sprite_API.spritesPath(baseID + ".json")).Directory.FullName +
                             "/" + paramCategory.Value<string>("path");
                 }
 

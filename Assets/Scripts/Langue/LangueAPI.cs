@@ -8,29 +8,41 @@ using UnityEngine.UI;
 
 public class LangueAPI : MonoBehaviour
 {
+    public static string languePath(string id)
+    {
+        if (ConfigAPI.GetString("ressources.pack") == null)
+            ConfigAPI.SetString("ressources.pack", "default");
+        string path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/languages/" + id;
+        if (Directory.Exists(path)) return path;
+        else return Application.persistentDataPath + "/Ressources/default/languages/" + id;
+    }
+
     public static void LangSet(string value) { ConfigAPI.SetString("Language", value); }
     public static string LangGet() { return ConfigAPI.GetString("Language"); }
 
     /// <summary>
     /// Get a text translation
     /// </summary>
+    /// <param name="category">Text's Category (native, mod name...)</param>
     /// <param name="id">ID of the text</param>
     /// <param name="dontExists">Text to display if the ID doesn't exists</param>
     /// <returns></returns>
-    public static string String(string id, string dontExists = null)
+    public static string String(string category, string id, string dontExists = null)
     {
-        string path = Application.persistentDataPath + "/Languages/" + ConfigAPI.GetString("Language") + ".lang";
+        if (!category.EndsWith("/")) category = category + "/";
+        string path = languePath(category + ConfigAPI.GetString("Language") + ".lang");
         string what = "|" + id + " = ";
         string txt = FormatString(Cherche(path, what));
         if (txt == null & dontExists != null) return dontExists;
         else return txt;
     }
-    public static string StringWithArgument(string id, double arg) { return StringWithArgument(id, new string[] { arg.ToString() }); }
-    public static string StringWithArgument(string id, float arg) { return StringWithArgument(id, new string[] { arg.ToString() }); }
-    public static string StringWithArgument(string id, string arg) { return StringWithArgument(id, new string[] { arg }); }
-    public static string StringWithArgument(string id, string[] arg, string dontExists = null)
+    public static string StringWithArgument(string category, string id, double arg) { return StringWithArgument(category, id, new string[] { arg.ToString() }); }
+    public static string StringWithArgument(string category, string id, float arg) { return StringWithArgument(category, id, new string[] { arg.ToString() }); }
+    public static string StringWithArgument(string category, string id, string arg) { return StringWithArgument(category, id, new string[] { arg }); }
+    public static string StringWithArgument(string category, string id, string[] arg, string dontExists = null)
     {
-        string path = Application.persistentDataPath + "/Languages/" + ConfigAPI.GetString("Language") + ".lang";
+        if (!category.EndsWith("/")) category = category + "/";
+        string path = languePath(category + ConfigAPI.GetString("Language") + ".lang");
         string what = "|" + id + " = ";
         string c = Cherche(path, what);
 
@@ -48,7 +60,7 @@ public class LangueAPI : MonoBehaviour
         string name = null;
         if (File.Exists(path))
         {
-            System.IO.StreamReader file = new System.IO.StreamReader(@path);
+            StreamReader file = new  StreamReader(@path);
             while ((line = file.ReadLine()) != null)
             {
                 if (line.Contains(what))
@@ -160,6 +172,5 @@ public class LangueAPI : MonoBehaviour
 
         if (!FilesExists)
             UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-        else instance.End();
     }
 }

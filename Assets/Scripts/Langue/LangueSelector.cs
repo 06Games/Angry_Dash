@@ -10,10 +10,6 @@ public class LangueSelector : MonoBehaviour
 
     public Transform Langues;
     public LoadingScreenControl LS;
-    public Transform DownloadingFilesPanel;
-    public DependenciesManager dependenciesManager;
-
-    public bool AutomatiqueUpdate;
 
     public string[] LangueDispo;
     public int actuel = 0;
@@ -23,24 +19,12 @@ public class LangueSelector : MonoBehaviour
 
     void NewStart()
     {
-        if (!Directory.Exists(Application.persistentDataPath + "/Languages/"))
-            Directory.CreateDirectory(Application.persistentDataPath + "/Languages/");
-
         if (string.IsNullOrEmpty(LangueAPI.LangGet()))
             ReloadScene();
 
-        if (AutomatiqueUpdate)
-        {
-            string title = "";
-            if (Directory.GetFiles(Application.persistentDataPath + "/Languages/").Length > 1)
-                title = LangueAPI.String("downloadLangTitleUpdate");
-            else title = LangueAPI.String("downloadLangTitle");
-            if (!string.IsNullOrEmpty(title)) DownloadingFilesPanel.GetChild(2).GetComponent<Text>().text = title;
-            StartCoroutine(LangueAPI.UpdateFiles(DownloadingFilesPanel, this));
-        }
         if (Langues != null)
             if (Langues.childCount <= 1)
-                GetLangDispo(AutomatiqueUpdate);
+                GetLangDispo(false);
 
         for (int i = 0; i < LangueDispo.Length; i++)
         {
@@ -72,7 +56,7 @@ public class LangueSelector : MonoBehaviour
 
     void GetLangDispo(bool forceUpdate = false)
     {
-        string[] languages = Directory.GetFiles(Application.persistentDataPath + "/Languages/");
+        string[] languages = Directory.GetFiles(Application.persistentDataPath + "/Ressources/default/languages/native/");
         LangFlag = new Sprite[languages.Length];
         for (int i = 0; i < languages.Length; i++)
         {
@@ -101,15 +85,5 @@ public class LangueSelector : MonoBehaviour
             if (LangueAPI.LangGet() == LangueDispo[i])
                 actuel = i;
         }
-    }
-
-    public void End()
-    {
-        UnityThread.executeInUpdate(() =>
-        {
-            DownloadingFilesPanel.gameObject.SetActive(false);
-            if (dependenciesManager != null)
-                dependenciesManager.DownloadAllRequiredTex();
-        });
     }
 }

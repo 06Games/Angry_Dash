@@ -12,96 +12,71 @@ public class DependenciesManager : MonoBehaviour
 {
 
     GameObject DownloadPanel;
-    Slider BigSlider;
-    Slider SmallSlider;
+    Slider slider;
 
     public Social _Social;
 
-    #region Textures
-    public void DownloadAllRequiredTex()
+    void Start() { DownloadDefaultsRP(); }
+    
+    public void DownloadDefaultsRP()
     {
         DownloadPanel = transform.GetChild(1).gameObject;
-        BigSlider = DownloadPanel.transform.GetChild(1).GetComponent<Slider>();
-        SmallSlider = DownloadPanel.transform.GetChild(2).GetComponent<Slider>();
+        slider = DownloadPanel.transform.GetChild(1).GetComponent<Slider>();
 
         if (InternetAPI.IsConnected())
         {
-            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/items/";
+            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/";
             WebClient client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             string Result = "";
             try { Result = client.DownloadString(URL).Replace("<BR />", "\n"); } catch { wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); return; }
             string[] lines = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
-            int CatNumber = int.Parse(lines[lines.Length - 1].Replace("<dir>", "").Replace("</dir>", ""));
 
             DownloadPanel.SetActive(true);
-            SmallSlider.transform.GetChild(4).gameObject.SetActive(false);
-
-            fileCat = new int[CatNumber];
-            for (int i = 0; i < lines.Length - 1; i++)
-            {
-                int c = int.Parse(lines[i].Split(new string[] { "<name>" }, StringSplitOptions.None)[1].Split(new string[] { "</name>" }, StringSplitOptions.None)[0].Split(new string[] { "/" }, StringSplitOptions.None)[0]);
-                fileCat[c]++;
-            }
-
-            downloadFile(0, lines, Application.persistentDataPath + "/Textures/", CatNumber);
+            slider.transform.GetChild(4).gameObject.SetActive(false);
+            
+            downloadFile(0, lines, URL, Application.persistentDataPath + "/Ressources/");
         }
         else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
     }
-
-    int[] fileCat = new int[0];
-    string[] downData = new string[5] { "", "", "", "", "" };
+    
+    string[] downData = new string[4] { "", "", "", "" };
     Stopwatch sw = new Stopwatch();
-    public void downloadFile(int actual, string[] lines, string mainPath, int CatNumber)
+    public void downloadFile(int actual, string[] lines, string url, string mainPath)
     {
         string version = lines[actual].Split(new string[] { "</version>" }, StringSplitOptions.None)[0].Replace("<version>", "");
         string name = lines[actual].Split(new string[] { "<name>" }, StringSplitOptions.None)[1].Split(new string[] { "</name>" }, StringSplitOptions.None)[0];
-        string cat = name.Split(new string[] { "/" }, StringSplitOptions.None)[0];
         int size = int.Parse(lines[actual].Split(new string[] { "<size>" }, StringSplitOptions.None)[1].Split(new string[] { "B</size>" }, StringSplitOptions.None)[0]);
 
-
-        int catSub = 0;
-        for (int i = 0; i < fileCat.Length; i++)
-        {
-            if (i < int.Parse(cat))
-                catSub = catSub + fileCat[i];
-            else i = fileCat.Length;
-        }
         UnityThread.executeInUpdate(() =>
         {
-            BigSlider.value = (int.Parse(cat) + 1) * 100 / (float)CatNumber;
-            SmallSlider.value = (actual - catSub) / (float)fileCat[int.Parse(cat)];
-
-            BigSlider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.StringWithArgument("downloadTexType", new string[2] { (int.Parse(cat) + 1).ToString(), CatNumber.ToString() });
-            SmallSlider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.StringWithArgument("downloadTexTexNumber", new string[2] { (actual + 1 - catSub).ToString(), fileCat[int.Parse(cat)].ToString() });
+            slider.value = (actual+1)/lines.Length;
+            slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "downloadTexTexNumber", new string[2] { (actual + 1).ToString(), lines.Length.ToString() });
         });
 
-        string desktopPath = mainPath + name;
+        string tempPath = Application.persistentDataPath + "/temp/" + actual + ".zip";
 
         bool down = false;
         if (!CheckVersionCompatibility(version)) down = false;
-        else if (File.Exists(desktopPath))
-            if (new FileInfo(desktopPath).Length != size) down = true;
+        else if (File.Exists(tempPath))
+            if (new FileInfo(tempPath).Length != size) down = true;
             else down = false;
         else down = true;
         if (down)
         {
-            if (!Directory.Exists(Application.persistentDataPath + "/Textures/" + cat))
-                Directory.CreateDirectory(Application.persistentDataPath + "/Textures/" + cat);
-
-            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/items/" + name;
+            if (!Directory.Exists(mainPath)) Directory.CreateDirectory(mainPath);
 
             using (WebClient wc = new WebClient())
             {
                 sw.Start();
                 wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                 wc.DownloadFileCompleted += wc_DownloadFileCompleted;
-                wc.DownloadFileAsync(new Uri(url), desktopPath);
+                wc.DownloadFileAsync(new Uri(url + name), tempPath);
             }
         }
         else
         {
-            SmallSlider.transform.GetChild(4).gameObject.SetActive(false);
+            slider.transform.GetChild(4).gameObject.SetActive(false);
             wc_DownloadFileCompleted(null, new AsyncCompletedEventArgs(null, false, null));
         }
 
@@ -116,8 +91,7 @@ public class DependenciesManager : MonoBehaviour
         downData[0] = actual.ToString();
         downData[1] = newS;
         downData[2] = mainPath;
-        downData[3] = catSub.ToString();
-        downData[4] = CatNumber.ToString();
+        downData[3] = url;
     }
 
     private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -162,20 +136,19 @@ public class DependenciesManager : MonoBehaviour
 
         UnityThread.executeInUpdate(() =>
         {
-            string speedText = LangueAPI.StringWithArgument(SpeedLangueID, speed);
-            string downloaded = LangueAPI.StringWithArgument(LangueID, new string[] { Actual.ToString("0.0"), Total.ToString("0.0") });
-            string pourcent = LangueAPI.StringWithArgument("downloadStatePercentage", pourcentage.ToString("00"));
+            string speedText = LangueAPI.StringWithArgument("native", SpeedLangueID, speed);
+            string downloaded = LangueAPI.StringWithArgument("native", LangueID, new string[] { Actual.ToString("0.0"), Total.ToString("0.0") });
+            string pourcent = LangueAPI.StringWithArgument("native", "downloadStatePercentage", pourcentage.ToString("00"));
 
-            Text DownloadInfo = SmallSlider.transform.GetChild(4).GetComponent<Text>();
+            Text DownloadInfo = slider.transform.GetChild(4).GetComponent<Text>();
             DownloadInfo.gameObject.SetActive(true);
             DownloadInfo.text = speedText + " - " + downloaded + " - <color=grey>" + pourcent + "</color>";
 
             //Progression plus détaillée
-            string name = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None)[int.Parse(downData[0])].Split(new string[] { "<name>" }, StringSplitOptions.None)[1].Split(new string[] { "</name>" }, StringSplitOptions.None)[0];
-            string cat = name.Split(new string[] { "/" }, StringSplitOptions.None)[0];
-            float baseValue = (int.Parse(downData[0]) - int.Parse(downData[3])) / (float)fileCat[int.Parse(cat)];
-            float oneValue = 1 / (float)fileCat[int.Parse(cat)];
-            SmallSlider.value = baseValue + ((pourcentage / 100F) * oneValue);
+            string[] lines = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None);
+            float baseValue = (int.Parse(downData[0])+1) / lines.Length;
+            float oneValue = 1 / (float)lines.Length;
+            slider.value = baseValue + ((pourcentage / 100F) * oneValue);
         });
     }
 
@@ -199,6 +172,9 @@ public class DependenciesManager : MonoBehaviour
         {
             string[] s = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None);
 
+            string[] pathTo = s[int.Parse(downData[0])].Split(new string[] { "<name>" }, StringSplitOptions.None)[1].Split(new string[] { "</name>" }, StringSplitOptions.None)[0].Split(new string[] { "/", "\\" }, StringSplitOptions.None);
+            FileFormat.ZIP.Decompress(Application.persistentDataPath + "/temp/" + downData[0] + ".zip", downData[2] + pathTo[pathTo.Length - 1].Replace(".zip", "") + "/");
+
             bool c = false;
             if (sender == null) c = true;
             else if (sender.ToString() != "pass") c = true;
@@ -216,14 +192,13 @@ public class DependenciesManager : MonoBehaviour
                 try
                 {
                     if (int.Parse(downData[0]) < s.Length - 2)
-                        downloadFile(int.Parse(downData[0]) + 1, s, downData[2], int.Parse(downData[4]));
+                        downloadFile(int.Parse(downData[0]) + 1, s, downData[3], downData[2]);
                     else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
                 }
                 catch { wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); }
             }
         });
     }
-    #endregion
 
     #region Levels
     int data_actual;

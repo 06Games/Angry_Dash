@@ -30,7 +30,7 @@ public class LevelPlayer : MonoBehaviour
 
     private void Update()
     {
-        nbLancerTxt.text = LangueAPI.StringWithArgument("playerTurn", new string[1] { nbLancer.ToString() });
+        nbLancerTxt.text = LangueAPI.StringWithArgument("native", "playerTurn", new string[1] { nbLancer.ToString() });
     }
 
     private void Start()
@@ -69,7 +69,7 @@ public class LevelPlayer : MonoBehaviour
                 string[] fileDir = file.Split(new string[1] { "/" }, System.StringSplitOptions.None);
                 Base.GetChild(3).GetChild(0).GetComponent<Text>().text = fileDir[fileDir.Length - 1].Replace(".level", "");
                 Parse();
-                Discord.Presence(LangueAPI.String("discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("discordPlaying_caption", fileDir[fileDir.Length - 1].Replace(".level", ""))), null, -1, 0);
+                Discord.Presence(LangueAPI.String("native", "discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("native", "discordPlaying_caption", fileDir[fileDir.Length - 1].Replace(".level", ""))), null, -1, 0);
 
                 if (FromScene == "Home") Recent.LvlPlayed(file, "P");
             }
@@ -97,7 +97,7 @@ public class LevelPlayer : MonoBehaviour
             string[] fileDir = file.Split(new string[1] { "/" }, System.StringSplitOptions.None);
             Base.GetChild(3).GetChild(0).GetComponent<Text>().text = fileDir[fileDir.Length - 1].Replace(".level", "");
             Parse();
-            Discord.Presence(LangueAPI.String("discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("discordPlaying_caption", fileDir[fileDir.Length - 1].Replace(".level", ""))), null, -1, 0);
+            Discord.Presence(LangueAPI.String("native", "discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("native", "discordPlaying_caption", fileDir[fileDir.Length - 1].Replace(".level", ""))), null, -1, 0);
         }
         else
         {

@@ -76,7 +76,7 @@ public class _NetworkManager : NetworkBehaviour
         StartData();
         mapRequested = false;
 
-        Discord.Presence(LangueAPI.String("discordServer_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("discordServer_caption", new string[] { adress, port.ToString() })), null, -1, 0);
+        Discord.Presence(LangueAPI.String("native", "discordServer_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("native", "discordServer_caption", new string[] { adress, port.ToString() })), null, -1, 0);
         Recent.LvlPlayed(adress + ":" + port, "S", "");
     }
 
@@ -90,13 +90,13 @@ public class _NetworkManager : NetworkBehaviour
 
         if (netMsg.msgType == 33)
         {
-            title = LangueAPI.String("ServerErrorNotResponding_title");
-            subtitle = LangueAPI.String("ServerErrorNotResponding_subtitle");
+            title = LangueAPI.String("native", "ServerErrorNotResponding_title");
+            subtitle = LangueAPI.String("native", "ServerErrorNotResponding_subtitle");
         }
         else
         {
-            title = LangueAPI.String("ServerErrorUnknown_title");
-            subtitle = LangueAPI.StringWithArgument("ServerErrorUnknown_subtitle", netMsg.msgType);
+            title = LangueAPI.String("native", "ServerErrorUnknown_title");
+            subtitle = LangueAPI.StringWithArgument("native", "ServerErrorUnknown_subtitle", netMsg.msgType);
         }
 
         ErrorPanel.GetChild(0).GetComponent<Text>().text = title;
@@ -119,7 +119,7 @@ public class _NetworkManager : NetworkBehaviour
         for (int i = 0; i < Items.transform.childCount; i++)
             Destroy(Items.transform.GetChild(i).gameObject);
 
-        Discord.Presence(LangueAPI.String("discordHome_title"), "", new DiscordClasses.Img("default"));
+        Discord.Presence(LangueAPI.String("native", "discordHome_title"), "", new DiscordClasses.Img("default"));
         LSC.LoadScreen("Home", new string[] { "Play", "Community Servers" });
     }
 
