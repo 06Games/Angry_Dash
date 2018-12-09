@@ -553,7 +553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: downloadTexSubtitle
+  id: downloadRPSubtitle
   keepIfNotExist: 1
   arg: []
 --- !u!114 &222504337
@@ -1960,7 +1960,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: downloadingSoloLevels
+  id: downloadLevels
   keepIfNotExist: 1
   arg: []
 --- !u!114 &918673451
@@ -2509,7 +2509,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: downloadTexTitle
+  id: downloadRPTitle
   keepIfNotExist: 1
   arg: []
 --- !u!114 &1456008403

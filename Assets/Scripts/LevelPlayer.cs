@@ -242,7 +242,7 @@ public class LevelPlayer : MonoBehaviour
             }
             SR.sortingOrder = (int)p.z;
             Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString(".0####") + ".png"));
+            tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/"+id.ToString(".0####") + ".png")));
             SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
 
             go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);

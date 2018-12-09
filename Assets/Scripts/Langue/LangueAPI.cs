@@ -29,6 +29,8 @@ public class LangueAPI : MonoBehaviour
     /// <returns></returns>
     public static string String(string category, string id, string dontExists = null)
     {
+        if (!category.Contains("native")) Debug.LogError("Only native is supported !");
+
         if (!category.EndsWith("/")) category = category + "/";
         string path = languePath(category + ConfigAPI.GetString("Language") + ".lang");
         string what = "|" + id + " = ";
@@ -41,6 +43,8 @@ public class LangueAPI : MonoBehaviour
     public static string StringWithArgument(string category, string id, string arg) { return StringWithArgument(category, id, new string[] { arg }); }
     public static string StringWithArgument(string category, string id, string[] arg, string dontExists = null)
     {
+        if (!category.Contains("native")) Debug.LogError("Only native is supported !");
+
         if (!category.EndsWith("/")) category = category + "/";
         string path = languePath(category + ConfigAPI.GetString("Language") + ".lang");
         string what = "|" + id + " = ";

@@ -54,6 +54,7 @@ public class DependenciesManager : MonoBehaviour
             slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "downloadTexTexNumber", new string[2] { (actual + 1).ToString(), lines.Length.ToString() });
         });
 
+        if (!Directory.Exists(Application.persistentDataPath + "/temp/")) Directory.CreateDirectory(Application.persistentDataPath + "/temp/");
         string tempPath = Application.persistentDataPath + "/temp/" + actual + ".zip";
 
         bool down = false;

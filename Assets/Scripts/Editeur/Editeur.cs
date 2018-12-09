@@ -1,5 +1,5 @@
-﻿using Boo.Lang;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -108,12 +108,12 @@ public class Editeur : MonoBehaviour
             else
             {
                 actualValue++;
-                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingVersionCheck", "Checking the level version"));
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingVersionCheck", "Checking the level version"));
                 yield return new WaitForEndOfFrame();
                 UpdateLevel(component);
 
                 actualValue++;
-                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingBlocks", "Placing Blocks"));
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBlocks", "Placing Blocks"));
                 yield return new WaitForEndOfFrame();
 
                 int d = -1;
@@ -151,17 +151,17 @@ public class Editeur : MonoBehaviour
 
 
                 actualValue++;
-                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingBackgrounds", "Caching Backgrounds"));
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBackgrounds", "Caching Backgrounds"));
                 transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this); //Caching Backgrounds
 
                 actualValue++;
-                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingMusics", "Refreshing the list of music"));
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingMusics", "Refreshing the list of music"));
                 yield return new WaitForEndOfFrame();
                 Selection.GetComponent<EditorSelect>().SoundBoard.RefreshList(); //Refresh musics list
 
 
                 actualValue++;
-                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("editorExploreLoadingOpen", "Opening Level"));
+                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingOpen", "Opening Level"));
                 OpenCat(-1);
 
                 Grille(false, true);
@@ -645,14 +645,14 @@ public class Editeur : MonoBehaviour
             {
                 Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
                 Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + newblockid.ToString("0.0####") + ".png"));
+                tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/" + newblockid.ToString("0.0####") + ".png")));
                 Contenu[3].transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
             }
             else
             {
                 Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
                 Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + i.ToString("0.0####") + ".png"));
+                tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/" + i.ToString("0.0####") + ".png")));
                 Contenu[3].transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
             }
         }
@@ -699,7 +699,7 @@ public class Editeur : MonoBehaviour
                     Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
                 BulleDeveloppementCat.transform.GetChild(0).gameObject.SetActive(false);
 
-                string path = Application.persistentDataPath + "/Textures/0/";
+                string path = Application.persistentDataPath + "/Ressources/default/textures/native/BLOCKS/";
                 for (int i = 0; i < Directory.GetFiles(path, id + ".*", SearchOption.AllDirectories).Length; i++)
                 {
                     GameObject newRef = Instantiate(BulleDeveloppementCat.transform.GetChild(0).gameObject, BulleDeveloppementCat.transform);
@@ -709,7 +709,7 @@ public class Editeur : MonoBehaviour
                     newRef.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => AddBlock(id.ToString() + "." + newRef.name));
 
                     Texture2D tex = new Texture2D(1, 1);
-                    tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id + "." + i + ".png"));
+                    tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/" + id + "." + i + ".png")));
                     newRef.transform.GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
                 }
                 BulleDeveloppementCat.SetActive(true);
@@ -770,7 +770,8 @@ public class Editeur : MonoBehaviour
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
 
             Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/0/" + id.ToString("0.0####") + ".png"));
+            if(id < 1) tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/GUI/editor/events/" + id.ToString("0.0####") + ".png")));
+            else tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/" + id.ToString("0.0####") + ".png")));
             SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
 
             go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);

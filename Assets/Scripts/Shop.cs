@@ -182,7 +182,7 @@ public class Shop : MonoBehaviour {
                 for (int i = 0; i < c.Length; i++)
                 {
                     string[] a = c[i].Split(new string[1] { "; " }, StringSplitOptions.None)[0].Split(new string[1] { ":" }, StringSplitOptions.None);
-                    byte[] Result2 = System.IO.File.ReadAllBytes(Application.persistentDataPath + "/Textures/" + a[0] + "/" + a[1] + ".png");
+                    byte[] Result2 = System.IO.File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/" + a[0] + "/" + a[1] + ".png"));
                     Texture2D tex = new Texture2D(1, 1);
                     tex.LoadImage(Result2);
                     Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));

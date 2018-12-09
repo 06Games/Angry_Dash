@@ -22,14 +22,13 @@ public class Background : MonoBehaviour {
     {
         if (sp == null)
         {
-            File.WriteAllBytes(Application.persistentDataPath + "/Textures/2/0.png", Texture2D.whiteTexture.EncodeToPNG());
-            int f = Directory.GetFiles(Application.persistentDataPath + "/Textures/2/").Length;
+            int f = Directory.GetFiles(Sprite_API.Sprite_API.spritesPath("native/BACKGROUNDS/")).Length;
             sp = new Sprite[f];
 
             for (int i = 0; i < f; i++)
             {
                 Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Application.persistentDataPath + "/Textures/2/" + i + ".png"));
+                tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BACKGROUNDS/" + i + ".png")));
                 sp[i] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
             }
         }

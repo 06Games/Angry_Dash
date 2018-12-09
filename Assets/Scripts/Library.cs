@@ -116,7 +116,8 @@ namespace Display
 
 namespace Tools
 {
-    public class String {
+    public class String
+    {
         string str;
         public String(string _string) { str = _string; }
 
@@ -132,9 +133,10 @@ namespace Tools
                 return new String(str);
             }
         }
-        public string GetString { get { string st = str;  return st; } }
+        public string GetString { get { string st = str; return st; } }
         public T ParseTo<T>() { return (T)System.Convert.ChangeType(str, typeof(T)); }
     }
+}
 
 namespace MessengerExtensions
 {

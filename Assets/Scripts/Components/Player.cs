@@ -57,7 +57,7 @@ public class Player : MonoBehaviour
 
         int playerSkin = PlayerPrefs.GetInt("PlayerSkin");
         Texture2D tex = new Texture2D(1, 1);
-        tex.LoadImage(System.IO.File.ReadAllBytes(Application.persistentDataPath + "/Textures/1/" + playerSkin + ".png"));
+        tex.LoadImage(System.IO.File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/PLAYERS/" + playerSkin + ".png")));
         Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
         GetComponent<SpriteRenderer>().sprite = sprite;
         vitesse = 1;
