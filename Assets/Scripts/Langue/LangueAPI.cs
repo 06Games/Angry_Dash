@@ -38,9 +38,9 @@ public class LangueAPI : MonoBehaviour
         if (txt == null & dontExists != null) return dontExists;
         else return txt;
     }
-    public static string StringWithArgument(string category, string id, double arg) { return StringWithArgument(category, id, new string[] { arg.ToString() }); }
-    public static string StringWithArgument(string category, string id, float arg) { return StringWithArgument(category, id, new string[] { arg.ToString() }); }
-    public static string StringWithArgument(string category, string id, string arg) { return StringWithArgument(category, id, new string[] { arg }); }
+    public static string StringWithArgument(string category, string id, double arg, string dontExists = null) { return StringWithArgument(category, id, new string[] { arg.ToString() }, dontExists); }
+    public static string StringWithArgument(string category, string id, float arg, string dontExists = null) { return StringWithArgument(category, id, new string[] { arg.ToString() }, dontExists); }
+    public static string StringWithArgument(string category, string id, string arg, string dontExists = null) { return StringWithArgument(category, id, new string[] { arg }, dontExists); }
     public static string StringWithArgument(string category, string id, string[] arg, string dontExists = null)
     {
         if (!category.Contains("native")) Debug.LogError("Only native is supported !");

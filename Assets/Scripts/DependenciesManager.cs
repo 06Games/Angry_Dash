@@ -51,7 +51,7 @@ public class DependenciesManager : MonoBehaviour
         UnityThread.executeInUpdate(() =>
         {
             slider.value = (actual+1)/lines.Length;
-            slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "downloadTexTexNumber", new string[2] { (actual + 1).ToString(), lines.Length.ToString() });
+            slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "downloadRPNumber", new string[2] { (actual + 1).ToString(), lines.Length.ToString() }, "File : [0] / [1]");
         });
 
         if (!Directory.Exists(Application.persistentDataPath + "/temp/")) Directory.CreateDirectory(Application.persistentDataPath + "/temp/");
@@ -59,6 +59,7 @@ public class DependenciesManager : MonoBehaviour
 
         bool down = false;
         if (!CheckVersionCompatibility(version)) down = false;
+        else if (Directory.Exists(Application.persistentDataPath + "/Ressources/default/")) down = false;
         else if (File.Exists(tempPath))
             if (new FileInfo(tempPath).Length != size) down = true;
             else down = false;
@@ -97,7 +98,7 @@ public class DependenciesManager : MonoBehaviour
 
     private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
-        // vitesse
+        // Vitesse
         double speed = Math.Round((e.BytesReceived / sw.Elapsed.TotalSeconds), 1);
         int SpeedReduct = 0;
         for (int i = 0; NbChiffreEntier(speed) > 3 & i <= 4; i++)
@@ -106,12 +107,12 @@ public class DependenciesManager : MonoBehaviour
             SpeedReduct++;
         }
         speed = Math.Round(speed, 1);
-        string SpeedLangueID = "downloadSpeedB";
-        if (SpeedReduct == 0) SpeedLangueID = "downloadSpeedB";
-        else if (SpeedReduct == 1) SpeedLangueID = "downloadSpeedKB";
-        else if (SpeedReduct == 2) SpeedLangueID = "downloadSpeedMB";
-        else if (SpeedReduct == 3) SpeedLangueID = "downloadSpeedGB";
-        else if (SpeedReduct == 4) SpeedLangueID = "downloadSpeedTB";
+        string[] SpeedLangueID = new string[] { "downloadSpeedB", "[0] B/s" };
+        if (SpeedReduct == 0) SpeedLangueID = new string[] { "downloadSpeedB", "[0] B/s" };
+        else if (SpeedReduct == 1) SpeedLangueID = new string[] { "downloadSpeedKB", "[0] KB/s" };
+        else if (SpeedReduct == 2) SpeedLangueID = new string[] { "downloadSpeedMB", "[0] MB/s" };
+        else if (SpeedReduct == 3) SpeedLangueID = new string[] { "downloadSpeedGB", "[0] GB/s" };
+        else if (SpeedReduct == 4) SpeedLangueID = new string[] { "downloadSpeedTB", "[0] TB/s" };
 
 
         int pourcentage = e.ProgressPercentage; //Progression
@@ -128,18 +129,18 @@ public class DependenciesManager : MonoBehaviour
         }
         Actual = Math.Round(Actual, 1);
         Total = Math.Round(Total, 1);
-        string LangueID = "downloadStateB";
-        if (Reduct == 0) LangueID = "downloadStateB";
-        else if (Reduct == 1) LangueID = "downloadStateKB";
-        else if (Reduct == 2) LangueID = "downloadStateMB";
-        else if (Reduct == 3) LangueID = "downloadStateGB";
-        else if (Reduct == 4) LangueID = "downloadStateTB";
+        string[] LangueID = new string[] { "downloadStateB", "[0] B out of [1] B" };
+        if (Reduct == 0) LangueID = new string[] { "downloadStateB", "[0] B out of [1] B" };
+        else if (Reduct == 1) LangueID = new string[] { "downloadStateKB", "[0] KB out of [1] KB" };
+        else if (Reduct == 2) LangueID = new string[] { "downloadStateMB", "[0] MB out of [1] MB" };
+        else if (Reduct == 3) LangueID = new string[] { "downloadStateGB", "[0] GB out of [1] GB" };
+        else if (Reduct == 4) LangueID = new string[] { "downloadStateTB", "[0] TB out of [1] TB" };
 
         UnityThread.executeInUpdate(() =>
         {
-            string speedText = LangueAPI.StringWithArgument("native", SpeedLangueID, speed);
-            string downloaded = LangueAPI.StringWithArgument("native", LangueID, new string[] { Actual.ToString("0.0"), Total.ToString("0.0") });
-            string pourcent = LangueAPI.StringWithArgument("native", "downloadStatePercentage", pourcentage.ToString("00"));
+            string speedText = LangueAPI.StringWithArgument("native", SpeedLangueID[0], speed, SpeedLangueID[1]);
+            string downloaded = LangueAPI.StringWithArgument("native", LangueID[0], new string[] { Actual.ToString("0.0"), Total.ToString("0.0") }, LangueID[1]);
+            string pourcent = LangueAPI.StringWithArgument("native", "downloadStatePercentage", pourcentage.ToString("00"), "[0]%");
 
             Text DownloadInfo = slider.transform.GetChild(4).GetComponent<Text>();
             DownloadInfo.gameObject.SetActive(true);
