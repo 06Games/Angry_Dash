@@ -13,6 +13,7 @@ public class CommunityServers : MonoBehaviour
     string adress = "localhost";
     int port = 7777;
     string[] fav;
+    bool InputFieldIsEmpty = true;
 
     void Start()
     {
@@ -25,7 +26,11 @@ public class CommunityServers : MonoBehaviour
 
     public void Join()
     {
-        LS.LoadScreen("Online", new string[] { "Connect", adress + ":" + port });
+        if (!InputFieldIsEmpty)
+        {
+            NM.StopClient();
+            LS.LoadScreen("Online", new string[] { "Connect", adress + ":" + port });
+        }
     }
 
 
@@ -33,6 +38,8 @@ public class CommunityServers : MonoBehaviour
 
     public void OnValueChang(InputField IF)
     {
+        InputFieldIsEmpty = string.IsNullOrEmpty(IF.text);
+
         if (isInFav(IF.text)) transform.GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersRemove");
         else transform.GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersAdd");
 
