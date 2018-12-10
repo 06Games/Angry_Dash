@@ -54,14 +54,12 @@ public class Editeur : MonoBehaviour
         string txt = directory + fileName + ".level";
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
-
-        File.CreateText(txt).Close();
+        
         file = txt;
         Selection.SetActive(false);
         gameObject.SetActive(true);
 
         System.DateTime createTime = System.DateTime.UtcNow;
-        File.SetCreationTimeUtc(file, createTime);
         component = new string[] { "description = " + desc,
             "background = 1; 4b4b4b255",
             "music = ",
@@ -72,6 +70,7 @@ public class Editeur : MonoBehaviour
             "Blocks {",
             "}"};
         File.WriteAllLines(file, component);
+        File.SetCreationTimeUtc(file, createTime);
         EditFile(file);
     }
 
