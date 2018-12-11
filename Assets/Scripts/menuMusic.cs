@@ -25,6 +25,8 @@ public class menuMusic : MonoBehaviour
         LoadMusic(audioClip);
         DontDestroyOnLoad(gameObject);
         AudioBegin = true;
+
+        try { Tayx.Graphy.GraphyManager.Instance.AudioListener = GetComponent<AudioListener>(); } catch { }
     }
     void Update()
     {

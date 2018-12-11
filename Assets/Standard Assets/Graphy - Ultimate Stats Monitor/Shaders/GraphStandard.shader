@@ -98,7 +98,7 @@
 				// If you see a pink box or that the graphs are not working, try lowering this value
 				// or using the GraphMobile.shader
 				
-				uniform float GraphValues[512];
+				uniform float GraphValues[224];
 
 				uniform float GraphValues_Length;
 
