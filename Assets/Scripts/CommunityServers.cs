@@ -11,9 +11,8 @@ public class CommunityServers : MonoBehaviour
     NetworkManager NM;
     NetworkClient Client;
     string adress = "localhost";
-    int port = 7777;
+    int port = 20000;
     string[] fav;
-    bool InputFieldIsEmpty = true;
 
     void Start()
     {
@@ -26,7 +25,7 @@ public class CommunityServers : MonoBehaviour
 
     public void Join()
     {
-        if (!InputFieldIsEmpty)
+        if (InternetAPI.ValidateIPv4(transform.GetChild(1).GetChild(0).GetComponent<InputField>().text))
         {
             NM.StopClient();
             LS.LoadScreen("Online", new string[] { "Connect", adress + ":" + port });
@@ -38,8 +37,6 @@ public class CommunityServers : MonoBehaviour
 
     public void OnValueChang(InputField IF)
     {
-        InputFieldIsEmpty = string.IsNullOrEmpty(IF.text);
-
         if (isInFav(IF.text)) transform.GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersRemove");
         else transform.GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersAdd");
 
@@ -47,6 +44,15 @@ public class CommunityServers : MonoBehaviour
         Transform trans = transform.GetChild(0).GetChild(0).GetChild(0);
         for (int i = 1; i < trans.childCount; i++)
             trans.GetChild(i).GetComponent<Button>().interactable = (i - 1) != f;
+
+        Transform ipButton = transform.GetChild(1);
+        for (int i = 1; i < ipButton.childCount; i++)
+        {
+            bool interactable = true;
+            if (i == 3 & refreshing) interactable = false;
+            else interactable = InternetAPI.ValidateIPv4(IF.text);
+            ipButton.GetChild(i).GetComponent<Button>().interactable = interactable;
+        }
 
 
         string[] a = IF.text.Split(new string[1] { ":" }, System.StringSplitOptions.None);
@@ -178,7 +184,7 @@ public class CommunityServers : MonoBehaviour
         }
         else NM.StopClient();
 
-        transform.GetChild(1).GetChild(3).GetComponent<Button>().interactable = !refreshing;
+        OnValueChang(transform.GetChild(1).GetChild(0).GetComponent<InputField>());
     }
     bool refreshing = false;
     int infoActual = 0;
@@ -194,7 +200,7 @@ public class CommunityServers : MonoBehaviour
         go.GetChild(1).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersError");
         go.GetChild(2).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersPlayersUnkown");
         refreshing = false;
-        transform.GetChild(1).GetChild(3).GetComponent<Button>().interactable = !refreshing;
+        OnValueChang(transform.GetChild(1).GetChild(0).GetComponent<InputField>());
     }
     public void ServInfoRecup(NetworkMessage netMsg)
     {
@@ -208,7 +214,7 @@ public class CommunityServers : MonoBehaviour
 
         if (!onlyOne)
             RefreshFav(infoActual);
-        transform.GetChild(1).GetChild(3).GetComponent<Button>().interactable = !refreshing;
+        OnValueChang(transform.GetChild(1).GetChild(0).GetComponent<InputField>());
     }
 
     private void Update()
