@@ -52,7 +52,11 @@ namespace FileFormat
 	private static extern void addZipFile (string addFile);
 
 #endif
-
+        /// <summary>
+        /// Compress a folder
+        /// </summary>
+        /// <param name="unzipPath">Path to the folder to compress</param>
+        /// <param name="zipPath">Path where the zip file will be saved</param>
         public static void Compress(string unzipPath, string zipPath)
         {
             string[] files = Directory.GetFiles(unzipPath);
@@ -82,6 +86,11 @@ namespace FileFormat
 #endif
         }
 
+        /// <summary>
+        /// Decompress a folder
+        /// </summary>
+        /// <param name="zipPath">Path where the zip file will be saved</param>
+        /// <param name="unzipPath">Path where the zip file will be extracted</param>
         public static void Decompress(string zipPath, string unzipPath)
         {
 #if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX
@@ -107,6 +116,9 @@ namespace Display
 {
     public static class Screen
     {
+        /// <summary>
+        /// Get the main screen resolution as a Vector2
+        /// </summary>
         public static Vector2 resolution {
             get { return new Vector2(UnityEngine.Screen.width, UnityEngine.Screen.height); }
             set { UnityEngine.Screen.SetResolution((int)resolution.x, (int)resolution.y, UnityEngine.Screen.fullScreen); }
@@ -118,23 +130,42 @@ namespace Tools
 {
     public class String
     {
-        string str;
-        public String(string _string) { str = _string; }
-
-        public String Format
+        /// <summary>
+        /// Format a string
+        /// </summary>
+        /// <param name="str">The string to format</param>
+        /// <returns></returns>
+        public static string Format(string str)
         {
-            get
+            if (str != null)
             {
-                if (str != null)
-                {
-                    str = str.Replace("\\n", "\n");
-                    str = str.Replace("\\t", "\t");
-                }
-                return new String(str);
+                str = str.Replace("\\n", "\n");
+                str = str.Replace("\\t", "\t");
             }
+            return str;
         }
-        public string GetString { get { string st = str; return st; } }
-        public T ParseTo<T>() { return (T)System.Convert.ChangeType(str, typeof(T)); }
+
+        /// <summary>
+        /// Parse a string to an other type
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static T ParseTo<T>(string str) { return (T)System.Convert.ChangeType(str, typeof(T)); }
+    }
+
+    public class Date
+    {
+        /// <summary>
+        ///  Return a DateTime as a string
+        /// </summary>
+        /// <param name="DT"></param>
+        /// <returns></returns>
+        public static string FormateDate(System.DateTime DT)
+        {
+            string a = "dd'/'MM'/'yyyy";
+            return DT.ToString(a);
+        }
     }
 }
 
@@ -221,6 +252,10 @@ namespace MessengerExtensions
 
 namespace Security
 {
+    /// <summary>
+    /// Encrypting class, the returned string can be decrypt
+    /// Warning : Do not use this for passwords or other sensitive elements
+    /// </summary>
     public static class Encrypting
     {
         public static string Encrypt(string plainText, string KEY)
@@ -325,6 +360,9 @@ namespace Security
         }
     }
 
+    /// <summary>
+    /// Hashing class, the returned string can't be "unhashed"
+    /// </summary>
     public static class Hashing
     {
         public static string SHA1(string value)

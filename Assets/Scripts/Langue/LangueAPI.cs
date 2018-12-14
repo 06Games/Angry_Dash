@@ -34,7 +34,7 @@ public class LangueAPI : MonoBehaviour
         if (!category.EndsWith("/")) category = category + "/";
         string path = languePath(category + ConfigAPI.GetString("Language") + ".lang");
         string what = "|" + id + " = ";
-        string txt = (new Tools.String(Cherche(path, what))).Format.GetString;
+        string txt = Tools.String.Format(Cherche(path, what));
         if (txt == null & dontExists != null) return dontExists;
         else return txt;
     }
@@ -56,7 +56,7 @@ public class LangueAPI : MonoBehaviour
         {
             if (c != null) c = c.Replace("[" + i + "]", arg[i]);
         }
-        return (new Tools.String(c)).Format.GetString;
+        return Tools.String.Format(c);
     }
     static string Cherche(string path, string what)
     {

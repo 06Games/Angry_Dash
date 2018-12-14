@@ -67,12 +67,6 @@ public class EditorSelect : MonoBehaviour
         Page(1);
     }
 
-    public static string FormatedDate(DateTime DT)
-    {
-        string a = "dd'/'MM'/'yyyy";
-        return DT.ToString(a);
-    }
-
     public void ChangLevel(int button)
     {
         if (button != -1)
@@ -284,7 +278,7 @@ public class EditorSelect : MonoBehaviour
                 DateTime UTC = File.GetLastWriteTime(file[f]);
 
                 go.GetChild(0).GetComponent<Text>().text = Name[Name.Length - 1].Replace(".level", "");
-                go.GetChild(1).GetComponent<Text>().text = FormatedDate(UTC);
+                go.GetChild(1).GetComponent<Text>().text = Tools.Date.FormateDate(UTC);
 
                 string[] a = File.ReadAllLines(file[f]);
                 int d = -1;
