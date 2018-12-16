@@ -126,16 +126,17 @@ namespace Display
     }
 }
 
+/// <summary> All function additions to Unity native classes </summary>
 namespace Tools
 {
-    public class String
+    public static class StringExtensions
     {
         /// <summary>
         /// Format a string
         /// </summary>
         /// <param name="str">The string to format</param>
         /// <returns></returns>
-        public static string Format(string str)
+        public static string Format(this string str)
         {
             if (str != null)
             {
@@ -151,17 +152,17 @@ namespace Tools
         /// <typeparam name="T"></typeparam>
         /// <param name="str"></param>
         /// <returns></returns>
-        public static T ParseTo<T>(string str) { return (T)System.Convert.ChangeType(str, typeof(T)); }
+        public static T ParseTo<T>(this string str) { return (T)System.Convert.ChangeType(str, typeof(T)); }
     }
 
-    public class Date
+    public static class DateExtensions
     {
         /// <summary>
         ///  Return a DateTime as a string
         /// </summary>
         /// <param name="DT"></param>
         /// <returns></returns>
-        public static string FormateDate(System.DateTime DT)
+        public static string Format(this System.DateTime DT)
         {
             string a = "dd'/'MM'/'yyyy";
             return DT.ToString(a);

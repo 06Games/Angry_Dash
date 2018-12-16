@@ -2,6 +2,7 @@
 using System.Collections;
 using System.IO;
 using System.Net;
+using Tools;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -34,7 +35,7 @@ public class LangueAPI : MonoBehaviour
         if (!category.EndsWith("/")) category = category + "/";
         string path = languePath(category + ConfigAPI.GetString("Language") + ".lang");
         string what = "|" + id + " = ";
-        string txt = Tools.String.Format(Cherche(path, what));
+        string txt = Cherche(path, what).Format();
         if (txt == null & dontExists != null) return dontExists;
         else return txt;
     }
@@ -56,7 +57,7 @@ public class LangueAPI : MonoBehaviour
         {
             if (c != null) c = c.Replace("[" + i + "]", arg[i]);
         }
-        return Tools.String.Format(c);
+        return c.Format();
     }
     static string Cherche(string path, string what)
     {

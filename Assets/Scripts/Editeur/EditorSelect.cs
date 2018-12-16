@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Crosstales.FB;
 using System.Net;
+using Tools;
 
 public class EditorSelect : MonoBehaviour
 {
@@ -278,7 +279,7 @@ public class EditorSelect : MonoBehaviour
                 DateTime UTC = File.GetLastWriteTime(file[f]);
 
                 go.GetChild(0).GetComponent<Text>().text = Name[Name.Length - 1].Replace(".level", "");
-                go.GetChild(1).GetComponent<Text>().text = Tools.Date.FormateDate(UTC);
+                go.GetChild(1).GetComponent<Text>().text = UTC.Format();
 
                 string[] a = File.ReadAllLines(file[f]);
                 int d = -1;
