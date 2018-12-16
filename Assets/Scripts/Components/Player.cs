@@ -64,7 +64,7 @@ public class Player : MonoBehaviour
         
         JoyStick.GetComponent<RectTransform>().position = new Vector2(
             Screen.width/2 - (JoyStick.GetComponent<RectTransform>().rect.width * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2, 
-            Display.Screen.resolution.y * 0.2F - (JoyStick.GetComponent<RectTransform>().rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
+            Display.Screen.Resolution.y * 0.2F - (JoyStick.GetComponent<RectTransform>().rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
 
         PositionInitiale = transform.position;
     }

@@ -119,9 +119,9 @@ namespace Display
         /// <summary>
         /// Get the main screen resolution as a Vector2
         /// </summary>
-        public static Vector2 resolution {
+        public static Vector2 Resolution {
             get { return new Vector2(UnityEngine.Screen.width, UnityEngine.Screen.height); }
-            set { UnityEngine.Screen.SetResolution((int)resolution.x, (int)resolution.y, UnityEngine.Screen.fullScreen); }
+            set { UnityEngine.Screen.SetResolution((int)value.x, (int)value.y, UnityEngine.Screen.fullScreen); }
         }
     }
 }
