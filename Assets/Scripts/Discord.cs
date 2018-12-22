@@ -65,14 +65,14 @@ public class Discord : MonoBehaviour
     /// <param name="maxPartySize">Taille maximale de la partie, du lobby ou du groupe (-1 pour le désactiver)</param>
     public static void Presence(string state, string detail = null, Img lImage = null, Img sImage = null, int remainingTime = -1, long startTime = -1, int minPartySize = -1, int maxPartySize = -1)
     {
-#if UNITY_STANDALONE
+#if UNITY_STANDALONE || UNITY_EDITOR
         GameObject go = GameObject.Find("Discord");
         if (go != null)
             go.GetComponent<Discord>().UpdatePresence(state, detail, lImage, sImage, remainingTime, startTime);
 #endif
     }
 
-#if UNITY_STANDALONE
+#if UNITY_STANDALONE || UNITY_EDITOR
     public DiscordRpc.RichPresence presence = new DiscordRpc.RichPresence();
     public DiscordRpc.DiscordUser joinRequest;
     public UnityEngine.Events.UnityEvent onConnect;
