@@ -152,7 +152,7 @@ public class EditorLevelSelector : MonoBehaviour
             if (content[x].Contains("description = ") & d == -1)
                 d = x;
         }
-        string Desc = "<color=red>Can not read the description</color>";
+        string Desc = LangueAPI.String("native", "EditorEditInfosDescriptionError", "<color=red>Can not read the description</color>");
         if (d >= 0) Desc = content[d].Replace("description = ", "");
         descriptionLine = d;
         infos.GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text = Desc.Format();
@@ -340,7 +340,7 @@ public class EditorLevelSelector : MonoBehaviour
         else
         {
             PublishPanel.Array(1);
-            PublishPanel.GO[1].transform.GetChild(0).GetComponent<Text>().text = "<color=red>Error</color> : " + Result;
+            PublishPanel.GO[1].transform.GetChild(0).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorEditPublishError", Result, "<color=red>Error</color> : [0]");
         }
     }
 }

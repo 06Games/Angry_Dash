@@ -66,7 +66,7 @@ public class LangueAPI : MonoBehaviour
         if (File.Exists(path))
         {
             StreamReader file = new  StreamReader(@path);
-            while ((line = file.ReadLine()) != null)
+            while ((line = file.ReadLine()) != null & name == null)
             {
                 if (line.Contains(what))
                     name = line.Split(new string[] { what }, StringSplitOptions.None)[1];

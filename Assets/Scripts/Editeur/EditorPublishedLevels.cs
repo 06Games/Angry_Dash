@@ -148,7 +148,7 @@ public class EditorPublishedLevels : MonoBehaviour
             go.name = items[i].Name; //Changes the editor gameObject name (useful only for debugging)
 
             go.GetChild(0).GetComponent<Text>().text = items[i].Name; //Sets the level's name
-            go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "CHANGETHISLATER", items[i].Author, "by [0]"); //Sets the level's author
+            go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorCommunityLevelsAuthor", items[i].Author, "by [0]"); //Sets the level's author
             go.gameObject.SetActive(true);
         }
     }
@@ -171,14 +171,14 @@ public class EditorPublishedLevels : MonoBehaviour
     {
         Transform infos = transform.GetChild(2);
         infos.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text = items[selected].Name;
-        infos.GetChild(0).GetChild(1).GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "CHANGETHISLATER", items[selected].Author, "by [0]");
+        infos.GetChild(0).GetChild(1).GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorCommunityLevelsAuthor", items[selected].Author, "by [0]");
         infos.GetChild(1).GetChild(1).GetComponent<ScrollRect>().content.GetChild(0).GetComponent<Text>().text = items[selected].Description;
         if (!string.IsNullOrEmpty(items[selected].Music))
         {
             string[] music = items[selected].Music.Split(new string[] { " - " }, System.StringSplitOptions.None);
             if (music.Length == 2)
             {
-                infos.GetChild(3).GetChild(1).GetComponent<Text>().text = music[1] + "\n<color=grey>by " + music[0] + "</color>";
+                infos.GetChild(3).GetChild(1).GetComponent<Text>().text = music[1] + "\n" + LangueAPI.StringWithArgument("native", "EditorCommunityLevelsAuthor", music[0], "<color=grey>by [0]</color>");
                 infos.GetChild(3).GetChild(2).gameObject.SetActive(!File.Exists(Application.persistentDataPath + "/Musics/" + items[selected].Music));
                 infos.GetChild(3).gameObject.SetActive(true);
             }
