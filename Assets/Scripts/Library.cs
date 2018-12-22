@@ -141,7 +141,23 @@ namespace Tools
             if (str != null)
             {
                 str = str.Replace("\\n", "\n");
+                str = str.Replace("\\r", "\r");
                 str = str.Replace("\\t", "\t");
+            }
+            return str;
+        }
+
+        /// <summary>
+        /// Unformat a string
+        /// </summary>
+        /// <param name="str">The string to unformat</param>
+        public static string Unformat(this string str)
+        {
+            if (str != null)
+            {
+                str = str.Replace("\n", "\\n");
+                str = str.Replace("\r", "\\r");
+                str = str.Replace("\t", "\\t");
             }
             return str;
         }
@@ -151,7 +167,6 @@ namespace Tools
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="str"></param>
-        /// <returns></returns>
         public static T ParseTo<T>(this string str) { return (T)System.Convert.ChangeType(str, typeof(T)); }
     }
 
