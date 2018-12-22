@@ -34,6 +34,12 @@ public class Base : MonoBehaviour {
 #endif
     }
 
+    public void CharacterCounter(Text display)
+    {
+        InputField IF = GetComponent<InputField>();
+        display.text = IF.text.Length + " / " + IF.characterLimit;
+    }
+
     public void OpenFolder(string path) { OpenFolderStatic(path); }
     public static void OpenFolderStatic(string path)
     {

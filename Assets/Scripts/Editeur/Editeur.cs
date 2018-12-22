@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Editeur : MonoBehaviour
 {
-
-    public GameObject Selection;
+    public LoadingScreenControl LSC;
+    public Transform LoadingLevel;
+    public Soundboard SoundBoard;
+    public string FromScene = "Home";
 
     public string file;
     public string[] component;
 
-    public bool AddBlocking;
-    public float newblockid;
+    bool AddBlocking;
+    float newblockid;
     public GameObject Prefab;
 
     public bool SelectBlocking;
@@ -28,7 +31,7 @@ public class Editeur : MonoBehaviour
     Camera cam;
     public int ZoomSensitive = 20;
 
-    public bool SelectMode = false;
+    bool SelectMode = false;
     public bool bloqueSelect = false;
 
     public GameObject BulleDeveloppementCat;
@@ -49,18 +52,14 @@ public class Editeur : MonoBehaviour
 #endif
 
     #region UI
-    public void CreateFile(string fileName, string directory, string desc)
-    {
-        string txt = directory + fileName + ".level";
-        if (!Directory.Exists(directory))
-            Directory.CreateDirectory(directory);
-        
-        file = txt;
-        Selection.SetActive(false);
+    public void CreateFile(string path, string desc)
+    {        
+        file = path;
         gameObject.SetActive(true);
 
         System.DateTime createTime = System.DateTime.UtcNow;
-        component = new string[] { "description = " + desc,
+        component = new string[] {
+            "description = " + desc,
             "background = 1; 4b4b4b255",
             "music = ",
             "version = " + Application.version,
@@ -68,7 +67,8 @@ public class Editeur : MonoBehaviour
             "respawnMode = 0",
             " ",
             "Blocks {",
-            "}"};
+            "}"
+        };
         File.WriteAllLines(file, component);
         File.SetCreationTimeUtc(file, createTime);
         EditFile(file);
@@ -77,20 +77,18 @@ public class Editeur : MonoBehaviour
     public void EditFile(string txt)
     {
         gameObject.SetActive(true);
-        Selection.SetActive(true);
         StartCoroutine(editFile(txt));
     }
     IEnumerator editFile(string txt)
     {
         if (!File.Exists(txt))
         {
-            Selection.SetActive(true);
-            Selection.transform.GetChild(0).gameObject.SetActive(true);
-            Selection.GetComponent<EditorSelect>().LvlLoadingActivation(false);
+            string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
+            LSC.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
         }
         else
         {
-            Selection.GetComponent<EditorSelect>().LvlLoadingActivation(true);
+            LvlLoadingActivation(true);
             int actualValue = 0;
             int maxValue = 5;
 
@@ -99,20 +97,18 @@ public class Editeur : MonoBehaviour
 
             if (component.Length == 0)
             {
-                file = "";
-                Selection.SetActive(true);
-                Selection.transform.GetChild(0).gameObject.SetActive(true);
-                Selection.GetComponent<EditorSelect>().LvlLoadingActivation(false);
+                string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
+                LSC.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
             }
             else
             {
                 actualValue++;
-                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingVersionCheck", "Checking the level version"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingVersionCheck", "Checking the level version"));
                 yield return new WaitForEndOfFrame();
                 UpdateLevel(component);
 
                 actualValue++;
-                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBlocks", "Placing Blocks"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBlocks", "Placing Blocks"));
                 yield return new WaitForEndOfFrame();
 
                 int d = -1;
@@ -140,7 +136,7 @@ public class Editeur : MonoBehaviour
                 {
                     if (each > 0 & (int)((i - d) / each) == (i - d) / each)
                     {
-                        Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.StringWithArgument("native", "editorExploreLoadingBlocksStatus", new string[] { (i - d).ToString(), (end - d).ToString() }, "Placing Blocks : [0]/[1]"));
+                        LvlLoadingStatus(actualValue, maxValue, LangueAPI.StringWithArgument("native", "editorExploreLoadingBlocksStatus", new string[] { (i - d).ToString(), (end - d).ToString() }, "Placing Blocks : [0]/[1]"));
                         yield return new WaitForEndOfFrame();
                     }
                     Instance(i);
@@ -150,17 +146,17 @@ public class Editeur : MonoBehaviour
 
 
                 actualValue++;
-                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBackgrounds", "Caching Backgrounds"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBackgrounds", "Caching Backgrounds"));
                 transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this); //Caching Backgrounds
 
                 actualValue++;
-                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingMusics", "Refreshing the list of music"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingMusics", "Refreshing the list of music"));
                 yield return new WaitForEndOfFrame();
-                Selection.GetComponent<EditorSelect>().SoundBoard.RefreshList(); //Refresh musics list
+                SoundBoard.RefreshList(); //Refresh musics list
 
 
                 actualValue++;
-                Selection.GetComponent<EditorSelect>().LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingOpen", "Opening Level"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingOpen", "Opening Level"));
                 OpenCat(-1);
 
                 Grille(false, true);
@@ -171,58 +167,67 @@ public class Editeur : MonoBehaviour
                 Discord.Presence(LangueAPI.String("native", "discordEditor_title"), LangueAPI.StringWithArgument("native", "discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
                 cam.GetComponent<BaseControl>().returnScene = false;
 
-                Selection.SetActive(false);
-                Selection.GetComponent<EditorSelect>().LvlLoadingActivation(false);
+                LvlLoadingActivation(false);
+                History.LvlPlayed(file, "E");
             }
         }
     }
 
+    /// <summary>
+    /// Change Loading Status,
+    /// return true when finished
+    /// </summary>
+    /// <param name="actualValue">Actual value</param>
+    /// <param name="maxValue">Max value</param>
+    /// <param name="text">Status Message</param>
+    public bool LvlLoadingStatus(float actualValue, float maxValue, string text)
+    {
+        LoadingLevel.GetChild(1).GetComponent<Text>().text = text;
+        LoadingLevel.GetChild(2).GetComponent<Scrollbar>().size = actualValue / maxValue;
+        return true;
+    }
+    public void LvlLoadingActivation(bool activate)
+    {
+        UnityThread.executeInUpdate(() => LoadingLevel.gameObject.SetActive(activate));
+        LoadingLevel.GetChild(1).GetComponent<Text>().text = "Initialisation";
+        LoadingLevel.GetChild(2).GetComponent<Scrollbar>().size = 0;
+    }
+
     public void ExitEdit()
     {
-        if (GameObject.Find("Audio") != null)
-        {
-            GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
-        }
-        Selection.SetActive(true);
-        Selection.transform.GetChild(0).gameObject.SetActive(true);
-        Selection.GetComponent<EditorSelect>().NewStart();
-        Destroy(transform.GetChild(1).gameObject);
-        GameObject Object = new GameObject("Objects");
-        Object.transform.SetParent(transform, false);
-        SelectedZone = Instantiate(SelectedZonePref, Object.transform);
-        SelectedZone.name = "Selected Block";
-        SelectedZone.SetActive(false);
-        new GameObject("Grid").transform.SetParent(Object.transform);
-        SelectedBlock = new int[0];
-        SelectMode = false;
-        component = new string[0];
-        transform.GetChild(0).GetChild(2).GetChild(1).GetComponent<CreatorManager>().array = 3;
-        newblockid = -1;
-        gameObject.SetActive(false);
-        Discord.Presence(LangueAPI.String("native", "discordEditor_title"), "", new DiscordClasses.Img("default"));
-        cam.GetComponent<BaseControl>().returnScene = true;
+        if (GameObject.Find("Audio") != null) GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
+        string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
+        LSC.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
     }
     #endregion
 
     private void Start()
     {
         Discord.Presence(LangueAPI.String("native", "discordEditor_title"), "", new DiscordClasses.Img("default"));
-        cam = Selection.GetComponent<EditorSelect>().Cam.GetComponent<Camera>();
+        cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        cam.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, -10);
+        cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;
+
         zoomIndicator.gameObject.SetActive(false);
         BulleDeveloppementCat.SetActive(false);
 
-        if (File.Exists(Application.temporaryCachePath + "/play.txt"))
+        string[] args = cam.GetComponent<BaseControl>().LSC.GetArgs();
+        if (args != null)
         {
-            if (File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 0)
+            if (args.Length > 2)
             {
-                file = File.ReadAllLines(Application.temporaryCachePath + "/play.txt")[0];
-                File.WriteAllText(Application.temporaryCachePath + "/play.txt", "");
-                EditFile(file);
-                Selection.GetComponent<EditorSelect>().SoundBoard.RefreshList();
+                FromScene = args[0];
+                if (args[1] == "Edit")
+                {
+                    file = args[2];
+                    EditFile(file);
+                }
+                else if (args[1] == "Create" & args.Length > 3)
+                    CreateFile(args[2], args[3]);
             }
-            else Selection.SetActive(true);
+            else LSC.LoadScreen(FromScene);
         }
-        else Selection.SetActive(true);
+        else LSC.LoadScreen(FromScene);
     }
 
     void Update()
@@ -1053,8 +1058,9 @@ public class Editeur : MonoBehaviour
 
     public void PlayLevel()
     {
-        File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, "Editor" });
-        GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
+        string[] args = new string[] { "Editor", "File", file };
+        string[] passThrough = new string[] { FromScene, "Edit", file };
+        GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player", args.Concat(passThrough).ToArray());
     }
 
     public void SelectModeChang(bool enable) { SelectMode = enable; }
@@ -1091,8 +1097,8 @@ public class Editeur : MonoBehaviour
                 x = newFileLines.Length;
             }
         }
-        string version = "0.2";
-        if (v != -1) version = newFileLines[v].Replace("version = ", "");
+        Versioning version = new Versioning(0.2F);
+        if (v != -1) version = new Versioning(newFileLines[v].Replace("version = ", ""));
         else
         {
             newFileLines = new string[] { "version = 0.2" };
@@ -1101,7 +1107,7 @@ public class Editeur : MonoBehaviour
         }
 
         //Upgrade to 0.2.1
-        if (version == "0.2")
+        if (version.CompareTo(new Versioning("0.2"), Versioning.SortConditions.OldestOrEqual))
         {
             int d = -1;
             for (int x = 0; x < newFileLines.Length; x++)
@@ -1120,8 +1126,12 @@ public class Editeur : MonoBehaviour
                     else
                     {
                         string[] parm = newFileLines[i].Split(new string[] { "; " }, System.StringSplitOptions.None);
-                        if (float.Parse(parm[0]) >= 1) newFileLines[i] = parm[0] + "; " + parm[1] + "; {Rotate:" + parm[2] + "; Color:" + parm[3] + "; Behavior:" + parm[4] + "}";
-                        else newFileLines[i] = parm[0] + "; " + parm[1] + "; {}";
+                        try
+                        {
+                            if (float.Parse(parm[0]) >= 1) newFileLines[i] = parm[0] + "; " + parm[1] + "; {Rotate:" + parm[2] + "; Color:" + parm[3] + "; Behavior:" + parm[4] + "}";
+                            else newFileLines[i] = parm[0] + "; " + parm[1] + "; {}";
+                        }
+                        catch { }
                     }
                 }
             }

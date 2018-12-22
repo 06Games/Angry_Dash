@@ -5,12 +5,13 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Recent : MonoBehaviour
+public class History : MonoBehaviour
 {
 
     public static string HistoryFile { get { return Application.persistentDataPath + "/history.txt"; } }
 
-    public Editeur editeur;
+    public LoadingScreenControl LSC;
+    public EditorPublishedLevels PublishedLevels;
 
     void Start() { Refresh(); }
     public void Refresh()
@@ -68,28 +69,17 @@ public class Recent : MonoBehaviour
         string action = a[0];
         string file = c[0];
 
-        if (action == "P" | file.Contains(Application.persistentDataPath + "/Level/Solo/"))
-        {
-            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, "Editor/History" });
-            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
-        }
+        if (action == "P" | file.Contains(Application.persistentDataPath + "/Levels/Official Levels/"))
+            LSC.LoadScreen("Player", new string[] { "Home/Play/History", "File", file });
         else if (action == "E")
-        {
-            if (GameObject.Find("Audio") != null)
-                GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
-            editeur.EditFile(file);
-            LvlPlayed(file, "E");
-
-            transform.parent.GetChild(0).gameObject.SetActive(true);
-            gameObject.SetActive(false);
-        }
+            LSC.LoadScreen("Editor", new string[] { "Home/Play/History", "Edit", file });
         else if (action == "O")
         {
-            Transform OnlinePanel = transform.parent.GetChild(3);
-            OnlinePanel.gameObject.SetActive(true);
-            OnlinePanel.GetComponent<EditorOnline>().Search(file);
-            OnlinePanel.GetComponent<EditorOnline>().OpenLevelMenu(0);
-            gameObject.SetActive(false);
+            PublishedLevels.transform.parent.parent.gameObject.SetActive(true);
+            PublishedLevels.transform.parent.GetComponent<CreatorManager>().Array(1);
+            PublishedLevels.Filter(file);
+            PublishedLevels.Select(0);
+            transform.parent.parent.gameObject.SetActive(false);
         }
         else if (action == "S")
             GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Online", new string[] { "Connect", file });

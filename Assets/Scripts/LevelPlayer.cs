@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,7 @@ public class LevelPlayer : MonoBehaviour
 {
     string file;
     string FromScene;
+    public string[] passThroughArgs;
     public string[] component;
     Camera cam;
 
@@ -40,84 +42,51 @@ public class LevelPlayer : MonoBehaviour
         cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;
 
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
-            FromFile();
+        {
+            string[] args = GetComponent<BaseControl>().LSC.GetArgs();
+            if (args != null)
+            {
+                if (args.Length > 2)
+                {
+                    passThroughArgs = args.RemoveAt(0, 2);
+                    if (args[1] == "File") FromFile(args[2], args[0]);
+                    else if (args[1] == "Data")
+                    {
+                        FromScene = args[0]; //Define the scene that will be open at the level player's exit
+                        PlayLevel(LevelItem.Parse(args[2]));
+                    }
+                    else FromFile();
+                }
+                else FromFile();
+            }
+            else FromFile();
+        }
     }
     void FromFile(string _file = null, string _fromScene = null)
     {
-        if (File.Exists(Application.temporaryCachePath + "/play.txt") & string.IsNullOrEmpty(_file))
-        {
-            if (File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 1)
-            {
-                file = File.ReadAllLines(Application.temporaryCachePath + "/play.txt")[0];
-
-                if (File.ReadAllLines(Application.temporaryCachePath + "/play.txt").Length > 1)
-                    FromScene = File.ReadAllLines(Application.temporaryCachePath + "/play.txt")[1];
-
-                File.WriteAllText(Application.temporaryCachePath + "/play.txt", "");
-
-                string scene = FromScene;
-                if (FromScene == "")
-                    scene = "Home";
-                if (file == "")
-                    GetComponent<BaseControl>().LSC.LoadScreen(scene);
-
-                component = File.ReadAllLines(file);
-
-                if (file.Contains(Application.temporaryCachePath))
-                    File.Delete(file);
-
-                string[] fileDir = file.Split(new string[1] { "/" }, System.StringSplitOptions.None);
-                Base.GetChild(3).GetChild(0).GetComponent<Text>().text = fileDir[fileDir.Length - 1].Replace(".level", "");
-                Parse();
-                Discord.Presence(LangueAPI.String("native", "discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("native", "discordPlaying_caption", fileDir[fileDir.Length - 1].Replace(".level", ""))), null, -1, 0);
-
-                if (FromScene == "Home") Recent.LvlPlayed(file, "P");
-            }
-            else
-            {
-                File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/4.level", "Home" });
-                FromFile();
-            }
-        }
-        else if (!string.IsNullOrEmpty(_file))
+        if (!string.IsNullOrEmpty(_file))
         {
             file = _file;
-            FromScene = _fromScene;
-            string scene = FromScene;
-            if (FromScene == "")
-                scene = "Home";
-            if (file == "")
-                GetComponent<BaseControl>().LSC.LoadScreen(scene);
+            if (string.IsNullOrEmpty(_fromScene)) FromScene = "Home";
+            else FromScene = _fromScene;
 
-            component = File.ReadAllLines(file);
-
-            if (file.Contains(Application.temporaryCachePath))
-                File.Delete(file);
-
-            string[] fileDir = file.Split(new string[1] { "/" }, System.StringSplitOptions.None);
-            Base.GetChild(3).GetChild(0).GetComponent<Text>().text = fileDir[fileDir.Length - 1].Replace(".level", "");
-            Parse();
-            Discord.Presence(LangueAPI.String("native", "discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("native", "discordPlaying_caption", fileDir[fileDir.Length - 1].Replace(".level", ""))), null, -1, 0);
+            LevelItem item = new LevelItem(Path.GetFileNameWithoutExtension(file));
+            item.Data = File.ReadAllLines(file);
+            PlayLevel(item);
         }
-        else
-        {
-            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/4.level", "Home" });
-            FromFile();
-        }
+        else FromFile(Application.persistentDataPath + "/Levels/Official Levels/4.level", "Home");
     }
 
-    public void MapData(string[] c)
+    public void PlayLevel(LevelItem item)
     {
-        component = c;
-        Base.GetChild(3).GetChild(0).GetComponent<Text>().text = "Multiplayer";
-        Parse();
+        component = Editeur.UpdateLevel(item.Data);
+        Base.GetChild(3).GetChild(0).GetComponent<Text>().text = item.Name; //Sets the level name
+        Parse(); //Spawn blocks
+        Discord.Presence(LangueAPI.String("native", "discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("native", "discordPlaying_caption", item.Name)), null, -1, 0); //Sets the Discord Infos
     }
 
     void Parse()
     {
-        component = Editeur.UpdateLevel(component);
-
-
         int a = -1;
         for (int x = 0; x < component.Length; x++)
         {
@@ -152,7 +121,7 @@ public class LevelPlayer : MonoBehaviour
         {
             for (int i = component.Length - 1; i >= d; i--)
             {
-                if (component[i] == "}" & end == -1)
+                if (component[i].Replace("\r", "") == "}" & end == -1)
                 {
                     end = i;
                     i = component.Length;
@@ -335,7 +304,7 @@ public class LevelPlayer : MonoBehaviour
     }
     public string GetBlocStatus(string StatusID, int Bloc)
     {
-        if (file != "" & component.Length > Bloc)
+        if (component.Length > 0 & component.Length > Bloc)
         {
             try
             {
@@ -375,18 +344,23 @@ public class LevelPlayer : MonoBehaviour
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
         {
             string scene = FromScene;
+            string[] args = null;
             if (FromScene == "")
                 scene = "Home";
-            else if (FromScene == "Editor/Online" | FromScene == "Editor/History")
-                scene = "Editor";
-
-            if (scene == "Editor" & FromScene == "Editor")
+            else if(FromScene.Contains("/"))
             {
-                File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { file, "" });
+                string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
+                scene = FromSceneDetails[0];
+                args = FromSceneDetails.RemoveAt(0);
+                GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
+            }
+            else if (FromScene == "Editor")
+            {
+                scene = FromScene;
+                args = passThroughArgs;
                 GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
             }
-            else GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
-            GetComponent<BaseControl>().LSC.LoadScreen(scene);
+            GetComponent<BaseControl>().LSC.LoadScreen(scene, args);
         }
         else
         {

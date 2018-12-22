@@ -77,7 +77,7 @@ public class _NetworkManager : NetworkBehaviour
         mapRequested = false;
 
         Discord.Presence(LangueAPI.String("native", "discordServer_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("native", "discordServer_caption", new string[] { adress, port.ToString() })), null, -1, 0);
-        Recent.LvlPlayed(adress + ":" + port, "S", "");
+        History.LvlPlayed(adress + ":" + port, "S", "");
     }
 
     void Error(NetworkMessage netMsg)
@@ -167,7 +167,7 @@ public class _NetworkManager : NetworkBehaviour
 
         MyMsgBase msg = netMsg.ReadMessage<MyMsgBase>();
         string[] map = msg.map.Split(new string[1] { "\n" }, System.StringSplitOptions.None);
-        GameObject.Find("Main Camera").GetComponent<LevelPlayer>().MapData(map);
+        GameObject.Find("Main Camera").GetComponent<LevelPlayer>().PlayLevel(new LevelItem("Multiplayer", "", map));
         Selection.SetActive(false);
     }
 }

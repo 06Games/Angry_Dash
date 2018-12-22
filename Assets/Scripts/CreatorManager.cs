@@ -12,11 +12,14 @@ public class CreatorManager : MonoBehaviour
     {
         for (int i = 0; i < GO.Length; i++)
         {
-            GO[i].SetActive(i == array);
-            if (Buttons != null)
+            if (GO[i] != null)
             {
-                if (Buttons.Length > i)
-                    Buttons[i].interactable = !(i == array);
+                GO[i].SetActive(i == array);
+                if (Buttons != null)
+                {
+                    if (Buttons.Length > i)
+                        Buttons[i].interactable = !(i == array);
+                }
             }
         }
     }

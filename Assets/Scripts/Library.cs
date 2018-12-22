@@ -112,6 +112,47 @@ namespace FileFormat
     }
 }
 
+public class Versioning
+{
+    public static Versioning Actual { get { return new Versioning(Application.version); } }
+    public enum Sort { Latest, Equal, Oldest, Error }
+    public enum SortConditions { Latest, LatestOrEqual, Equal, OldestOrEqual, Oldest }
+
+    string[] version;
+    public Versioning(float _version) { version = _version.ToString().Split(new string[] { "." }, System.StringSplitOptions.None); }
+    public Versioning(string _version) { version = _version.Split(new string[] { "." }, System.StringSplitOptions.None); }
+
+    public override string ToString() { return string.Join(".", version); }
+    public bool CompareTo(Versioning compared, SortConditions conditions)
+    {
+        Sort sort = CompareTo(compared);
+        bool lastest = conditions == SortConditions.Latest || conditions == SortConditions.LatestOrEqual;
+        bool equal = conditions == SortConditions.LatestOrEqual || conditions == SortConditions.Equal || conditions == SortConditions.OldestOrEqual;
+        bool oldest = conditions == SortConditions.OldestOrEqual || conditions == SortConditions.Oldest;
+
+        if (lastest & sort == Sort.Latest) return true;
+        else if (equal & sort == Sort.Equal) return true;
+        else if (oldest & sort == Sort.Oldest) return true;
+        else return false;
+    }
+    public Sort CompareTo(Versioning compared)
+    {
+        for (int i = 0; (i < version.Length | i < compared.version.Length); i++)
+        {
+            float versionNumber = 0;
+            if (version.Length > i) versionNumber = float.Parse(version[i]);
+            float comparedVersion = 0;
+            if (compared.version.Length > i) comparedVersion = float.Parse(compared.version[i]);
+
+            if (versionNumber > comparedVersion) return Sort.Latest;
+            if (versionNumber == comparedVersion & (i >= version.Length - 1 & i >= compared.version.Length - 1)) return Sort.Equal;
+            if (versionNumber < comparedVersion) return Sort.Oldest;
+        }
+        Debug.LogError("Can't compare versions !");
+        return Sort.Error;
+    }
+}
+
 namespace Display
 {
     public static class Screen
@@ -170,6 +211,40 @@ namespace Tools
         public static T ParseTo<T>(this string str) { return (T)System.Convert.ChangeType(str, typeof(T)); }
     }
 
+    public static class ArrayExtensions
+    {
+        public static T[] RemoveAt<T>(this T[] source, int index)
+        {
+            T[] dest = new T[source.Length - 1];
+            if (index > 0)
+                System.Array.Copy(source, 0, dest, 0, index);
+
+            if (index < source.Length - 1)
+                System.Array.Copy(source, index + 1, dest, index, source.Length - index - 1);
+
+            return dest;
+        }
+        public static T[] RemoveAt<T>(this T[] source, int from, int to)
+        {
+            T[] dest = new T[source.Length - (to - from) - 1];
+            if (from > 0)
+                System.Array.Copy(source, 0, dest, 0, from);
+
+            if (to < source.Length - 1)
+                System.Array.Copy(source, to + 1, dest, from, source.Length - to - 1);
+
+            return dest;
+        }
+    }
+
+    public delegate void BetterEventHandler(object sender, BetterEventArgs e);
+    public class BetterEventArgs : System.EventArgs
+    {
+        public object UserState { get; }
+        public BetterEventArgs() { }
+        public BetterEventArgs(object userToken) { UserState = userToken; }
+    }
+
     public static class DateExtensions
     {
         /// <summary>
@@ -181,6 +256,28 @@ namespace Tools
         {
             string a = "dd'/'MM'/'yyyy";
             return DT.ToString(a);
+        }
+    }
+
+    public static class ScrollRectExtensions
+    {
+        /// <summary>
+        /// Scroll to a child of the content
+        /// </summary>
+        /// <param name="scroll">The ScrollRect</param>
+        /// <param name="target">The child to scroll to</param>
+        /// <param name="myMonoBehaviour">Any MonoBehaviour script</param>
+        public static void SnapTo(this UnityEngine.UI.ScrollRect scroll, Transform target, MonoBehaviour myMonoBehaviour) { myMonoBehaviour.StartCoroutine(Snap(scroll, target)); }
+        static System.Collections.IEnumerator Snap(UnityEngine.UI.ScrollRect scroll, Transform target)
+        {
+            float Frames = 30;
+            float normalizePosition = 1 - (target.GetSiblingIndex() - 1F) / (scroll.content.childCount - 2F);
+            float actualNormalizePosition = scroll.verticalNormalizedPosition;
+            for (int i = 0; i < Frames; i++)
+            {
+                scroll.verticalNormalizedPosition = scroll.verticalNormalizedPosition + ((normalizePosition - actualNormalizePosition) / Frames);
+                yield return new WaitForEndOfFrame();
+            }
         }
     }
 }

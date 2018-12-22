@@ -2,17 +2,20 @@
 using System.IO;
 using System;
 using UnityEngine;
+using Tools;
 
 namespace FFmpeg
 {
     public class handler
     {
         public handler() { }
-        public handler(EventHandler _Exited) { Exited = _Exited; }
-        public handler(EventHandler _Exited, DataReceivedEventHandler _OutputDataReceived) { Exited = _Exited; OutputDataReceived = _OutputDataReceived; }
+        public handler(BetterEventHandler _Exited) { Exited = _Exited; }
+        public handler(BetterEventHandler _Exited, object userToken) { Exited = _Exited; UserToken = userToken; }
+        public handler(BetterEventHandler _Exited, DataReceivedEventHandler _OutputDataReceived) { Exited = _Exited; OutputDataReceived = _OutputDataReceived; }
 
-        public EventHandler Exited = null;
+        public BetterEventHandler Exited = null;
         public DataReceivedEventHandler OutputDataReceived = null;
+        public object UserToken = null;
     }
     public class FFmpegAPI : MonoBehaviour
     {
@@ -33,7 +36,7 @@ namespace FFmpeg
                 RedirectStandardOutput = _handler.OutputDataReceived != null
             };
             process.EnableRaisingEvents = true;
-            if(_handler.Exited != null) process.Exited += _handler.Exited;
+            if (_handler.Exited != null) process.Exited += (sender, args) => _handler.Exited(sender, new BetterEventArgs(_handler.UserToken));
             if (_handler.OutputDataReceived != null) process.OutputDataReceived += _handler.OutputDataReceived;
             process.OutputDataReceived += (s, e) => Console.Out.WriteLine(e.Data);
 

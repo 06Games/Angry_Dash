@@ -1,22 +1,36 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 public class ArgsMenuManager : MonoBehaviour {
 
     public LoadingScreenControl LS;
-    public CreatorManager CM;
+    public CreatorManager[] CM;
 
-	void Start () {
+	void Start ()
+    {
+        if (CM.Length < transform.childCount) CM = CM.Concat(new CreatorManager[transform.childCount - CM.Length]).ToArray();
+
         string[] args = LS.GetArgs();
         if(args == null) return;
         else if (args.Length < 2) return;
 
-        if(args[0] == name)
+        for (int p = 0; p < transform.childCount; p++)
         {
-            transform.GetChild(0).gameObject.SetActive(true);
-            for (int i = 0; i < CM.GO.Length; i++)
+            if (CM[p] == null) CM[p] = transform.GetChild(p).gameObject.GetComponentInChildren<CreatorManager>();
+
+            if (CM[p] != null)
             {
-                if (CM.GO[i].name == args[1])
-                    CM.array = i;
+                if (args[0] == transform.GetChild(p).name)
+                {
+                    transform.GetChild(p).gameObject.SetActive(true);
+                    for (int i = 0; i < CM[p].GO.Length; i++)
+                    {
+                        if (CM[p].GO[i].name == args[1])
+                            CM[p].array = i;
+                    }
+
+                    p = transform.childCount;
+                }
             }
         }
     }
