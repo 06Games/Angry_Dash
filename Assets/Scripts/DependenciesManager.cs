@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +18,7 @@ public class DependenciesManager : MonoBehaviour
     public Social _Social;
 
     void Start() { DownloadDefaultsRP(); }
-    
+
     public void DownloadDefaultsRP()
     {
         DownloadPanel = transform.GetChild(1).gameObject;
@@ -34,12 +35,12 @@ public class DependenciesManager : MonoBehaviour
 
             DownloadPanel.SetActive(true);
             slider.transform.GetChild(4).gameObject.SetActive(false);
-            
+
             downloadFile(0, lines, URL, Application.persistentDataPath + "/Ressources/");
         }
         else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
     }
-    
+
     string[] downData = new string[4] { "", "", "", "" };
     Stopwatch sw = new Stopwatch();
     public void downloadFile(int actual, string[] lines, string url, string mainPath)
@@ -50,20 +51,20 @@ public class DependenciesManager : MonoBehaviour
 
         UnityThread.executeInUpdate(() =>
         {
-            slider.value = (actual+1)/lines.Length;
+            slider.value = (actual + 1) / lines.Length;
             slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "downloadRPNumber", new string[2] { (actual + 1).ToString(), lines.Length.ToString() }, "File : [0] / [1]");
         });
 
-        if (!Directory.Exists(Application.persistentDataPath + "/temp/")) Directory.CreateDirectory(Application.persistentDataPath + "/temp/");
-        string tempPath = Application.persistentDataPath + "/temp/" + actual + ".zip";
 
         bool down = false;
         if (!CheckVersionCompatibility(version)) down = false;
-        else if (Directory.Exists(Application.persistentDataPath + "/Ressources/default/")) down = false;
-        else if (File.Exists(tempPath))
-            if (new FileInfo(tempPath).Length != size) down = true;
-            else down = false;
-        else down = true;
+        else if (!Directory.Exists(Application.persistentDataPath + "/Ressources/default/")) down = true;
+        else
+        {
+            long dirSize = new DirectoryInfo(Application.persistentDataPath + "/Ressources/default/").GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
+            if (dirSize == size) down = false;
+            else down = true;
+        }
         if (down)
         {
             if (!Directory.Exists(mainPath)) Directory.CreateDirectory(mainPath);
@@ -73,7 +74,7 @@ public class DependenciesManager : MonoBehaviour
                 sw.Start();
                 wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                 wc.DownloadFileCompleted += wc_DownloadFileCompleted;
-                wc.DownloadFileAsync(new Uri(url + name), tempPath);
+                wc.DownloadFileAsync(new Uri(url + name), Application.temporaryCachePath + "/" + actual + ".zip");
             }
         }
         else
@@ -148,7 +149,7 @@ public class DependenciesManager : MonoBehaviour
 
             //Progression plus détaillée
             string[] lines = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None);
-            float baseValue = (int.Parse(downData[0])+1) / lines.Length;
+            float baseValue = (int.Parse(downData[0]) + 1) / lines.Length;
             float oneValue = 1 / (float)lines.Length;
             slider.value = baseValue + ((pourcentage / 100F) * oneValue);
         });
@@ -174,9 +175,6 @@ public class DependenciesManager : MonoBehaviour
         {
             string[] s = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None);
 
-            string[] pathTo = s[int.Parse(downData[0])].Split(new string[] { "<name>" }, StringSplitOptions.None)[1].Split(new string[] { "</name>" }, StringSplitOptions.None)[0].Split(new string[] { "/", "\\" }, StringSplitOptions.None);
-            FileFormat.ZIP.Decompress(Application.persistentDataPath + "/temp/" + downData[0] + ".zip", downData[2] + pathTo[pathTo.Length - 1].Replace(".zip", "") + "/");
-
             bool c = false;
             if (sender == null) c = true;
             else if (sender.ToString() != "pass") c = true;
@@ -191,6 +189,12 @@ public class DependenciesManager : MonoBehaviour
 
             if (c)
             {
+                if (sender != null)
+                {
+                    string[] pathTo = s[int.Parse(downData[0])].Split(new string[] { "<name>" }, StringSplitOptions.None)[1].Split(new string[] { "</name>" }, StringSplitOptions.None)[0].Split(new string[] { "/", "\\" }, StringSplitOptions.None);
+                    FileFormat.ZIP.Decompress(Application.temporaryCachePath + "/" + downData[0] + ".zip", downData[2] + pathTo[pathTo.Length - 1].Replace(".zip", "") + "/");
+                }
+
                 try
                 {
                     if (int.Parse(downData[0]) < s.Length - 2)
