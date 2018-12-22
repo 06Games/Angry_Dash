@@ -23,7 +23,7 @@ public class LoadingScreenControl : MonoBehaviour {
             Text txt = var.AddComponent<Text>();
             if (args.Length > 0) txt.text = args[0];
             for (int v = 1; v < args.Length; v++)
-                txt.text = txt.text + "\n" + args[v];
+                txt.text = txt.text + "\\newParam" + args[v];
         }
         
         loadingScreenObj = transform.GetChild(0).gameObject;
@@ -41,7 +41,7 @@ public class LoadingScreenControl : MonoBehaviour {
     public string[] GetArgs() {
         if (GameObject.Find("Temp_var") == null) return null;
         else {
-            string[] args = GameObject.Find("Temp_var").GetComponent<Text>().text.Split(new string[] { "\n" }, System.StringSplitOptions.None);
+            string[] args = GameObject.Find("Temp_var").GetComponent<Text>().text.Split(new string[] { "\\newParam" }, System.StringSplitOptions.None);
             Destroy(GameObject.Find("Temp_var"));
             return args;
         }
