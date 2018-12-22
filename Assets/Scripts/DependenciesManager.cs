@@ -231,7 +231,7 @@ public class DependenciesManager : MonoBehaviour
             string name = lines[actual].Split(new string[] { "<name>" }, StringSplitOptions.None)[1].Split(new string[] { "</name>" }, StringSplitOptions.None)[0];
             int size = int.Parse(lines[actual].Split(new string[] { "<size>" }, StringSplitOptions.None)[1].Split(new string[] { "B</size>" }, StringSplitOptions.None)[0]);
 
-            string desktopPath = Application.persistentDataPath + "/Level/Solo/" + name;
+            string desktopPath = Application.persistentDataPath + "/Levels/Official Levels/" + name;
 
             bool down = false;
             if (!CheckVersionCompatibility(version)) down = false;
@@ -241,8 +241,8 @@ public class DependenciesManager : MonoBehaviour
             else down = true;
             if (down)
             {
-                if (!Directory.Exists(Application.persistentDataPath + "/Level/Solo/"))
-                    Directory.CreateDirectory(Application.persistentDataPath + "/Level/Solo/");
+                if (!Directory.Exists(Application.persistentDataPath + "/Levels/Official Levels/"))
+                    Directory.CreateDirectory(Application.persistentDataPath + "/Levels/Official Levels/");
 
                 string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/solo/" + name;
                 using (WebClient wc = new WebClient())

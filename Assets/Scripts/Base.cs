@@ -80,11 +80,10 @@ public class Base : MonoBehaviour {
 
     public void PlayNewLevel(string LevelName)
     {
-        if (File.Exists(Application.persistentDataPath + "/Level/Solo/" + LevelName + ".level"))
+        if (File.Exists(Application.persistentDataPath + "/Levels/Official Levels/" + LevelName + ".level"))
         {
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
-            File.WriteAllLines(Application.temporaryCachePath + "/play.txt", new string[2] { Application.persistentDataPath + "/Level/Solo/" + LevelName + ".level", "Home" });
-            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player");
+            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player", new string[]{ "Home/Play/Official Levels", "File", Application.persistentDataPath + "/Levels/Official Levels/" + LevelName + ".level"});
         }
         else GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Start");
     }

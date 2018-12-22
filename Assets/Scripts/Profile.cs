@@ -110,7 +110,7 @@ public class Profile : MonoBehaviour
             int actual = i;
             go.GetChild(1).GetComponent<Button>().onClick.AddListener(() => DeleteWarning(actual));
             go.GetChild(2).GetComponent<Button>().onClick.AddListener(() => Download(actual));
-            go.GetChild(2).GetComponent<Button>().interactable = !File.Exists(Application.persistentDataPath + "/Saved Level/" + lvlNames[i] + ".level");
+            go.GetChild(2).GetComponent<Button>().interactable = !File.Exists(Application.persistentDataPath + "/Levels/Edited Levels/" + lvlNames[i] + ".level");
             go.GetChild(3).GetComponent<Button>().onClick.AddListener(() => Collaborate(actual));
 
             go.name = lvlNames[i];
@@ -142,7 +142,7 @@ public class Profile : MonoBehaviour
         if (lvlNames.Length > levelNumber)
         {
             string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + ConfigAPI.GetString("Account.Username") + "/" + lvlNames[levelNumber] + ".level";
-            string path = Application.persistentDataPath + "/Saved Level/" + lvlNames[levelNumber] + ".level";
+            string path = Application.persistentDataPath + "/Levels/Edited Levels/" + lvlNames[levelNumber] + ".level";
             WebClient client = new WebClient();
             client.Encoding = System.Text.Encoding.UTF8;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
