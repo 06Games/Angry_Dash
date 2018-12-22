@@ -30,7 +30,7 @@ public class LevelPlayer : MonoBehaviour
 
     private void Update()
     {
-        nbLancerTxt.text = LangueAPI.StringWithArgument("native", "playerTurn", new string[1] { nbLancer.ToString() });
+        nbLancerTxt.text = LangueAPI.StringWithArgument("native", "playerTurn", new string[1] { nbLancer.ToString() }, "[0] Turn");
     }
 
     private void Start()
