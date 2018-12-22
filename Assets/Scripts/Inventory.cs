@@ -31,6 +31,7 @@ public class Inventory : MonoBehaviour {
     void Start () {
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Flush();
+        System.IO.File.Delete(Application.persistentDataPath + "/AdvancedPlayerPrefs.txt");
 
         for (int i = 1; i < 3; i++)
         {
