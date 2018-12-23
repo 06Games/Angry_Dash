@@ -89,7 +89,7 @@ namespace FileFormat
         /// <summary>
         /// Decompress a folder
         /// </summary>
-        /// <param name="zipPath">Path where the zip file will be saved</param>
+        /// <param name="zipPath">ZIP file location</param>
         /// <param name="unzipPath">Path where the zip file will be extracted</param>
         public static void Decompress(string zipPath, string unzipPath)
         {
@@ -108,6 +108,95 @@ namespace FileFormat
 #elif UNITY_IPHONE
 		unzip (zipPath, unzipPath);
 #endif
+        }
+    }
+
+    public static class GZIP
+    {
+        /// <summary>
+        /// Compress a zip
+        /// </summary>
+        /// <param name="zipPath">ZIP file location</param>
+        /// <param name="gzipFile">Path where the gzip file will be saved, null if zipPath.gz</param>
+        public static void Compress(string zipFile, string gzipFile = null)
+        {
+            FileInfo fileToBeGZipped = new FileInfo(zipFile);
+            if (gzipFile == null) gzipFile = string.Concat(fileToBeGZipped.FullName, ".gz");
+            FileInfo gzipFileName = new FileInfo(gzipFile);
+
+            using (FileStream fileToBeZippedAsStream = fileToBeGZipped.OpenRead())
+            {
+                using (FileStream gzipTargetAsStream = gzipFileName.Create())
+                {
+                    using (System.IO.Compression.GZipStream gzipStream = new System.IO.Compression.GZipStream(gzipTargetAsStream, System.IO.Compression.CompressionMode.Compress))
+                    {
+                        try
+                        {
+                            fileToBeZippedAsStream.CopyTo(gzipStream);
+                        }
+                        catch (System.Exception ex)
+                        {
+                            Debug.LogError(ex.Message);
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Compress a zip array
+        /// </summary>
+        /// <param name="zip">zip byte array</param>
+        public static byte[] Compress(byte[] zip)
+        {
+            using (var outStream = new MemoryStream())
+            {
+                using (var tinyStream = new System.IO.Compression.GZipStream(outStream, System.IO.Compression.CompressionMode.Compress))
+                using (var mStream = new MemoryStream(zip))
+                    mStream.CopyTo(tinyStream);
+
+                return outStream.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Decompress a gzip
+        /// </summary>
+        /// <param name="gzipFile">GZIP file location</param>
+        /// <param name="zipFile">Path where the zip file will be saved</param>
+        public static void Extract(string gzipFile, string zipFile)
+        {
+            using (FileStream fileToDecompressAsStream = new FileInfo(gzipFile).OpenRead())
+            {
+                using (FileStream decompressedStream = File.Create(zipFile))
+                {
+                    using (System.IO.Compression.GZipStream decompressionStream = new System.IO.Compression.GZipStream(fileToDecompressAsStream, System.IO.Compression.CompressionMode.Decompress))
+                    {
+                        try
+                        {
+                            decompressionStream.CopyTo(decompressedStream);
+                        }
+                        catch (System.Exception ex)
+                        {
+                            Debug.LogError(ex.Message);
+                        }
+                    }
+                }
+            }
+        }
+        /// <summary>
+        /// Decompress a gzip array
+        /// </summary>
+        /// <param name="gzip">gzip byte array</param>
+        public static byte[] Extract(byte[] gzip)
+        {
+            using (var inStream = new MemoryStream(gzip))
+            using (var bigStream = new System.IO.Compression.GZipStream(inStream, System.IO.Compression.CompressionMode.Decompress))
+            using (var bigStreamOut = new MemoryStream())
+            {
+                bigStream.CopyTo(bigStreamOut);
+                return bigStreamOut.ToArray();
+            }
+
         }
     }
 }
@@ -160,7 +249,8 @@ namespace Display
         /// <summary>
         /// Get the main screen resolution as a Vector2
         /// </summary>
-        public static Vector2 Resolution {
+        public static Vector2 Resolution
+        {
             get { return new Vector2(UnityEngine.Screen.width, UnityEngine.Screen.height); }
             set { UnityEngine.Screen.SetResolution((int)value.x, (int)value.y, UnityEngine.Screen.fullScreen); }
         }
