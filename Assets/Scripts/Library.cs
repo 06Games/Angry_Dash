@@ -241,6 +241,57 @@ public class Versioning
         return Sort.Error;
     }
 }
+namespace Editor
+{
+    [System.Serializable]
+    public class LevelItem
+    {
+        public string Name = "";
+        public string Author = "";
+        public string Description = "";
+        public string Music = "";
+        public string[] Data = new string[0];
+        public LevelItem() { }
+        public LevelItem(string name, string author = "", string[] data = null, string description = "", string music = "")
+        {
+            Name = name;
+            Author = author;
+            if (data == null) Data = new string[0];
+            else Data = data;
+            Description = description;
+            Music = music;
+        }
+
+
+        private static readonly System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(LevelItem));
+        public override string ToString()
+        {
+            var settings = new System.Xml.XmlWriterSettings
+            {
+                NewLineHandling = System.Xml.NewLineHandling.Entitize
+            };
+
+            using (var stream = new StringWriter())
+            using (var writer = System.Xml.XmlWriter.Create(stream, settings))
+            {
+                _serializer.Serialize(writer, this);
+
+                return stream.ToString();
+            }
+        }
+        public static LevelItem Parse(string data)
+        {
+            if (string.IsNullOrEmpty(data))
+                return null;
+
+            using (var stream = new StringReader(data))
+            using (var reader = System.Xml.XmlReader.Create(stream))
+            {
+                return (LevelItem)_serializer.Deserialize(reader);
+            }
+        }
+    }
+}
 
 namespace Display
 {

@@ -53,7 +53,7 @@ public class Editeur : MonoBehaviour
 
     #region UI
     public void CreateFile(string path, string desc)
-    {        
+    {
         file = path;
         gameObject.SetActive(true);
 
@@ -774,7 +774,7 @@ public class Editeur : MonoBehaviour
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
 
             Texture2D tex = new Texture2D(1, 1);
-            if(id < 1) tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/GUI/editor/events/" + id.ToString("0.0####") + ".png")));
+            if (id < 1) tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/GUI/editor/events/" + id.ToString("0.0####") + ".png")));
             else tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/" + id.ToString("0.0####") + ".png")));
             SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
 
