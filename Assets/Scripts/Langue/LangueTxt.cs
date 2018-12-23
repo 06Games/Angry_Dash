@@ -7,9 +7,9 @@ public class LangueTxt : MonoBehaviour {
     public string id;
     public bool keepIfNotExist = true;
     public string[] arg = new string[0];
-	void Start () {
+    void Start() {
         string txt = null;
-        if(arg.Length > 0)
+        if (arg.Length > 0)
             txt = LangueAPI.StringWithArgument(category, id, arg);
         else txt = LangueAPI.String(category, id);
 

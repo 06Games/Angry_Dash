@@ -241,7 +241,7 @@ public class Versioning
         return Sort.Error;
     }
 }
-namespace Editor
+namespace Level
 {
     [System.Serializable]
     public class LevelItem
@@ -261,35 +261,29 @@ namespace Editor
             Description = description;
             Music = music;
         }
+        
+        public override string ToString() { return Tools.TExtensions.ToString(this); }
+        public static LevelItem Parse(string data) { return Tools.TExtensions.Parse<LevelItem>(data); }
+    }
 
-
-        private static readonly System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(LevelItem));
-        public override string ToString()
+    [System.Serializable]
+    public class SongItem
+    {
+        public string Name = "";
+        public string Artist = "";
+        public string Licence = "";
+        public string URL = "";
+        public SongItem() { }
+        public SongItem(string name, string artist = "", string licence = "", string url = "")
         {
-            var settings = new System.Xml.XmlWriterSettings
-            {
-                NewLineHandling = System.Xml.NewLineHandling.Entitize
-            };
-
-            using (var stream = new StringWriter())
-            using (var writer = System.Xml.XmlWriter.Create(stream, settings))
-            {
-                _serializer.Serialize(writer, this);
-
-                return stream.ToString();
-            }
+            Name = name;
+            Artist = artist;
+            Licence = licence;
+            URL = url;
         }
-        public static LevelItem Parse(string data)
-        {
-            if (string.IsNullOrEmpty(data))
-                return null;
 
-            using (var stream = new StringReader(data))
-            using (var reader = System.Xml.XmlReader.Create(stream))
-            {
-                return (LevelItem)_serializer.Deserialize(reader);
-            }
-        }
+        public override string ToString() { return Tools.TExtensions.ToString(this); }
+        public static SongItem Parse(string data) { return Tools.TExtensions.Parse<SongItem>(data); }
     }
 }
 
@@ -311,6 +305,38 @@ namespace Display
 /// <summary> All function additions to Unity native classes </summary>
 namespace Tools
 {
+    public static class TExtensions
+    {
+        public static string ToString<T>(T data)
+        {
+            System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            var settings = new System.Xml.XmlWriterSettings
+            {
+                NewLineHandling = System.Xml.NewLineHandling.Entitize
+            };
+
+            using (var stream = new StringWriter())
+            using (var writer = System.Xml.XmlWriter.Create(stream, settings))
+            {
+                _serializer.Serialize(writer, data);
+
+                return stream.ToString();
+            }
+        }
+        public static T Parse<T>(string data)
+        {
+            System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            if (string.IsNullOrEmpty(data))
+                return default(T);
+
+            using (var stream = new StringReader(data))
+            using (var reader = System.Xml.XmlReader.Create(stream))
+            {
+                return (T)_serializer.Deserialize(reader);
+            }
+        }
+    }
+
     public static class StringExtensions
     {
         /// <summary>
