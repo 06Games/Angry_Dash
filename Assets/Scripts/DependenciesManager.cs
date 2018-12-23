@@ -17,7 +17,7 @@ public class DependenciesManager : MonoBehaviour
 
     public Social _Social;
 
-    void Start() { DownloadDefaultsRP(); }
+    void Start() { }
 
     public void DownloadDefaultsRP()
     {
