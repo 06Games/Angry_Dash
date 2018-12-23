@@ -1,5 +1,4 @@
 ﻿using CnControls;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -16,21 +15,19 @@ public class Player : MonoBehaviour
 
     //Joystick
     public GameObject JoyStick; //Le Joystick
-    public int[] Sensibility; //Min et max de l'aléatoire
-    public int Sesibility; //Sesi actuelle (distance du point d'arrivé)
+    public Vector3 Sensibility; //Min et max de l'aléatoire + Sensibilité actuelle (distance en nombre blocs)
     int x; //pos x du joystick
     int y; //pos y du joystick
 
     //Point d'arrivé
-    public Transform Parents; //Zone Unity pour spawn de l'arrivé
-    public Vector2 Ar = new Vector2(); //Pt d'arrivé actuel
+    //public Transform Parents; //Zone Unity pour spawn de l'arrivé
+    Vector2 Ar = new Vector2(); //Pt d'arrivé actuel
 
     //Avancer
     public bool PeutAvancer = false; //Pas de mur
     public Vector2 PositionInitiale; //Dernier point d'arrivé valide
 
     //Paramètres
-    public int move = 0; //Frame actuel du déplacemnt du joueur
     public float vitesse = 1; //Multiplicateur de la vitesse du joueur
     public int respawnMode = 0; //Action à effectuer en cas de mort
 
@@ -41,8 +38,8 @@ public class Player : MonoBehaviour
             LP = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
         if (JoyStick == null)
             JoyStick = GameObject.Find("SensitiveJoystick");
-        if (Parents == null)
-            Parents = GameObject.Find("Base").transform;
+        /*if (Parents == null)
+            Parents = GameObject.Find("Base").transform;*/
 
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online")
         {
@@ -61,9 +58,9 @@ public class Player : MonoBehaviour
         Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
         GetComponent<SpriteRenderer>().sprite = sprite;
         vitesse = 1;
-        
+
         JoyStick.GetComponent<RectTransform>().position = new Vector2(
-            Screen.width/2 - (JoyStick.GetComponent<RectTransform>().rect.width * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2, 
+            Screen.width / 2 - (JoyStick.GetComponent<RectTransform>().rect.width * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2,
             Display.Screen.Resolution.y * 0.2F - (JoyStick.GetComponent<RectTransform>().rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
 
         PositionInitiale = transform.position;
@@ -71,9 +68,9 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        Sesibility = UnityEngine.Random.Range(Sensibility[0], Sensibility[1]);
-        int xa = (int)(CnInputManager.GetAxis("Horizontal") * Sesibility); //x actuel
-        int ya = (int)(CnInputManager.GetAxis("Vertical") * Sesibility); //y actuel
+        Sensibility.z = Random.Range(Sensibility.x, Sensibility.y);
+        int xa = (int)(CnInputManager.GetAxis("Horizontal") * 50 * Sensibility.z); //x actuel
+        int ya = (int)(CnInputManager.GetAxis("Vertical") * 50 * Sensibility.z); //y actuel
 
         bool t = false;
         if (x != 0 | y != 0)
@@ -83,14 +80,14 @@ public class Player : MonoBehaviour
             JoyStick.SetActive(true);
         else JoyStick.SetActive(false);
 
-        
-        if (xa == 0 & ya == 0 & t & Ar == new Vector2() & move == 0 & PeutAvancer) //si le joueur a laché le joystick
+
+        if (xa == 0 & ya == 0 & t & Ar == new Vector2() & PeutAvancer) //si le joueur a laché le joystick
         {
             LP.nbLancer = LP.nbLancer + 1;
             Vector3 pos = new Vector3(transform.position.x - x, transform.position.y - y, 0);
             Ar = pos;
 
-            if(respawnMode == 0) PositionInitiale = transform.position;
+            if (respawnMode == 0) PositionInitiale = transform.position;
             StartCoroutine(Navigate());
         }
 
@@ -103,9 +100,9 @@ public class Player : MonoBehaviour
         //Rotation du Player
         float adjacent = Ar.x - transform.position.x;
         float oppose = Ar.y - transform.position.y;
-        float hypothenuse = (float)Math.Sqrt(Math.Pow(adjacent, 2) + Math.Pow(oppose, 2));
+        float hypothenuse = Mathf.Sqrt(Mathf.Pow(adjacent, 2) + Mathf.Pow(oppose, 2));
         float cos = adjacent / hypothenuse;
-        double z = (Math.Acos(cos) * 180) / Mathf.PI;
+        double z = (Mathf.Acos(cos) * 180) / Mathf.PI;
         if (transform.position.y < Ar.y)
             z = z - 90;
         else z = z * -1 - 90;
@@ -113,27 +110,39 @@ public class Player : MonoBehaviour
         rot.eulerAngles = new Vector3(0, 0, (float)z);
         transform.rotation = rot;
 
+        System.TimeSpan MoveTime = System.TimeSpan.FromSeconds(0.75F/vitesse);
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        Vector2 InitialPos = transform.position;
+        float Mouvement = Mathf.Sqrt(Mathf.Pow(Ar.x - InitialPos.x, 2) + Mathf.Pow(Ar.y - InitialPos.y, 2));
 
-        move = 0; //Reset le nb de Frame du Player
-        int FPS = int.Parse(Parents.GetChild(1).GetComponent<Text>().text.Replace(" FPS", "")); //Recup le nombre de FPS
-        while (move < FPS)
+        bool LastFrame = true;
+        long lastTime = 0;
+        stopwatch.Start();
+        while ((stopwatch.Elapsed < MoveTime | LastFrame) & PeutAvancer)
         {
-            if (PeutAvancer)
+            long Time = stopwatch.ElapsedMilliseconds;
+            if (stopwatch.Elapsed >= MoveTime)
             {
-                float v = move + 1;
-                if (move > FPS / 2)
-                    v = FPS - move;
-                v = 5 * (v / (FPS / 6));
-
-                float Mouvement = vitesse * (1 / (FPS / 60F)) * v;
-                transform.Translate(new Vector2(0, Mouvement), Space.Self);
-                move++;
-                yield return new WaitForSeconds(0.00001F);
+                LastFrame = false;
+                Time = (long)MoveTime.TotalMilliseconds;
             }
-            else move = FPS;
+
+            float maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
+            float moveFrame = 0;
+            for (long i = lastTime; i < Time + 1; i++)
+            {
+                long vi = i + 1;
+                if (i > MoveTime.TotalMilliseconds / 2F)
+                    vi = (long)MoveTime.TotalMilliseconds - i;
+                moveFrame = moveFrame + ((Mouvement / ((maxDistance / vi) / maxDistance)) / (long)MoveTime.TotalMilliseconds / (maxDistance / 2F));
+            }
+            lastTime = Time + 1;
+            transform.Translate(new Vector2(0, moveFrame), Space.Self);
+
+            yield return new WaitForEndOfFrame();
         }
-        move = 0;
-        vitesse = 1;
+        stopwatch.Stop();
         Ar = new Vector2();
+        vitesse = 1;
     }
 }

@@ -903,6 +903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66a8717f5c4769742a176929d3e9d364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  passThroughArgs: []
   component: []
   Prefabs:
   - {fileID: 1063887458892150, guid: 32bf6bf4e16da964d87773a275cb9051, type: 2}
@@ -1598,6 +1599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  category: native
   id: levelRewardCoins
   keepIfNotExist: 1
   arg: []
@@ -3332,6 +3334,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  category: native
   id: levelQuit
   keepIfNotExist: 1
   arg: []
@@ -3426,6 +3429,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  category: native
   id: levelFinished
   keepIfNotExist: 1
   arg: []
@@ -3524,6 +3528,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  category: native
   id: levelReward
   keepIfNotExist: 1
   arg: []
@@ -3838,6 +3843,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  category: native
   id: levelPaused
   keepIfNotExist: 1
   arg: []
@@ -4184,6 +4190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  category: native
   id: levelResume
   keepIfNotExist: 1
   arg: []
@@ -4497,12 +4504,12 @@ Prefab:
     - target: {fileID: 114739312834396952, guid: 79265f9128f23e74d89893cb362141a7,
         type: 2}
       propertyPath: Sensibility.Array.data[0]
-      value: 290
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 114739312834396952, guid: 79265f9128f23e74d89893cb362141a7,
         type: 2}
       propertyPath: Sensibility.Array.data[1]
-      value: 300
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 58128718382601564, guid: 79265f9128f23e74d89893cb362141a7,
         type: 2}
@@ -4527,6 +4534,21 @@ Prefab:
         type: 2}
       propertyPath: m_BodyType
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114739312834396952, guid: 79265f9128f23e74d89893cb362141a7,
+        type: 2}
+      propertyPath: sensibility
+      value: 5.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114739312834396952, guid: 79265f9128f23e74d89893cb362141a7,
+        type: 2}
+      propertyPath: Sensibility.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114739312834396952, guid: 79265f9128f23e74d89893cb362141a7,
+        type: 2}
+      propertyPath: Sensibility.y
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 79265f9128f23e74d89893cb362141a7, type: 2}
