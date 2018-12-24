@@ -18,19 +18,16 @@ public class menuMusic : MonoBehaviour
             mixer.SetFloat(parametersNames[i], ConfigAPI.GetInt(parametersConfigNames[i]));
 
         if (!AudioBegin)
+        {
+            try { Tayx.Graphy.GraphyManager.Instance.AudioListener = GetComponent<AudioListener>(); } catch { }
             StartDefault();
+        }
     }
     public void StartDefault()
     {
         LoadMusic(audioClip);
         DontDestroyOnLoad(gameObject);
         AudioBegin = true;
-
-#if !UNITY_ANDROID || UNITY_EDITOR
-        try { Tayx.Graphy.GraphyManager.Instance.AudioListener = GetComponent<AudioListener>(); } catch { }
-#else
-        if (Tayx.Graphy.GraphyManager.Instance != null) Tayx.Graphy.GraphyManager.Instance.gameObject.SetActive(false);
-#endif
     }
     void Update()
     {
