@@ -5,6 +5,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using UnityEngine;
 using Ionic.Zip;
+using System.Linq;
 
 namespace FileFormat
 {
@@ -35,6 +36,102 @@ namespace FileFormat
             public bool ContainsValues { get { if (jToken == null) return false; else return jToken.HasValues; } }
             public T Value<T>(string value) { return jToken.Value<T>(value); }
             public bool ValueExist(string value) { if (jToken == null) return false; else return jToken.Value<string>(value) != null; }
+        }
+    }
+
+
+    public static class XML
+    {
+        public static string ClassToXML<T>(T data)
+        {
+            System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            var settings = new System.Xml.XmlWriterSettings
+            {
+                NewLineHandling = System.Xml.NewLineHandling.Entitize
+            };
+
+            using (var stream = new StringWriter())
+            using (var writer = System.Xml.XmlWriter.Create(stream, settings))
+            {
+                _serializer.Serialize(writer, data);
+
+                return stream.ToString();
+            }
+        }
+        public static T XMLtoClass<T>(string data)
+        {
+            System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            if (string.IsNullOrEmpty(data))
+                return default(T);
+
+            using (var stream = new StringReader(data))
+            using (var reader = System.Xml.XmlReader.Create(stream))
+            {
+                return (T)_serializer.Deserialize(reader);
+            }
+        }
+    }
+
+    namespace INI
+    {
+        public class INI
+        {
+            Nini.Config.IConfigSource source;
+            public INI(string path)
+            {
+                source = new Nini.Config.IniConfigSource(path);
+                source.AutoSave = true;
+            }
+            public Category GetCategory(string token) { if (source == null) return new Category(null); else return new Category(source.Configs[token]); }
+        }
+
+        public class Category
+        {
+            Nini.Config.IConfig config;
+            public Category(Nini.Config.IConfig iConfig) { config = iConfig; }
+
+            
+            public bool ContainsValues { get { if (config == null) return false; else return config.GetValues().Length > 0; } }
+            public void Delete() { if (config != null) config.ConfigSource.Configs.Remove(config); }
+
+            public T Value<T>(string key) { if (config == null) return default(T); else return Tools.StringExtensions.ParseTo<T>(config.Get(key)); }
+            public T Value<T>(string key, string defaultValue) { if (config == null) return default(T); else return Tools.StringExtensions.ParseTo<T>(config.Get(key, defaultValue)); }
+            public bool ValueExist(string key) { if (config == null) return false; else return config.Get(key) != null; }
+            public void SetValue(string key, object value) { if (config != null) config.Set(key, value); }
+            public void RemoveValue(string key) { if (config != null) config.Remove(key); }
+        }
+    }
+
+    public class Binary
+    {
+        string chain = "";
+        public Binary(byte[] data) {
+            string binary = string.Join("", data.Select(byt => System.Convert.ToString(byt, 2).PadLeft(8, '0')));
+            string onlyNumbers = System.Text.RegularExpressions.Regex.Replace(binary, "[0-9]", "");
+            if (string.IsNullOrEmpty(onlyNumbers)) chain = binary;
+            else throw new System.ArgumentException("The specified string is not binary");
+        }
+
+        public override string ToString()
+        {
+            string str = "";
+            for (var i = 0; i < chain.Length; i += 8)
+            {
+                if (i < 8) str = chain.Substring(i, Mathf.Min(8, chain.Length - i));
+                else str = string.Join(" ", str, chain.Substring(i, Mathf.Min(8, chain.Length - i)));
+            }
+            return str;
+        }
+        public string Decode() { return Decode(Encoding.UTF8); }
+        public string Decode(Encoding encoding)
+        {
+            System.Collections.Generic.List<byte> byteList = new System.Collections.Generic.List<byte>();
+
+            for (int i = 0; i < chain.Length; i += 8)
+            {
+                byteList.Add(System.Convert.ToByte(chain.Substring(i, 8), 2));
+            }
+            return encoding.GetString(byteList.ToArray());
         }
     }
 
@@ -262,8 +359,8 @@ namespace Level
             Music = music;
         }
         
-        public override string ToString() { return Tools.TExtensions.ToString(this); }
-        public static LevelItem Parse(string data) { return Tools.TExtensions.Parse<LevelItem>(data); }
+        public override string ToString() { return FileFormat.XML.ClassToXML(this); }
+        public static LevelItem Parse(string data) { return FileFormat.XML.XMLtoClass<LevelItem>(data); }
     }
 
     [System.Serializable]
@@ -282,8 +379,8 @@ namespace Level
             URL = url;
         }
 
-        public override string ToString() { return Tools.TExtensions.ToString(this); }
-        public static SongItem Parse(string data) { return Tools.TExtensions.Parse<SongItem>(data); }
+        public override string ToString() { return FileFormat.XML.ClassToXML(this); }
+        public static SongItem Parse(string data) { return FileFormat.XML.XMLtoClass<SongItem>(data); }
     }
 }
 
@@ -305,38 +402,6 @@ namespace Display
 /// <summary> All function additions to Unity native classes </summary>
 namespace Tools
 {
-    public static class TExtensions
-    {
-        public static string ToString<T>(T data)
-        {
-            System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
-            var settings = new System.Xml.XmlWriterSettings
-            {
-                NewLineHandling = System.Xml.NewLineHandling.Entitize
-            };
-
-            using (var stream = new StringWriter())
-            using (var writer = System.Xml.XmlWriter.Create(stream, settings))
-            {
-                _serializer.Serialize(writer, data);
-
-                return stream.ToString();
-            }
-        }
-        public static T Parse<T>(string data)
-        {
-            System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
-            if (string.IsNullOrEmpty(data))
-                return default(T);
-
-            using (var stream = new StringReader(data))
-            using (var reader = System.Xml.XmlReader.Create(stream))
-            {
-                return (T)_serializer.Deserialize(reader);
-            }
-        }
-    }
-
     public static class StringExtensions
     {
         /// <summary>
@@ -376,6 +441,9 @@ namespace Tools
         /// <typeparam name="T"></typeparam>
         /// <param name="str"></param>
         public static T ParseTo<T>(this string str) { return (T)System.Convert.ChangeType(str, typeof(T)); }
+
+        public static byte[] ToByte(this string str) { return ToByte(str, Encoding.UTF8); }
+        public static byte[] ToByte(this string str, Encoding encoding) { return encoding.GetBytes(str); }
     }
 
     public static class ArrayExtensions
