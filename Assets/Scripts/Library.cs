@@ -33,42 +33,113 @@ namespace FileFormat
             public Category(Newtonsoft.Json.Linq.JToken token) { jToken = token; }
 
             public Category GetCategory(string token) { if (jToken == null) return new Category(null); else return new Category(jToken.SelectToken(token)); }
+            public void Delete() { if (jToken != null) jToken.Remove(); }
             public bool ContainsValues { get { if (jToken == null) return false; else return jToken.HasValues; } }
+
             public T Value<T>(string value) { return jToken.Value<T>(value); }
             public bool ValueExist(string value) { if (jToken == null) return false; else return jToken.Value<string>(value) != null; }
         }
     }
 
-
-    public static class XML
+    namespace XML
     {
-        public static string ClassToXML<T>(T data)
+        public static class Utils
         {
-            System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
-            var settings = new System.Xml.XmlWriterSettings
+            public static string ClassToXML<T>(T data)
             {
-                NewLineHandling = System.Xml.NewLineHandling.Entitize
-            };
+                System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+                var settings = new System.Xml.XmlWriterSettings
+                {
+                    NewLineHandling = System.Xml.NewLineHandling.Entitize
+                };
 
-            using (var stream = new StringWriter())
-            using (var writer = System.Xml.XmlWriter.Create(stream, settings))
+                using (var stream = new StringWriter())
+                using (var writer = System.Xml.XmlWriter.Create(stream, settings))
+                {
+                    _serializer.Serialize(writer, data);
+
+                    return stream.ToString();
+                }
+            }
+            public static T XMLtoClass<T>(string data)
             {
-                _serializer.Serialize(writer, data);
+                System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+                if (string.IsNullOrEmpty(data))
+                    return default(T);
 
-                return stream.ToString();
+                using (var stream = new StringReader(data))
+                using (var reader = System.Xml.XmlReader.Create(stream))
+                {
+                    return (T)_serializer.Deserialize(reader);
+                }
             }
         }
-        public static T XMLtoClass<T>(string data)
-        {
-            System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
-            if (string.IsNullOrEmpty(data))
-                return default(T);
 
-            using (var stream = new StringReader(data))
-            using (var reader = System.Xml.XmlReader.Create(stream))
+        public class XML
+        {
+            System.Xml.XmlDocument xmlDoc;
+            public XML() { xmlDoc = new System.Xml.XmlDocument(); }
+            public XML(string plainText)
             {
-                return (T)_serializer.Deserialize(reader);
+                xmlDoc = new System.Xml.XmlDocument();
+                xmlDoc.LoadXml(plainText);
             }
+            public override string ToString()
+            {
+                using (var stringWriter = new StringWriter())
+                using (var xmlTextWriter = System.Xml.XmlWriter.Create(stringWriter))
+                {
+                    xmlDoc.WriteTo(xmlTextWriter);
+                    xmlTextWriter.Flush();
+                    return stringWriter.GetStringBuilder().ToString();
+                }
+            }
+
+            public RootElement CreateRootElement(string name)
+            {
+                System.Xml.XmlNode xmlNode = xmlDoc.CreateElement(name);
+                xmlDoc.AppendChild(xmlNode);
+                return new RootElement(xmlNode);
+            }
+        }
+
+        public class RootElement
+        {
+            System.Xml.XmlNode node;
+            public RootElement(System.Xml.XmlNode xmlNode) { node = xmlNode; }
+
+            public Item GetItem(string key) { return new Item(node.SelectSingleNode(key)); }
+            public Item CreateItem(string key)
+            {
+                System.Xml.XmlNode xmlNode = node.OwnerDocument.CreateElement(key);
+                node.AppendChild(xmlNode);
+                return new Item(xmlNode);
+            }
+            public void RemoveItem(string key) { node.RemoveChild(node.SelectSingleNode(key)); }
+        }
+
+        public class Item
+        {
+            System.Xml.XmlNode node;
+            public Item(System.Xml.XmlNode xmlNode) { node = xmlNode; }
+
+            public Item CreateItem(string key)
+            {
+                System.Xml.XmlNode xmlNode = node.OwnerDocument.CreateElement(key);
+                node.AppendChild(xmlNode);
+                return new Item(xmlNode);
+            }
+
+            public string Value
+            {
+                get { return node.Value; }
+                set
+                {
+                    System.Xml.XmlNode xmlNode = node.OwnerDocument.CreateTextNode(value);
+                    node.AppendChild(xmlNode);
+                }
+            }
+            public void Remove() { node.ParentNode.RemoveChild(node); }
         }
     }
 
@@ -359,8 +430,8 @@ namespace Level
             Music = music;
         }
         
-        public override string ToString() { return FileFormat.XML.ClassToXML(this); }
-        public static LevelItem Parse(string data) { return FileFormat.XML.XMLtoClass<LevelItem>(data); }
+        public override string ToString() { return FileFormat.XML.Utils.ClassToXML(this); }
+        public static LevelItem Parse(string data) { return FileFormat.XML.Utils.XMLtoClass<LevelItem>(data); }
     }
 
     [System.Serializable]
@@ -379,8 +450,8 @@ namespace Level
             URL = url;
         }
 
-        public override string ToString() { return FileFormat.XML.ClassToXML(this); }
-        public static SongItem Parse(string data) { return FileFormat.XML.XMLtoClass<SongItem>(data); }
+        public override string ToString() { return FileFormat.XML.Utils.ClassToXML(this); }
+        public static SongItem Parse(string data) { return FileFormat.XML.Utils.XMLtoClass<SongItem>(data); }
     }
 }
 
