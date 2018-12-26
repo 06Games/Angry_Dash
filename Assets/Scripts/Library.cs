@@ -79,10 +79,11 @@ namespace FileFormat
         {
             System.Xml.XmlDocument xmlDoc;
             public XML() { xmlDoc = new System.Xml.XmlDocument(); }
+            public XML(System.Xml.XmlDocument xml) { if (xml == null) xmlDoc = new System.Xml.XmlDocument(); else xmlDoc = xml; }
             public XML(string plainText)
             {
                 xmlDoc = new System.Xml.XmlDocument();
-                xmlDoc.LoadXml(plainText);
+                if (!string.IsNullOrEmpty(plainText)) xmlDoc.LoadXml(plainText);
             }
             public override string ToString()
             {
@@ -101,38 +102,37 @@ namespace FileFormat
                 xmlDoc.AppendChild(xmlNode);
                 return new RootElement(xmlNode);
             }
+            public RootElement RootElement
+            {
+                get
+                {
+                    if (xmlDoc.DocumentElement != null) return new RootElement(xmlDoc.DocumentElement);
+                    else throw new System.Exception("There is no Root Element ! Create one with CreateRootElement() function");
+                }
+            }
         }
 
-        public class RootElement
+        public class RootElement : Base_Collection
         {
-            System.Xml.XmlNode node;
             public RootElement(System.Xml.XmlNode xmlNode) { node = xmlNode; }
 
-            public Item GetItem(string key) { return new Item(node.SelectSingleNode(key)); }
-            public Item CreateItem(string key)
-            {
-                System.Xml.XmlNode xmlNode = node.OwnerDocument.CreateElement(key);
-                node.AppendChild(xmlNode);
-                return new Item(xmlNode);
-            }
-            public void RemoveItem(string key) { node.RemoveChild(node.SelectSingleNode(key)); }
+            public XML xmlFile { get { return new XML(node.OwnerDocument); } }
         }
 
-        public class Item
+        public class Item : Base_Collection
         {
-            System.Xml.XmlNode node;
             public Item(System.Xml.XmlNode xmlNode) { node = xmlNode; }
 
-            public Item CreateItem(string key)
+            public string Attribute(string key) { return node.Attributes[key].Value; }
+            public void CreateAttribute(string key, string value)
             {
-                System.Xml.XmlNode xmlNode = node.OwnerDocument.CreateElement(key);
-                node.AppendChild(xmlNode);
-                return new Item(xmlNode);
+                System.Xml.XmlAttribute xmlAttribute = node.OwnerDocument.CreateAttribute(key);
+                node.Attributes.Append(xmlAttribute);
             }
-
+            public void RemoveAttribute(string key) { node.Attributes.Remove(node.Attributes[key]); }
             public string Value
             {
-                get { return node.Value; }
+                get { return node.InnerText; }
                 set
                 {
                     System.Xml.XmlNode xmlNode = node.OwnerDocument.CreateTextNode(value);
@@ -140,6 +140,35 @@ namespace FileFormat
                 }
             }
             public void Remove() { node.ParentNode.RemoveChild(node); }
+        }
+
+        public abstract class Base_Collection
+        {
+            public System.Xml.XmlNode node;
+            public Item GetItem(string key) { return new Item(node.SelectSingleNode(key)); }
+            public Item[] GetItems(string key)
+            {
+                System.Xml.XmlNodeList list = node.SelectNodes(key);
+                Item[] items = new Item[list.Count];
+                for (int i = 0; i < items.Length; i++)
+                    items[i] = new Item(list[i]);
+                return items;
+            }
+            public Item GetItemByAttribute(string key, string attribute, string attributeValue) { return new Item(node.SelectSingleNode(key + "[@" + attribute + " = '" + attributeValue + "']")); }
+            public Item[] GetItemsByAttribute(string key, string attribute, string attributeValue)
+            {
+                System.Xml.XmlNodeList list = node.SelectNodes(key + "[@" + attribute + " = '" + attributeValue + "']");
+                Item[] items = new Item[list.Count];
+                for (int i = 0; i < items.Length; i++)
+                    items[i] = new Item(list[i]);
+                return items;
+            }
+            public Item CreateItem(string key)
+            {
+                System.Xml.XmlNode xmlNode = node.OwnerDocument.CreateElement(key);
+                node.AppendChild(xmlNode);
+                return new Item(xmlNode);
+            }
         }
     }
 
