@@ -1,9 +1,11 @@
 fileFormatVersion: 2
-guid: 89aafd33e61141c0a0852d1825442155
+guid: b9f6a0d499ad4b7b9b3694ff3fccd24a
 labels:
 - gvh
 - gvh_targets-editor
 - gvh_version-1.2.97.0
+timeCreated: 1545856794
+licenseType: Pro
 PluginImporter:
   serializedVersion: 2
   iconMap: {}
