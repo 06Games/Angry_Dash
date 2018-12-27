@@ -52,26 +52,13 @@ public class Player : MonoBehaviour
             else GetComponent<Player>().enabled = false;
         }
 
-
-        //Default value
-        string XML = string.Join("",
-            "<root>",
-                "<OwnedItems>",
-                    "<item name=\"0\" />",
-                "</OwnedItems>",
-                "<SelectedItems>",
-                    "<item category=\"native/PLAYERS/\">0</item>",
-                "</SelectedItems>",
-                "<Money>0</Money>",
-            "</root>");
-        //If the file exist, load it
-        if (System.IO.File.Exists(Inventory.xmlPath)) XML = Security.Encrypting.Decrypt(FileFormat.Binary.Parse(System.IO.File.ReadAllText(Inventory.xmlPath)).Decode(System.Text.Encoding.UTF8), Inventory.encodeKey);
-        FileFormat.XML.RootElement xml = new FileFormat.XML.XML(XML).RootElement;
+        FileFormat.XML.RootElement xml = Inventory.xmlDefault;
         int playerSkin = int.Parse(xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", "native/PLAYERS/").Value);
         if (!Inventory.Owned(xml, playerSkin.ToString()))
         {
             xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", "native/PLAYERS/").Value = "0";
             playerSkin = 0;
+            Inventory.xmlDefault = xml;
         }
         GetComponent<UImage_Reader>().baseID = "native/PLAYERS/" + playerSkin;
         GetComponent<UImage_Reader>().Load();

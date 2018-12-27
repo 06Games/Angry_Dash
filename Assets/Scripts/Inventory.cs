@@ -15,35 +15,69 @@ public class InvItem
 
 public class Inventory : MonoBehaviour
 {
-    /// <summary> URL of the shop </summary>
-    public string serverURL
-    //{ get { return "https://06games.ddns.net/Projects/Games/Angry%20Dash/shop/" + category.Replace("native", "").Replace("/", "").ToLower() + ".xml"; } }
-    { get { return "file:///C:/xampp/htdocs/Projects/Games/Angry%20Dash/shop/" + category.Replace("native", "").Replace("/", "").ToLower() + ".xml"; } }
-
-    public string category;
-    public int selected = 0;
-    public InvItem[] items;
-
+    //General Functions
+    /// <summary> Path to the XML file </summary>
     public static string xmlPath { get { return Application.persistentDataPath + "/data.bin"; } }
-    public static string encodeKey = "CheatingIsBad,ItDoesNotHelpAnyoneAndYouWillNotFeelStrongerButMuchMoreDependentOnCheating.SoWhyTryToUnderstandThisKey?FindAnotherActivity,ThereIsSoMuchBetterToDo!YouAreStillHere?WhatAreYouWaitingFor?DoYouWantToRuinUs?OrDoYouThinkOnlyOfYourselfAndTheRestHasNoImportance?";
-    FileFormat.XML.RootElement xml;
-
-    private void Start()
+    /// <summary> Key used to encode the XML file </summary>
+    public static string encodeKey = "CheatingIsBad,ItDoesNotHelpAnyoneAndYouWillNotFeelStrongerButMuchMoreDependentOnCheating." +
+        "SoWhyTryToUnderstandThisKey?FindAnotherActivity,ThereIsSoMuchBetterToDo!YouAreStillHere?WhatAreYouWaitingFor?" +
+        "DoYouWantToRuinUs?OrDoYouThinkOnlyOfYourselfAndTheRestHasNoImportance?";
+    /// <summary> Get or Set the XML file </summary>
+    public static FileFormat.XML.RootElement xmlDefault
     {
-        //Default value
-        string XML = string.Join("",
+        get
+        {
+            //Default value
+            string XML = string.Join("",
             "<root>",
                 "<OwnedItems>",
                     "<item name=\"0\" />",
                 "</OwnedItems>",
                 "<SelectedItems>",
-                    "<item category=\"" + category + "\">0</item>",
+                    "<item category=\"native/PLAYERS/\">0</item>",
                 "</SelectedItems>",
                 "<Money>0</Money>",
             "</root>");
-        //If the file exist, load it
-        if (System.IO.File.Exists(xmlPath)) XML = Security.Encrypting.Decrypt(Binary.Parse(System.IO.File.ReadAllText(xmlPath)).Decode(System.Text.Encoding.UTF8), encodeKey);
-        xml = new FileFormat.XML.XML(XML).RootElement;
+            //If the file exist, load it
+            if (System.IO.File.Exists(xmlPath))
+            {
+                string decodeBinary = Binary.Parse(System.IO.File.ReadAllText(xmlPath)).Decode(System.Text.Encoding.UTF8);
+                XML = Security.Encrypting.Decrypt(decodeBinary, encodeKey);
+            }
+            return new FileFormat.XML.XML(XML).RootElement;
+        }
+        set
+        {
+            Binary binary = new Binary(Security.Encrypting.Encrypt(value.xmlFile.ToString(), encodeKey).ToByte(System.Text.Encoding.UTF8));
+            System.IO.File.WriteAllText(xmlPath, binary.ToString());
+        }
+    }
+
+    //Script Functions
+
+    /// <summary> URL of the shop </summary>
+    public string serverURL
+    {
+        get
+        {
+            string categoryName = category.Replace("native", "").Replace("/", "").ToLower();
+            //return "https://06games.ddns.net/Projects/Games/Angry%20Dash/shop/" + categoryName + ".xml";
+            return "file:///C:/xampp/htdocs/Projects/Games/Angry%20Dash/shop/" + categoryName + ".xml";
+        }
+    }
+    /// <summary> The category of item managed by this instance of the script </summary>
+    public string category = "native/PLAYERS/";
+    /// <summary> The selected item's index </summary>
+    public int selected = 0;
+    /// <summary> List of all the category's items </summary>
+    public InvItem[] items = new InvItem[0];
+    FileFormat.XML.RootElement xml;
+    
+
+    private void Start()
+    {
+        if (!InternetAPI.IsConnected()) return; //If no connection then stop loading
+        xml = xmlDefault;
         Refresh();
     }
 
@@ -53,9 +87,10 @@ public class Inventory : MonoBehaviour
         WebClient client = new WebClient();
         client.Encoding = System.Text.Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string Result = client.DownloadString(serverURL);
+        string Result = null;
+        try { Result = client.DownloadString(serverURL); } catch { return;  /* If no connection then stop loading */ }
 
-        FileFormat.XML.RootElement root = new FileFormat.XML.XML(Result).RootElement;
+            FileFormat.XML.RootElement root = new FileFormat.XML.XML(Result).RootElement;
         FileFormat.XML.Item ItemsRoot = root.GetItemByAttribute("version", "v", Application.version);
         for (int i = 0; i < items.Length; i++)
         {
@@ -79,7 +114,8 @@ public class Inventory : MonoBehaviour
             Destroy(content.GetChild(i).gameObject);
 
         selected = int.Parse(xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value);
-        if (!Owned(items[selected].name)) {
+        if (!Owned(items[selected].name))
+        {
             xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value = "0";
             selected = 0;
         }
@@ -110,7 +146,7 @@ public class Inventory : MonoBehaviour
             go.gameObject.SetActive(true);
         }
     }
-    
+
     /// <summary> Check if the item is owned </summary>
     /// <param name="name">Item's name</param>
     public bool Owned(string name) { return xml.GetItem("OwnedItems").GetItemByAttribute("item", "name", name) != null; }
@@ -120,18 +156,18 @@ public class Inventory : MonoBehaviour
     public static bool Owned(FileFormat.XML.RootElement xml, string name)
     { return xml.GetItem("OwnedItems").GetItemByAttribute("item", "name", name) != null; }
 
+    /// <summary> Buy the item </summary>
+    /// <param name="index">Item's index</param>
     public void Buy(int index)
     {
         int money = int.Parse(xml.GetItem("Money").Value);
-        if(items[index].price <= money)
+        if (items[index].price <= money)
         {
             xml.GetItem("OwnedItems").CreateItem("item").CreateAttribute("name", index.ToString());
             xml.GetItem("Money").Value = (money - items[index].price).ToString();
             Reload();
         }
-
-        Binary binary = new Binary(Security.Encrypting.Encrypt(xml.xmlFile.ToString(), encodeKey).ToByte(System.Text.Encoding.UTF8));
-        System.IO.File.WriteAllText(xmlPath, binary.ToString());
+        xmlDefault = xml;
     }
 
     /// <summary> Select the item </summary>
@@ -141,8 +177,6 @@ public class Inventory : MonoBehaviour
         selected = index;
         xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value = selected.ToString();
         Reload();
-
-        Binary binary = new Binary(Security.Encrypting.Encrypt(xml.xmlFile.ToString(), encodeKey).ToByte(System.Text.Encoding.UTF8));
-        System.IO.File.WriteAllText(xmlPath, binary.ToString());
+        xmlDefault = xml;
     }
 }
