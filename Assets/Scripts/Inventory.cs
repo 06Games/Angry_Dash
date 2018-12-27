@@ -24,12 +24,13 @@ public class Inventory : MonoBehaviour
     public int selected = 0;
     public InvItem[] items;
 
-    public string xmlPath { get { return Application.persistentDataPath + "/data.bin"; } }
-    string encodeKey = "CheatingIsBad,ItDoesNotHelpAnyoneAndYouWillNotFeelStrongerButMuchMoreDependentOnCheating.SoWhyTryToUnderstandThisKey?FindAnotherActivity,ThereIsSoMuchBetterToDo!YouAreStillHere?WhatAreYouWaitingFor?DoYouWantToRuinUs?OrDoYouThinkOnlyOfYourselfAndTheRestHasNoImportance?";
+    public static string xmlPath { get { return Application.persistentDataPath + "/data.bin"; } }
+    public static string encodeKey = "CheatingIsBad,ItDoesNotHelpAnyoneAndYouWillNotFeelStrongerButMuchMoreDependentOnCheating.SoWhyTryToUnderstandThisKey?FindAnotherActivity,ThereIsSoMuchBetterToDo!YouAreStillHere?WhatAreYouWaitingFor?DoYouWantToRuinUs?OrDoYouThinkOnlyOfYourselfAndTheRestHasNoImportance?";
     FileFormat.XML.RootElement xml;
 
     private void Start()
     {
+        //Default value
         string XML = string.Join("",
             "<root>",
                 "<OwnedItems>",
@@ -40,12 +41,13 @@ public class Inventory : MonoBehaviour
                 "</SelectedItems>",
                 "<Money>0</Money>",
             "</root>");
+        //If the file exist, load it
         if (System.IO.File.Exists(xmlPath)) XML = Security.Encrypting.Decrypt(Binary.Parse(System.IO.File.ReadAllText(xmlPath)).Decode(System.Text.Encoding.UTF8), encodeKey);
         xml = new FileFormat.XML.XML(XML).RootElement;
         Refresh();
     }
 
-    /// <summary> Check item's price </summary>
+    /// <summary> Check item's price and setup the items array </summary>
     public void Refresh()
     {
         WebClient client = new WebClient();
@@ -108,12 +110,15 @@ public class Inventory : MonoBehaviour
             go.gameObject.SetActive(true);
         }
     }
-
-    //Check if the item is owned
-    public bool Owned(string name)
-    {
-        return xml.GetItem("OwnedItems").GetItemByAttribute("item", "name", name) != null;
-    }
+    
+    /// <summary> Check if the item is owned </summary>
+    /// <param name="name">Item's name</param>
+    public bool Owned(string name) { return xml.GetItem("OwnedItems").GetItemByAttribute("item", "name", name) != null; }
+    /// <summary> Check if the item is owned </summary>
+    /// <param name="xml">Xml file</param>
+    /// <param name="name">Item's name</param>
+    public static bool Owned(FileFormat.XML.RootElement xml, string name)
+    { return xml.GetItem("OwnedItems").GetItemByAttribute("item", "name", name) != null; }
 
     public void Buy(int index)
     {
@@ -129,6 +134,8 @@ public class Inventory : MonoBehaviour
         System.IO.File.WriteAllText(xmlPath, binary.ToString());
     }
 
+    /// <summary> Select the item </summary>
+    /// <param name="index">Item's index</param>
     public void Select(int index)
     {
         selected = index;
