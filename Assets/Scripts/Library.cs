@@ -122,46 +122,54 @@ namespace FileFormat
         public class Item : Base_Collection
         {
             public Item(System.Xml.XmlNode xmlNode) { node = xmlNode; }
+            public RootElement rootElement {  get { return new RootElement(node.OwnerDocument.DocumentElement); } }
 
             public string Attribute(string key) { return node.Attributes[key].Value; }
             public void CreateAttribute(string key, string value)
             {
                 System.Xml.XmlAttribute xmlAttribute = node.OwnerDocument.CreateAttribute(key);
                 node.Attributes.Append(xmlAttribute);
+                xmlAttribute.Value = value;
             }
+            public void SetAttribute(string key, string value) { node.Attributes[key].Value = value; }
             public void RemoveAttribute(string key) { node.Attributes.Remove(node.Attributes[key]); }
-            public string Value
-            {
-                get { return node.InnerText; }
-                set
-                {
-                    System.Xml.XmlNode xmlNode = node.OwnerDocument.CreateTextNode(value);
-                    node.AppendChild(xmlNode);
-                }
-            }
+
+            public string Value { get { return node.InnerText; } set { node.InnerText = value; } }
             public void Remove() { node.ParentNode.RemoveChild(node); }
         }
 
         public abstract class Base_Collection
         {
             public System.Xml.XmlNode node;
-            public Item GetItem(string key) { return new Item(node.SelectSingleNode(key)); }
+            public Item GetItem(string key)
+            {
+                System.Xml.XmlNode xmlNode = node.SelectSingleNode(key);
+                if (xmlNode == null) return null;
+                else return new Item(xmlNode);
+            }
             public Item[] GetItems(string key)
             {
                 System.Xml.XmlNodeList list = node.SelectNodes(key);
                 Item[] items = new Item[list.Count];
                 for (int i = 0; i < items.Length; i++)
                     items[i] = new Item(list[i]);
-                return items;
+                if (items.Length > 0) return items;
+                else return null;
             }
-            public Item GetItemByAttribute(string key, string attribute, string attributeValue) { return new Item(node.SelectSingleNode(key + "[@" + attribute + " = '" + attributeValue + "']")); }
+            public Item GetItemByAttribute(string key, string attribute, string attributeValue)
+            {
+                System.Xml.XmlNode xmlNode = node.SelectSingleNode(key + "[@" + attribute + " = '" + attributeValue + "']");
+                if (xmlNode == null) return null;
+                else return new Item(xmlNode);
+            }
             public Item[] GetItemsByAttribute(string key, string attribute, string attributeValue)
             {
                 System.Xml.XmlNodeList list = node.SelectNodes(key + "[@" + attribute + " = '" + attributeValue + "']");
                 Item[] items = new Item[list.Count];
                 for (int i = 0; i < items.Length; i++)
                     items[i] = new Item(list[i]);
-                return items;
+                if (items.Length > 0) return items;
+                else return null;
             }
             public Item CreateItem(string key)
             {
@@ -211,6 +219,8 @@ namespace FileFormat
             if (string.IsNullOrEmpty(onlyNumbers)) chain = binary;
             else throw new System.ArgumentException("The specified string is not binary");
         }
+        Binary (string data) { chain = data; }
+        public static Binary Parse(string data) { return new Binary(data.Replace(" ", "")); }
 
         public override string ToString()
         {
