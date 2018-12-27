@@ -1,180 +1,141 @@
-﻿using System;
+﻿using FileFormat;
 using System.Collections;
-using System.Collections.Generic;
 using System.Net;
+using Tools;
 using UnityEngine;
 using UnityEngine.UI;
-using PlayerPrefs = PreviewLabs.PlayerPrefs;
 
-public class Inventory : MonoBehaviour {
+[System.Serializable] //Display in Editor
+public class InvItem
+{
+    public string name;
+    public float price;
+    public InvItem(string Name, float Price = 0) { name = Name; price = Price; }
+}
 
-    int[] page;
+public class Inventory : MonoBehaviour
+{
+    /// <summary> URL of the shop </summary>
+    public string serverURL
+    //{ get { return "https://06games.ddns.net/Projects/Games/Angry%20Dash/shop/" + category.Replace("native", "").Replace("/", "").ToLower() + ".xml"; } }
+    { get { return "file:///C:/xampp/htdocs/Projects/Games/Angry%20Dash/shop/" + category.Replace("native", "").Replace("/", "").ToLower() + ".xml"; } }
 
-    string[] article1;
-    string[] article2;
+    public string category;
+    public int selected = 0;
+    public InvItem[] items;
 
-    Sprite[] sp1;
-    Sprite[] sp2;
+    public string xmlPath { get { return Application.persistentDataPath + "/data.bin"; } }
+    string encodeKey = "CheatingIsBad,ItDoesNotHelpAnyoneAndYouWillNotFeelStrongerButMuchMoreDependentOnCheating.SoWhyTryToUnderstandThisKey?FindAnotherActivity,ThereIsSoMuchBetterToDo!YouAreStillHere?WhatAreYouWaitingFor?DoYouWantToRuinUs?OrDoYouThinkOnlyOfYourselfAndTheRestHasNoImportance?";
+    FileFormat.XML.RootElement xml;
 
-    public string[] ids;
-    
-    bool Refreshed = false;
+    private void Start()
+    {
+        string XML = string.Join("",
+            "<root>",
+                "<OwnedItems>",
+                    "<item name=\"0\" />",
+                "</OwnedItems>",
+                "<SelectedItems>",
+                    "<item category=\"" + category + "\">0</item>",
+                "</SelectedItems>",
+                "<Money>0</Money>",
+            "</root>");
+        if (System.IO.File.Exists(xmlPath)) XML = Security.Encrypting.Decrypt(Binary.Parse(System.IO.File.ReadAllText(xmlPath)).Decode(System.Text.Encoding.UTF8), encodeKey);
+        xml = new FileFormat.XML.XML(XML).RootElement;
+        Refresh();
+    }
+
+    /// <summary> Check item's price </summary>
     public void Refresh()
     {
-        if (!Refreshed)
-            Actualse();
-        Refreshed = true;
+        WebClient client = new WebClient();
+        client.Encoding = System.Text.Encoding.UTF8;
+        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        string Result = client.DownloadString(serverURL);
 
-        RefreshArticle();
+        FileFormat.XML.RootElement root = new FileFormat.XML.XML(Result).RootElement;
+        FileFormat.XML.Item ItemsRoot = root.GetItemByAttribute("version", "v", Application.version);
+        for (int i = 0; i < items.Length; i++)
+        {
+            FileFormat.XML.Item item = ItemsRoot.GetItemByAttribute("item", "name", i.ToString());
+            float price = 0;
+            if (item != null) float.TryParse(item.Value, out price);
+            string Name = i.ToString();
+            if (item != null) item.Attribute("name");
+            items[i] = new InvItem(Name, price);
+        }
+
+        Reload();
     }
 
-    void Start () {
-        PlayerPrefs.DeleteAll();
-        PlayerPrefs.Flush();
-        System.IO.File.Delete(Application.persistentDataPath + "/AdvancedPlayerPrefs.txt");
-
-        for (int i = 1; i < 3; i++)
-        {
-            if (PlayerPrefs.GetString("Item" + i) == "")
-                PlayerPrefs.SetString("Item" + i, "0");
-        }
-        if(PlayerPrefs.GetInt("PlayerSkin") == new int())
-            PlayerPrefs.SetInt("PlayerSkin", 0);
-	}
-
-    void Actualse()
+    /// <summary> Display all items </summary>
+    public void Reload()
     {
-        page = new int[3];
-        for (int v = 1; v <= 1; v++)
-        {
-            int cLenght = System.IO.Directory.GetFiles(Application.persistentDataPath + "/Textures/" + v + "/").Length;
+        transform.GetChild(0).GetChild(1).GetComponent<Text>().text = xml.GetItem("Money").Value;
+        Transform content = transform.GetChild(1).GetComponent<ScrollRect>().content;
+        for (int i = 1; i < content.childCount; i++)
+            Destroy(content.GetChild(i).gameObject);
 
-            Sprite[] b = new Sprite[cLenght];
-            string[] d = new string[cLenght];
-            for (int i = 0; i < cLenght; i++)
+        selected = int.Parse(xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value);
+        if (!Owned(items[selected].name)) {
+            xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value = "0";
+            selected = 0;
+        }
+
+        for (int i = 0; i < items.Length; i++)
+        {
+            bool owned = Owned(items[i].name);
+
+            Transform go = Instantiate(content.GetChild(0).gameObject, content).transform;
+            go.GetChild(0).GetComponent<UImage_Reader>().baseID = category + items[i].name;
+            go.GetComponent<Button>().interactable = i != selected;
+            int button = i;
+            go.GetComponent<Button>().onClick.AddListener(() =>
             {
-                byte[] Result2 = System.IO.File.ReadAllBytes(Application.persistentDataPath + "/Textures/" + v + "/" + i + ".png");
-                Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(Result2);
-                Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-                b[i] = sprite;
-
-                if (i < 5)
-                {
-                    transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(i + 1).GetChild(0).GetComponent<Image>().sprite = b[i];
-                    transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(i + 1).GetChild(1).GetComponent<Text>().text = "";
-                }
-
-                transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(6).GetComponent<Button>().interactable = page[v] > 0;
-                transform.GetChild(0).GetChild(0).GetChild(2).GetChild(v - 1).GetChild(7).GetComponent<Button>().interactable = page[v] + 5 < cLenght;
-
-                if (v == 1)
-                {
-                    sp1 = b;
-                    article1 = d;
-                }
-                else if (v == 2)
-                {
-                    sp2 = b;
-                    article2 = d;
-                }
-            }
-
-            RefreshArticle();
-        }
-    }
-
-    public void PagePlus(int cat)
-    {
-        string[] c = new string[0];
-        Sprite[] b = new Sprite[0];
-        if (cat == 1)
-        {
-            c = article1;
-            b = sp1;
-        }
-        else if (cat == 2)
-        {
-            c = article2;
-            b = sp2;
-        }
-
-        page[cat] = page[cat] + 1;
-        for (int i = 0; i < c.Length & i < 5; i++)
-            transform.GetChild(0).GetChild(0).GetChild(2).GetChild(cat - 1).GetChild(i + 1).GetChild(0).GetComponent<Image>().sprite = b[i + page[cat]];
-
-        transform.GetChild(0).GetChild(0).GetChild(2).GetChild(cat - 1).GetChild(6).GetComponent<Button>().interactable = page[cat] > 0;
-        transform.GetChild(0).GetChild(0).GetChild(2).GetChild(cat - 1).GetChild(7).GetComponent<Button>().interactable = page[cat] + 5 < c.Length;
-
-        RefreshArticle();
-    }
-    public void PageMoins(int cat)
-    {
-        string[] c = new string[0];
-        Sprite[] b = new Sprite[0];
-        if (cat == 1)
-        {
-            c = article1;
-            b = sp1;
-        }
-        else if (cat == 2)
-        {
-            c = article2;
-            b = sp2;
-        }
-
-        page[cat] = page[cat] - 1;
-        for (int i = 0; i < c.Length & i < 5; i++)
-            transform.GetChild(0).GetChild(0).GetChild(2).GetChild(cat - 1).GetChild(i + 1).GetChild(0).GetComponent<Image>().sprite = b[i + page[cat]];
-
-        transform.GetChild(0).GetChild(0).GetChild(2).GetChild(cat - 1).GetChild(6).GetComponent<Button>().interactable = page[cat] > 0;
-        transform.GetChild(0).GetChild(0).GetChild(2).GetChild(cat - 1).GetChild(7).GetComponent<Button>().interactable = page[cat] + 5 < c.Length;
-
-        RefreshArticle();
-    }
-
-    public void RefreshArticle()
-    {
-        if (Refreshed)
-        {
-            for (int i = 0; i < 1; i++)
+                if (owned) Select(button);
+                else Buy(button);
+            });
+            go.GetChild(1).gameObject.SetActive(!owned);
+            go.GetChild(2).gameObject.SetActive(owned & selected == i);
+            if (!owned)
             {
-                string PPname = "Item" + (i + 1);
-                if (PlayerPrefs.GetString(PPname) == null)
-                    PlayerPrefs.SetString(PPname, "0");
-                string PP = PlayerPrefs.GetString(PPname);
-                string[] a = PP.Split(new string[1] { " " }, StringSplitOptions.None);
+                go.GetChild(1).gameObject.SetActive(true);
+                go.GetChild(2).gameObject.SetActive(false);
 
-                for (int v = 1; v < 6; v++)
-                {
-                    bool f = false;
-                    for (int k = 0; k < a.Length; k++)
-                    {
-                        if (a[k].Contains((v - 1 + page[i + 1]).ToString()))
-                            f = true;
-                    }
-                    transform.GetChild(0).GetChild(0).GetChild(2).GetChild(i).GetChild(v).GetComponent<Button>().interactable = f;
-
-                    string t = LangueAPI.String("native", ids[0]);
-                    if (f & PlayerPrefs.GetInt("PlayerSkin") == (v - 1) + page[i + 1])
-                        t = LangueAPI.String("native", ids[1]);
-                    else if (f)
-                        t = "";
-
-                    transform.GetChild(0).GetChild(0).GetChild(2).GetChild(i).GetChild(v).GetChild(1).GetComponent<Text>().text = t;
-                }
+                if (items[i].price == 0) go.GetChild(1).GetChild(0).GetComponent<Text>().text = "Free";
+                else go.GetChild(1).GetChild(0).GetComponent<Text>().text = items[i].price.ToString();
             }
+            go.gameObject.SetActive(true);
         }
     }
 
-    public void Select(float cas)
+    //Check if the item is owned
+    public bool Owned(string name)
     {
-        int cat = (int)cas;
-        int art = Mathf.RoundToInt((cas - (int)cas) * 10) + page[cat];
+        return xml.GetItem("OwnedItems").GetItemByAttribute("item", "name", name) != null;
+    }
 
-        if (cat == 1)
-            PlayerPrefs.SetInt("PlayerSkin", art-1);
+    public void Buy(int index)
+    {
+        int money = int.Parse(xml.GetItem("Money").Value);
+        if(items[index].price <= money)
+        {
+            xml.GetItem("OwnedItems").CreateItem("item").CreateAttribute("name", index.ToString());
+            xml.GetItem("Money").Value = (money - items[index].price).ToString();
+            Reload();
+        }
 
-        RefreshArticle();
+        Binary binary = new Binary(Security.Encrypting.Encrypt(xml.xmlFile.ToString(), encodeKey).ToByte(System.Text.Encoding.UTF8));
+        System.IO.File.WriteAllText(xmlPath, binary.ToString());
+    }
+
+    public void Select(int index)
+    {
+        selected = index;
+        xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value = selected.ToString();
+        Reload();
+
+        Binary binary = new Binary(Security.Encrypting.Encrypt(xml.xmlFile.ToString(), encodeKey).ToByte(System.Text.Encoding.UTF8));
+        System.IO.File.WriteAllText(xmlPath, binary.ToString());
     }
 }
