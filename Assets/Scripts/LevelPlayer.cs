@@ -388,7 +388,7 @@ public class LevelPlayer : MonoBehaviour
 
     public void Replay()
     {
-        Time.timeScale = 1;
+        Pause(false);
         if (GameObject.Find("Player") != null) GameObject.Find("Player").GetComponent<Player>().PeutAvancer = true;
         else if (GameObject.Find("Player(Clone)") != null) GameObject.Find("Player(Clone)").GetComponent<Player>().PeutAvancer = true;
         nbLancer = 0;
