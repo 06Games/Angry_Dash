@@ -172,6 +172,7 @@ public class LevelPlayer : MonoBehaviour
         SummonPlace = place;
 
 
+        Time.timeScale = 1;
         GetComponent<MainCam>().Player.GetComponent<Player>().PeutAvancer = true; //Le niveau est chargé, le joueur peut bouger
     }
 
@@ -357,6 +358,7 @@ public class LevelPlayer : MonoBehaviour
 
     public void Exit()
     {
+        Time.timeScale = 1;
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
         {
             string scene = FromScene;
@@ -386,6 +388,7 @@ public class LevelPlayer : MonoBehaviour
 
     public void Replay()
     {
+        Time.timeScale = 1;
         if (GameObject.Find("Player") != null) GameObject.Find("Player").GetComponent<Player>().PeutAvancer = true;
         else if (GameObject.Find("Player(Clone)") != null) GameObject.Find("Player(Clone)").GetComponent<Player>().PeutAvancer = true;
         nbLancer = 0;
