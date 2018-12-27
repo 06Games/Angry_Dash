@@ -393,8 +393,6 @@ public class LevelPlayer : MonoBehaviour
         else if (GameObject.Find("Player(Clone)") != null) GameObject.Find("Player(Clone)").GetComponent<Player>().PeutAvancer = true;
         nbLancer = 0;
         Base.GetChild(3).gameObject.SetActive(false);
-        if (!File.Exists(file))
-            File.WriteAllLines(file, component);
-        FromFile(file, FromScene);
+        PlayLevel(level);
     }
 }
