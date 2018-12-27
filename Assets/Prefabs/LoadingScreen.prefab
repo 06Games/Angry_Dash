@@ -250,6 +250,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  category: native
   id: loadingScene
   keepIfNotExist: 1
   arg: []
@@ -580,12 +581,12 @@ RectTransform:
   m_Children:
   - {fileID: 224178254683894826}
   m_Father: {fileID: 224463673497254308}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -495}
-  m_SizeDelta: {x: 1560, y: 890}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 60}
+  m_SizeDelta: {x: 1490, y: 850}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224178254683894826
 RectTransform:
@@ -618,6 +619,7 @@ RectTransform:
   - {fileID: 224843573903192450}
   - {fileID: 224739276373222604}
   - {fileID: 224594448227711656}
+  - {fileID: 224636191977589490}
   m_Father: {fileID: 224463673497254308}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -637,7 +639,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224317185164525226}
-  - {fileID: 224636191977589490}
   - {fileID: 224077301066446146}
   m_Father: {fileID: 224606903381878006}
   m_RootOrder: 0
@@ -713,13 +714,13 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 224463673497254308}
-  m_RootOrder: 1
+  m_Father: {fileID: 224317185164525226}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -430.6}
-  m_SizeDelta: {x: 1500, y: 88.9}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 45}
+  m_SizeDelta: {x: 0, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224739276373222604
 RectTransform:
