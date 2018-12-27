@@ -212,7 +212,7 @@ public class LevelPlayer : MonoBehaviour
             }
             SR.sortingOrder = (int)p.z;
             Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/"+id.ToString(".0####") + ".png")));
+            tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/" + id.ToString(".0####") + ".png")));
             SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
 
             go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
@@ -339,6 +339,21 @@ public class LevelPlayer : MonoBehaviour
         else return "";
     }
 
+    float oldSpeed = 1;
+    public void Pause(bool pause)
+    {
+        if (pause) Time.timeScale = 0;
+        else Time.timeScale = 1;
+
+        Player player = GetComponent<MainCam>().Player.GetComponent<Player>();
+        player.enabled = !pause;
+        if (pause)
+        {
+            oldSpeed = player.vitesse;
+            player.vitesse = 0;
+        }
+        else player.vitesse = oldSpeed;
+    }
 
     public void Exit()
     {
@@ -348,7 +363,7 @@ public class LevelPlayer : MonoBehaviour
             string[] args = null;
             if (FromScene == "")
                 scene = "Home";
-            else if(FromScene.Contains("/"))
+            else if (FromScene.Contains("/"))
             {
                 string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
                 scene = FromSceneDetails[0];

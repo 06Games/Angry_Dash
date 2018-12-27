@@ -110,7 +110,7 @@ public class Player : MonoBehaviour
         rot.eulerAngles = new Vector3(0, 0, (float)z);
         transform.rotation = rot;
 
-        System.TimeSpan MoveTime = System.TimeSpan.FromSeconds(0.75F/vitesse);
+        System.TimeSpan MoveTime = System.TimeSpan.FromSeconds(0.75F / vitesse);
         System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
         Vector2 InitialPos = transform.position;
         float Mouvement = Mathf.Sqrt(Mathf.Pow(Ar.x - InitialPos.x, 2) + Mathf.Pow(Ar.y - InitialPos.y, 2));
@@ -120,26 +120,37 @@ public class Player : MonoBehaviour
         stopwatch.Start();
         while ((stopwatch.Elapsed < MoveTime | LastFrame) & PeutAvancer)
         {
-            long Time = stopwatch.ElapsedMilliseconds;
-            if (stopwatch.Elapsed >= MoveTime)
+            if (vitesse <= 0)
             {
-                LastFrame = false;
-                Time = (long)MoveTime.TotalMilliseconds;
+                stopwatch.Stop();
+                yield return new WaitWhile(() => (vitesse <= 0));
+                stopwatch.Start();
             }
-
-            float maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
-            float moveFrame = 0;
-            for (long i = lastTime; i < Time + 1; i++)
+            else
             {
-                long vi = i + 1;
-                if (i > MoveTime.TotalMilliseconds / 2F)
-                    vi = (long)MoveTime.TotalMilliseconds - i;
-                moveFrame = moveFrame + ((Mouvement / ((maxDistance / vi) / maxDistance)) / (long)MoveTime.TotalMilliseconds / (maxDistance / 2F));
-            }
-            lastTime = Time + 1;
-            transform.Translate(new Vector2(0, moveFrame), Space.Self);
+                MoveTime = System.TimeSpan.FromSeconds(0.75F / vitesse);
 
-            yield return new WaitForEndOfFrame();
+                long Time = stopwatch.ElapsedMilliseconds;
+                if (stopwatch.Elapsed >= MoveTime)
+                {
+                    LastFrame = false;
+                    Time = (long)MoveTime.TotalMilliseconds;
+                }
+
+                float maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
+                float moveFrame = 0;
+                for (long i = lastTime; i < Time + 1; i++)
+                {
+                    long vi = i + 1;
+                    if (i > MoveTime.TotalMilliseconds / 2F)
+                        vi = (long)MoveTime.TotalMilliseconds - i;
+                    moveFrame = moveFrame + ((Mouvement / ((maxDistance / vi) / maxDistance)) / (long)MoveTime.TotalMilliseconds / (maxDistance / 2F));
+                }
+                lastTime = Time + 1;
+                transform.Translate(new Vector2(0, moveFrame), Space.Self);
+
+                yield return new WaitForEndOfFrame();
+            }
         }
         stopwatch.Stop();
         Ar = new Vector2();
