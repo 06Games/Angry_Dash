@@ -16,15 +16,12 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     //Data
     new Coroutine[] animation = new Coroutine[4];
     System.Diagnostics.Stopwatch[] animationTime = new System.Diagnostics.Stopwatch[4];
-    Selectable component;
     uint[] Played = new uint[4];
     int[] Frame = new int[4];
 
-
-    void Start()
+    void Start() { Load(); }
+    public void Load()
     {
-
-        component = GetComponent<Selectable>();
         FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
         if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
             json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
@@ -62,10 +59,10 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 data[i] = Sprite_API.Sprite_API.GetSprites(path, border);
             }
 
-            if (component != null)
+            if (GetComponent<Selectable>() != null)
             {
-                lastInteractable = component.interactable;
-                component.transition = Selectable.Transition.None;
+                lastInteractable = GetComponent<Selectable>().interactable;
+                GetComponent<Selectable>().transition = Selectable.Transition.None;
             }
 
             if (data == null)
@@ -145,12 +142,12 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     bool lastInteractable = true;
     void Update()
     {
-        if (component == null) return;
-        if (component.interactable != lastInteractable)
+        if (GetComponent<Selectable>() == null) return;
+        if (GetComponent<Selectable>().interactable != lastInteractable)
         {
-            if (component.interactable) StartAnimating(3, -1);
+            if (GetComponent<Selectable>().interactable) StartAnimating(3, -1);
             else StartAnimating(3, 1);
-            lastInteractable = component.interactable;
+            lastInteractable = GetComponent<Selectable>().interactable;
         }
     }
 
@@ -159,8 +156,17 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         if (data[index] == null) return;
 
-        if (data[index].Frames[0].border != new Vector4()) GetComponent<Image>().type = Image.Type.Tiled;
-        else GetComponent<Image>().type = Image.Type.Simple;
+        if (GetComponent<Image>() != null)
+        {
+            if (data[index].Frames[0].border != new Vector4()) GetComponent<Image>().type = Image.Type.Tiled;
+            else GetComponent<Image>().type = Image.Type.Simple;
+        }
+        else if (GetComponent<SpriteRenderer>() != null)
+        {
+            if (data[index].Frames[0].border != new Vector4()) GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Tiled;
+            else GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Simple;
+        }
+
         if (data[index].Frames.Length > 1)
         {
             if (!keepFrame) Frame[index] = 0;
@@ -172,7 +178,10 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             animation[index] = StartCoroutine(APNG(index, frameAddition));
         }
         else if (data[index].Frames.Length == 1 & frameAddition > 0)
-            GetComponent<Image>().sprite = data[index].Frames[0];
+        {
+            if (GetComponent<Image>() != null) GetComponent<Image>().sprite = data[index].Frames[0];
+            else if (GetComponent<SpriteRenderer>() != null) GetComponent<SpriteRenderer>().sprite = data[index].Frames[0];
+        }
         else if (data[index].Frames.Length == 1 & frameAddition < 0)
             StartAnimating(0, 1);
     }
@@ -220,7 +229,9 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
             if (frameIndex > -1)
             {
-                GetComponent<Image>().sprite = data[index].Frames[frameIndex];
+                if (GetComponent<Image>() != null) GetComponent<Image>().sprite = data[index].Frames[frameIndex];
+                else if (GetComponent<SpriteRenderer>() != null) GetComponent<SpriteRenderer>().sprite = data[index].Frames[frameIndex];
+
                 Frame[index] = frameIndex;
                 animationTime[index].Restart();
             }

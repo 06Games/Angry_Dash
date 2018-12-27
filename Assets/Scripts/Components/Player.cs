@@ -52,11 +52,31 @@ public class Player : MonoBehaviour
             else GetComponent<Player>().enabled = false;
         }
 
-        int playerSkin = PlayerPrefs.GetInt("PlayerSkin");
-        Texture2D tex = new Texture2D(1, 1);
-        tex.LoadImage(System.IO.File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/PLAYERS/" + playerSkin + ".png")));
-        Sprite sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-        GetComponent<SpriteRenderer>().sprite = sprite;
+
+        //Default value
+        string XML = string.Join("",
+            "<root>",
+                "<OwnedItems>",
+                    "<item name=\"0\" />",
+                "</OwnedItems>",
+                "<SelectedItems>",
+                    "<item category=\"native/PLAYERS/\">0</item>",
+                "</SelectedItems>",
+                "<Money>0</Money>",
+            "</root>");
+        //If the file exist, load it
+        if (System.IO.File.Exists(Inventory.xmlPath)) XML = Security.Encrypting.Decrypt(FileFormat.Binary.Parse(System.IO.File.ReadAllText(Inventory.xmlPath)).Decode(System.Text.Encoding.UTF8), Inventory.encodeKey);
+        FileFormat.XML.RootElement xml = new FileFormat.XML.XML(XML).RootElement;
+        int playerSkin = int.Parse(xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", "native/PLAYERS/").Value);
+        if (!Inventory.Owned(xml, playerSkin.ToString()))
+        {
+            xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", "native/PLAYERS/").Value = "0";
+            playerSkin = 0;
+        }
+        GetComponent<UImage_Reader>().baseID = "native/PLAYERS/" + playerSkin;
+        GetComponent<UImage_Reader>().Load();
+
+
         vitesse = 1;
 
         JoyStick.GetComponent<RectTransform>().position = new Vector2(
