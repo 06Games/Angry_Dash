@@ -33,7 +33,7 @@ public class LoadingScreenControl : MonoBehaviour {
         int i = rnd.Next(0, Backgrounds.Length);
         if (i >= Backgrounds.Length)
             i = Backgrounds.Length - 1;
-        loadingScreenObj.transform.GetChild(2).GetChild(0).GetComponent<Image>().sprite = Backgrounds[i];
+        loadingScreenObj.transform.GetChild(1).GetChild(0).GetComponent<Image>().sprite = Backgrounds[i];
 
         StartCoroutine(LoadingScreen(Scene));
     }
