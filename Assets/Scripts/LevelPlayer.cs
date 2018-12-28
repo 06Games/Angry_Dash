@@ -9,8 +9,9 @@ using UnityEngine.UI;
 
 public class LevelPlayer : MonoBehaviour
 {
+    public LevelItem level;
     string file;
-    string FromScene;
+    public string FromScene;
     public string[] passThroughArgs;
     public string[] component;
     Camera cam;
@@ -80,6 +81,7 @@ public class LevelPlayer : MonoBehaviour
 
     public void PlayLevel(LevelItem item)
     {
+        level = item;
         component = Editeur.UpdateLevel(item.Data);
         Base.GetChild(3).GetChild(0).GetComponent<Text>().text = item.Name; //Sets the level name
         Parse(); //Spawn blocks

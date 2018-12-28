@@ -37,6 +37,7 @@ public class Inventory : MonoBehaviour
                     "<item category=\"native/PLAYERS/\">0</item>",
                 "</SelectedItems>",
                 "<Money>0</Money>",
+                "<PlayedLevels type=\"Official\" />",
             "</root>");
             //If the file exist, load it
             if (System.IO.File.Exists(xmlPath))
@@ -53,8 +54,8 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    //Script Functions
 
+    //Script Functions
     /// <summary> URL of the shop </summary>
     public string serverURL
     {
@@ -72,7 +73,7 @@ public class Inventory : MonoBehaviour
     /// <summary> List of all the category's items </summary>
     public InvItem[] items = new InvItem[0];
     FileFormat.XML.RootElement xml;
-    
+
 
     private void Start()
     {
@@ -90,7 +91,7 @@ public class Inventory : MonoBehaviour
         string Result = null;
         try { Result = client.DownloadString(serverURL); } catch { return;  /* If no connection then stop loading */ }
 
-            FileFormat.XML.RootElement root = new FileFormat.XML.XML(Result).RootElement;
+        FileFormat.XML.RootElement root = new FileFormat.XML.XML(Result).RootElement;
         FileFormat.XML.Item ItemsRoot = root.GetItemByAttribute("version", "v", Application.version);
         for (int i = 0; i < items.Length; i++)
         {
