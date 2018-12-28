@@ -1949,7 +1949,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: levelRestart
   keepIfNotExist: 1
   arg: []
 --- !u!114 &560339840

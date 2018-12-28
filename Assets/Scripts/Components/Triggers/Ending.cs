@@ -133,7 +133,7 @@ public class Ending : MonoBehaviour
 
             GameObject.Find("Base").transform.GetChild(3).GetChild(1).GetChild(1).gameObject.SetActive(true);
             GameObject.Find("Base").transform.GetChild(3).GetChild(1).GetChild(1).GetChild(2).GetComponent<UnityEngine.UI.Text>().text =
-                LangueAPI.StringWithArgument("native", "CHANGETHISLATER", gain - lastGain, "x[0]");
+                LangueAPI.StringWithArgument("native", "levelRewardQuantity", gain - lastGain, "x[0]");
         }
         else GameObject.Find("Base").transform.GetChild(3).GetChild(1).GetChild(1).gameObject.SetActive(false);
         Inventory.xmlDefault = xml;

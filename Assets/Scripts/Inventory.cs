@@ -62,8 +62,7 @@ public class Inventory : MonoBehaviour
         get
         {
             string categoryName = category.Replace("native", "").Replace("/", "").ToLower();
-            //return "https://06games.ddns.net/Projects/Games/Angry%20Dash/shop/" + categoryName + ".xml";
-            return "file:///C:/xampp/htdocs/Projects/Games/Angry%20Dash/shop/" + categoryName + ".xml";
+            return "https://06games.ddns.net/Projects/Games/Angry%20Dash/shop/" + categoryName + ".xml";
         }
     }
     /// <summary> The category of item managed by this instance of the script </summary>
@@ -77,7 +76,11 @@ public class Inventory : MonoBehaviour
 
     private void Start()
     {
-        if (!InternetAPI.IsConnected()) return; //If no connection then stop loading
+        if (!InternetAPI.IsConnected())
+        {
+            transform.parent.GetComponent<CreatorManager>().Array(0);
+            return; //If no connection then stop loading
+        }
         xml = xmlDefault;
         Refresh();
     }
@@ -89,7 +92,12 @@ public class Inventory : MonoBehaviour
         client.Encoding = System.Text.Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         string Result = null;
-        try { Result = client.DownloadString(serverURL); } catch { return;  /* If no connection then stop loading */ }
+        try { Result = client.DownloadString(serverURL); }
+        catch
+        {
+            transform.parent.GetComponent<CreatorManager>().Array(0);
+            return; //If no connection then stop loading
+        }
 
         FileFormat.XML.RootElement root = new FileFormat.XML.XML(Result).RootElement;
         FileFormat.XML.Item ItemsRoot = root.GetItemByAttribute("version", "v", Application.version);
@@ -141,8 +149,16 @@ public class Inventory : MonoBehaviour
                 go.GetChild(1).gameObject.SetActive(true);
                 go.GetChild(2).gameObject.SetActive(false);
 
-                if (items[i].price == 0) go.GetChild(1).GetChild(0).GetComponent<Text>().text = "Free";
-                else go.GetChild(1).GetChild(0).GetComponent<Text>().text = items[i].price.ToString();
+                if (items[i].price == 0)
+                {
+                    go.GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", "InventoryItemFree", "Free");
+                    go.GetChild(1).GetChild(0).GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
+                }
+                else {
+                    go.GetChild(1).GetChild(0).GetComponent<Text>().text = items[i].price.ToString();
+                    go.GetChild(1).GetChild(0).GetComponent<Text>().alignment = TextAnchor.MiddleRight;
+                }
+                go.GetChild(1).GetChild(1).gameObject.SetActive(items[i].price > 0);
             }
             go.gameObject.SetActive(true);
         }
