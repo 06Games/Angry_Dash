@@ -105,9 +105,8 @@ public class LevelPlayer : MonoBehaviour
         string[] Ar = back.Split(new string[1] { "; " }, System.StringSplitOptions.None);
         for (int i = 0; i < ArrierePlan.childCount; i++)
         {
-            Image Im = ArrierePlan.GetChild(i).GetComponent<Image>();
-            Im.sprite = ArrierePlanS[int.Parse(Ar[0])];
-            Im.color = HexToColor(Ar[1]);
+            ArrierePlan.GetChild(i).GetComponent<Image>().color = HexToColor(Ar[1]);
+            ArrierePlan.GetChild(i).GetComponent<UImage_Reader>().baseID = "native/BACKGROUNDS/" + Ar[0];
         }
 
         int d = -1;

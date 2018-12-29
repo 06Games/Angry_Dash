@@ -18,6 +18,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     System.Diagnostics.Stopwatch[] animationTime = new System.Diagnostics.Stopwatch[4];
     uint[] Played = new uint[4];
     int[] Frame = new int[4];
+    int[] Type = new int[4];
 
     void Start() { Load(); }
     public void Load()
@@ -54,6 +55,14 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                     if (paramCategory.ValueExist("path"))
                         path = new FileInfo(Sprite_API.Sprite_API.spritesPath(baseID + ".json")).Directory.FullName +
                             "/" + paramCategory.Value<string>("path");
+
+                    if (paramCategory.ValueExist("type"))
+                    {
+                        string ImageType = paramCategory.Value<string>("type");
+                        if (ImageType == "Simple") Type[i] = 0;
+                        else if (ImageType == "Sliced") Type[i] = 1;
+                        else if (ImageType == "Tiled") Type[i] = 2;
+                    }
                 }
 
                 data[i] = Sprite_API.Sprite_API.GetSprites(path, border);
@@ -155,17 +164,9 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void StartAnimating(int index, int frameAddition, bool keepFrame = true)
     {
         if (data[index] == null) return;
-
-        if (GetComponent<Image>() != null)
-        {
-            if (data[index].Frames[0].border != new Vector4()) GetComponent<Image>().type = Image.Type.Tiled;
-            else GetComponent<Image>().type = Image.Type.Simple;
-        }
-        else if (GetComponent<SpriteRenderer>() != null)
-        {
-            if (data[index].Frames[0].border != new Vector4()) GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Tiled;
-            else GetComponent<SpriteRenderer>().drawMode = SpriteDrawMode.Simple;
-        }
+        
+        if (GetComponent<Image>() != null) GetComponent<Image>().type = (Image.Type)Type[index];
+        else if (GetComponent<SpriteRenderer>() != null) GetComponent<SpriteRenderer>().drawMode = (SpriteDrawMode)Type[index];
 
         if (data[index].Frames.Length > 1)
         {

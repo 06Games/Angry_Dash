@@ -9,7 +9,7 @@ public class Background : MonoBehaviour {
     public int Selected;
     public Editeur Editor;
     string file;
-    Sprite[] sp;
+    Sprite_API.Sprite_API_Data[] sp;
 
     public ColorPicker CP;
 
@@ -22,14 +22,27 @@ public class Background : MonoBehaviour {
     {
         if (sp == null)
         {
-            int f = Directory.GetFiles(Sprite_API.Sprite_API.spritesPath("native/BACKGROUNDS/")).Length;
-            sp = new Sprite[f];
-
+            int f = 12;//Directory.GetFiles(Sprite_API.Sprite_API.spritesPath("native/BACKGROUNDS/")).Length;
+            sp = new Sprite_API.Sprite_API_Data[f];
             for (int i = 0; i < f; i++)
             {
-                Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BACKGROUNDS/" + i + ".png")));
-                sp[i] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+                string baseID = "native/BACKGROUNDS/" + i;
+
+                FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
+                if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
+                    json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
+                FileFormat.JSON.Category paramCategory = json.GetCategory("textures").GetCategory("basic");
+
+                string path = Sprite_API.Sprite_API.spritesPath(baseID + " basic.png");
+                if (paramCategory.ContainsValues)
+                {
+                    //Path
+                    if (paramCategory.ValueExist("path"))
+                        path = new FileInfo(Sprite_API.Sprite_API.spritesPath(baseID + ".json")).Directory.FullName +
+                            "/" + paramCategory.Value<string>("path");
+                }
+
+                sp[i] = Sprite_API.Sprite_API.GetSprites(path);
             }
         }
     }
@@ -106,13 +119,13 @@ public class Background : MonoBehaviour {
             back = Editor.component[d].Replace("background = ", "");
         string[] Ar = back.Split(new string[1] { "; " }, System.StringSplitOptions.None);
 
-        Sprite sprite = sp[int.Parse(Ar[0])];
+        //Sprite sprite = sp[int.Parse(Ar[0])];
         Color32 color = Editeur.HexToColor(Ar[1]);
         for (int i = 0; i < go.childCount; i++)
         {
-            Image Im = go.GetChild(i).GetComponent<Image>();
-            Im.sprite = sprite;
-            Im.color = color;
+            go.GetChild(i).GetComponent<Image>().color = color;
+            go.GetChild(i).GetComponent<UImage_Reader>().baseID = "native/BACKGROUNDS/" + Ar[0];
+            go.GetChild(i).GetComponent<UImage_Reader>().Load();
         }
     }
 
@@ -123,12 +136,12 @@ public class Background : MonoBehaviour {
 
         for (int i = 0; i < 6; i++)
         {
-
-            transform.GetChild(0).GetChild(i + 1).GetChild(0).GetComponent<Image>().sprite = sp[j + i];
+            if (sp[Selected].Frames.Length > 0)
+                transform.GetChild(0).GetChild(i + 1).GetChild(0).GetComponent<Image>().sprite = sp[j + i].Frames[0];
         }
 
         transform.GetChild(0).GetChild(0).GetComponent<Button>().interactable = j > 0;
-        transform.GetChild(0).GetChild(7).GetComponent<Button>().interactable = (j + 6) < sp.Length;
+        transform.GetChild(0).GetChild(7).GetComponent<Button>().interactable = (j + 6) < 12;
     }
 
     public void ChangeColorPickerBG(GameObject BG)
@@ -136,6 +149,6 @@ public class Background : MonoBehaviour {
         CP.transform.GetChild(0).GetChild(1).GetComponent<HexColorField>().displayAlpha = false;
         CP.transform.GetChild(4).GetChild(3).gameObject.SetActive(false);
         BG.SetActive(true);
-        BG.GetComponent<Image>().sprite = sp[Selected];
+        if(sp[Selected].Frames.Length > 0) BG.GetComponent<Image>().sprite = sp[Selected].Frames[0];
     }
 }
