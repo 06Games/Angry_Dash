@@ -4,7 +4,6 @@ using System.Text;
 using System.Reflection;
 using Newtonsoft.Json;
 using UnityEngine;
-using Ionic.Zip;
 using System.Linq;
 
 namespace FileFormat
@@ -247,18 +246,6 @@ namespace FileFormat
 
     public static class ZIP
     {
-
-#if UNITY_IPHONE
-	[DllImport("__Internal")]
-	private static extern void unzip (string zipFilePath, string location);
-
-	[DllImport("__Internal")]
-	private static extern void zip (string zipFilePath);
-
-	[DllImport("__Internal")]
-	private static extern void addZipFile (string addFile);
-
-#endif
         /// <summary>
         /// Compress a folder
         /// </summary>
@@ -266,31 +253,19 @@ namespace FileFormat
         /// <param name="zipPath">Path where the zip file will be saved</param>
         public static void Compress(string unzipPath, string zipPath)
         {
-            string[] files = Directory.GetFiles(unzipPath);
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX
-            string path = Path.GetDirectoryName(zipPath);
-            Directory.CreateDirectory(path);
+            ICSharpCode.SharpZipLib.Zip.FastZip fastZip = new ICSharpCode.SharpZipLib.Zip.FastZip();
+            fastZip.CreateZip(zipPath, unzipPath, true, null);
+        }
 
-            using (ZipFile zip = new ZipFile())
+        public static byte[] Compress(byte[] input)
+        {
+            using (var compressStream = new MemoryStream())
+            using (var compressor = new System.IO.Compression.DeflateStream(compressStream, System.IO.Compression.CompressionMode.Compress))
             {
-                foreach (string file in files)
-                {
-                    zip.AddFile(file, "");
-                }
-                zip.Save(zipPath);
+                new MemoryStream(input).CopyTo(compressor);
+                compressor.Close();
+                return compressStream.ToArray();
             }
-#elif UNITY_ANDROID
-		using (AndroidJavaClass zipper = new AndroidJavaClass ("com.tsw.zipper")) {
-			{
-				zipper.CallStatic ("zip", zipPath, files);
-			}
-		}
-#elif UNITY_IPHONE
-		foreach (string file in files) {
-			addZipFile (file);
-		}
-		zip (zipPath);
-#endif
         }
 
         /// <summary>
@@ -300,21 +275,21 @@ namespace FileFormat
         /// <param name="unzipPath">Path where the zip file will be extracted</param>
         public static void Decompress(string zipPath, string unzipPath)
         {
-#if UNITY_EDITOR || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_STANDALONE_LINUX
-            Directory.CreateDirectory(unzipPath);
+            ICSharpCode.SharpZipLib.Zip.FastZip fastZip = new ICSharpCode.SharpZipLib.Zip.FastZip();
+            fastZip.ExtractZip(zipPath, unzipPath, null);
+        }
 
-            using (ZipFile zip = ZipFile.Read(zipPath))
-            {
 
-                zip.ExtractAll(unzipPath, ExtractExistingFileAction.OverwriteSilently);
-            }
-#elif UNITY_ANDROID
-		using (AndroidJavaClass zipper = new AndroidJavaClass ("com.tsw.zipper")) {
-			zipper.CallStatic ("unzip", zipPath, unzipPath);
-		}
-#elif UNITY_IPHONE
-		unzip (zipPath, unzipPath);
-#endif
+        public static byte[] Decompress(byte[] input)
+        {
+            var output = new MemoryStream();
+
+            using (var compressStream = new MemoryStream(input))
+            using (var decompressor = new System.IO.Compression.DeflateStream(compressStream, System.IO.Compression.CompressionMode.Decompress))
+                decompressor.CopyTo(output);
+
+            output.Position = 0;
+            return output.ToArray();
         }
     }
 
