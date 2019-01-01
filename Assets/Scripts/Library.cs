@@ -253,7 +253,10 @@ namespace FileFormat
         /// <param name="zipPath">Path where the zip file will be saved</param>
         public static void Compress(string unzipPath, string zipPath)
         {
-            ICSharpCode.SharpZipLib.Zip.FastZip fastZip = new ICSharpCode.SharpZipLib.Zip.FastZip();
+            ICSharpCode.SharpZipLib.Zip.FastZip fastZip = new ICSharpCode.SharpZipLib.Zip.FastZip
+            {
+                CreateEmptyDirectories = true
+            };
             fastZip.CreateZip(zipPath, unzipPath, true, null);
         }
 
@@ -275,7 +278,10 @@ namespace FileFormat
         /// <param name="unzipPath">Path where the zip file will be extracted</param>
         public static void Decompress(string zipPath, string unzipPath)
         {
-            ICSharpCode.SharpZipLib.Zip.FastZip fastZip = new ICSharpCode.SharpZipLib.Zip.FastZip();
+            ICSharpCode.SharpZipLib.Zip.FastZip fastZip = new ICSharpCode.SharpZipLib.Zip.FastZip
+            {
+                CreateEmptyDirectories = true
+            };
             fastZip.ExtractZip(zipPath, unzipPath, null);
         }
 
