@@ -18,72 +18,104 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     System.Diagnostics.Stopwatch[] animationTime = new System.Diagnostics.Stopwatch[4];
     uint[] Played = new uint[4];
     int[] Frame = new int[4];
-    int[] Type = new int[4];
+    public int[] Type = new int[4];
 
     void Start() { Load(); }
+    public void Load(Sprite_API.Sprite_API_Data spriteData, string id = null)
+    {
+        data[0] = spriteData;
+        baseID = id;
+
+        if (id != null)
+        {
+            FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
+            if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
+                json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
+            LoadOthersComponents(json);
+        }
+        else StartAnimating(0);
+    }
+    public void Load(Sprite_API.Sprite_API_Data[] spriteData, string id = null)
+    {
+        data = spriteData;
+        baseID = id;
+
+        if (id != null)
+        {
+            FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
+            if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
+                json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
+            LoadOthersComponents(json);
+        }
+        else StartAnimating(0);
+    }
     public void Load()
     {
         FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
         if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
             json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
 
-        if (true) //Textures
+        //Textures
+        FileFormat.JSON.Category category = json.GetCategory("textures");
+
+        string[] paramNames = new string[] { "basic", "hover", "pressed", "disabled" };
+        data = new Sprite_API.Sprite_API_Data[paramNames.Length];
+        for (int i = 0; i < paramNames.Length; i++)
         {
-            FileFormat.JSON.Category category = json.GetCategory("textures");
+            FileFormat.JSON.Category paramCategory = category.GetCategory(paramNames[i]);
 
-            string[] paramNames = new string[] { "basic", "hover", "pressed", "disabled" };
-            data = new Sprite_API.Sprite_API_Data[paramNames.Length];
-            for (int i = 0; i < paramNames.Length; i++)
+            string path = Sprite_API.Sprite_API.spritesPath(baseID + " " + paramNames[i] + ".png");
+            Vector4 border = new Vector4();
+            if (paramCategory.ContainsValues)
             {
-                FileFormat.JSON.Category paramCategory = category.GetCategory(paramNames[i]);
-
-                string path = Sprite_API.Sprite_API.spritesPath(baseID + " " + paramNames[i] + ".png");
-                Vector4 border = new Vector4();
-                if (paramCategory.ContainsValues)
+                //Border
+                FileFormat.JSON.Category borderCategory = paramCategory.GetCategory("border");
+                if (borderCategory.ContainsValues)
                 {
-                    //Border
-                    FileFormat.JSON.Category borderCategory = paramCategory.GetCategory("border");
-                    if (borderCategory.ContainsValues)
-                    {
-                        if (borderCategory.ValueExist("left")) border.x = borderCategory.Value<float>("left");
-                        if (borderCategory.ValueExist("right")) border.z = borderCategory.Value<float>("right");
-                        if (borderCategory.ValueExist("top")) border.w = borderCategory.Value<float>("top");
-                        if (borderCategory.ValueExist("bottom")) border.y = borderCategory.Value<float>("bottom");
-                    }
-
-                    //Path
-                    if (paramCategory.ValueExist("path"))
-                        path = new FileInfo(Sprite_API.Sprite_API.spritesPath(baseID + ".json")).Directory.FullName +
-                            "/" + paramCategory.Value<string>("path");
-
-                    if (paramCategory.ValueExist("type"))
-                    {
-                        string ImageType = paramCategory.Value<string>("type");
-                        if (ImageType == "Simple") Type[i] = 0;
-                        else if (ImageType == "Sliced") Type[i] = 1;
-                        else if (ImageType == "Tiled") Type[i] = 2;
-                    }
+                    if (borderCategory.ValueExist("left")) border.x = borderCategory.Value<float>("left");
+                    if (borderCategory.ValueExist("right")) border.z = borderCategory.Value<float>("right");
+                    if (borderCategory.ValueExist("top")) border.w = borderCategory.Value<float>("top");
+                    if (borderCategory.ValueExist("bottom")) border.y = borderCategory.Value<float>("bottom");
                 }
 
-                data[i] = Sprite_API.Sprite_API.GetSprites(path, border);
+                //Path
+                if (paramCategory.ValueExist("path"))
+                    path = new FileInfo(Sprite_API.Sprite_API.spritesPath(baseID + ".json")).Directory.FullName +
+                        "/" + paramCategory.Value<string>("path");
+
+                if (paramCategory.ValueExist("type"))
+                {
+                    string ImageType = paramCategory.Value<string>("type");
+                    if (ImageType == "Simple") Type[i] = 0;
+                    else if (ImageType == "Sliced") Type[i] = 1;
+                    else if (ImageType == "Tiled") Type[i] = 2;
+                }
             }
 
-            if (GetComponent<Selectable>() != null)
-            {
-                lastInteractable = GetComponent<Selectable>().interactable;
-                GetComponent<Selectable>().transition = Selectable.Transition.None;
-            }
-
-            if (data == null)
-            {
-                data = new Sprite_API.Sprite_API_Data[4];
-                data[0].Frames = new Sprite[] { GetComponent<Image>().sprite };
-                data[0].Delay = new float[] { 60F };
-                data[0].Repeat = 0;
-            }
-
-            StartAnimating(0);
+            data[i] = Sprite_API.Sprite_API.GetSprites(path, border);
         }
+
+        LoadOthersComponents(json);
+    }
+
+
+    void LoadOthersComponents(FileFormat.JSON.JSON json)
+    {
+
+        //Textures
+        if (GetComponent<Selectable>() != null)
+        {
+            lastInteractable = GetComponent<Selectable>().interactable;
+            GetComponent<Selectable>().transition = Selectable.Transition.None;
+        }
+        if (data == null)
+        {
+            data = new Sprite_API.Sprite_API_Data[4];
+            data[0].Frames = new Sprite[] { GetComponent<Image>().sprite };
+            data[0].Delay = new float[] { 60F };
+            data[0].Repeat = 0;
+        }
+        StartAnimating(0);
 
         //Text
         Text[] texts = GetComponentsInChildren<Text>(true);

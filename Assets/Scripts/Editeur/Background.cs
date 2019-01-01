@@ -10,6 +10,7 @@ public class Background : MonoBehaviour {
     public Editeur Editor;
     string file;
     Sprite_API.Sprite_API_Data[] sp;
+    int[] Type;
 
     public ColorPicker CP;
 
@@ -22,8 +23,9 @@ public class Background : MonoBehaviour {
     {
         if (sp == null)
         {
-            int f = 12;//Directory.GetFiles(Sprite_API.Sprite_API.spritesPath("native/BACKGROUNDS/")).Length;
+            int f = 12;
             sp = new Sprite_API.Sprite_API_Data[f];
+            Type = new int[f];
             for (int i = 0; i < f; i++)
             {
                 string baseID = "native/BACKGROUNDS/" + i;
@@ -34,15 +36,34 @@ public class Background : MonoBehaviour {
                 FileFormat.JSON.Category paramCategory = json.GetCategory("textures").GetCategory("basic");
 
                 string path = Sprite_API.Sprite_API.spritesPath(baseID + " basic.png");
+                Vector4 border = new Vector4();
                 if (paramCategory.ContainsValues)
                 {
+                    //Border
+                    FileFormat.JSON.Category borderCategory = paramCategory.GetCategory("border");
+                    if (borderCategory.ContainsValues)
+                    {
+                        if (borderCategory.ValueExist("left")) border.x = borderCategory.Value<float>("left");
+                        if (borderCategory.ValueExist("right")) border.z = borderCategory.Value<float>("right");
+                        if (borderCategory.ValueExist("top")) border.w = borderCategory.Value<float>("top");
+                        if (borderCategory.ValueExist("bottom")) border.y = borderCategory.Value<float>("bottom");
+                    }
+
                     //Path
                     if (paramCategory.ValueExist("path"))
                         path = new FileInfo(Sprite_API.Sprite_API.spritesPath(baseID + ".json")).Directory.FullName +
                             "/" + paramCategory.Value<string>("path");
+
+                    if (paramCategory.ValueExist("type"))
+                    {
+                        string ImageType = paramCategory.Value<string>("type");
+                        if (ImageType == "Simple") Type[i] = 0;
+                        else if (ImageType == "Sliced") Type[i] = 1;
+                        else if (ImageType == "Tiled") Type[i] = 2;
+                    }
                 }
 
-                sp[i] = Sprite_API.Sprite_API.GetSprites(path);
+                sp[i] = Sprite_API.Sprite_API.GetSprites(path, border);
             }
         }
     }
@@ -116,16 +137,19 @@ public class Background : MonoBehaviour {
         }
         string back = "1; 4B4B4B255";
         if (d != -1)
-            back = Editor.component[d].Replace("background = ", "");
+        {
+            string BG = Editor.component[d].Replace("background = ", "");
+            if (!string.IsNullOrEmpty(BG)) back = BG;
+        }
         string[] Ar = back.Split(new string[1] { "; " }, System.StringSplitOptions.None);
-
-        //Sprite sprite = sp[int.Parse(Ar[0])];
+        
         Color32 color = Editeur.HexToColor(Ar[1]);
         for (int i = 0; i < go.childCount; i++)
         {
             go.GetChild(i).GetComponent<Image>().color = color;
-            go.GetChild(i).GetComponent<UImage_Reader>().baseID = "native/BACKGROUNDS/" + Ar[0];
-            go.GetChild(i).GetComponent<UImage_Reader>().Load();
+            int selected = int.Parse(Ar[0]);
+            go.GetChild(i).GetComponent<UImage_Reader>().Type[0] = Type[selected];
+            go.GetChild(i).GetComponent<UImage_Reader>().Load(sp[selected], null);
         }
     }
 
