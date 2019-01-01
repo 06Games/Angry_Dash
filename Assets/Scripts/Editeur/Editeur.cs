@@ -167,6 +167,7 @@ public class Editeur : MonoBehaviour
 
                 LvlLoadingActivation(false);
                 History.LvlPlayed(file, "E");
+                if (GameObject.Find("Audio") != null) GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
             }
         }
     }
