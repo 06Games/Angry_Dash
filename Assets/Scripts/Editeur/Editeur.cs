@@ -57,7 +57,6 @@ public class Editeur : MonoBehaviour
         file = path;
         gameObject.SetActive(true);
 
-        System.DateTime createTime = System.DateTime.UtcNow;
         component = new string[] {
             "description = " + desc,
             "background = 1; 4b4b4b255",
@@ -70,7 +69,6 @@ public class Editeur : MonoBehaviour
             "}"
         };
         File.WriteAllLines(file, component);
-        File.SetCreationTimeUtc(file, createTime);
         EditFile(file);
     }
 
