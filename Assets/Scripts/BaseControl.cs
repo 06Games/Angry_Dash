@@ -70,10 +70,6 @@ public class BaseControl : MonoBehaviour
 
         if (SceneManager.GetActiveScene().name == "Home")
             Discord.Presence(LangueAPI.String("native", "discordHome_title"), "", new DiscordClasses.Img("default"));
-
-        /*ModTool.ModManager mng = gameObject.AddComponent<ModTool.ModManager>();
-        mng.AddSearchDirectory(@"C:\Users\evan\Documents\Unity\Projets\mods");
-        mng.mods[0].Load();*/
     }
 
     public void SelectButton(Selectable obj)
