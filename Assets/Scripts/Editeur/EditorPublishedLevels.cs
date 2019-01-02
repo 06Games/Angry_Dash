@@ -188,7 +188,39 @@ public class EditorPublishedLevels : MonoBehaviour
             }
         }
     }
-    private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) { }
+    private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+    {
+        int pourcentage = e.ProgressPercentage; //Progression
+
+        //Avancé (x Mo sur x Mo)
+        double Actual = e.BytesReceived;
+        double Total = e.TotalBytesToReceive;
+        int Reduct = 0;
+        for (int i = 0; DependenciesManager.NbChiffreEntier(Total) > 3 & i <= 4; i++)
+        {
+            Actual = Actual / 1024d;
+            Total = Total / 1024d;
+            Reduct++;
+        }
+        Actual = System.Math.Round(Actual, 1);
+        Total = System.Math.Round(Total, 1);
+        string[] LangueID = new string[] { "downloadStateB", "[0] B out of [1] B" };
+        if (Reduct == 0) LangueID = new string[] { "downloadStateB", "[0] B out of [1] B" };
+        else if (Reduct == 1) LangueID = new string[] { "downloadStateKB", "[0] KB out of [1] KB" };
+        else if (Reduct == 2) LangueID = new string[] { "downloadStateMB", "[0] MB out of [1] MB" };
+        else if (Reduct == 3) LangueID = new string[] { "downloadStateGB", "[0] GB out of [1] GB" };
+        else if (Reduct == 4) LangueID = new string[] { "downloadStateTB", "[0] TB out of [1] TB" };
+
+        UnityThread.executeInUpdate(() =>
+        {
+            string downloaded = LangueAPI.StringWithArgument("native", LangueID[0], new string[] { Actual.ToString("0.0"), Total.ToString("0.0") }, LangueID[1]);
+            string pourcent = LangueAPI.StringWithArgument("native", "downloadStatePercentage", pourcentage.ToString("00"), "[0]%");
+
+            Text DownloadInfo = transform.GetChild(2).GetChild(3).GetChild(3).GetComponent<Text>();
+            DownloadInfo.gameObject.SetActive(true);
+            DownloadInfo.text = downloaded + " - <color=grey>" + pourcent + "</color>";
+        });
+    }
     private void wc_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
     {
         if (e.Cancelled) { print("The download has been cancelled"); return; }
@@ -200,6 +232,7 @@ public class EditorPublishedLevels : MonoBehaviour
             string fileName = Soundboard.WithoutSpecialCharacters(items[index].Music);
             UnityThread.executeInUpdate(() =>
             {
+                transform.GetChild(2).GetChild(3).GetChild(3).GetComponent<Text>().text = LangueAPI.String("native", "EditorCommunityLevelsInfosMusicConverting", "Converting...");
                 if (File.Exists(Application.temporaryCachePath + "/" + fileName + ".mp3"))
                     File.Delete(Application.temporaryCachePath + "/" + fileName + ".mp3");
                 File.Move(Application.temporaryCachePath + "/" + fileName, Application.temporaryCachePath + "/" + fileName + ".mp3");

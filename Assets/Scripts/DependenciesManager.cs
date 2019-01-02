@@ -340,6 +340,6 @@ public class DependenciesManager : MonoBehaviour
         return versionCompatibility;
     }
 
-    int NbChiffreEntier(double d) { return Math.Round(d, 0).ToString().Length; }
+    public static int NbChiffreEntier(double d) { return Math.Round(d, 0).ToString().Length; }
     #endregion
 }
