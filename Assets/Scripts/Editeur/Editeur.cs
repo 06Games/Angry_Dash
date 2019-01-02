@@ -226,7 +226,14 @@ public class Editeur : MonoBehaviour
             }
             else LSC.LoadScreen(FromScene);
         }
-        else LSC.LoadScreen(FromScene);
+        else
+        {
+#if UNITY_EDITOR
+            EditFile(Application.persistentDataPath + "/Levels/Official Levels/4.level");
+#else
+            LSC.LoadScreen(FromScene);
+#endif
+        }
     }
 
     void Update()
