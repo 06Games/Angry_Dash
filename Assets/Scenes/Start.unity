@@ -8810,7 +8810,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2065800058}
   - component: {fileID: 2065800056}
-  - component: {fileID: 2065800055}
   - component: {fileID: 2065800054}
   - component: {fileID: 2065800057}
   - component: {fileID: 2065800059}
@@ -8822,14 +8821,6 @@ GameObject:
   m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!124 &2065800054
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2065800052}
-  m_Enabled: 1
---- !u!92 &2065800055
 Behaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -23,9 +23,9 @@ public class menuMusic : MonoBehaviour
             StartDefault();
         }
     }
-    public void StartDefault()
+    public void StartDefault(float timePos = 0)
     {
-        LoadMusic(audioClip);
+        LoadMusic(audioClip, timePos);
         DontDestroyOnLoad(gameObject);
         AudioBegin = true;
     }
@@ -52,7 +52,12 @@ public class menuMusic : MonoBehaviour
 #endif
         StartCoroutine(StartAudio(url, timePos));
     }
-    public void LoadMusic(AudioClip ac) { GetComponent<AudioSource>().clip = ac; Play(); }
+    public void LoadMusic(AudioClip ac, float timePos)
+    {
+        GetComponent<AudioSource>().clip = ac;
+        GetComponent<AudioSource>().time = timePos;
+        Play();
+    }
     IEnumerator StartAudio(string url, float timePos)
     {
         if (url.Length > 8)
