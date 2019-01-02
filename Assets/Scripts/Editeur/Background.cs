@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using Tools;
 
 public class Background : MonoBehaviour {
 
@@ -142,15 +143,20 @@ public class Background : MonoBehaviour {
             if (!string.IsNullOrEmpty(BG)) back = BG;
         }
         string[] Ar = back.Split(new string[1] { "; " }, System.StringSplitOptions.None);
-        
+        int selected = int.Parse(Ar[0]);
+
         Color32 color = Editeur.HexToColor(Ar[1]);
         for (int i = 0; i < go.childCount; i++)
         {
             go.GetChild(i).GetComponent<Image>().color = color;
-            int selected = int.Parse(Ar[0]);
             go.GetChild(i).GetComponent<UImage_Reader>().Type[0] = Type[selected];
             go.GetChild(i).GetComponent<UImage_Reader>().Load(sp[selected], null);
         }
+        Vector2 size = sp[selected].Frames[0].Size();
+        go.GetComponent<CanvasScaler>().referenceResolution = size;
+        float match = 1;
+        if (size.y < size.x) match = 0;
+        go.GetComponent<CanvasScaler>().matchWidthOrHeight = match;
     }
 
     int j = 0;

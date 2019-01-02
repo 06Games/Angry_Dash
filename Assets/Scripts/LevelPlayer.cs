@@ -108,6 +108,11 @@ public class LevelPlayer : MonoBehaviour
             ArrierePlan.GetChild(i).GetComponent<Image>().color = HexToColor(Ar[1]);
             ArrierePlan.GetChild(i).GetComponent<UImage_Reader>().baseID = "native/BACKGROUNDS/" + Ar[0];
         }
+        Vector2 size = ArrierePlan.GetChild(0).GetComponent<Image>().sprite.Size();
+        ArrierePlan.GetComponent<CanvasScaler>().referenceResolution = size;
+        float match = 1;
+        if (size.y < size.x) match = 0;
+        ArrierePlan.GetComponent<CanvasScaler>().matchWidthOrHeight = match;
 
         int d = -1;
         for (int x = 0; x < component.Length; x++)

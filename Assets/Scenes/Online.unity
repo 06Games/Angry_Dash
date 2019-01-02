@@ -421,9 +421,9 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 1920, y: 1200}
+  m_ReferenceResolution: {x: 1000, y: 1000}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -556,7 +556,6 @@ GameObject:
   m_Component:
   - component: {fileID: 191689102}
   - component: {fileID: 191689101}
-  - component: {fileID: 191689100}
   - component: {fileID: 191689099}
   - component: {fileID: 191689103}
   - component: {fileID: 191689104}
@@ -569,14 +568,6 @@ GameObject:
   m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!124 &191689099
-Behaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 191689097}
-  m_Enabled: 1
---- !u!92 &191689100
 Behaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -844,6 +835,31 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114850151574524444, guid: 981a9ad2435523444be2674b148ffc7e,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 191689105}
+    - target: {fileID: 114852038408399458, guid: 981a9ad2435523444be2674b148ffc7e,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 191689105}
+    - target: {fileID: 114561100764015292, guid: 981a9ad2435523444be2674b148ffc7e,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 191689105}
+    - target: {fileID: 114293193403912882, guid: 981a9ad2435523444be2674b148ffc7e,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1556125073}
+    - target: {fileID: 114071675161682996, guid: 981a9ad2435523444be2674b148ffc7e,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 191689105}
     - target: {fileID: 224865842552478914, guid: 981a9ad2435523444be2674b148ffc7e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -934,31 +950,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114293193403912882, guid: 981a9ad2435523444be2674b148ffc7e,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 1556125073}
-    - target: {fileID: 114071675161682996, guid: 981a9ad2435523444be2674b148ffc7e,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 191689105}
-    - target: {fileID: 114561100764015292, guid: 981a9ad2435523444be2674b148ffc7e,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 191689105}
-    - target: {fileID: 114852038408399458, guid: 981a9ad2435523444be2674b148ffc7e,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 191689105}
-    - target: {fileID: 114850151574524444, guid: 981a9ad2435523444be2674b148ffc7e,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 191689105}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 981a9ad2435523444be2674b148ffc7e, type: 3}
 --- !u!1 &864369161
@@ -1364,6 +1355,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: 
+  Type: 00000000000000000000000000000000
 --- !u!114 &1300331717
 MonoBehaviour:
   m_ObjectHideFlags: 0

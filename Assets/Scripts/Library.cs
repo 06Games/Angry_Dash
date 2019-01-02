@@ -606,6 +606,11 @@ namespace Tools
             }
         }
     }
+
+    public static class SpriteExtensions
+    {
+        public static Vector2 Size(this Sprite sp) { Rect rect = sp.rect; return new Vector2(rect.width, rect.height); }
+    }
 }
 
 namespace MessengerExtensions
