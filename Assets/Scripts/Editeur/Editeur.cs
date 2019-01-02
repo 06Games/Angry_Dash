@@ -647,6 +647,11 @@ public class Editeur : MonoBehaviour
             newblockid = id;
             AddBlocking = true;
         }
+        else if (id > 10000)
+        {
+            newblockid = -1;
+            AddBlocking = false;
+        }
 
         BulleDeveloppementCat.SetActive(false);
         for (int i = 1; i < Contenu[3].transform.childCount - 2; i++)
@@ -666,11 +671,10 @@ public class Editeur : MonoBehaviour
                 Contenu[3].transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
             }
         }
-        for (int i = 1; i < Contenu[1].transform.childCount - 2; i++)
+        for (int i = 1; i < Contenu[1].transform.childCount - 1; i++)
         {
             int v = (int)(newblockid - 10000F);
-            if (i == v & AddBlocking)
-                Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
+            if (i == v & AddBlocking) Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
             else Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(45, 45, 45, 255);
         }
     }
