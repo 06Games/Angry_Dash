@@ -2326,6 +2326,7 @@ GameObject:
   - component: {fileID: 847468924}
   - component: {fileID: 847468923}
   - component: {fileID: 847468926}
+  - component: {fileID: 847468927}
   m_Layer: 5
   m_Name: Pause
   m_TagString: Untagged
@@ -2474,6 +2475,20 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: Base+OnCompleteEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+--- !u!114 &847468927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 847468921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/levelLauncher/pause
+  Type: 00000000000000000000000000000000
 --- !u!1 &864369161
 GameObject:
   m_ObjectHideFlags: 0
