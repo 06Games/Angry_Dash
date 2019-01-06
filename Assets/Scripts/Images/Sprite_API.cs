@@ -25,7 +25,8 @@ namespace Sprite_API
         /// </summary>
         public uint Repeat;
 
-        public Sprite_API_Data(){
+        public Sprite_API_Data()
+        {
             Frames = new Sprite[0];
             Delay = new float[0];
             Repeat = 0;
@@ -61,6 +62,13 @@ namespace Sprite_API
         /// <returns></returns>
         public static Sprite_API_Data GetSprites(string filePath, Vector4 border = new Vector4())
         {
+            CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures");
+            if (!cache.ValueExist(filePath)) cache.Set(filePath, Load(filePath, border));
+            return cache.Get<Sprite_API_Data>(filePath);
+        }
+
+        static Sprite_API_Data Load(string filePath, Vector4 border = new Vector4())
+        {
             if (File.Exists(filePath))
             {
                 APNG apng = new APNG(filePath);
@@ -75,7 +83,7 @@ namespace Sprite_API
                     Delay = new float[1] { 0 };
                     Texture2D tex = new Texture2D(1, 1);
                     tex.LoadImage(File.ReadAllBytes(filePath));
-                    Frames[0] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f), 
+                    Frames[0] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f),
                         100, 0, SpriteMeshType.FullRect, border);
                 }
                 else //APNG
@@ -128,8 +136,8 @@ namespace Sprite_API
                 errors = new string[0];
             }
         }
-        
-        public static Sprite GetSprite(APNGFrameInfo info)
+
+        static Sprite GetSprite(APNGFrameInfo info)
         {
             Frame frame = info.apng.Frames[info.index];
 
@@ -172,7 +180,7 @@ namespace Sprite_API
         static Texture2D CreateTransparent(int width, int height)
         {
             Texture2D texture_ = new Texture2D(width, height);
-            
+
             Color32 resetColor = UnityEngine.Color.white;
             Color32[] resetColorArray = texture_.GetPixels32();
             for (int i = 0; i < resetColorArray.Length; i++)

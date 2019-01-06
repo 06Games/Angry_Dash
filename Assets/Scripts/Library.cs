@@ -429,6 +429,60 @@ public class Versioning
         return Sort.Error;
     }
 }
+
+namespace CacheManager
+{
+    public class Dictionary : MonoBehaviour
+    {
+        public System.Collections.Generic.Dictionary<string, Cache> dictionary;
+        public Dictionary()
+        { dictionary = new System.Collections.Generic.Dictionary<string, Cache> (); }
+
+        public static Dictionary Static()
+        {
+            if (GameObject.Find("Cache") != null)
+                return GameObject.Find("Cache").GetComponent<Dictionary>();
+            else
+            {
+                GameObject cache = new GameObject("Cache");
+                DontDestroyOnLoad(cache);
+                return cache.AddComponent<Dictionary>();
+            }
+        }
+    }
+    
+    public class Cache
+    {
+        System.Collections.Generic.Dictionary<string, object> dictionary;
+        public Cache(string name)
+        {
+            Dictionary dic = Dictionary.Static();
+            if (dic.dictionary.ContainsKey(name))
+                dictionary = dic.dictionary[name].dictionary;
+            else
+            {
+                dictionary = new System.Collections.Generic.Dictionary<string, object>();
+                dic.dictionary.Add(name, this);
+            }
+        }
+
+        public void Set(string id, object obj)
+        {
+            if (dictionary.ContainsKey(id)) dictionary[id] = obj;
+            else dictionary.Add(id, obj);
+        }
+
+        public T Get<T>(string id) { return (T)Get(id); }
+        public object Get(string id)
+        {
+            if (dictionary.ContainsKey(id)) return dictionary[id];
+            else return null;
+        }
+
+        public bool ValueExist(string id) { return dictionary.ContainsKey(id); }
+    }
+}
+
 namespace Level
 {
     [System.Serializable]

@@ -18,6 +18,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     System.Diagnostics.Stopwatch[] animationTime = new System.Diagnostics.Stopwatch[4];
     uint[] Played = new uint[4];
     int[] Frame = new int[4];
+    [HideInInspector]
     public int[] Type = new int[4];
 
     void Start() { Load(); }
@@ -196,7 +197,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void StartAnimating(int index, int frameAddition, bool keepFrame = true)
     {
         if (data[index] == null) return;
-        
+
         if (GetComponent<Image>() != null) GetComponent<Image>().type = (Image.Type)Type[index];
         else if (GetComponent<SpriteRenderer>() != null) GetComponent<SpriteRenderer>().drawMode = (SpriteDrawMode)Type[index];
 
