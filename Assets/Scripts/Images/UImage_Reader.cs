@@ -98,6 +98,8 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void StartAnimating(int index) { StartAnimating(index, 1, false); }
     public void StartAnimating(int index, int frameAddition, bool keepFrame = true)
     {
+        if (data == null) return;
+        if (index >= data.Length) return;
         if (data[index] == null) return;
 
         if (GetComponent<Image>() != null) GetComponent<Image>().type = (Image.Type)Type[index];
@@ -124,6 +126,8 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public void StopAnimating(int index) { StopAnimating(index, false); }
     public void StopAnimating(int index, bool keepFrame)
     {
+        if (data == null) return;
+        if (index >= data.Length) return;
         if (data[index] == null) return;
         if (data[index].Frames.Length > 1)
         {

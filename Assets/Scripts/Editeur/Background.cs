@@ -24,9 +24,11 @@ public class Background : MonoBehaviour {
     {
         if (sp == null)
         {
-            int f = 12;
-            sp = new Sprite_API.Sprite_API_Data[f];
-            for (int i = 0; i < f; i++)
+            int bgNumber = 12;
+
+            sp = new Sprite_API.Sprite_API_Data[bgNumber];
+            jsonData = new Sprite_API.JSON_PARSE_DATA[bgNumber];
+            for (int i = 0; i < bgNumber; i++)
             {
                 string baseID = "native/BACKGROUNDS/" + i;
 
@@ -121,7 +123,7 @@ public class Background : MonoBehaviour {
         for (int i = 0; i < go.childCount; i++)
         {
             go.GetChild(i).GetComponent<Image>().color = color;
-            go.GetChild(i).GetComponent<UImage_Reader>().Type[0] = jsonData[i].type[selected];
+            go.GetChild(i).GetComponent<UImage_Reader>().Type[0] = jsonData[selected].type[0];
             go.GetChild(i).GetComponent<UImage_Reader>().Load(sp[selected], null);
         }
         Vector2 size = sp[selected].Frames[0].Size();
