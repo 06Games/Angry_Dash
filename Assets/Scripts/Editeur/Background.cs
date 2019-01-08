@@ -11,7 +11,7 @@ public class Background : MonoBehaviour {
     public Editeur Editor;
     string file;
     Sprite_API.Sprite_API_Data[] sp;
-    int[] Type;
+    Sprite_API.JSON_PARSE_DATA[] jsonData;
 
     public ColorPicker CP;
 
@@ -26,7 +26,6 @@ public class Background : MonoBehaviour {
         {
             int f = 12;
             sp = new Sprite_API.Sprite_API_Data[f];
-            Type = new int[f];
             for (int i = 0; i < f; i++)
             {
                 string baseID = "native/BACKGROUNDS/" + i;
@@ -34,37 +33,10 @@ public class Background : MonoBehaviour {
                 FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
                 if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
                     json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
-                FileFormat.JSON.Category paramCategory = json.GetCategory("textures").GetCategory("basic");
+                jsonData[i] = Sprite_API.Sprite_API.Parse(baseID, json);
+                
 
-                string path = Sprite_API.Sprite_API.spritesPath(baseID + " basic.png");
-                Vector4 border = new Vector4();
-                if (paramCategory.ContainsValues)
-                {
-                    //Border
-                    FileFormat.JSON.Category borderCategory = paramCategory.GetCategory("border");
-                    if (borderCategory.ContainsValues)
-                    {
-                        if (borderCategory.ValueExist("left")) border.x = borderCategory.Value<float>("left");
-                        if (borderCategory.ValueExist("right")) border.z = borderCategory.Value<float>("right");
-                        if (borderCategory.ValueExist("top")) border.w = borderCategory.Value<float>("top");
-                        if (borderCategory.ValueExist("bottom")) border.y = borderCategory.Value<float>("bottom");
-                    }
-
-                    //Path
-                    if (paramCategory.ValueExist("path"))
-                        path = new FileInfo(Sprite_API.Sprite_API.spritesPath(baseID + ".json")).Directory.FullName +
-                            "/" + paramCategory.Value<string>("path");
-
-                    if (paramCategory.ValueExist("type"))
-                    {
-                        string ImageType = paramCategory.Value<string>("type");
-                        if (ImageType == "Simple") Type[i] = 0;
-                        else if (ImageType == "Sliced") Type[i] = 1;
-                        else if (ImageType == "Tiled") Type[i] = 2;
-                    }
-                }
-
-                sp[i] = Sprite_API.Sprite_API.GetSprites(path, border);
+                sp[i] = Sprite_API.Sprite_API.GetSprites(jsonData[i].path[0], jsonData[i].border[0]);
             }
         }
     }
@@ -149,7 +121,7 @@ public class Background : MonoBehaviour {
         for (int i = 0; i < go.childCount; i++)
         {
             go.GetChild(i).GetComponent<Image>().color = color;
-            go.GetChild(i).GetComponent<UImage_Reader>().Type[0] = Type[selected];
+            go.GetChild(i).GetComponent<UImage_Reader>().Type[0] = jsonData[i].type[selected];
             go.GetChild(i).GetComponent<UImage_Reader>().Load(sp[selected], null);
         }
         Vector2 size = sp[selected].Frames[0].Size();
@@ -162,16 +134,19 @@ public class Background : MonoBehaviour {
     int j = 0;
     public void Page(int p)
     {
+        int bgNumber = 12;
+        int bgDisplayed = 6;
+
         j = j + p;
 
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < bgDisplayed; i++)
         {
             if (sp[Selected].Frames.Length > 0)
                 transform.GetChild(0).GetChild(i + 1).GetChild(0).GetComponent<Image>().sprite = sp[j + i].Frames[0];
         }
 
         transform.GetChild(0).GetChild(0).GetComponent<Button>().interactable = j > 0;
-        transform.GetChild(0).GetChild(7).GetComponent<Button>().interactable = (j + 6) < 12;
+        transform.GetChild(0).GetChild(7).GetComponent<Button>().interactable = (j + bgDisplayed) < bgNumber;
     }
 
     public void ChangeColorPickerBG(GameObject BG)

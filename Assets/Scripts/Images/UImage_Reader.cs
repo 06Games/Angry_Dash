@@ -22,20 +22,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public int[] Type = new int[4];
 
     void Start() { Load(); }
-    public void Load(Sprite_API.Sprite_API_Data spriteData, string id = null)
-    {
-        data[0] = spriteData;
-        baseID = id;
-
-        if (id != null)
-        {
-            FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
-            if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
-                json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
-            LoadOthersComponents(json);
-        }
-        else StartAnimating(0);
-    }
+    public void Load(Sprite_API.Sprite_API_Data spriteData, string id = null) { Load(new Sprite_API.Sprite_API_Data[] { spriteData }, id); }
     public void Load(Sprite_API.Sprite_API_Data[] spriteData, string id = null)
     {
         data = spriteData;
@@ -46,7 +33,9 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
             if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
                 json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
-            LoadOthersComponents(json);
+            Sprite_API.JSON_PARSE_DATA data = Sprite_API.Sprite_API.Parse(baseID, json);
+
+            ApplyJson(data);
         }
         else StartAnimating(0);
     }
@@ -55,126 +44,39 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
         if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
             json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
+        Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.Sprite_API.Parse(baseID, json);
 
-        //Textures
-        FileFormat.JSON.Category category = json.GetCategory("textures");
+        for (int i = 0; i < 4; i++)
+            data[i] = Sprite_API.Sprite_API.GetSprites(jsonData.path[i], jsonData.border[i]);
 
-        string[] paramNames = new string[] { "basic", "hover", "pressed", "disabled" };
-        data = new Sprite_API.Sprite_API_Data[paramNames.Length];
-        for (int i = 0; i < paramNames.Length; i++)
-        {
-            FileFormat.JSON.Category paramCategory = category.GetCategory(paramNames[i]);
-
-            string path = Sprite_API.Sprite_API.spritesPath(baseID + " " + paramNames[i] + ".png");
-            Vector4 border = new Vector4();
-            if (paramCategory.ContainsValues)
-            {
-                //Border
-                FileFormat.JSON.Category borderCategory = paramCategory.GetCategory("border");
-                if (borderCategory.ContainsValues)
-                {
-                    if (borderCategory.ValueExist("left")) border.x = borderCategory.Value<float>("left");
-                    if (borderCategory.ValueExist("right")) border.z = borderCategory.Value<float>("right");
-                    if (borderCategory.ValueExist("top")) border.w = borderCategory.Value<float>("top");
-                    if (borderCategory.ValueExist("bottom")) border.y = borderCategory.Value<float>("bottom");
-                }
-
-                //Path
-                if (paramCategory.ValueExist("path"))
-                    path = new FileInfo(Sprite_API.Sprite_API.spritesPath(baseID + ".json")).Directory.FullName +
-                        "/" + paramCategory.Value<string>("path");
-
-                if (paramCategory.ValueExist("type"))
-                {
-                    string ImageType = paramCategory.Value<string>("type");
-                    if (ImageType == "Simple") Type[i] = 0;
-                    else if (ImageType == "Sliced") Type[i] = 1;
-                    else if (ImageType == "Tiled") Type[i] = 2;
-                }
-            }
-
-            data[i] = Sprite_API.Sprite_API.GetSprites(path, border);
-        }
-
-        LoadOthersComponents(json);
+        ApplyJson(jsonData);
     }
 
 
-    void LoadOthersComponents(FileFormat.JSON.JSON json)
+    void ApplyJson(Sprite_API.JSON_PARSE_DATA data)
     {
-
         //Textures
         if (GetComponent<Selectable>() != null)
         {
             lastInteractable = GetComponent<Selectable>().interactable;
             GetComponent<Selectable>().transition = Selectable.Transition.None;
         }
-        if (data == null)
-        {
-            data = new Sprite_API.Sprite_API_Data[4];
-            data[0].Frames = new Sprite[] { GetComponent<Image>().sprite };
-            data[0].Delay = new float[] { 60F };
-            data[0].Repeat = 0;
-        }
-        StartAnimating(0);
 
         //Text
         Text[] texts = GetComponentsInChildren<Text>(true);
         for (int i = 0; i < texts.Length; i++)
         {
-            FileFormat.JSON.Category category = json.GetCategory("text");
-            //Color
-            Color32 textColor = new Color32(255, 255, 255, 255);
-            if (category.ValueExist("color")) HexColorField.HexToColor(category.Value<string>("color"), out textColor);
-            texts[i].color = textColor;
-
-            //Font Style
-            if (category.ValueExist("fontStyle"))
-            {
-                string value = category.Value<string>("fontStyle");
-                if (value == "Normal") texts[i].fontStyle = FontStyle.Normal;
-                else if (value == "Bold") texts[i].fontStyle = FontStyle.Bold;
-                else if (value == "Italic") texts[i].fontStyle = FontStyle.Italic;
-                else if (value == "BoldAndItalic") texts[i].fontStyle = FontStyle.BoldAndItalic;
-            }
-            else texts[i].fontStyle = FontStyle.Normal;
-
-            //Font Alignment
-            FileFormat.JSON.Category fontAlignment = category.GetCategory("fontAlignment");
-            if (fontAlignment.ContainsValues)
-            {
-                int horizontal = 0;
-                int vertical = 0;
-
-                if (fontAlignment.ValueExist("horizontal"))
-                {
-                    string horizontalValue = fontAlignment.Value<string>("horizontal");
-                    if (horizontalValue == "Left") horizontal = 0;
-                    else if (horizontalValue == "Center") horizontal = 1;
-                    else if (horizontalValue == "Right") horizontal = 2;
-                }
-                else horizontal = (int)texts[i].alignment - ((int)texts[i].alignment / 3) * 3;
-
-                if (fontAlignment.ValueExist("vertical"))
-                {
-                    string verticalValue = fontAlignment.Value<string>("vertical");
-                    if (verticalValue == "Upper") vertical = 0;
-                    else if (verticalValue == "Middle") vertical = 1;
-                    else if (verticalValue == "Lower") vertical = 2;
-                }
-                else vertical = (int)texts[i].alignment / 3;
-
-                texts[i].alignment = (TextAnchor)((vertical * 3) + horizontal);
-            }
-            else texts[i].alignment = TextAnchor.MiddleLeft;
-
-            //Font Size
-            FileFormat.JSON.Category fontSize = category.GetCategory("resize");
-            if (fontSize.ValueExist("minSize") & fontSize.ValueExist("maxSize")) texts[i].resizeTextForBestFit = true;
-            else texts[i].fontSize = 14;
-            if (fontSize.ValueExist("minSize")) texts[i].resizeTextMinSize = fontSize.Value<int>("minSize");
-            if (fontSize.ValueExist("maxSize")) texts[i].resizeTextMaxSize = fontSize.Value<int>("maxSize");
+           
+            texts[i].color = data.textColor; //Color
+            texts[i].fontStyle = data.textStyle; //Font Style
+            texts[i].alignment = data.textAnchor; //Font Alignment
+            texts[i].resizeTextForBestFit = data.textResize; //Font Resize
+            texts[i].fontSize = data.textSize;//Font Size
+            texts[i].resizeTextMinSize = data.textResizeMinAndMax[0]; //Font Resize Min
+            texts[i].resizeTextMaxSize = data.textResizeMinAndMax[1]; //Font Resize Max
         }
+
+        StartAnimating(0);
     }
 
     public void OnPointerEnter(PointerEventData eventData) { if (lastInteractable) StartAnimating(1, 1); }

@@ -39,6 +39,24 @@ namespace Sprite_API
         }
     }
 
+    [System.Serializable]
+    public class JSON_PARSE_DATA
+    {
+        [Header("Textures")]
+        public string[] path;
+        public Vector4[] border;
+        public int[] type;
+
+        [Space(10)]
+        [Header("Text Components")]
+        public Color32 textColor;
+        public UnityEngine.FontStyle textStyle;
+        public TextAnchor textAnchor;
+        public bool textResize;
+        public int textSize; //Only if textResize = false or for compatibility with layout groups
+        public int[] textResizeMinAndMax = new int[2];  //Only works if textResize = true
+    }
+
 
     public class Sprite_API : MonoBehaviour
     {
@@ -52,6 +70,111 @@ namespace Sprite_API
             string path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/" + id;
             if (File.Exists(path)) return path;
             else return Application.persistentDataPath + "/Ressources/default/textures/" + id;
+        }
+
+        public static JSON_PARSE_DATA Parse(string baseID, FileFormat.JSON.JSON json)
+        {
+            JSON_PARSE_DATA data = new JSON_PARSE_DATA();
+
+            //Textures
+            if (true)
+            {
+                FileFormat.JSON.Category category = json.GetCategory("textures");
+
+                string[] paramNames = new string[] { "basic", "hover", "pressed", "disabled" };
+                data.path = new string[paramNames.Length];
+                data.border = new Vector4[paramNames.Length];
+                data.type = new int[paramNames.Length];
+                for (int i = 0; i < paramNames.Length; i++)
+                {
+                    FileFormat.JSON.Category paramCategory = category.GetCategory(paramNames[i]);
+
+                    data.path[i] = spritesPath(baseID + " " + paramNames[i] + ".png");
+                    Vector4 border = new Vector4();
+                    if (paramCategory.ContainsValues)
+                    {
+                        //Border
+                        FileFormat.JSON.Category borderCategory = paramCategory.GetCategory("border");
+                        if (borderCategory.ContainsValues)
+                        {
+                            if (borderCategory.ValueExist("left")) border.x = borderCategory.Value<float>("left");
+                            if (borderCategory.ValueExist("right")) border.z = borderCategory.Value<float>("right");
+                            if (borderCategory.ValueExist("top")) border.w = borderCategory.Value<float>("top");
+                            if (borderCategory.ValueExist("bottom")) border.y = borderCategory.Value<float>("bottom");
+                        }
+
+                        //Path
+                        if (paramCategory.ValueExist("path"))
+                            data.path[i] = new FileInfo(spritesPath(baseID + ".json")).Directory.FullName +
+                                "/" + paramCategory.Value<string>("path");
+
+                        if (paramCategory.ValueExist("type"))
+                        {
+                            string ImageType = paramCategory.Value<string>("type");
+                            if (ImageType == "Simple") data.type[i] = 0;
+                            else if (ImageType == "Sliced") data.type[i] = 1;
+                            else if (ImageType == "Tiled") data.type[i] = 2;
+                        }
+                    }
+                }
+            }
+
+            //Text
+            if (true)
+            {
+                FileFormat.JSON.Category category = json.GetCategory("text");
+                //Color
+                Color32 textColor = new Color32(255, 255, 255, 255);
+                if (category.ValueExist("color")) HexColorField.HexToColor(category.Value<string>("color"), out textColor);
+                data.textColor = textColor;
+
+                //Font Style
+                if (category.ValueExist("fontStyle"))
+                {
+                    string value = category.Value<string>("fontStyle");
+                    if (value == "Normal") data.textStyle = UnityEngine.FontStyle.Normal;
+                    else if (value == "Bold") data.textStyle = UnityEngine.FontStyle.Bold;
+                    else if (value == "Italic") data.textStyle = UnityEngine.FontStyle.Italic;
+                    else if (value == "BoldAndItalic") data.textStyle = UnityEngine.FontStyle.BoldAndItalic;
+                }
+                else data.textStyle = UnityEngine.FontStyle.Normal;
+
+                //Font Alignment
+                FileFormat.JSON.Category fontAlignment = category.GetCategory("fontAlignment");
+                if (fontAlignment.ContainsValues)
+                {
+                    int horizontal = 0;
+                    int vertical = 0;
+
+                    if (fontAlignment.ValueExist("horizontal"))
+                    {
+                        string horizontalValue = fontAlignment.Value<string>("horizontal");
+                        if (horizontalValue == "Left") horizontal = 0;
+                        else if (horizontalValue == "Center") horizontal = 1;
+                        else if (horizontalValue == "Right") horizontal = 2;
+                    }
+
+                    if (fontAlignment.ValueExist("vertical"))
+                    {
+                        string verticalValue = fontAlignment.Value<string>("vertical");
+                        if (verticalValue == "Upper") vertical = 0;
+                        else if (verticalValue == "Middle") vertical = 1;
+                        else if (verticalValue == "Lower") vertical = 2;
+                    }
+
+                    data.textAnchor = (TextAnchor)((vertical * 3) + horizontal);
+                }
+                else data.textAnchor = TextAnchor.MiddleLeft;
+
+                //Font Size
+                FileFormat.JSON.Category fontSize = category.GetCategory("resize");
+                if (fontSize.ValueExist("minSize") & fontSize.ValueExist("maxSize")) data.textResize = true;
+                else { data.textResize = false; data.textSize = 14; }
+                if (fontSize.ValueExist("minSize")) data.textResizeMinAndMax[0] = fontSize.Value<int>("minSize");
+                if (fontSize.ValueExist("maxSize")) data.textResizeMinAndMax[1] = fontSize.Value<int>("maxSize");
+            }
+
+            return data;
         }
 
         /// <summary>
