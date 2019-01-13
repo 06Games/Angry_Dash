@@ -35,13 +35,6 @@ public class RessourcePackLoader : MonoBehaviour
                 Status.text = i + "/" + (ids.Length - 1);
             }
         }
-
-        End();
-    }
-
-    public void End()
-    {
-        InspectorUtilities.ClearConsole();
         GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Home");
     }
 }

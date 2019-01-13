@@ -435,9 +435,11 @@ public static class InspectorUtilities
 {
     public static void ClearConsole()
     {
+#if UNITY_EDITOR
         var logEntries = System.Type.GetType("UnityEditor.LogEntries,UnityEditor.dll");
         var clearMethod = logEntries.GetMethod("Clear", BindingFlags.Static | BindingFlags.Public);
         clearMethod.Invoke(null, null);
+#endif
     }
 }
 
