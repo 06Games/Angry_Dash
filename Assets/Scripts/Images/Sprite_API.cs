@@ -9,6 +9,7 @@ namespace Sprite_API
     /// <summary>
     /// Contains animation information
     /// </summary>
+    [System.Serializable]
     public class Sprite_API_Data
     {
         /// <summary>
@@ -65,6 +66,15 @@ namespace Sprite_API
         /// </summary>
         public static string spritesPath(string id)
         {
+#if UNITY_EDITOR
+            string fid = id.Replace(" basic", "").Replace(" hover", "").Replace(" pressed", "").Replace(" disabled", "");
+            string idPath = Application.dataPath + "/rpID.txt";
+            string[] lines = new string[0];
+            if (File.Exists(idPath)) lines = File.ReadAllLines(idPath);
+            File.WriteAllLines(idPath, lines.Union(new string[] { fid.Replace(".png", "").Replace(".json", "") }));
+
+#endif
+
             if (ConfigAPI.GetString("ressources.pack") == null)
                 ConfigAPI.SetString("ressources.pack", "default");
             string path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/" + id;
@@ -72,7 +82,22 @@ namespace Sprite_API
             else return Application.persistentDataPath + "/Ressources/default/textures/" + id;
         }
 
-        public static JSON_PARSE_DATA Parse(string baseID, FileFormat.JSON.JSON json)
+        public static JSON_PARSE_DATA Parse(string baseID, FileFormat.JSON.JSON json = null)
+        {
+            CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures/json");
+            if (!cache.ValueExist(baseID))
+            {
+                if (json == null)
+                {
+                    json = new FileFormat.JSON.JSON("");
+                    string jsonID = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/" + baseID + ".json";
+                    if (File.Exists(jsonID)) json = new FileFormat.JSON.JSON(File.ReadAllText(jsonID));
+                }
+                cache.Set(baseID, LoadParse(baseID, json));
+            }
+            return cache.Get<JSON_PARSE_DATA>(baseID);
+        }
+        public static JSON_PARSE_DATA LoadParse(string baseID, FileFormat.JSON.JSON json)
         {
             JSON_PARSE_DATA data = new JSON_PARSE_DATA();
 
@@ -185,13 +210,14 @@ namespace Sprite_API
         /// <returns></returns>
         public static Sprite_API_Data GetSprites(string filePath, Vector4 border = new Vector4())
         {
-            CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures");
-            if (!cache.ValueExist(filePath)) cache.Set(filePath, Load(filePath, border));
-            return cache.Get<Sprite_API_Data>(filePath);
+            Load(filePath, border);
+            return new CacheManager.Cache("Ressources/textures").Get<Sprite_API_Data>(filePath);
         }
 
-        static Sprite_API_Data Load(string filePath, Vector4 border = new Vector4())
+        public static void Load(string filePath, Vector4 border = new Vector4())
         {
+            CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures");
+            if (cache.ValueExist(filePath)) return;
             if (File.Exists(filePath))
             {
                 APNG apng = new APNG(filePath);
@@ -233,9 +259,8 @@ namespace Sprite_API
 
                 SAD.Frames = Frames;
                 SAD.Delay = Delay;
-                return SAD;
+                cache.Set(filePath, SAD);
             }
-            else return null;
         }
 
         public class APNGFrameInfo

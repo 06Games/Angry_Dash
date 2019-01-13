@@ -121,7 +121,7 @@ namespace FileFormat
         public class Item : Base_Collection
         {
             public Item(System.Xml.XmlNode xmlNode) { node = xmlNode; }
-            public RootElement rootElement {  get { return new RootElement(node.OwnerDocument.DocumentElement); } }
+            public RootElement rootElement { get { return new RootElement(node.OwnerDocument.DocumentElement); } }
 
             public string Attribute(string key) { return node.Attributes[key].Value; }
             public void CreateAttribute(string key, string value)
@@ -197,7 +197,7 @@ namespace FileFormat
             Nini.Config.IConfig config;
             public Category(Nini.Config.IConfig iConfig) { config = iConfig; }
 
-            
+
             public bool ContainsValues { get { if (config == null) return false; else return config.GetValues().Length > 0; } }
             public void Delete() { if (config != null) config.ConfigSource.Configs.Remove(config); }
 
@@ -212,13 +212,14 @@ namespace FileFormat
     public class Binary
     {
         string chain = "";
-        public Binary(byte[] data) {
+        public Binary(byte[] data)
+        {
             string binary = string.Join("", data.Select(byt => System.Convert.ToString(byt, 2).PadLeft(8, '0')));
             string onlyNumbers = System.Text.RegularExpressions.Regex.Replace(binary, "[0-9]", "");
             if (string.IsNullOrEmpty(onlyNumbers)) chain = binary;
             else throw new System.ArgumentException("The specified string is not binary");
         }
-        Binary (string data) { chain = data; }
+        Binary(string data) { chain = data; }
         public static Binary Parse(string data) { return new Binary(data.Replace(" ", "")); }
 
         public override string ToString()
@@ -430,13 +431,23 @@ public class Versioning
     }
 }
 
+public static class InspectorUtilities
+{
+    public static void ClearConsole()
+    {
+        var logEntries = System.Type.GetType("UnityEditor.LogEntries,UnityEditor.dll");
+        var clearMethod = logEntries.GetMethod("Clear", BindingFlags.Static | BindingFlags.Public);
+        clearMethod.Invoke(null, null);
+    }
+}
+
 namespace CacheManager
 {
     public class Dictionary : MonoBehaviour
     {
         public System.Collections.Generic.Dictionary<string, Cache> dictionary;
         public Dictionary()
-        { dictionary = new System.Collections.Generic.Dictionary<string, Cache> (); }
+        { dictionary = new System.Collections.Generic.Dictionary<string, Cache>(); }
 
         public static Dictionary Static()
         {
@@ -449,11 +460,23 @@ namespace CacheManager
                 return cache.AddComponent<Dictionary>();
             }
         }
+
+#if UNITY_EDITOR
+        public string[] key;
+        public Cache[] value;
+        private void Update()
+        {
+            key = dictionary.Keys.ToArray();
+            value = dictionary.Values.ToArray();
+        }
+#endif
     }
-    
+
+    [System.Serializable]
     public class Cache
     {
         System.Collections.Generic.Dictionary<string, object> dictionary;
+
         public Cache(string name)
         {
             Dictionary dic = Dictionary.Static();
@@ -503,7 +526,7 @@ namespace Level
             Description = description;
             Music = music;
         }
-        
+
         public override string ToString() { return FileFormat.XML.Utils.ClassToXML(this); }
         public static LevelItem Parse(string data) { return FileFormat.XML.Utils.XMLtoClass<LevelItem>(data); }
     }

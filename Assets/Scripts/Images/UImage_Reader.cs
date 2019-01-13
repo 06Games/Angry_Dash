@@ -30,10 +30,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
         if (id != null)
         {
-            FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
-            if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
-                json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
-            Sprite_API.JSON_PARSE_DATA data = Sprite_API.Sprite_API.Parse(baseID, json);
+            Sprite_API.JSON_PARSE_DATA data = Sprite_API.Sprite_API.Parse(baseID);
 
             ApplyJson(data);
         }
@@ -41,10 +38,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     }
     public void Load()
     {
-        FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
-        if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
-            json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
-        Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.Sprite_API.Parse(baseID, json);
+        Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.Sprite_API.Parse(baseID);
 
         for (int i = 0; i < 4; i++)
             data[i] = Sprite_API.Sprite_API.GetSprites(jsonData.path[i], jsonData.border[i]);

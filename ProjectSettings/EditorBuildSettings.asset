@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Start.unity
     guid: af6a0df439de4f541973b294be419702
   - enabled: 1
+    path: Assets/Scenes/Load.unity
+    guid: 6411cc8f6eae4c34487e79e6e2d82ac0
+  - enabled: 1
     path: Assets/Scenes/Home.unity
     guid: e98c260189d59f747af2c3a504817d43
   - enabled: 1
@@ -20,3 +23,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Online.unity
     guid: 25863a60734f2964b9566e829698dbb2
+  m_configObjects: {}
