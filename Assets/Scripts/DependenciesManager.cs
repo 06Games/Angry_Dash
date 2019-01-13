@@ -63,7 +63,11 @@ public class DependenciesManager : MonoBehaviour
         {
             long dirSize = new DirectoryInfo(Application.persistentDataPath + "/Ressources/default/").GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
             if (dirSize == size) down = false;
-            else down = true;
+            else
+            {
+                down = true;
+                Directory.Delete((Application.persistentDataPath + "/Ressources/default/"), true);
+            }
         }
         if (down)
         {
