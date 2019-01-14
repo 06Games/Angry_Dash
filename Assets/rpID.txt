@@ -50,3 +50,5 @@ native/PLAYERS/6
 native/PLAYERS/7
 native/PLAYERS/8
 native/PLAYERS/9
+native/GUI/editorMenu/edit
+native/GUI/editorMenu/communityLevels

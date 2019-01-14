@@ -462,6 +462,7 @@ namespace CacheManager
                 return cache.AddComponent<Dictionary>();
             }
         }
+        public static bool Exist() { return GameObject.Find("Cache") != null; }
 
 #if UNITY_EDITOR
         public string[] key;
