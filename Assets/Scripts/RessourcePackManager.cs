@@ -36,7 +36,7 @@ public class RessourcePackManager : MonoBehaviour
             go.GetChild(2).gameObject.SetActive(name == ConfigAPI.GetString("ressources.pack"));
 
             string description = "";
-            string wallpaperPath = null;
+            string wallpaperPath = "native/GUI/settingsMenu/ressourcePacks/defaultBackground";
 
             for (int l = 0; l < data.Length; l++)
             {
@@ -47,28 +47,14 @@ public class RessourcePackManager : MonoBehaviour
                 {
                     if (infos[0] == "name") name = infos[1];
                     else if (infos[0] == "description") description = infos[1];
-                    else if (infos[0] == "wallpaper") wallpaperPath = infos[1];
+                    else if (infos[0] == "wallpaper") wallpaperPath = "../" + infos[1];
                 }
             }
 
             go.name = name;
             go.GetChild(0).GetComponent<Text>().text = name;
             go.GetChild(1).GetComponent<Text>().text = description;
-            if (!string.IsNullOrEmpty(wallpaperPath))
-            {
-                if (File.Exists(RPs[i] + "/" + wallpaperPath))
-                {
-                    Texture2D tex = new Texture2D(1, 1);
-                    tex.LoadImage(File.ReadAllBytes(RPs[i] + "/" + wallpaperPath));
-
-                    Vector4 border = new Vector4();
-                    go.GetComponent<Image>().sprite = Sprite.Create(tex,
-                        new Rect(0, 0, tex.width, tex.height),
-                        new Vector2(.5f, .5f),
-                        100.0f, 0, SpriteMeshType.FullRect,
-                        border);
-                }
-            }
+            go.GetComponent<UImage_Reader>().baseID = wallpaperPath;
 
             go.gameObject.SetActive(true);
         }

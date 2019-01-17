@@ -54,3 +54,4 @@ native/PLAYERS/8
 native/PLAYERS/9
 native/GUI/editorMenu/edit
 native/GUI/editorMenu/communityLevels
+native/GUI/settingsMenu/ressourcePacks/defaultBackground
