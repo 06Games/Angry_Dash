@@ -66,10 +66,10 @@ public class LangueSelector : MonoBehaviour
             go.GetComponent<Button>().onClick.RemoveAllListeners();
             go.GetComponent<Button>().onClick.AddListener(() => Chang(dispo));
 
-            if (File.Exists(Sprite_API.Sprite_API.spritesPath("native/GUI/settings/languagesFlags/" + Path.GetFileNameWithoutExtension(languages[i]) + ".png")))
+            if (File.Exists(Sprite_API.Sprite_API.spritesPath("native/GUI/settingsMenu/languagesFlags/" + Path.GetFileNameWithoutExtension(languages[i]) + ".png")))
             {
                 Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/GUI/settings/languagesFlags/" + Path.GetFileNameWithoutExtension(languages[i]) + ".png")));
+                tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/GUI/settingsMenu/languagesFlags/" + Path.GetFileNameWithoutExtension(languages[i]) + ".png")));
                 LangFlag[i] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
             }
             else LangFlag[i] = Langues.GetChild(0).GetComponent<Image>().sprite;

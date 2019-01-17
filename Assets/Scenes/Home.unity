@@ -5459,7 +5459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/settings/sound/delete
+  baseID: native/GUI/settingsMenu/sound/delete
   Type: 00000000000000000000000000000000
 --- !u!1 &175311785
 GameObject:
@@ -11925,6 +11925,7 @@ GameObject:
   - component: {fileID: 489920605}
   - component: {fileID: 489920607}
   - component: {fileID: 489920606}
+  - component: {fileID: 489920608}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -11988,6 +11989,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 489920604}
   m_CullTransparentMesh: 0
+--- !u!114 &489920608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 489920604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/settingsMenu/sound
+  Type: 00000000000000000000000000000000
 --- !u!1 &490972753
 GameObject:
   m_ObjectHideFlags: 0
@@ -15250,7 +15265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/settings/sound/play
+  baseID: native/GUI/settingsMenu/sound/play
   Type: 00000000000000000000000000000000
 --- !u!1 &622013190
 GameObject:
@@ -26780,6 +26795,7 @@ GameObject:
   - component: {fileID: 1123241333}
   - component: {fileID: 1123241334}
   - component: {fileID: 1123241335}
+  - component: {fileID: 1123241336}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -26843,6 +26859,20 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+--- !u!114 &1123241336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1123241332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/settingsMenu/languages
+  Type: 00000000000000000000000000000000
 --- !u!1 &1136823972
 GameObject:
   m_ObjectHideFlags: 0
