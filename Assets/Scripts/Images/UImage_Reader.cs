@@ -9,6 +9,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     //Configuration
     public string baseID;
+    public bool TextConfiguration = true;
 
     //Parameters
     Sprite_API.Sprite_API_Data[] data = new Sprite_API.Sprite_API_Data[4];
@@ -56,18 +57,21 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             GetComponent<Selectable>().transition = Selectable.Transition.None;
         }
 
-        //Text
-        Text[] texts = GetComponentsInChildren<Text>(true);
-        for (int i = 0; i < texts.Length; i++)
+        if (TextConfiguration)
         {
-           
-            texts[i].color = data.textColor; //Color
-            texts[i].fontStyle = data.textStyle; //Font Style
-            texts[i].alignment = data.textAnchor; //Font Alignment
-            texts[i].resizeTextForBestFit = data.textResize; //Font Resize
-            texts[i].fontSize = data.textSize;//Font Size
-            texts[i].resizeTextMinSize = data.textResizeMinAndMax[0]; //Font Resize Min
-            texts[i].resizeTextMaxSize = data.textResizeMinAndMax[1]; //Font Resize Max
+            //Text
+            Text[] texts = GetComponentsInChildren<Text>(true);
+            for (int i = 0; i < texts.Length; i++)
+            {
+
+                texts[i].color = data.textColor; //Color
+                texts[i].fontStyle = data.textStyle; //Font Style
+                texts[i].alignment = data.textAnchor; //Font Alignment
+                texts[i].resizeTextForBestFit = data.textResize; //Font Resize
+                texts[i].fontSize = data.textSize;//Font Size
+                texts[i].resizeTextMinSize = data.textResizeMinAndMax[0]; //Font Resize Min
+                texts[i].resizeTextMaxSize = data.textResizeMinAndMax[1]; //Font Resize Max
+            }
         }
 
         StartAnimating(0);

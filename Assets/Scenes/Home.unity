@@ -1310,6 +1310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/mainMenu/button
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &24187624
 GameObject:
@@ -4024,6 +4025,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/playMenu/communityServers
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &132773394
 GameObject:
@@ -5460,6 +5462,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/settingsMenu/sound/delete
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &175311785
 GameObject:
@@ -6686,6 +6689,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/logo
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &227421474
 GameObject:
@@ -10211,6 +10215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/editorMenu/communityLevels
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &431649455
 GameObject:
@@ -12002,6 +12007,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/settingsMenu/sound
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &490972753
 GameObject:
@@ -14117,6 +14123,7 @@ GameObject:
   - component: {fileID: 574575549}
   - component: {fileID: 574575548}
   - component: {fileID: 574575550}
+  - component: {fileID: 574575551}
   m_Layer: 5
   m_Name: Template
   m_TagString: Untagged
@@ -14225,6 +14232,21 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &574575551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 574575546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: 
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &575206676
 GameObject:
   m_ObjectHideFlags: 0
@@ -15266,6 +15288,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/settingsMenu/sound/play
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &622013190
 GameObject:
@@ -16311,6 +16334,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: 
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &668813795
 GameObject:
@@ -18415,6 +18439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/playMenu/officialLevels
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &764433822
 GameObject:
@@ -19033,6 +19058,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/editorMenu/edit
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &805437979
 GameObject:
@@ -26872,6 +26898,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/settingsMenu/languages
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &1136823972
 GameObject:
@@ -33329,6 +33356,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/mainMenu/background
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &1391679893
 GameObject:
@@ -33780,6 +33808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/playMenu/history
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &1411691821
 GameObject:
@@ -37506,6 +37535,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/mainMenu/button
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &1601577207
 GameObject:
@@ -38818,6 +38848,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/playMenu/OfficialServers
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &1661439376
 GameObject:
@@ -48894,6 +48925,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/mainMenu/profile
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!114 &2065246928
 MonoBehaviour:
@@ -50222,6 +50254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/mainMenu/button
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!114 &2110757787
 MonoBehaviour:
