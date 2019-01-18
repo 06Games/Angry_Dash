@@ -43,7 +43,10 @@ public class Player : MonoBehaviour
 
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online")
         {
+
+#pragma warning disable CS0618 // En attendant la nouvelle API
             if (GetComponent<NetworkIdentity>().isLocalPlayer)
+#pragma warning restore CS0618 // En attendant la nouvelle API
             {
                 LP.GetComponent<MainCam>().Player = gameObject;
                 GetComponent<SpriteRenderer>().color = new Color32(255, 185, 0, 255);

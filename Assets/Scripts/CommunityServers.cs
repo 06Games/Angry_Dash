@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class CommunityServers : MonoBehaviour
 {
+#pragma warning disable CS0618 // En attendant la nouvelle API
 
     public LoadingScreenControl LS;
     public Sprite DefaultServerIcon;
