@@ -62,13 +62,16 @@ public class menuMusic : MonoBehaviour
     {
         if (url.Length > 8)
         {
-            WWW audioLoader = new WWW(url);
-            while (!audioLoader.isDone)
-                yield return null;
+            UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip(url, Soundboard.NativeFileFormat());
+            yield return www.SendWebRequest();
 
-            GetComponent<AudioSource>().clip = audioLoader.GetAudioClip(false, false, Soundboard.NativeFileFormat());
-            GetComponent<AudioSource>().time = timePos;
-            Play();
+            if (www.isNetworkError) Debug.LogError(www.error);
+            else
+            {
+                GetComponent<AudioSource>().clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(www);
+                GetComponent<AudioSource>().time = timePos;
+                Play();
+            }
         }
     }
 }
