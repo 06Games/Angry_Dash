@@ -20,7 +20,7 @@ public class BaseControl : MonoBehaviour
     public string scene = "Home";
     public bool returnScene = true;
     [Serializable] public class OnCompleteEvent : UnityEvent { }
-    [SerializeField] private OnCompleteEvent OnEchap;
+    [SerializeField] private OnCompleteEvent OnEchap = new OnCompleteEvent();
 
     public LoadingScreenControl LSC;
 

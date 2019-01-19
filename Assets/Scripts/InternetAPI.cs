@@ -12,7 +12,7 @@ public class InternetAPI : MonoBehaviour {
         OnStart.Invoke();
     }
 
-    [SerializeField] private OnCompleteEvent OnStart;
+    [SerializeField] private OnCompleteEvent OnStart = new OnCompleteEvent();
     [Serializable] public class OnCompleteEvent : UnityEvent { }
 
     /// <summary> Donne la vitesse de téléchargement en kb/sec </summary>

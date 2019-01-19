@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 public class SurClique : MonoBehaviour {
     
-    [SerializeField] private OnCompleteEvent OnCompleteMethods;
+    [SerializeField] private OnCompleteEvent OnCompleteMethods = new OnCompleteEvent();
     public enum QuelClique
     {
         Gauche,

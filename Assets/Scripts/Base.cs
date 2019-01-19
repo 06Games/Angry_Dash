@@ -12,7 +12,7 @@ using PlayerPrefs = PreviewLabs.PlayerPrefs;
 public class Base : MonoBehaviour {
 
     [Serializable] public class OnCompleteEvent : UnityEvent { }
-    [SerializeField] private OnCompleteEvent OnUpdate;
+    [SerializeField] private OnCompleteEvent OnUpdate = new OnCompleteEvent();
 
     private void Update() { OnUpdate.Invoke(); }
 

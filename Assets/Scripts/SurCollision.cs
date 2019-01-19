@@ -31,7 +31,7 @@ public class SurCollision : MonoBehaviour
 
 
 
-    [SerializeField] private OnCompleteEvent OnCompleteMethods;
+    [SerializeField] private OnCompleteEvent OnCompleteMethods = new OnCompleteEvent();
     [Serializable] public class OnCompleteEvent : UnityEvent { }
 
     public void Detruire(GameObject go = null)
