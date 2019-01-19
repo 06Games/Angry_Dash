@@ -1,5 +1,5 @@
-lastUpgrade=00950
-proj.pluginVersion=0.9.50
+lastUpgrade=00958
+proj.pluginVersion=0.9.58
 proj.AppId=1038919147510
 and.BundleId=com.fr_06Games.AngryDash
 proj.classDir=Assets%2fScripts

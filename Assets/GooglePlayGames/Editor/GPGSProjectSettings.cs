@@ -20,7 +20,7 @@ namespace GooglePlayGames.Editor
 {
     using System.Collections.Generic;
     using System.IO;
-    using UnityEngine.Networking;
+    using UnityEngine;
 
     public class GPGSProjectSettings
     {
@@ -97,7 +97,7 @@ namespace GooglePlayGames.Editor
             }
             else if (mDict.ContainsKey(key))
             {
-                return UnityWebRequest.UnEscapeURL(mDict[key]);
+                return WWW.UnEscapeURL(mDict[key]);
             }
             else
             {
@@ -109,7 +109,7 @@ namespace GooglePlayGames.Editor
         {
             if (mDict.ContainsKey(key))
             {
-                string val = UnityWebRequest.UnEscapeURL(mDict[key]);
+                string val = WWW.UnEscapeURL(mDict[key]);
                 return val;
             }
             else
@@ -135,7 +135,7 @@ namespace GooglePlayGames.Editor
 
         public void Set(string key, string val)
         {
-            string escaped = UnityWebRequest.EscapeURL(val);
+            string escaped = WWW.EscapeURL(val);
             mDict[key] = escaped;
             mDirty = true;
         }
@@ -173,7 +173,7 @@ namespace GooglePlayGames.Editor
             mDirty = false;
         }
 
-        public static void Reload()
+        public static void Reload ()
         {
             sInstance = new GPGSProjectSettings();
         }
