@@ -494,14 +494,16 @@ namespace CacheManager
 
         public void Set(string id, object obj)
         {
-            if (dictionary.ContainsKey(id)) dictionary[id] = obj;
+            if (string.IsNullOrEmpty(id)) return;
+            else if (dictionary.ContainsKey(id)) dictionary[id] = obj;
             else dictionary.Add(id, obj);
         }
 
         public T Get<T>(string id) { return (T)Get(id); }
         public object Get(string id)
         {
-            if (dictionary.ContainsKey(id)) return dictionary[id];
+            if (string.IsNullOrEmpty(id)) return null;
+            else if (dictionary.ContainsKey(id)) return dictionary[id];
             else return null;
         }
 
@@ -640,6 +642,15 @@ namespace Tools
                 System.Array.Copy(source, to + 1, dest, from, source.Length - to - 1);
 
             return dest;
+        }
+
+        public static T[] Get<T>(this T[] list, int from, int to)
+        {
+            if (from < 0) throw new System.Exception("From index can not be less than 0");
+            else if (to < from) throw new System.Exception("To index can not be less than From index");
+            else if (to >= list.Length) throw new System.Exception("To index can not be more than the list length");
+
+            return list.Skip(from).Take(to - from).ToArray();
         }
     }
 

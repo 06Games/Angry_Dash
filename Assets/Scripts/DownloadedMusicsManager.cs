@@ -20,11 +20,7 @@ public class DownloadedMusicsManager : MonoBehaviour
 
         GameObject Template = scroll.content.GetChild(0).gameObject;
         FileInfo[] files = new DirectoryInfo(Application.persistentDataPath + "/Musics/").GetFiles("* - *", SearchOption.AllDirectories);
-        string mime = "audio/x-wav";
-        if (Soundboard.NativeFileFormat() == AudioType.OGGVORBIS)
-            mime = "application/ogg";
-        else if (Soundboard.NativeFileFormat() == AudioType.MPEG)
-            mime = "audio/mpeg";
+        string mime = "application/ogg";
 
         for (int i = 0; i < files.Length; i++)
         {
@@ -49,10 +45,10 @@ public class DownloadedMusicsManager : MonoBehaviour
         if (GameObject.Find("Audio") != null) mm = GameObject.Find("Audio").GetComponent<menuMusic>();
         else return;
 
-        if (mm.GetComponent<AudioSource>().clip == mm.audioClip | curentlyPlaying != path) //Play
+        if (mm.GetComponent<AudioSource>().clip == SoundAPI.Sound.Get("native/main") | curentlyPlaying != path) //Play
         {
             defaultMusicPos = mm.GetComponent<AudioSource>().time;
-            mm.LoadMusic(path);
+            mm.LoadUnpackagedMusic(path);
             curentlyPlaying = path;
         }
         else //Stop

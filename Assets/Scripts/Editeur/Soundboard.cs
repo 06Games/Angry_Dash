@@ -78,17 +78,12 @@ public class Soundboard : MonoBehaviour
             if (lenght > 0) return;
             Refreshed = true;
         }
-
-            String AT = "audio/x-wav";
-            if (NativeFileFormat() == AudioType.OGGVORBIS)
-                AT = "application/ogg";
-            else if (NativeFileFormat() == AudioType.MPEG)
-                AT = "audio/mpeg";
+        
         string[] sFiles = Directory.GetFiles(Application.persistentDataPath + "/Musics/");
         Base = new SongItem[sFiles.Length];
         for (int i = 0; i < sFiles.Length; i++)
         {
-            TagLib.Tag TL = TagLib.File.Create(sFiles[i], AT, TagLib.ReadStyle.None).Tag;
+            TagLib.Tag TL = TagLib.File.Create(sFiles[i], "application/ogg", TagLib.ReadStyle.None).Tag;
             Base[i] = new SongItem();
             Base[i].URL = sFiles[i];
             Base[i].Artist = TL.Performers[0];
@@ -120,13 +115,12 @@ public class Soundboard : MonoBehaviour
                 wc.DownloadFileCompleted += wc_DownloadFileCompleted;
 
                 string path = Application.persistentDataPath + "/Musics/";
-                if (NativeFileFormat() == AudioType.OGGVORBIS)
-                    path = Application.temporaryCachePath + "/";
                 wc.DownloadFileAsync(new Uri(URL), path + Song[SongOpened].Artist + " - " + Song[SongOpened].Name);
             }
         }
     }
-
+    
+    [Obsolete("Now, ogg is supported on all platforms")]
     public static AudioType NativeFileFormat()
     {
 #if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBGL
@@ -182,50 +176,10 @@ public class Soundboard : MonoBehaviour
             return;
         }
 
-        if (NativeFileFormat() == AudioType.OGGVORBIS)
-        {
-            string fileName = Song[SongOpened].Artist + " - " + Song[SongOpened].Name;
-            UnityThread.executeInUpdate(() =>
-            {
-                if (File.Exists(Application.temporaryCachePath + "/" + fileName + ".mp3"))
-                    File.Delete(Application.temporaryCachePath + "/" + fileName + ".mp3");
-                File.Move(Application.temporaryCachePath + "/" + fileName, Application.temporaryCachePath + "/" + fileName + ".mp3");
+        BaseScript.DeactiveObjectStatic(DownloadPanel);
 
-                if (File.Exists(Application.persistentDataPath + "/Musics/" + fileName + ".ogg"))
-                    File.Delete(Application.persistentDataPath + "/Musics/" + fileName + ".ogg");
-
-                
-                FFmpeg.FFmpegAPI.Convert(Application.temporaryCachePath + "/" + fileName + ".mp3", Application.temporaryCachePath + "/" + fileName + ".ogg", new FFmpeg.handler(ConvertEnd));
-            });
-        }
-        else
-        {
-            BaseScript.DeactiveObjectStatic(DownloadPanel);
-
-            UnityThread.executeInUpdate(() =>
-            {
-                Transform go = MusicSelectorPanel.transform.GetChild(3).GetChild(0).GetChild(3);
-                bool FileExists = File.Exists(Application.persistentDataPath + "/Musics/" + Song[SongOpened].Artist + " - " + Song[SongOpened].Name);
-                go.GetChild(0).gameObject.SetActive(!FileExists);
-                go.GetChild(1).gameObject.SetActive(FileExists);
-                editor.bloqueEchap = false;
-            });
-        }
-    }
-
-    void ConvertEnd(object sender, EventArgs e)
-    { 
         UnityThread.executeInUpdate(() =>
         {
-            string fileName = Song[SongOpened].Artist + " - " + Song[SongOpened].Name;
-            if (File.Exists(Application.temporaryCachePath + "/" + fileName + ".mp3"))
-                File.Delete(Application.temporaryCachePath + "/" + fileName + ".mp3");
-            if (File.Exists(Application.persistentDataPath + "/Musics/" + fileName))
-                File.Delete(Application.persistentDataPath + "/Musics/" + fileName);
-            File.Move(Application.temporaryCachePath + "/" + fileName + ".ogg", Application.persistentDataPath + "/Musics/" + fileName);
-
-            BaseScript.DeactiveObjectStatic(DownloadPanel);
-
             Transform go = MusicSelectorPanel.transform.GetChild(3).GetChild(0).GetChild(3);
             bool FileExists = File.Exists(Application.persistentDataPath + "/Musics/" + Song[SongOpened].Artist + " - " + Song[SongOpened].Name);
             go.GetChild(0).gameObject.SetActive(!FileExists);
@@ -339,7 +293,7 @@ public class Soundboard : MonoBehaviour
             if (GameObject.Find("Audio") != null)
             {
                 menuMusic mm = GameObject.Find("Audio").GetComponent<menuMusic>();
-                mm.LoadMusic(Application.persistentDataPath + "/Musics/" + Song[SongOpened].Artist + " - " + Song[SongOpened].Name, MusicPos);
+                mm.LoadUnpackagedMusic(Application.persistentDataPath + "/Musics/" + Song[SongOpened].Artist + " - " + Song[SongOpened].Name, MusicPos);
             }
             txt.text = LangueAPI.String("native", ids[7]);
             Play = true;

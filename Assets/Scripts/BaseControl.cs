@@ -29,7 +29,6 @@ public class BaseControl : MonoBehaviour
     public Slider SmallSlider;
 
     public GameObject AudioPrefs;
-    public AudioClip ButtonSoundOnClick;
 
     public GameObject DiscordPref;
 
@@ -63,10 +62,15 @@ public class BaseControl : MonoBehaviour
 
         GameObject[] gos = GameObject.FindGameObjectsWithTag("Button With Click");
         for (int i = 0; i < gos.Length; i++)
-            gos[i].GetComponent<Button>().onClick.AddListener(() => GetComponent<AudioSource>().PlayOneShot(ButtonSoundOnClick));
+            gos[i].GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SoundAPI.Load load = new SoundAPI.Load("native/click");
+                load.Complete += (sender, e) => GetComponent<AudioSource>().PlayOneShot(SoundAPI.Sound.Get("native/click"));
+                StartCoroutine(load.Start());
+            });
 
         eventSystem = GameObject.Find("EventSystem").GetComponent<UnityEngine.EventSystems.EventSystem>();
-        if(eventSystem.firstSelectedGameObject != null) baseSelectable = eventSystem.firstSelectedGameObject.GetComponent<Selectable>();
+        if (eventSystem.firstSelectedGameObject != null) baseSelectable = eventSystem.firstSelectedGameObject.GetComponent<Selectable>();
 
         if (SceneManager.GetActiveScene().name == "Home")
             Discord.Presence(LangueAPI.String("native", "discordHome_title"), "", new DiscordClasses.Img("default"));
