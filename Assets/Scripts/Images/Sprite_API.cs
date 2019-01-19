@@ -44,9 +44,9 @@ namespace Sprite_API
     public class JSON_PARSE_DATA
     {
         [Header("Textures")]
-        public string[] path;
-        public Vector4[] border;
-        public int[] type;
+        public string[] path = new string[4];
+        public Vector4[] border = new Vector4[4];
+        public int[] type = new int[4];
 
         [Space(10)]
         [Header("Text Components")]
@@ -67,11 +67,15 @@ namespace Sprite_API
         public static string spritesPath(string id)
         {
 #if UNITY_EDITOR
-            string fid = id.Replace(" basic", "").Replace(" hover", "").Replace(" pressed", "").Replace(" disabled", "");
-            string idPath = Application.dataPath + "/rpID.txt";
-            string[] lines = new string[0];
-            if (File.Exists(idPath)) lines = File.ReadAllLines(idPath);
-            File.WriteAllLines(idPath, lines.Union(new string[] { fid.Replace(".png", "").Replace(".json", "") }));
+            if (!id.Contains("bg") & !string.IsNullOrEmpty(id))
+            {
+                string fid = id.Replace(" basic", "").Replace(" hover", "").Replace(" pressed", "").Replace(" disabled", "");
+                string idPath = Application.dataPath + "/rpID.txt";
+                string[] lines = new string[0];
+                if (File.Exists(idPath)) lines = File.ReadAllLines(idPath);
+                fid = fid.Replace(".png", "").Replace(".json", "");
+                if(!string.IsNullOrEmpty(fid)) File.WriteAllLines(idPath, lines.Union(new string[] { fid }));
+            }
 
 #endif
 
