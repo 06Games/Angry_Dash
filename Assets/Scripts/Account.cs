@@ -30,7 +30,7 @@ public class Account : MonoBehaviour
                     string[] details = File.ReadAllLines(path);
                     if (!File.Exists(Application.temporaryCachePath + "/ac.txt"))
                         Connect(details[0].Replace("1 = ", ""), details[1].Replace("2 = ", ""), true);
-                    else if (Security.Encrypting.Decrypt(File.ReadAllLines(Application.temporaryCachePath + "/ac.txt")[0], details[1].Replace("2 = ", "")) != details[0].Replace("1 = ", "") + BaseControl.pathToActualLogMessage())
+                    else if (Security.Encrypting.Decrypt(File.ReadAllLines(Application.temporaryCachePath + "/ac.txt")[0], details[1].Replace("2 = ", "")) != details[0].Replace("1 = ", "") + Logging.pathToLogFile)
                         Connect(details[0].Replace("1 = ", ""), details[1].Replace("2 = ", ""), true);
                 }
                 catch
@@ -79,7 +79,7 @@ public class Account : MonoBehaviour
 
         if (Result.Contains("Connection succesful !"))
         {
-            BaseControl.LogNewMassage("Successful connection to 06Games account", true);
+            Logging.Log("Successful connection to 06Games account", LogType.Log);
             transform.GetChild(0).gameObject.SetActive(false);
 
 #if UNITY_EDITOR || UNITY_STANDALONE
@@ -90,11 +90,11 @@ public class Account : MonoBehaviour
             string[] a = Result.Split(new string[] { "<br>" }, StringSplitOptions.None);
             ConfigAPI.SetString("Account.Username", a[3]);
             File.WriteAllLines(path, new string[2] { "1 = " + user, "2 = " + MDP });
-            File.WriteAllLines(Application.temporaryCachePath + "/ac.txt", new string[1] { Security.Encrypting.Encrypt(user + BaseControl.pathToActualLogMessage(), mdp) });
+            File.WriteAllLines(Application.temporaryCachePath + "/ac.txt", new string[1] { Security.Encrypting.Encrypt(user + Logging.pathToLogFile, mdp) });
         }
         else
         {
-                if(showErrors) BaseControl.LogNewMassage("06Games account connection failure", true);
+                if(showErrors) Logging.Log("06Games account connection failure", LogType.Warning);
             transform.GetChild(0).gameObject.SetActive(true);
             if(!hash)
                 transform.GetChild(0).GetChild(4).gameObject.SetActive(true);

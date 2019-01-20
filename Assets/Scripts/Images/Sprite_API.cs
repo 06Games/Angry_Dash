@@ -258,7 +258,7 @@ namespace Sprite_API
                     }
 
                     for (int i = 0; i < info.errors.Length; i++)
-                        BaseControl.LogNewMassage(info.errors[i]);
+                        Logging.Log(info.errors[i], LogType.Error);
                 }
 
                 SAD.Frames = Frames;

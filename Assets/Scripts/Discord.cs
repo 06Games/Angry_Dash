@@ -133,43 +133,43 @@ public class Discord : MonoBehaviour
 
     public void ReadyCallback(ref DiscordRpc.DiscordUser connectedUser)
     {
-        Debug.Log(string.Format("Discord: connected to {0}#{1}: {2}", connectedUser.username, connectedUser.discriminator, connectedUser.userId));
+        Logging.Log(string.Format("Discord: connected to {0}#{1}: {2}", connectedUser.username, connectedUser.discriminator, connectedUser.userId), LogType.Log);
         onConnect.Invoke();
     }
 
     public void DisconnectedCallback(int errorCode, string message)
     {
-        Debug.Log(string.Format("Discord: disconnect {0}: {1}", errorCode, message));
+        Logging.Log(string.Format("Discord: disconnect {0}: {1}", errorCode, message), LogType.Log);
         onDisconnect.Invoke();
     }
 
     public void ErrorCallback(int errorCode, string message)
     {
-        Debug.Log(string.Format("Discord: error {0}: {1}", errorCode, message));
+        Logging.Log(string.Format("Discord: error {0}: {1}", errorCode, message), LogType.Error);
     }
 
     public void JoinCallback(string secret)
     {
-        Debug.Log(string.Format("Discord: join ({0})", secret));
+        Logging.Log(string.Format("Discord: join ({0})", secret), LogType.Log);
         onJoin.Invoke(secret);
     }
 
     public void SpectateCallback(string secret)
     {
-        Debug.Log(string.Format("Discord: spectate ({0})", secret));
+        Logging.Log(string.Format("Discord: spectate ({0})", secret), LogType.Log);
         onSpectate.Invoke(secret);
     }
 
     public void RequestCallback(ref DiscordRpc.DiscordUser request)
     {
-        Debug.Log(string.Format("Discord: join request {0}#{1}: {2}", request.username, request.discriminator, request.userId));
+        Logging.Log(string.Format("Discord: join request {0}#{1}: {2}", request.username, request.discriminator, request.userId), LogType.Log);
         joinRequest = request;
         onJoinRequest.Invoke(request);
     }
 
     void OnEnable()
     {
-        Debug.Log("Discord API is starting");
+        Logging.Log("Discord API is starting", LogType.Log);
         DontDestroyOnLoad(gameObject);
 
         handlers = new DiscordRpc.EventHandlers();

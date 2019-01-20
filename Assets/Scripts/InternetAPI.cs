@@ -70,7 +70,6 @@ public class InternetAPI : MonoBehaviour {
             HtmlText = "";
         }
 
-        BaseControl.LogNewMassage("Internet connection : " + (HtmlText != "").ToString());
         return HtmlText != "";
     }
 

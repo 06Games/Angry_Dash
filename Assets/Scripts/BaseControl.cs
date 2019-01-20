@@ -11,9 +11,6 @@ using UnityEngine.SceneManagement;
 using System.Net;
 using System.ComponentModel;
 using UnityEngine.UI;
-using System.Linq;
-using System.Diagnostics;
-using Debug = UnityEngine.Debug;
 
 public class BaseControl : MonoBehaviour
 {
@@ -37,9 +34,16 @@ public class BaseControl : MonoBehaviour
     {
         UnityThread.initUnityThread();
         System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
+        if (SceneManager.GetActiveScene().name == "Start")
+        {
+            Application.logMessageReceived += (logString, stackTrace, type) => Logging.Log(logString, type, stackTrace);
+            Logging.Log("The game start", LogType.Log);
+        }
     }
-    private void OnApplicationQuit() {
-        string[] files= Directory.GetFiles(Application.temporaryCachePath);
+    private void OnApplicationQuit()
+    {
+        string[] files = Directory.GetFiles(Application.temporaryCachePath);
         for (int i = 0; i < files.Length; i++)
             File.Delete(files[i]);
     }
@@ -51,11 +55,8 @@ public class BaseControl : MonoBehaviour
 
     void Start()
     {
-        if (GameObject.Find("Audio") == null)
-            Instantiate(AudioPrefs).name = "Audio";
-
-        if (GameObject.Find("Discord") == null)
-            Instantiate(DiscordPref).name = "Discord";
+        if (GameObject.Find("Audio") == null) Instantiate(AudioPrefs).name = "Audio";
+        if (GameObject.Find("Discord") == null) Instantiate(DiscordPref).name = "Discord";
 
         if (LSC == null)
             LSC = GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>();
@@ -93,7 +94,7 @@ public class BaseControl : MonoBehaviour
         bool newController = Input.GetJoystickNames().Length > 0;
         if (newController) newController = !(Input.GetJoystickNames().Length == 1 & string.IsNullOrEmpty(Input.GetJoystickNames()[0]));
         if (newController == true & Controller == false & baseSelectable != null) baseSelectable.Select();
-        if(Controller & eventSystem.currentSelectedGameObject == null & baseSelectable != null) baseSelectable.Select();
+        if (Controller & eventSystem.currentSelectedGameObject == null & baseSelectable != null) baseSelectable.Select();
         if (Controller & !newController) eventSystem.SetSelectedGameObject(null);
         Controller = newController;
 
@@ -116,83 +117,5 @@ public class BaseControl : MonoBehaviour
         }
     }
 
-    #region Logs
-
-    void OnEnable() { Application.logMessageReceived += HandleLog; }
-    void OnDisable() { Application.logMessageReceived -= HandleLog; }
-    void HandleLog(string logString, string stackTrace, LogType type)
-    {
-#if !UNITY_EDITOR
-        UnityThread.executeInUpdate(() =>
-        {
-            string[] trace = stackTrace.Split(new string[1] { "\n" }, StringSplitOptions.None);
-            stackTrace = "";
-            for (int i = 0; i < trace.Length - 1; i++)
-                stackTrace = stackTrace + "\n\t\t" + trace[i];
-
-            string DT = (DateTime.Now - TimeSpan.FromSeconds(Time.realtimeSinceStartup)).ToString("yyyy-MM-dd HH-mm-ss");
-            string path = Application.persistentDataPath + "/logs/";
-            string filepath = path + DT + ".log";
-
-            if (!Directory.Exists(path))
-                Directory.CreateDirectory(path);
-            else if (!File.Exists(filepath))
-                File.WriteAllText(filepath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] The game start\n\n");
-
-            string current = "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + logString + stackTrace + "\n\n";
-            string line = File.ReadAllText(filepath) + current;
-            File.WriteAllText(filepath, line);
-        });
-#endif
-    }
-    public static void LogNewMassage(string logString, bool inEditor = false, string stackTrace = null)
-    {
-        bool go = true;
-#if UNITY_EDITOR
-        go = inEditor;
-#endif
-        if (go)
-        {
-            UnityThread.executeInUpdate(() =>
-            {
-                string DT = (DateTime.Now - TimeSpan.FromSeconds(Time.realtimeSinceStartup)).ToString("yyyy-MM-dd HH-mm-ss");
-                string path = Application.persistentDataPath + "/logs/";
-                string filepath = path + DT + ".log";
-
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-                if (!File.Exists(filepath))
-                    File.WriteAllText(filepath, "[" + DateTime.Now.ToString("HH:mm:ss") + "] The game start\n\n");
-
-                if (stackTrace != null)
-                {
-                    string[] trace = stackTrace.Split(new string[1] { "\n" }, StringSplitOptions.None);
-                    stackTrace = "";
-                    for (int i = 0; i < trace.Length - 1; i++)
-                        stackTrace = stackTrace + "\n\t\t" + trace[i];
-                }
-
-                string current = "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + logString + stackTrace + "\n\n";
-                string line = File.ReadAllText(filepath) + current;
-                File.WriteAllText(filepath, line);
-            });
-        }
-    }
-    public static string pathToActualLogMessage()
-    {
-        string DT = (DateTime.Now - TimeSpan.FromSeconds(Time.realtimeSinceStartup)).ToString("yyyy-MM-dd HH-mm-ss");
-        string path = Application.persistentDataPath + "/logs/";
-        return path + DT + ".log";
-
-    }
-    public void DeleteAllCache()
-    {
-        string DT = (DateTime.Now - TimeSpan.FromSeconds(Time.realtimeSinceStartup)).ToString("yyyy-MM-dd HH-mm-ss");
-        string log = File.ReadAllText(Application.persistentDataPath + "/logs/" + DT + ".log");
-        Directory.Delete(Application.persistentDataPath + "/logs/", true);
-        Directory.CreateDirectory(Application.persistentDataPath + "/logs/");
-        File.WriteAllText(Application.persistentDataPath + "/logs/" + DT + ".log", log);
-    }
-
-    #endregion
+    public void DeleteAllCache() { Logging.DeleteLogs(); }
 }
