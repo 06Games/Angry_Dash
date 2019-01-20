@@ -24,7 +24,10 @@ namespace SoundAPI
         {
             CacheManager.Cache cache = new CacheManager.Cache("Ressources/sounds");
             AudioClip clip = null;
-            if (!cache.ValueExist(id))
+            bool needLoad = !cache.ValueExist(id);
+            if (cache.ValueExist(id))
+                if (cache.Get(id) != null) needLoad = true;
+            if (needLoad)
             {
                 string filePath = id;
                 if (storeInCache)
@@ -66,9 +69,9 @@ namespace SoundAPI
                         }
                     }
 #endif
-                    if (storeInCache & string.IsNullOrEmpty(id)) throw new System.Exception("ID must be set if you want to cache audio");
-                    if (storeInCache) cache.Set(id, clip);
                 }
+                if (storeInCache & string.IsNullOrEmpty(id)) throw new System.Exception("ID must be set if you want to cache audio");
+                else if (storeInCache) cache.Set(id, clip);
             }
             Complete.Invoke(null, new Tools.BetterEventArgs(clip));
         }
