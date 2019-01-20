@@ -30,7 +30,13 @@ public class DependenciesManager : MonoBehaviour
             WebClient client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             string Result = "";
-            try { Result = client.DownloadString(URL).Replace("<BR />", "\n"); } catch { wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); return; }
+            try { Result = client.DownloadString(URL).Replace("<BR />", "\n"); } //Try to access to the server
+            catch (Exception e)
+            { //else
+                UnityEngine.Debug.LogError(e.Message); //log error
+                wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); //continue game starting
+                return; //stop this function
+            }
             string[] lines = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
 
             DownloadPanel.SetActive(true);
