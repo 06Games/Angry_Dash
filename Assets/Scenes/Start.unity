@@ -5335,10 +5335,10 @@ RectTransform:
   m_Father: {fileID: 407109814}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1233188436
 CanvasRenderer:
@@ -8922,7 +8922,6 @@ MonoBehaviour:
   BigSlider: {fileID: 0}
   SmallSlider: {fileID: 0}
   AudioPrefs: {fileID: 1458537501854406, guid: 2cfcea02e17130a43b3499549985c4a0, type: 3}
-  ButtonSoundOnClick: {fileID: 8300000, guid: 7f487e4748fd40643adb86125a40f81e, type: 3}
   DiscordPref: {fileID: 1650686116138130, guid: 23fa7d3e42dcf5a489750d3576031f1e,
     type: 3}
   Controller: 0

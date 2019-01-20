@@ -45,6 +45,8 @@ public class Intro : MonoBehaviour {
 
         //Assign the Texture from Video to RawImage to be displayed
         UnityEngine.UI.RawImage rawImage = gameObject.AddComponent<UnityEngine.UI.RawImage>();
+        float sizeMultiplier = 1080F / Screen.height;
+        transform.localScale = new Vector2(videoPlayer.texture.width / sizeMultiplier, videoPlayer.texture.height / sizeMultiplier);
         rawImage.texture = videoPlayer.texture;
 
         //Play Video
