@@ -167,8 +167,9 @@ public class EditorPublishedLevels : MonoBehaviour
     {
         if (InternetAPI.IsConnected())
         {
-            if (!Directory.Exists(Application.persistentDataPath + "/Musics/"))
-                Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
+            string path = Application.persistentDataPath + "/Musics/";
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
 
             string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/files/" +
                 Soundboard.WithoutSpecialCharacters(items[index].Music).Replace(" ", "%20") + ".ogg";
@@ -178,7 +179,6 @@ public class EditorPublishedLevels : MonoBehaviour
                 wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                 wc.DownloadFileCompleted += wc_DownloadFileCompleted;
 
-                string path = Application.persistentDataPath + "/Musics/";
                 wc.DownloadFileAsync(new System.Uri(URL), path + Soundboard.WithoutSpecialCharacters(items[index].Music), index);
 
                 transform.GetChild(2).GetChild(3).GetChild(2).gameObject.SetActive(false);
@@ -225,6 +225,6 @@ public class EditorPublishedLevels : MonoBehaviour
         if (e.Error != null) { Debug.LogError("An error ocurred while trying to download file\n" + e.Error); return; }
         int index = (int)e.UserState;
 
-        transform.GetChild(2).GetChild(3).GetChild(3).gameObject.SetActive(false);
+        UnityThread.executeInUpdate(() => transform.GetChild(2).GetChild(3).GetChild(3).gameObject.SetActive(false));
     }
 }
