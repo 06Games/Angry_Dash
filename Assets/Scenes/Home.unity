@@ -13046,7 +13046,6 @@ MonoBehaviour:
   BigSlider: {fileID: 0}
   SmallSlider: {fileID: 0}
   AudioPrefs: {fileID: 1458537501854406, guid: 2cfcea02e17130a43b3499549985c4a0, type: 3}
-  ButtonSoundOnClick: {fileID: 8300000, guid: 7f487e4748fd40643adb86125a40f81e, type: 3}
   DiscordPref: {fileID: 1650686116138130, guid: 23fa7d3e42dcf5a489750d3576031f1e,
     type: 3}
   Controller: 0
@@ -21565,6 +21564,25 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224744703202280554, guid: e09bd60866c1db1449e7dcab4d010fb3,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1957322146981096, guid: e09bd60866c1db1449e7dcab4d010fb3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224618225338030792, guid: e09bd60866c1db1449e7dcab4d010fb3,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224618225338030792, guid: e09bd60866c1db1449e7dcab4d010fb3,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224618225338030792, guid: e09bd60866c1db1449e7dcab4d010fb3,
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
