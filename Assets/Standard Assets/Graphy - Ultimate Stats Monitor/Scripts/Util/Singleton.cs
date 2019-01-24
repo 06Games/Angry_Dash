@@ -33,9 +33,9 @@ namespace Tayx.Graphy.Utils
 
         #region Variables -> Private
 
-        private static  T       _instance;
+        private static T _instance;
 
-        private static  object  _lock       = new object();
+        private static object _lock = new object();
 
         #endregion
 
@@ -45,7 +45,7 @@ namespace Tayx.Graphy.Utils
         {
             get
             {
-                
+
                 if (_applicationIsQuitting)
                 {
                     //Debug.LogWarning("[Singleton] Instance '" + typeof(T) +
@@ -53,7 +53,7 @@ namespace Tayx.Graphy.Utils
                     //    " Won't create again - returning null.");
                     return null;
                 }
-                
+
                 lock (_lock)
                 {
                     if (_instance == null)
@@ -80,6 +80,7 @@ namespace Tayx.Graphy.Utils
                             //    " is needed in the scene, so '" + singleton +
                             //    "' was created with DontDestroyOnLoad.");
 
+#if !UNITY_EDITOR
                             Debug.Log
                             (
                                 "[Singleton] An instance of " + typeof(T) +
@@ -87,6 +88,7 @@ namespace Tayx.Graphy.Utils
                                 "Make sure to add an instance of " + typeof(T) + " in the scene before " +
                                 " trying to access it."
                             );
+#endif
                         }
                         else
                         {
@@ -100,9 +102,9 @@ namespace Tayx.Graphy.Utils
             }
         }
 
-        #endregion
+#endregion
 
-        #region Methods -> Unity Callbacks
+#region Methods -> Unity Callbacks
 
         void Awake()
         {
@@ -130,6 +132,6 @@ namespace Tayx.Graphy.Utils
             _applicationIsQuitting = true;
         }
 
-        #endregion
+#endregion
     }
 }
