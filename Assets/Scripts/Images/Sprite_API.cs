@@ -74,7 +74,7 @@ namespace Sprite_API
                 string[] lines = new string[0];
                 if (File.Exists(idPath)) lines = File.ReadAllLines(idPath);
                 fid = fid.Replace(".png", "").Replace(".json", "");
-                if(!string.IsNullOrEmpty(fid)) File.WriteAllLines(idPath, lines.Union(new string[] { fid }));
+                if (!string.IsNullOrEmpty(fid)) File.WriteAllLines(idPath, lines.Union(new string[] { fid }));
             }
 
 #endif
@@ -238,6 +238,7 @@ namespace Sprite_API
                     tex.LoadImage(File.ReadAllBytes(filePath));
                     Frames[0] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f),
                         100, 0, SpriteMeshType.FullRect, border);
+                    Frames[0].name = Path.GetFileNameWithoutExtension(filePath);
                 }
                 else //APNG
                 {
@@ -255,6 +256,7 @@ namespace Sprite_API
 
                         info.index = i;
                         Frames[i] = GetSprite(info);
+                        Frames[i].name = Path.GetFileNameWithoutExtension(filePath) + " n°" + i;
                     }
 
                     for (int i = 0; i < info.errors.Length; i++)
@@ -293,53 +295,68 @@ namespace Sprite_API
         {
             Frame frame = info.apng.Frames[info.index];
 
-            Texture2D text = new Texture2D(1, 1);
-            text.LoadImage(frame.GetStream().ToArray());
+            Texture2D frameImg = new Texture2D(1, 1);
+            frameImg.LoadImage(frame.GetStream().ToArray());
 
-            info.buffer.SetPixels((int)frame.fcTLChunk.XOffset, info.buffer.height - (int)frame.fcTLChunk.YOffset - text.height,
-                text.width, text.height, text.GetPixels(0, 0, text.width, text.height));
-
-            Texture2D tex = info.buffer;
-            tex.Apply();
+            Texture2D frameTampon = info.buffer;
+            Vector2 offset = new Vector2(frame.fcTLChunk.XOffset, info.buffer.height - frame.fcTLChunk.YOffset - frameImg.height);
+            if (frame.fcTLChunk.BlendOp == BlendOps.APNGBlendOpOver)
+            {
+                UnityEngine.Color[] fgColor = frameImg.GetPixels();
+                UnityEngine.Color[] bgColor = frameTampon.GetPixels((int)offset.x, (int)offset.y, frameImg.width, frameImg.height);
+                for (int c = 0; c < fgColor.Length; c++)
+                {
+                    if (fgColor[c].a == 0) { /* Do nothing */ }
+                    else if (fgColor[c].a == 255) bgColor[c] = fgColor[c];
+                    else
+                    {
+                        for (int i = 0; i < 3; i++)
+                            bgColor[c][i] = fgColor[c].a * fgColor[c][i] + (1 - fgColor[c].a) * bgColor[c][i];
+                    }
+                }
+                frameTampon.SetPixels((int)offset.x, (int)offset.y, frameImg.width, frameImg.height, bgColor);
+            }
+            else if (frame.fcTLChunk.BlendOp == BlendOps.APNGBlendOpSource)
+            {
+                frameTampon.SetPixels((int)offset.x, (int)offset.y, frameImg.width, frameImg.height, //Image position
+                frameImg.GetPixels(0, 0, frameImg.width, frameImg.height)); //Copy image
+            }
 
             info.dispose = frame.fcTLChunk.DisposeOp;
-            TamponCleaner(info);
+            TamponCleaner(info, frameTampon);
 
-            return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f),
+            frameTampon.Apply();
+            return Sprite.Create(frameTampon, new Rect(0, 0, frameTampon.width, frameTampon.height), new Vector2(.5f, .5f),
                         100, 0, SpriteMeshType.FullRect, info.border);
+
         }
 
-        static void TamponCleaner(APNGFrameInfo info)
+        static void TamponCleaner(APNGFrameInfo info, Texture2D frameTampon)
         {
-            if (info.index == 0 & info.dispose == DisposeOps.APNGDisposeOpPrevious) info.dispose = DisposeOps.APNGDisposeOpBackground;
+            if (info.index == 0 & info.dispose == DisposeOps.APNGDisposeOpPrevious) //Previous in the first frame 
+                info.dispose = DisposeOps.APNGDisposeOpBackground; //is treated as Background
 
-            if (info.dispose == DisposeOps.APNGDisposeOpPrevious)
+            if (info.dispose == DisposeOps.APNGDisposeOpPrevious) { } //don't apply anything
+            else if (info.dispose == DisposeOps.APNGDisposeOpBackground) //reset the buffer
+                info.buffer = CreateTransparent(info.apng.IHDRChunk.Width, info.apng.IHDRChunk.Height);
+            else if (info.dispose == DisposeOps.APNGDisposeOpNone) //set the frame to the buffer
             {
-                Texture2D text = new Texture2D(1, 1);
-                text.LoadImage(info.apng.Frames[info.index - 1].GetStream().ToArray());
-
-                info.buffer = CreateTransparent(info.apng.IHDRChunk.Width, info.apng.IHDRChunk.Height);
-                Frame frame = info.apng.Frames[info.index - 1];
-                info.buffer.SetPixels((int)frame.fcTLChunk.XOffset, info.buffer.height - (int)frame.fcTLChunk.YOffset - text.height, text.width, text.height,
-                    text.GetPixels(0, 0, text.width, text.height));
+                Texture2D texture_ = new Texture2D(info.apng.IHDRChunk.Width, info.apng.IHDRChunk.Height);
+                texture_.LoadRawTextureData(frameTampon.GetRawTextureData());
+                info.buffer = texture_;
             }
-            else if (info.dispose == DisposeOps.APNGDisposeOpBackground)
-                info.buffer = CreateTransparent(info.apng.IHDRChunk.Width, info.apng.IHDRChunk.Height);
-            else if (info.dispose == DisposeOps.APNGDisposeOpNone)
-                info.errors = info.errors.Union(new string[] { "The texture at \"" + info.id + "\" contains frames with the dispose value set to None, the game does not support it yet !" }).ToArray();
         }
 
         static Texture2D CreateTransparent(int width, int height)
         {
             Texture2D texture_ = new Texture2D(width, height);
 
-            Color32 resetColor = UnityEngine.Color.white;
+            Color32 resetColor = new Color32(0, 0, 0, 0);
             Color32[] resetColorArray = texture_.GetPixels32();
             for (int i = 0; i < resetColorArray.Length; i++)
                 resetColorArray[i] = resetColor;
 
             texture_.SetPixels32(resetColorArray);
-            texture_.Apply();
             return texture_;
         }
     }

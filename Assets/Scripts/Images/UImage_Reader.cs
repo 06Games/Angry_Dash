@@ -41,7 +41,8 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     {
         Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.Sprite_API.Parse(baseID);
 
-        for (int i = 0; i < 4; i++)
+        data = new Sprite_API.Sprite_API_Data[4];
+        for (int i = 0; i < data.Length; i++)
             data[i] = Sprite_API.Sprite_API.GetSprites(jsonData.path[i], jsonData.border[i]);
 
         ApplyJson(jsonData);
