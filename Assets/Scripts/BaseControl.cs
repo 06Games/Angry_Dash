@@ -103,9 +103,11 @@ public class BaseControl : MonoBehaviour
             if (scene == "" & returnScene)
                 Base.Quit(true);
             else if (!sceneChanging & returnScene)
+            {
                 LSC.LoadScreen(scene);
-
-            if (returnScene) sceneChanging = true;
+                sceneChanging = true;
+            }
+            
             OnEchap.Invoke();
         }
         if (Input.GetKeyDown(KeyCode.F11) & !VideoSettings.mobile())
