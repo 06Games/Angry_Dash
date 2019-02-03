@@ -55,3 +55,6 @@ native/PLAYERS/9
 native/GUI/editorMenu/edit
 native/GUI/editorMenu/communityLevels
 native/GUI/settingsMenu/ressourcePacks/defaultBackground
+native/GUI/settingsMenu/video
+native/GUI/settingsMenu/informations
+native/GUI/settingsMenu/ressourcePacks

@@ -42,7 +42,7 @@ namespace SoundAPI
                 if (System.IO.File.Exists(filePath))
                 {
 #if UNITY_EDITOR || UNITY_STANDALONE
-                    bool NVorbis = !ConfigAPI.GetBool("audio.WaitForComplete");
+                    bool NVorbis = !ConfigAPI.GetBool("audio.WaitUntilFullyLoaded");
                     if (!NVorbis) //If it is necessary to wait for the end of the loading, the native method is more advantageous
                     {
                         UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip("file:///" + filePath, AudioType.OGGVORBIS);

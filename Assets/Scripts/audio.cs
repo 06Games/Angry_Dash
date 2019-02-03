@@ -4,13 +4,16 @@ using UnityEngine.UI;
 
 public class audio : MonoBehaviour
 {
-
+    [Header("Sound level")]
     public AudioMixer mixer;
     public string[] parametersNames = new string[3] { "Master", "Musique", "FX" };
     string[] parametersConfigNames = new string[] { "audio.master", "audio.music", "audio.fx" };
 
     public int[] Value = new int[3] { -15, -15, -15 };
     public Scrollbar[] scroll;
+    
+    [Header("Other parameters")]
+    public Toggle FullyLoaded;
 
     void Start() { NewStart(); }
     void NewStart()
@@ -23,6 +26,8 @@ public class audio : MonoBehaviour
             mixer.SetFloat(parametersNames[i], Value[i]);
             scroll[i].value = (Value[i] + 30F) / 30;
         }
+
+        FullyLoaded.isOn = ConfigAPI.GetBool("audio.WaitUntilFullyLoaded");
     }
 
     public void ValueChanged(int i)
@@ -33,4 +38,6 @@ public class audio : MonoBehaviour
         mixer.SetFloat(parametersNames[i], Value[i]);
         ConfigAPI.SetInt(parametersConfigNames[i], Value[i]);
     }
+
+    public void WaitUntilFullyLoaded(Toggle toggle) { ConfigAPI.SetBool("audio.WaitUntilFullyLoaded", toggle.isOn); }
 }
