@@ -6531,7 +6531,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1.3
-  m_Text: Downloading textures required by the game
+  m_Text: Downloading ressources required by the game
 --- !u!222 &1456008404
 CanvasRenderer:
   m_ObjectHideFlags: 0
