@@ -4,8 +4,6 @@ native/GUI/mainMenu/background
 native/GUI/mainMenu/profile
 native/GUI/settingsMenu/sound
 native/GUI/settingsMenu/languages
-native/GUI/settingsMenu/languagesFlags/English
-native/GUI/settingsMenu/languagesFlags/French
 native/GUI/settingsMenu/sound/play
 native/GUI/settingsMenu/sound/delete
 native/GUI/playMenu/OfficialServers

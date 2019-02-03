@@ -11,19 +11,20 @@ public class Social : MonoBehaviour
 {
     public LoadingScreenControl LSC;
     public bool EditorContinue = true;
+    readonly string scene = "Load";
 
     public void NewStart()
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
         Auth();
 #elif !UNITY_EDITOR
-        LSC.LoadScreen("Load");
+        LSC.LoadScreen(scene);
 #else
         transform.GetChild(0).gameObject.SetActive(true);
         transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", "googleServiceAuthenticating");
         transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
         if (EditorContinue)
-            LSC.LoadScreen("Load");
+            LSC.LoadScreen(scene);
 #endif
     }
 
@@ -58,7 +59,7 @@ public class Social : MonoBehaviour
                         PlayGamesPlatform.DebugLogEnabled = true; // recommended for debugging
                         PlayGamesPlatform.Activate(); // Activate the Google Play Games platform
                         UnityEngine.Social.ReportProgress("CgkI9r-go54eEAIQAg", 100.0f, (bool s) => { }); //Débloque le succès Bienvenue
-                        LSC.LoadScreen("Load");
+                        LSC.LoadScreen(scene);
                     }
                     else
                     {
@@ -68,15 +69,9 @@ public class Social : MonoBehaviour
                 });
             }
             else if (!mWaitingForAuth)
-                LSC.LoadScreen("Load");
+                LSC.LoadScreen(scene);
         }
-        else LSC.LoadScreen("Load");
+        else LSC.LoadScreen(scene);
 #endif
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
