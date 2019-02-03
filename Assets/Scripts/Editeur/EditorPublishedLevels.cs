@@ -154,7 +154,7 @@ public class EditorPublishedLevels : MonoBehaviour
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
         LevelItem item = items[index];
-        item.Data = client.DownloadString(url).Split(new string[] { "\n" }, System.StringSplitOptions.None);
+        item.Data = client.DownloadString(url).Replace("\r", "").Split(new string[] { "\n" }, System.StringSplitOptions.None);
         loadingScreenControl.LoadScreen("Player", new string[] { "Home/Editor/Community Levels", "Data", item.ToString() });
     }
 
