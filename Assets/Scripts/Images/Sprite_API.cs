@@ -67,7 +67,7 @@ namespace Sprite_API
         public static string spritesPath(string id)
         {
 #if UNITY_EDITOR
-            if (!id.Contains("bg") & !string.IsNullOrEmpty(id))
+            if (!id.Contains("bg") & !id.Contains("languagesFlags/") & !string.IsNullOrEmpty(id))
             {
                 string fid = id.Replace(" basic", "").Replace(" hover", "").Replace(" pressed", "").Replace(" disabled", "");
                 string idPath = Application.dataPath + "/rpID.txt";
@@ -230,7 +230,7 @@ namespace Sprite_API
                 float[] Delay = new float[apng.Frames.Length];
                 Sprite[] Frames = new Sprite[apng.Frames.Length];
 
-                if (apng.IsSimplePNG) //PNG
+                if (apng.IsSimplePNG | Application.platform == RuntimePlatform.Android) //PNG
                 {
                     Frames = new Sprite[1];
                     Delay = new float[1] { 0 };
