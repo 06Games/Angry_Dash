@@ -64,6 +64,7 @@ public class Player : MonoBehaviour
             Inventory.xmlDefault = xml;
         }
         GetComponent<UImage_Reader>().baseID = "native/PLAYERS/" + playerSkin;
+        GetComponent<UImage_Reader>().enabled = true;
         GetComponent<UImage_Reader>().Load();
 
 

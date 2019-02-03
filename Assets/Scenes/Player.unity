@@ -770,7 +770,6 @@ MonoBehaviour:
   BigSlider: {fileID: 0}
   SmallSlider: {fileID: 0}
   AudioPrefs: {fileID: 1458537501854406, guid: 2cfcea02e17130a43b3499549985c4a0, type: 3}
-  ButtonSoundOnClick: {fileID: 8300000, guid: 7f487e4748fd40643adb86125a40f81e, type: 3}
   DiscordPref: {fileID: 1650686116138130, guid: 23fa7d3e42dcf5a489750d3576031f1e,
     type: 3}
   Controller: 0
@@ -2488,6 +2487,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/levelLauncher/pause
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &864369161
 GameObject:
@@ -3352,6 +3352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: 
+  TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!114 &1300331717
 MonoBehaviour:
@@ -4088,6 +4089,11 @@ PrefabInstance:
       propertyPath: JoyStick
       value: 
       objectReference: {fileID: 506425742}
+    - target: {fileID: 114082335190938474, guid: 79265f9128f23e74d89893cb362141a7,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79265f9128f23e74d89893cb362141a7, type: 3}
 --- !u!1 &1607164628
