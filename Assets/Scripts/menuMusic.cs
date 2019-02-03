@@ -27,7 +27,10 @@ namespace SoundAPI
             AudioClip clip = null;
             bool needLoad = !cache.ValueExist(id);
             if (cache.ValueExist(id))
-                if (cache.Get(id) != null) needLoad = true;
+                if (cache.Get(id) == null) needLoad = true;
+
+
+            bool FullyLoaded = ConfigAPI.GetBool("audio.WaitUntilFullyLoaded");
             if (needLoad)
             {
                 string filePath = id;
@@ -38,12 +41,11 @@ namespace SoundAPI
                     filePath = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/sounds/" + id + ".ogg";
                     if (!System.IO.File.Exists(filePath)) filePath = Application.persistentDataPath + "/Ressources/default/sounds/" + id + ".ogg";
                 }
-
+                
                 if (System.IO.File.Exists(filePath))
                 {
 #if UNITY_EDITOR || UNITY_STANDALONE
-                    bool NVorbis = !ConfigAPI.GetBool("audio.WaitUntilFullyLoaded");
-                    if (!NVorbis) //If it is necessary to wait for the end of the loading, the native method is more advantageous
+                    if (FullyLoaded) //If it is necessary to wait for the end of the loading, the native method is more advantageous
                     {
                         UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip("file:///" + filePath, AudioType.OGGVORBIS);
                         yield return www.SendWebRequest();
@@ -70,7 +72,7 @@ namespace SoundAPI
 
                             double sampleLength = sampleRate * vorbis.TotalTime.TotalSeconds;
                             clip = AudioClip.Create(id, (int)sampleLength, channels, sampleRate, false);
-                            if (Readable != null) Readable.Invoke(null, new Tools.BetterEventArgs(clip));
+                            if (Readable != null & !FullyLoaded) Readable.Invoke(null, new Tools.BetterEventArgs(clip));
                             if (storeInCache & string.IsNullOrEmpty(id)) throw new System.Exception("ID must be set if you want to cache audio");
                             else if (storeInCache) cache.Set(id, clip);
 
@@ -91,6 +93,8 @@ namespace SoundAPI
 #endif
                 }
             }
+            else clip = Sound.Get(id);
+            if (Readable != null & FullyLoaded) Readable.Invoke(null, new Tools.BetterEventArgs(clip));
             if (Complete != null) Complete.Invoke(null, new Tools.BetterEventArgs(clip));
         }
     }
