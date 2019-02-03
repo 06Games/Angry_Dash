@@ -96,6 +96,7 @@ namespace SoundAPI
     }
 }
 
+#if UNITY_EDITOR
 [UnityEditor.CustomEditor(typeof(menuMusic))]
 public class LevelScriptEditor : UnityEditor.Editor
 {
@@ -106,6 +107,7 @@ public class LevelScriptEditor : UnityEditor.Editor
         UnityEditor.EditorGUILayout.LabelField("Position", source.time.ToString() + " / " + source.clip.length);
     }
 }
+#endif
 
 public class menuMusic : MonoBehaviour
 {
