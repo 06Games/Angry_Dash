@@ -54,4 +54,13 @@ public class DownloadedMusicsManager : MonoBehaviour
         else //Stop
             mm.StartDefault(defaultMusicPos);
     }
+
+    private void OnDisable()
+    {
+        menuMusic mm = null;
+        if (GameObject.Find("Audio") != null) mm = GameObject.Find("Audio").GetComponent<menuMusic>();
+        else return;
+
+        if (!mm.PlayingMainMusic) mm.StartDefault(defaultMusicPos);
+    }
 }
