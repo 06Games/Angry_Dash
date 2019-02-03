@@ -45,7 +45,7 @@ public class DownloadedMusicsManager : MonoBehaviour
         if (GameObject.Find("Audio") != null) mm = GameObject.Find("Audio").GetComponent<menuMusic>();
         else return;
 
-        if (mm.GetComponent<AudioSource>().clip == SoundAPI.Sound.Get("native/main") | curentlyPlaying != path) //Play
+        if (mm.PlayingMainMusic | curentlyPlaying != path) //Play
         {
             defaultMusicPos = mm.GetComponent<AudioSource>().time;
             mm.LoadUnpackagedMusic(path);

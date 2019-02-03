@@ -66,7 +66,7 @@ public class BaseControl : MonoBehaviour
             gos[i].GetComponent<Button>().onClick.AddListener(() =>
             {
                 SoundAPI.Load load = new SoundAPI.Load("native/click");
-                load.Complete += (sender, e) => GetComponent<AudioSource>().PlayOneShot(SoundAPI.Sound.Get("native/click"));
+                load.Readable += (sender, e) => GetComponent<AudioSource>().PlayOneShot((AudioClip)e.UserState);
                 StartCoroutine(load.Start());
             });
 
