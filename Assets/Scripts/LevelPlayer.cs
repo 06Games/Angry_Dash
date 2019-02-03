@@ -171,8 +171,11 @@ public class LevelPlayer : MonoBehaviour
         if (m != -1)
             music = Application.persistentDataPath + "/Musics/" + component[m].Replace("music = ", "");
 
-        if (GameObject.Find("Audio") != null & music != "null")
-            GameObject.Find("Audio").GetComponent<menuMusic>().LoadUnpackagedMusic(music);
+        if (GameObject.Find("Audio") != null)
+        {
+            GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
+            if (!string.IsNullOrEmpty(music)) GameObject.Find("Audio").GetComponent<menuMusic>().LoadUnpackagedMusic(music);
+        }
 
         Destroy(SummonPlace.gameObject);
         SummonPlace = place;
