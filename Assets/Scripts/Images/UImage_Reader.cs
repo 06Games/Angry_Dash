@@ -22,7 +22,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [HideInInspector]
     public int[] Type = new int[4];
 
-    void Start() { Load(); }
+    void Start() { if(!string.IsNullOrEmpty(baseID)) Load(); }
     public void Load(Sprite_API.Sprite_API_Data spriteData, string id = null) { Load(new Sprite_API.Sprite_API_Data[] { spriteData }, id); }
     public void Load(Sprite_API.Sprite_API_Data[] spriteData, string id = null)
     {
