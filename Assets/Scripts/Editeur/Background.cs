@@ -153,9 +153,9 @@ public class Background : MonoBehaviour {
 
     public void ChangeColorPickerBG(GameObject BG)
     {
-        CP.transform.GetChild(0).GetChild(1).GetComponent<HexColorField>().displayAlpha = false;
-        CP.transform.GetChild(4).GetChild(3).gameObject.SetActive(false);
-        BG.SetActive(true);
-        if(sp[Selected].Frames.Length > 0) BG.GetComponent<Image>().sprite = sp[Selected].Frames[0];
+        CP.transform.GetChild(0).GetChild(1).GetComponent<HexColorField>().displayAlpha = false; //Don't include alpha in hex codes
+        CP.transform.GetChild(3).GetChild(3).gameObject.SetActive(false); //Sets to RGB
+        BG.SetActive(true); //Actives preview
+        if (sp[Selected].Frames.Length > 0) BG.GetComponent<Image>().sprite = sp[Selected].Frames[0]; //Sets the image to the preview
     }
 }
