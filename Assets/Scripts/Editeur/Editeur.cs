@@ -235,7 +235,7 @@ public class Editeur : MonoBehaviour
             LSC.LoadScreen(FromScene);
 #endif
         }
-        saveMethode = SaveMethode.EveryMinute;
+        saveMethode = (SaveMethode)ConfigAPI.GetInt("editor.autoSave");
     }
 
     void Update()

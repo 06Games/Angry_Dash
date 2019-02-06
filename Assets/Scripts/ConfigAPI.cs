@@ -45,7 +45,7 @@ public class ConfigAPI
         return b;
     }
 
-    static bool ParmExist(string d)
+    public static bool Exists(string d)
     {
         string id = d + " = ";
 

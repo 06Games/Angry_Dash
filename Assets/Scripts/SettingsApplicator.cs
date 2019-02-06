@@ -12,6 +12,6 @@ public class SettingsApplicator : MonoBehaviour
     void Start()
     {
         for (int i = 0; i < objects.Length; i++)
-            objects[i].SendMessageToAll(voids[i]);
+            objects[i].BroadcastToAll(voids[i]);
     }
 }
