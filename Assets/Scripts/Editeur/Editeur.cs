@@ -194,6 +194,7 @@ public class Editeur : MonoBehaviour
 
     public void ExitEdit()
     {
+        SaveLevel();
         if (GameObject.Find("Audio") != null) GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
         string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
         LSC.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
@@ -234,6 +235,7 @@ public class Editeur : MonoBehaviour
             LSC.LoadScreen(FromScene);
 #endif
         }
+        saveMethode = SaveMethode.EveryMinute;
     }
 
     void Update()
@@ -254,12 +256,6 @@ public class Editeur : MonoBehaviour
         if (SelectMode)
             backColor = new Color32(70, 70, 70, 255);
         transform.GetChild(0).GetChild(2).GetComponent<Image>().color = backColor;
-
-        //Sauvegarde Automatique
-        if (file != "" & component.Length != 0)
-        {
-            try { File.WriteAllLines(file, component); } catch { }
-        }
 
         //Détection de la localisation lors de l'ajout d'un bloc
         if (AddBlocking & !bloqueSelect)
@@ -455,6 +451,47 @@ public class Editeur : MonoBehaviour
         }
         else touchLastPosition = new Vector2(-50000, -50000);
 #endif
+    }
+
+    public enum SaveMethode
+    {
+        Everytime,
+        EveryChange,
+        EveryMinute,
+        EveryFiveMinutes
+    }
+    private SaveMethode _saveMethode;
+    public SaveMethode saveMethode
+    {
+        get { return _saveMethode; }
+        set { _saveMethode = value; if (!AutoSaveLevelEnabled) StartCoroutine(AutoSaveLevel()); }
+    }
+    bool AutoSaveLevelEnabled = false;
+    IEnumerator AutoSaveLevel()
+    {
+        AutoSaveLevelEnabled = true;
+        SaveLevel();
+
+        if (_saveMethode == SaveMethode.Everytime) yield return new WaitForFixedUpdate();
+        else if (_saveMethode == SaveMethode.EveryChange)
+        {
+            string[] oldComponent = component;
+            while (oldComponent == component)
+                yield return new WaitForEndOfFrame();
+        }
+        else if (_saveMethode == SaveMethode.EveryMinute) yield return new WaitForSeconds(60);
+        else if (_saveMethode == SaveMethode.EveryFiveMinutes) yield return new WaitForSeconds(60 * 5);
+        else throw new System.NotImplementedException("¯\\_(ツ)_/¯");
+
+        AutoSaveLevelEnabled = false;
+        StartCoroutine(AutoSaveLevel());
+    }
+    public void SaveLevel()
+    {
+        Logging.Log("Start saving...", LogType.Log);
+        if (file != "" & component.Length != 0)
+            File.WriteAllLines(file, component);
+        Logging.Log("Saving completed !", LogType.Log);
     }
 
     public Vector2 GetWorldPosition(Vector2 pos)
