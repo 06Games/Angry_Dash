@@ -1164,7 +1164,7 @@ public class Editeur : MonoBehaviour
         }
 
         //Upgrade to 0.2.1
-        if (version.CompareTo(new Versioning("0.2"), Versioning.SortConditions.OldestOrEqual))
+        if (version.CompareTo(new Versioning("0.2"), Versioning.SortConditions.OlderOrEqual))
         {
             int d = -1;
             for (int x = 0; x < newFileLines.Length; x++)
