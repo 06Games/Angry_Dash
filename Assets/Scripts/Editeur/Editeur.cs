@@ -235,12 +235,21 @@ public class Editeur : MonoBehaviour
             LSC.LoadScreen(FromScene);
 #endif
         }
+
+        transform.GetChild(0).GetChild(6).gameObject.SetActive(ConfigAPI.GetBool("editor.showCoordinates"));
         saveMethode = (SaveMethode)ConfigAPI.GetInt("editor.autoSave");
     }
 
     void Update()
     {
         GetComponent<SurClique>().enabled = SelectMode;
+#if UNITY_EDITOR || UNITY_STANDALONE
+        transform.GetChild(0).GetChild(6).GetComponent<Text>().text =
+        GetWorldPosition(Input.mousePosition, false).ToString("0.0");
+#else
+        transform.GetChild(0).GetChild(6).GetComponent<Text>().text = 
+        GetWorldPosition(Display.Screen.Resolution / 2, false).ToString("0.0");
+#endif
 
         if (SelectedZone == null)
         {
@@ -494,16 +503,17 @@ public class Editeur : MonoBehaviour
         Logging.Log("Saving completed !", LogType.Log);
     }
 
-    public Vector2 GetWorldPosition(Vector2 pos)
+    public Vector2 GetWorldPosition(Vector2 pos, bool round = true)
     {
         float zoom = cam.orthographicSize / Screen.height * 2;
-        Vector2 Cam0 = new Vector2(cam.transform.position.x - (cam.pixelWidth * zoom / 2), cam.transform.position.y - (cam.pixelHeight * zoom / 2));
+        Vector2 Cam0 = new Vector2(cam.transform.position.x - (cam.pixelWidth * zoom / 2),
+            cam.transform.position.y - (cam.pixelHeight * zoom / 2));
 
-        int x = (int)(pos.x * zoom + Cam0.x) / 50;
-        if (Cam0.x < 0) x = x - 1;
-        int y = (int)(pos.y * zoom + Cam0.y) / 50;
-        if (Cam0.y < 0) y = y - 1;
-        return new Vector2(x, y);
+        float x = (pos.x * zoom + Cam0.x - 25) / 50F;
+        float y = (pos.y * zoom + Cam0.y - 25) / 50F;
+
+        if (round) return new Vector2(Mathf.RoundToInt(x), Mathf.RoundToInt(y));
+        else return new Vector2(x, y);
     }
 
     public void ChangeMultiSelect(Image btn)
