@@ -513,8 +513,11 @@ namespace CacheManager
 
 public static class Logging
 {
+    public static event Tools.BetterEventHandler NewMessage;
+
     public static void Log(string logString, LogType type = LogType.Log, string stackTrace = null)
     {
+        if (NewMessage != null) NewMessage.Invoke(type, new Tools.BetterEventArgs(logString));
         UnityThread.executeInUpdate(() =>
         {
             if (stackTrace != null)
@@ -532,7 +535,7 @@ public static class Logging
 
             string current = "[" + System.DateTime.Now.ToString("HH:mm:ss") + "] " + //date
             type.ToString() + ": " + //type
-            logString + stackTrace + "\n\n"; //Message + Trace if exist
+            logString + stackTrace + "\n\n";  //Message + trace
             if (file.Exists) current = File.ReadAllText(file.FullName) + current;
             File.WriteAllText(file.FullName, current);
         });

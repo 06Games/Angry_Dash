@@ -9,6 +9,9 @@ public class LoadingScreenControl : MonoBehaviour {
     public Sprite[] Backgrounds;
     AsyncOperation async;
 
+    public static bool CanChange { get; set; }
+    public static event Tools.BetterEventHandler OnSceneChange;
+
     public void LoadScreen(string Scene) { LoadScreen(Scene, null); }
 
     public void LoadScreen(string Scene, string[] args)
@@ -48,8 +51,11 @@ public class LoadingScreenControl : MonoBehaviour {
     }
 
     IEnumerator LoadingScreen(string Scene) {
+        if (!CanChange) yield return new WaitUntil(() => CanChange);
+
         loadingScreenObj.SetActive(true);
         async = SceneManager.LoadSceneAsync(Scene);
+        if (OnSceneChange != null) async.completed += new System.Action<AsyncOperation>((task) => OnSceneChange.Invoke(null, new Tools.BetterEventArgs(Scene)));
         async.allowSceneActivation = false;
         while (async.isDone == false)
         {
