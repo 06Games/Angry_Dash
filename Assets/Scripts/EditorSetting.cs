@@ -14,7 +14,7 @@ public class EditorSetting : MonoBehaviour
         
         //Set States
         transform.GetChild(0).GetComponent<Toggle>().isOn = ConfigAPI.GetBool("editor.showCoordinates");
-        transform.GetChild(1).GetComponent<Dropdown>().value = ConfigAPI.GetInt("editor.autoSave");
+        transform.GetChild(1).GetChild(1).GetComponent<Dropdown>().value = ConfigAPI.GetInt("editor.autoSave");
     }
     
     public void ShowCoordinates(Toggle toggle) { ConfigAPI.SetBool("editor.showCoordinates", toggle.isOn); }
