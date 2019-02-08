@@ -513,7 +513,7 @@ namespace CacheManager
 
 public static class Logging
 {
-    public static event Tools.BetterEventHandler NewMessage;
+    public static Tools.BetterEventHandler NewMessage;
 
     public static void Log(string logString, LogType type = LogType.Log, string stackTrace = null)
     {

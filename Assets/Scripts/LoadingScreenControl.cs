@@ -9,7 +9,7 @@ public class LoadingScreenControl : MonoBehaviour {
     public Sprite[] Backgrounds;
     AsyncOperation async;
 
-    public static bool CanChange { get; set; }
+    public static bool CanChange { get; set; } = true;
     public static event Tools.BetterEventHandler OnSceneChange;
 
     public void LoadScreen(string Scene) { LoadScreen(Scene, null); }

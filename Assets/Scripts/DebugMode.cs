@@ -53,26 +53,20 @@ public class DebugMode : MonoBehaviour
 
             if (content.childCount >= 5) Destroy(content.GetChild(1).gameObject);
             GameObject go = Instantiate(template, content);
-            go.GetComponent<Text>().text = type + (string)e.UserState;
+            go.transform.GetChild(0).GetComponent<Text>().text = type + (string)e.UserState;
             go.SetActive(true);
             StartCoroutine(LogAutoSuppr(go));
         }
-
-        StartCoroutine(LogSpam());
+        
         if (toggle.isOn) Logging.NewMessage += Logs;
-        else Logging.NewMessage -= Logs;
-    }
-    IEnumerator LogSpam() {
-        Logging.Log("spam !!!", (LogType)new System.Random().Next(0, 4));
-        yield return new WaitForSeconds(0.5F);
-        StartCoroutine(LogSpam());
+        else Logging.NewMessage = null;
     }
     IEnumerator LogAutoSuppr(GameObject go)
     {
         yield return new WaitForSeconds(5);
         if (go != null)
         {
-            Text text = go.GetComponent<Text>();
+            Image text = go.GetComponent<Image>();
             while (text.color.a > 0)
             {
                 text.color = new Color(text.color.r, text.color.g, text.color.b, text.color.a - 0.05F);
