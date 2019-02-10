@@ -26,7 +26,7 @@ namespace E7.NotchSolution
                 if (state == PlayModeStateChange.EnteredEditMode)
                     UpdateMockup(NotchSimulatorUtility.selectedDevice);
                 else if (state == PlayModeStateChange.EnteredPlayMode & GameObject.Find(mockupCanvasName) != null)
-                    GameObject.Find(mockupCanvasName).hideFlags = HideFlags.HideInHierarchy;
+                    GameObject.Find(mockupCanvasName).hideFlags = mockupHideFlags;
             };
 
             bool enableSimulation = NotchSimulatorUtility.enableSimulation;
@@ -105,6 +105,7 @@ namespace E7.NotchSolution
 
         private const string prefix = "NoSo";
         private const string mockupCanvasName = prefix + "-MockupCanvas";
+        private const HideFlags mockupHideFlags = HideFlags.HideInHierarchy | HideFlags.DontUnloadUnusedAsset;
 
         //TODO : Game view related reflection methods should be cached.
 
@@ -129,8 +130,14 @@ namespace E7.NotchSolution
                     var prefabGuids = AssetDatabase.FindAssets(mockupCanvasName);
                     GameObject mockupCanvasPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(prefabGuids.First()));
                     mockupCanvas = (GameObject)PrefabUtility.InstantiatePrefab(mockupCanvasPrefab);
+
+                    UnityEditor.SceneManagement.EditorSceneManager.sceneSaving += (scene, path) => DestroyImmediate(mockupCanvas);
+                    UnityEditor.SceneManagement.EditorSceneManager.sceneSaved += (scene) => 
+                        UpdateMockup(NotchSimulatorUtility.selectedDevice);
+                    UnityEditor.SceneManagement.EditorSceneManager.sceneOpened += (scene, openSceneMode) => 
+                        UpdateMockup(NotchSimulatorUtility.selectedDevice);
                 }
-                mockupCanvas.hideFlags = HideFlags.HideInHierarchy;
+                mockupCanvas.hideFlags = mockupHideFlags;
                 var mc = mockupCanvas.GetComponent<MockupCanvas>();
 
                 mc.SetMockupSprite(mockupSprite, NotchSimulatorUtility.GetGameViewOrientation(), simulate: enableSimulation, flipped: NotchSimulatorUtility.flipOrientation);

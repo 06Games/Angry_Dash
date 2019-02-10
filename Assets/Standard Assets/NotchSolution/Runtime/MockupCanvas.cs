@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UnityEditor;
 #endif
 
+[ExecuteInEditMode]
 public class MockupCanvas : MonoBehaviour
 {
     public Image mockupImage;
@@ -17,6 +18,7 @@ public class MockupCanvas : MonoBehaviour
         if (!simulate)
         {
             mockupImage.enabled = false;
+            Destroy(gameObject);
         }
         else
         {
@@ -44,5 +46,15 @@ public class MockupCanvas : MonoBehaviour
             mockupImage.enabled = false;
             mockupImage.enabled = true;
         }
+    }
+
+    public void OnEnable()
+    {
+#if !UNITY_EDITOR
+        Destroy(gameObject);
+#else
+        string enableSimulationKey = E7.NotchSolution.NotchSolutionUtility.prefix + "enableSimulation";
+        if (!EditorPrefs.GetBool(enableSimulationKey)) DestroyImmediate(gameObject);
+#endif
     }
 }
