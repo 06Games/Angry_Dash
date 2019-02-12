@@ -66,6 +66,12 @@ public class MockupCanvas : MonoBehaviour
                 flipped ? -1 : 1,
                 1
             );
+
+#if UNITY_EDITOR
+            //Changing the simulated device on edit mode doesn't work, force the editor to refresh
+            mockupImage.enabled = false;
+            mockupImage.enabled = true;
+#endif
         }
     }
 }
