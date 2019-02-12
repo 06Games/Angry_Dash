@@ -2,23 +2,48 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-[ExecuteInEditMode]
 public class MockupCanvas : MonoBehaviour
 {
     public Image mockupImage;
     const float proColor = 40 / 255f;
     const float personalColor = 49 / 255f;
+
+    public void Hide()
+    {
+        mockupImage.enabled = false;
+    }
+
+    public void Show()
+    {
+        mockupImage.enabled = true;
+    }
+
+    // public void OnDestroy()
+    // {
+    //     Debug.Log($"DESTROY");
+    // }
+
+    // public void OnDisable()
+    // {
+    //     Debug.Log($"DISABLE");
+    // }
+
+    // public void OnEnable()
+    // {
+    //     Debug.Log($"ENABLE");
+    // }
+
     public void SetMockupSprite(Sprite sprite, ScreenOrientation orientation, bool simulate, bool flipped)
     {
         if (!simulate)
         {
             mockupImage.enabled = false;
-            Destroy(gameObject);
         }
         else
         {
@@ -41,20 +66,6 @@ public class MockupCanvas : MonoBehaviour
                 flipped ? -1 : 1,
                 1
             );
-
-            //Force editor to refresh
-            mockupImage.enabled = false;
-            mockupImage.enabled = true;
         }
-    }
-
-    public void OnEnable()
-    {
-#if !UNITY_EDITOR
-        Destroy(gameObject);
-#else
-        string enableSimulationKey = E7.NotchSolution.NotchSolutionUtility.prefix + "enableSimulation";
-        if (!EditorPrefs.GetBool(enableSimulationKey)) DestroyImmediate(gameObject);
-#endif
     }
 }
