@@ -751,6 +751,17 @@ namespace Tools
     {
         public static Vector2 Size(this Sprite sp) { Rect rect = sp.rect; return new Vector2(rect.width, rect.height); }
     }
+
+    public static class Vector2Extensions
+    {
+        public static Vector2 Round(this Vector2 v, float round)
+        { return new Vector2((int)(v.x / round), (int)(v.y / round)) * round; }
+    }
+    public static class Vector3Extensions
+    {
+        public static Vector3 Round(this Vector3 v, float round)
+        { return new Vector3((int)(v.x / round), (int)(v.y / round), (int)(v.z / round)) * round; }
+    }
 }
 
 namespace MessengerExtensions

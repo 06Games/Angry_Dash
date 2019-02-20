@@ -157,10 +157,6 @@ public class Editeur : MonoBehaviour
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingOpen", "Opening Level"));
                 OpenCat(-1);
 
-                Grille(false, true);
-                GrilleOnOff(ConfigAPI.GetBool("editor.Grid"), transform.GetChild(0).GetChild(5).GetComponent<Image>());
-
-
                 string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
                 Discord.Presence(LangueAPI.String("native", "discordEditor_title"), LangueAPI.StringWithArgument("native", "discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
                 cam.GetComponent<BaseControl>().returnScene = false;
@@ -207,6 +203,8 @@ public class Editeur : MonoBehaviour
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         cam.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, -10);
         cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;
+        
+        GrilleOnOff(ConfigAPI.GetBool("editor.Grid"), transform.GetChild(0).GetChild(5).GetComponent<Image>());
 
         zoomIndicator.gameObject.SetActive(false);
         BulleDeveloppementCat.SetActive(false);
@@ -502,13 +500,12 @@ public class Editeur : MonoBehaviour
             File.WriteAllLines(file, component);
         Logging.Log("Saving completed !", LogType.Log);
     }
-
-    public Vector2 GetWorldPosition(Vector2 pos, bool round = true)
+    public Vector2 GetWorldPosition(Vector2 pos, bool round = true) { return GetWorldPosition(pos, round, cam.transform.position); }
+    public Vector2 GetWorldPosition(Vector2 pos, bool round, Vector2 camPos)
     {
         float zoom = cam.orthographicSize / Screen.height * 2;
-        Vector2 Cam0 = new Vector2(cam.transform.position.x - (cam.pixelWidth * zoom / 2),
-            cam.transform.position.y - (cam.pixelHeight * zoom / 2));
-
+        Vector2 Cam0 = new Vector2(camPos.x - (cam.pixelWidth * zoom / 2),
+            camPos.y - (cam.pixelHeight * zoom / 2));
         float x = (pos.x * zoom + Cam0.x - 25) / 50F;
         float y = (pos.y * zoom + Cam0.y - 25) / 50F;
 
@@ -558,7 +555,7 @@ public class Editeur : MonoBehaviour
     public void GrilleOnOff(Image Img)
     {
         Transform _Grille = transform.GetChild(1).GetChild(1);
-        GrilleOnOff(!(_Grille.childCount > 0), Img);
+        GrilleOnOff(!_Grille.GetComponent<SpriteRenderer>().enabled, Img);
     }
     void GrilleOnOff(bool on, Image Img)
     {
@@ -576,40 +573,26 @@ public class Editeur : MonoBehaviour
     }
     void Grille(bool needRespawn, bool del = false)
     {
-        if (!ConfigAPI.GetBool("editor.Grid") & needRespawn) return;
+        if (!ConfigAPI.GetBool("editor.Grid") & needRespawn) return; //Can't create a grid if the user doesn't want it ...
         Transform _Grille = transform.GetChild(1).GetChild(1);
-        _Grille.localPosition = new Vector2((int)(cam.transform.position.x / 50) * 50, (int)(cam.transform.position.y / 50) * 50);
 
-        if (del)
+        if (needRespawn)
         {
-            for (int i = 0; i < _Grille.childCount; i++)
-                Destroy(_Grille.GetChild(i).gameObject);
+            _Grille.GetComponent<SpriteRenderer>().enabled = true;
+            _Grille.localScale = new Vector2(100, 100) / GrilleSp.Size() * 50; //One grid block size
+
+            //Grid Size
+            _Grille.GetComponent<SpriteRenderer>().size = GetWorldPosition(Display.Screen.Resolution, false,
+                Display.Screen.Resolution * (cam.orthographicSize / Display.Screen.Resolution.y)) + new Vector2(2, 2);
         }
-        else if (needRespawn)
+
+
+        if (del) _Grille.GetComponent<SpriteRenderer>().enabled = false;
+        else //Place correctly the grid
         {
-            Vector2 GrilleOrigine = GetWorldPosition(new Vector2(0, 0));
-            Vector2 GrilleCarre = GetWorldPosition(new Vector2(Screen.width, Screen.height)) - GrilleOrigine;
-            GrilleCarre.x = GrilleCarre.x + 4;
-            GrilleCarre.y = GrilleCarre.y + 4;
-            int GrilleCarreNb = (int)(GrilleCarre.x * GrilleCarre.y);
-
-            for (int i = GrilleCarreNb - _Grille.childCount; GrilleCarreNb > _Grille.childCount; i++)
-            {
-                GameObject go = Instantiate(Prefab, new Vector2(), new Quaternion(), _Grille);
-                go.GetComponent<SpriteRenderer>().sprite = GrilleSp;
-                go.transform.localScale = new Vector2(50, 50);
-                go.name = "Grid Element";
-            }
-            for (int i = 0; i < _Grille.childCount - GrilleCarreNb; i++)
-                Destroy(_Grille.GetChild(i).gameObject);
-
-            for (int i = 0; i < GrilleCarreNb; i++)
-            {
-                int y = (int)(i / GrilleCarre.x);
-                int x = i - ((int)GrilleCarre.x * y);
-                Vector2 pos50 = new Vector2(x, y) + GrilleOrigine;
-                _Grille.GetChild(i).position = new Vector2((pos50.x - 1) * 50 + 25, (pos50.y - 1) * 50 + 25);
-            }
+            Vector2 bottomLeft = (GetWorldPosition(new Vector2(0, 0), false) * 50F) + new Vector2(25, 25); //Bottom Left Corner
+            Vector2 center = _Grille.GetComponent<SpriteRenderer>().size * _Grille.localScale * 0.5F; //Grid Center
+            _Grille.localPosition = (bottomLeft.Round(50) + center);
         }
     }
 
