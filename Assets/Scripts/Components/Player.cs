@@ -1,17 +1,15 @@
 ﻿using CnControls;
 using System.Collections;
-using System.Collections.Generic;
-using System.Net;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UI;
-using PlayerPrefs = PreviewLabs.PlayerPrefs;
+using Tools;
 
 public class Player : MonoBehaviour
 {
 
     //Dépendances
     public LevelPlayer LP;
+    public Transform Trace;
 
     //Joystick
     public GameObject JoyStick; //Le Joystick
@@ -38,6 +36,8 @@ public class Player : MonoBehaviour
             LP = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
         if (JoyStick == null)
             JoyStick = GameObject.Find("SensitiveJoystick");
+        if(Trace == null)
+            Trace = GameObject.Find("Traces").transform;
         /*if (Parents == null)
             Parents = GameObject.Find("Base").transform;*/
 
@@ -125,6 +125,9 @@ public class Player : MonoBehaviour
         Vector2 InitialPos = transform.position;
         float Mouvement = Mathf.Sqrt(Mathf.Pow(Ar.x - InitialPos.x, 2) + Mathf.Pow(Ar.y - InitialPos.y, 2));
 
+        Transform traceObj = CreateTrace();
+        Vector2 endPos = InitialPos;
+
         bool LastFrame = true;
         long lastTime = 0;
         stopwatch.Start();
@@ -159,11 +162,49 @@ public class Player : MonoBehaviour
                 lastTime = Time + 1;
                 transform.Translate(new Vector2(0, moveFrame), Space.Self);
 
+                if (rot != transform.rotation) //If the player bounced, start a new trace
+                {
+                    TraceEnd(traceObj, endPos); //End the old trace
+                    traceObj = CreateTrace(); //Create another
+                }
+                Texture2D tex = traceObj.GetComponent<SpriteRenderer>().sprite.texture;
+                traceObj.localScale = new Vector2(100F / tex.width * 25, Vector2Extensions.Distance(transform.position, InitialPos) * 100F / tex.height);
+                traceObj.position = Vector2Extensions.Center(transform.position, InitialPos);
+                traceObj.rotation = transform.rotation;
+                rot = transform.rotation;
+                endPos = transform.position;
+
                 yield return new WaitForEndOfFrame();
             }
         }
+        TraceEnd(traceObj, endPos);
+
         stopwatch.Stop();
         Ar = new Vector2();
         vitesse = 1;
+    }
+
+    Transform CreateTrace()
+    {
+        Transform traceObj = new GameObject("Trace Obj").transform;
+        traceObj.parent = Trace;
+        traceObj.gameObject.AddComponent<SpriteRenderer>();
+        traceObj.gameObject.AddComponent<UImage_Reader>().SetID("native/TRACES/0").Load();
+        return traceObj;
+    }
+    void TraceEnd(Transform traceObj, Vector2 endPos)
+    {
+        string endPointID = "native/TRACES/0_Success";
+        if ((Vector2)transform.position == PositionInitiale)
+        {
+            traceObj.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.5F);
+            endPointID = "native/TRACES/0_Missed";
+        }
+        GameObject endPoint = new GameObject("Trace End Point");
+        endPoint.transform.parent = Trace;
+        endPoint.transform.localScale = new Vector2(50 / 64F * 50F, 50 / 64F * 50F);
+        endPoint.transform.position = endPos;
+        endPoint.AddComponent<SpriteRenderer>();
+        endPoint.AddComponent<UImage_Reader>().baseID = endPointID;
     }
 }

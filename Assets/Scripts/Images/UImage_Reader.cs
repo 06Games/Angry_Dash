@@ -6,6 +6,7 @@ using System.IO;
 
 public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
+    public UImage_Reader SetID(string id) { baseID = id; return this; }
 
     //Configuration
     public string baseID;

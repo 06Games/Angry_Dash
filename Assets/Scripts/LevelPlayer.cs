@@ -402,6 +402,11 @@ public class LevelPlayer : MonoBehaviour
         else if (GameObject.Find("Player(Clone)") != null) GameObject.Find("Player(Clone)").GetComponent<Player>().PeutAvancer = true;
         nbLancer = 0;
         Base.GetChild(3).gameObject.SetActive(false);
+
+        Transform trace = GameObject.Find("Traces").transform;
+        for (int i = 0; i < trace.childCount; i++)
+            Destroy(trace.GetChild(i).gameObject);
+
         PlayLevel(level);
     }
 }

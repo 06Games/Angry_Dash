@@ -749,18 +749,45 @@ namespace Tools
 
     public static class SpriteExtensions
     {
-        public static Vector2 Size(this Sprite sp) { Rect rect = sp.rect; return new Vector2(rect.width, rect.height); }
+        public static Vector2 Size(this Sprite sp) {
+            if (sp == null) return new Vector2();
+            Rect rect = sp.rect; return new Vector2(rect.width, rect.height);
+        }
+    }
+    public static class TransformExtensions
+    {
+        public static void SetGlobalScale(this Transform transform, Vector3 globalScale)
+        {
+            transform.localScale = Vector3.one;
+            transform.localScale = new Vector3(globalScale.x / transform.lossyScale.x, globalScale.y / transform.lossyScale.y, globalScale.z / transform.lossyScale.z);
+        }
     }
 
     public static class Vector2Extensions
     {
         public static Vector2 Round(this Vector2 v, float round)
         { return new Vector2((int)(v.x / round), (int)(v.y / round)) * round; }
+
+        public static float Distance(Vector2 first, Vector2 second)
+        { return Mathf.Sqrt(Mathf.Pow(first.x - second.x, 2) + Mathf.Pow(first.y - second.y, 2)); }
+
+        public static Vector2 Center(Vector2 first, Vector2 second)
+        { return new Vector2((first.x + second.x) / 2F, (first.y + second.y) / 2F); }
     }
     public static class Vector3Extensions
     {
         public static Vector3 Round(this Vector3 v, float round)
         { return new Vector3((int)(v.x / round), (int)(v.y / round), (int)(v.z / round)) * round; }
+    }
+    public static class QuaternionExtensions
+    {
+        public static Quaternion SetEuler(this Quaternion q, float x, float y, float z = 0)
+        { return SetEuler(q, new Vector3(x, y, z)); }
+        public static Quaternion SetEuler(this Quaternion quaternion, Vector3 vector)
+        {
+            quaternion.eulerAngles = vector;
+            return quaternion;
+        }
     }
 }
 

@@ -57,3 +57,6 @@ native/GUI/settingsMenu/video
 native/GUI/settingsMenu/informations
 native/GUI/settingsMenu/ressourcePacks
 native/GUI/settingsMenu/editor
+native/TRACES/0
+native/TRACES/0_Success
+native/TRACES/0_Missed
