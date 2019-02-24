@@ -189,17 +189,18 @@ public class Player : MonoBehaviour
         Transform traceObj = new GameObject("Trace Obj").transform;
         traceObj.parent = Trace;
         traceObj.gameObject.AddComponent<SpriteRenderer>();
-        traceObj.gameObject.AddComponent<UImage_Reader>().SetID("native/TRACES/0").Load();
+        traceObj.gameObject.AddComponent<UImage_Reader>().SetID("native/TRACES/0_Moving").Load();
         return traceObj;
     }
     void TraceEnd(Transform traceObj, Vector2 endPos)
     {
-        string endPointID = "native/TRACES/0_Success";
+        string endPointID = "native/TRACES/0_SuccessEnd";
         if ((Vector2)transform.position == PositionInitiale)
         {
-            traceObj.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 0.5F);
-            endPointID = "native/TRACES/0_Missed";
+            traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/0_Missed").Load();
+            endPointID = "native/TRACES/0_MissedEnd";
         }
+        else traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/0_Success").Load();
         GameObject endPoint = new GameObject("Trace End Point");
         endPoint.transform.parent = Trace;
         endPoint.transform.localScale = new Vector2(50 / 64F * 50F, 50 / 64F * 50F);
