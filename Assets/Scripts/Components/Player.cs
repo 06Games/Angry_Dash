@@ -188,7 +188,7 @@ public class Player : MonoBehaviour
     {
         Transform traceObj = new GameObject("Trace Obj").transform;
         traceObj.parent = Trace;
-        traceObj.gameObject.AddComponent<SpriteRenderer>();
+        traceObj.gameObject.AddComponent<SpriteRenderer>().sortingOrder = 32766;
         traceObj.gameObject.AddComponent<UImage_Reader>().SetID("native/TRACES/0_Moving").Load();
         return traceObj;
     }
@@ -205,7 +205,7 @@ public class Player : MonoBehaviour
         endPoint.transform.parent = Trace;
         endPoint.transform.localScale = new Vector2(50 / 64F * 50F, 50 / 64F * 50F);
         endPoint.transform.position = endPos;
-        endPoint.AddComponent<SpriteRenderer>();
+        endPoint.AddComponent<SpriteRenderer>().sortingOrder = 32766;
         endPoint.AddComponent<UImage_Reader>().baseID = endPointID;
     }
 }
