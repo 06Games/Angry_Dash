@@ -798,12 +798,11 @@ public class Editeur : MonoBehaviour
             else UImage.SetID("native/BLOCKS/" + id.ToString("0.0####")).Load();
 
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
-            Texture2D tex = SR.sprite.texture;
-            go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
+            go.transform.localScale = new Vector2(100, 100) / UImage.FrameSize * 50;
             for (int i = 0; i < go.transform.childCount; i++)
             {
                 Texture2D SelectedZoneSize = go.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite.texture;
-                go.transform.GetChild(i).localScale = new Vector2(tex.width / SelectedZoneSize.width, tex.height / SelectedZoneSize.height);
+                go.transform.GetChild(i).localScale = new Vector2(UImage.FrameSize.x / SelectedZoneSize.width, UImage.FrameSize.y / SelectedZoneSize.height);
             }
 
             try { SR.color = HexToColor(GetBlocStatus("Color", num)); }

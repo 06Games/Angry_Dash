@@ -35073,6 +35073,8 @@ MonoBehaviour:
   items:
   - name: 
     price: 0
+  - name: 
+    price: 0
 --- !u!222 &1364703557
 CanvasRenderer:
   m_ObjectHideFlags: 0

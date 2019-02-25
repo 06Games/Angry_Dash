@@ -23,6 +23,8 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [HideInInspector]
     public int[] Type = new int[4];
 
+    public Vector2 FrameSize { get { return new Vector2(data[0].Frames[0].texture.width, data[0].Frames[0].texture.height); } }
+
     void Start() { if(!string.IsNullOrEmpty(baseID)) Load(); }
     public void Load(Sprite_API.Sprite_API_Data spriteData, string id = null) { Load(new Sprite_API.Sprite_API_Data[] { spriteData }, id); }
     public void Load(Sprite_API.Sprite_API_Data[] spriteData, string id = null)

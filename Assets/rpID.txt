@@ -66,3 +66,8 @@ native/TRACES/0_Success
 native/TRACES/0_SuccessEnd
 native/TRACES/0_Missed
 native/TRACES/0_MissedEnd
+native/TRACES/1_Moving
+native/TRACES/1_Success
+native/TRACES/1_SuccessEnd
+native/TRACES/1_Missed
+native/TRACES/1_MissedEnd

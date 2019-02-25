@@ -18,7 +18,6 @@ public class Player : MonoBehaviour
     int y; //pos y du joystick
 
     //Point d'arrivé
-    //public Transform Parents; //Zone Unity pour spawn de l'arrivé
     Vector2 Ar = new Vector2(); //Pt d'arrivé actuel
 
     //Avancer
@@ -41,8 +40,6 @@ public class Player : MonoBehaviour
             JoyStick = GameObject.Find("SensitiveJoystick");
         if (Trace == null)
             Trace = GameObject.Find("Traces").transform;
-        /*if (Parents == null)
-            Parents = GameObject.Find("Base").transform;*/
 
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online")
         {
@@ -194,8 +191,9 @@ public class Player : MonoBehaviour
                     TraceEnd(traceObj, endPos); //End the old trace
                     traceObj = CreateTrace(); //Create another
                 }
-                Texture2D tex = traceObj.GetComponent<SpriteRenderer>().sprite.texture;
-                traceObj.localScale = new Vector2(100F / tex.width * 25, Vector2Extensions.Distance(transform.position, InitialPos) * 100F / tex.height);
+                
+                Vector2 imgSize = traceObj.GetComponent<UImage_Reader>().FrameSize;
+                traceObj.localScale = new Vector2(100F / imgSize.x * 25, Vector2Extensions.Distance(transform.position, InitialPos) * 100F / imgSize.y);
                 traceObj.position = Vector2Extensions.Center(transform.position, InitialPos);
                 traceObj.rotation = transform.rotation;
                 rot = transform.rotation;
