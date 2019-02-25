@@ -133,7 +133,12 @@ namespace FileFormat
             public void SetAttribute(string key, string value) { node.Attributes[key].Value = value; }
             public void RemoveAttribute(string key) { node.Attributes.Remove(node.Attributes[key]); }
 
-            public string Value { get { return node.InnerText; } set { node.InnerText = value; } }
+            public T value<T>() {
+                string v = Value;
+                if (v == null) return default;
+                else try { return Tools.StringExtensions.ParseTo<T>(v); } catch { return default; }
+            }
+            public string Value { get { if (node == null) return null; else return node.InnerText; } set { node.InnerText = value; } }
             public void Remove() { node.ParentNode.RemoveChild(node); }
         }
 

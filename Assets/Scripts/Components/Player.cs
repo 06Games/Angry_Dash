@@ -56,10 +56,19 @@ public class Player : MonoBehaviour
         }
 
         FileFormat.XML.RootElement xml = Inventory.xmlDefault;
-        int playerSkin = int.Parse(xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", "native/PLAYERS/").Value);
-        if (!Inventory.Owned(xml, playerSkin.ToString()))
+
+        //Player Image
+        int playerSkin = 0;
+        FileFormat.XML.Item xmlPlayerItem = xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", "native/PLAYERS/");
+        if (xmlPlayerItem != null) playerSkin = xmlPlayerItem.value<int>();
+        if (!Inventory.Owned(xml, playerSkin.ToString()) | xmlPlayerItem != null)
         {
-            xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", "native/PLAYERS/").Value = "0";
+            if(xmlPlayerItem == null)
+            {
+                xmlPlayerItem = xml.GetItem("SelectedItems").CreateItem("item");
+                xmlPlayerItem.CreateAttribute("category", "native/PLAYERS/");
+            }
+            xmlPlayerItem.Value = "0";
             playerSkin = 0;
             Inventory.xmlDefault = xml;
         }

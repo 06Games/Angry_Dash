@@ -35,6 +35,7 @@ public class Inventory : MonoBehaviour
                 "</OwnedItems>",
                 "<SelectedItems>",
                     "<item category=\"native/PLAYERS/\">0</item>",
+                    "<item category=\"native/TRACES/\">0</item>",
                 "</SelectedItems>",
                 "<Money>0</Money>",
                 "<PlayedLevels type=\"Official\" />",
@@ -67,6 +68,8 @@ public class Inventory : MonoBehaviour
     }
     /// <summary> The category of item managed by this instance of the script </summary>
     public string category = "native/PLAYERS/";
+    /// <summary> a string to add at the end of the file name when loading the preview </summary>
+    public string fileSuffix = "";
     /// <summary> The selected item's index </summary>
     public int selected = 0;
     /// <summary> List of all the category's items </summary>
@@ -122,7 +125,13 @@ public class Inventory : MonoBehaviour
         for (int i = 1; i < content.childCount; i++)
             Destroy(content.GetChild(i).gameObject);
 
-        selected = int.Parse(xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value);
+        FileFormat.XML.Item xmlItem = xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category);
+        if (xmlItem == null)
+        {
+            xmlItem = xml.GetItem("SelectedItems").CreateItem("item");
+            xmlItem.CreateAttribute("category", category);
+        }
+        selected = xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).value<int>();
         if (!Owned(items[selected].name))
         {
             xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value = "0";
