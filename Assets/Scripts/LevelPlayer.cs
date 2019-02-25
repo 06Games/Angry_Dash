@@ -221,11 +221,8 @@ public class LevelPlayer : MonoBehaviour
                 Debug.LogWarning("The block at the line " + num + " as an invalid color");
             }
             SR.sortingOrder = (int)p.z;
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/" + id.ToString(".0####") + ".png")));
-            SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-
-            go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
+            go.GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id.ToString(".0####")).Load();
+            go.transform.localScale = new Vector2(100F / SR.sprite.texture.width * 50, 100F / SR.sprite.texture.height * 50);
 
             go.GetComponent<Mur>().colider = colid;
             go.GetComponent<Mur>().blockID = id;

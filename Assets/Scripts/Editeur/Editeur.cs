@@ -24,8 +24,6 @@ public class Editeur : MonoBehaviour
     public int[] SelectedBlock;
     public GameObject NoBlocSelectedPanel;
     public GameObject[] Contenu;
-    GameObject SelectedZone;
-    public GameObject SelectedZonePref;
     public Scrollbar zoomIndicator;
 
     Camera cam;
@@ -249,16 +247,6 @@ public class Editeur : MonoBehaviour
         GetWorldPosition(Display.Screen.Resolution / 2, false).ToString("0.0");
 #endif
 
-        if (SelectedZone == null)
-        {
-            SelectedZone = GameObject.Find("Selected Block");
-            if (SelectedZone == null)
-            {
-                SelectedZone = Instantiate(SelectedZonePref, transform.GetChild(1));
-                SelectedZone.name = "Selected Block";
-            }
-        }
-
         Color32 backColor = new Color32(32, 32, 32, 255);
         if (SelectMode)
             backColor = new Color32(70, 70, 70, 255);
@@ -378,7 +366,6 @@ public class Editeur : MonoBehaviour
                 if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(true);
             }
         }
-        else SelectedZone.SetActive(false);
 
 
 #if UNITY_STANDALONE || UNITY_EDITOR
@@ -684,28 +671,24 @@ public class Editeur : MonoBehaviour
         }
 
         BulleDeveloppementCat.SetActive(false);
-        for (int i = 1; i < Contenu[3].transform.childCount - 2; i++)
+        if (id <= 10000)
         {
-            if (i == (int)newblockid & AddBlocking)
+            for (int i = 1; i < Contenu[3].transform.childCount - 2; i++)
             {
-                Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
-                Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/" + newblockid.ToString("0.0####") + ".png")));
-                Contenu[3].transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-            }
-            else
-            {
-                Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
-                Texture2D tex = new Texture2D(1, 1);
-                tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/" + i.ToString("0.0####") + ".png")));
-                Contenu[3].transform.GetChild(i).GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+                if (i == (int)newblockid & AddBlocking)
+                    Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
+                else Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
+                Contenu[3].transform.GetChild(i).GetChild(0).GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + newblockid.ToString("0.0####")).Load();
             }
         }
-        for (int i = 1; i < Contenu[1].transform.childCount - 1; i++)
+        else
         {
-            int v = (int)(newblockid - 10000F);
-            if (i == v & AddBlocking) Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
-            else Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(45, 45, 45, 255);
+            for (int i = 1; i < Contenu[1].transform.childCount - 1; i++)
+            {
+                int v = (int)(newblockid - 10000F);
+                if (i == v & AddBlocking) Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
+                else Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(45, 45, 45, 255);
+            }
         }
     }
     public void OpenCat(int id)
@@ -752,9 +735,7 @@ public class Editeur : MonoBehaviour
                     newRef.transform.localPosition = new Vector3(i * 80, 0, 0);
                     newRef.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => AddBlock(id.ToString() + "." + newRef.name));
 
-                    Texture2D tex = new Texture2D(1, 1);
-                    tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/" + id + "." + i + ".png")));
-                    newRef.transform.GetChild(0).GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+                    newRef.transform.GetChild(0).GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id + "." + i).Load();
                 }
                 BulleDeveloppementCat.SetActive(true);
                 BulleDeveloppementCat.transform.localPosition = pos;
@@ -811,13 +792,13 @@ public class Editeur : MonoBehaviour
             else go = Instantiate(Pref, pos, rot, transform.GetChild(1));
 
             go.name = "Objet n° " + num;
+
+            UImage_Reader UImage = go.GetComponent<UImage_Reader>();
+            if (id < 1) UImage.SetID("native/GUI/editor/events/" + id.ToString("0.0####")).Load();
+            else UImage.SetID("native/BLOCKS/" + id.ToString("0.0####")).Load();
+
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
-
-            Texture2D tex = new Texture2D(1, 1);
-            if (id < 1) tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/GUI/editor/events/" + id.ToString("0.0####") + ".png")));
-            else tex.LoadImage(File.ReadAllBytes(Sprite_API.Sprite_API.spritesPath("native/BLOCKS/" + id.ToString("0.0####") + ".png")));
-            SR.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-
+            Texture2D tex = SR.sprite.texture;
             go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
             for (int i = 0; i < go.transform.childCount; i++)
             {
