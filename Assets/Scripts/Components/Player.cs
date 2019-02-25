@@ -25,6 +25,9 @@ public class Player : MonoBehaviour
     public bool PeutAvancer = false; //Pas de mur
     public Vector2 PositionInitiale; //Dernier point d'arrivé valide
 
+    //Traces
+    int selectedTrace = 0;
+
     //Paramètres
     public float vitesse = 1; //Multiplicateur de la vitesse du joueur
     public int respawnMode = 0; //Action à effectuer en cas de mort
@@ -36,7 +39,7 @@ public class Player : MonoBehaviour
             LP = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
         if (JoyStick == null)
             JoyStick = GameObject.Find("SensitiveJoystick");
-        if(Trace == null)
+        if (Trace == null)
             Trace = GameObject.Find("Traces").transform;
         /*if (Parents == null)
             Parents = GameObject.Find("Base").transform;*/
@@ -74,6 +77,21 @@ public class Player : MonoBehaviour
         }
         GetComponent<UImage_Reader>().baseID = "native/PLAYERS/" + playerSkin;
         GetComponent<UImage_Reader>().Load();
+
+        //Trace Image
+        FileFormat.XML.Item xmlTraceItem = xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", "native/TRACES/");
+        if(xmlTraceItem != null) selectedTrace = xmlTraceItem.value<int>();
+        if (!Inventory.Owned(xml, selectedTrace.ToString()) | xmlTraceItem == null)
+        {
+            if (xmlTraceItem == null)
+            {
+                xmlTraceItem = xml.GetItem("SelectedItems").CreateItem("item");
+                xmlTraceItem.CreateAttribute("category", "native/TRACES/");
+            }
+            xmlTraceItem.Value = "0";
+            selectedTrace = 0;
+            Inventory.xmlDefault = xml;
+        }
 
 
         vitesse = 1;
@@ -198,18 +216,18 @@ public class Player : MonoBehaviour
         Transform traceObj = new GameObject("Trace Obj").transform;
         traceObj.parent = Trace;
         traceObj.gameObject.AddComponent<SpriteRenderer>().sortingOrder = 32766;
-        traceObj.gameObject.AddComponent<UImage_Reader>().SetID("native/TRACES/0_Moving").Load();
+        traceObj.gameObject.AddComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "_Moving").Load();
         return traceObj;
     }
     void TraceEnd(Transform traceObj, Vector2 endPos)
     {
-        string endPointID = "native/TRACES/0_SuccessEnd";
+        string endPointID = "native/TRACES/" + selectedTrace + "_SuccessEnd";
         if ((Vector2)transform.position == PositionInitiale)
         {
-            traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/0_Missed").Load();
-            endPointID = "native/TRACES/0_MissedEnd";
+            traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "_Missed").Load();
+            endPointID = "native/TRACES/" + selectedTrace + "_MissedEnd";
         }
-        else traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/0_Success").Load();
+        else traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "_Success").Load();
         GameObject endPoint = new GameObject("Trace End Point");
         endPoint.transform.parent = Trace;
         endPoint.transform.localScale = new Vector2(50 / 64F * 50F, 50 / 64F * 50F);

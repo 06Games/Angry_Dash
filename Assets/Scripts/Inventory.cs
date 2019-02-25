@@ -143,7 +143,7 @@ public class Inventory : MonoBehaviour
             bool owned = Owned(items[i].name);
 
             Transform go = Instantiate(content.GetChild(0).gameObject, content).transform;
-            go.GetChild(0).GetComponent<UImage_Reader>().baseID = category + items[i].name;
+            go.GetChild(0).GetComponent<UImage_Reader>().baseID = category + items[i].name + fileSuffix;
             go.GetComponent<Button>().interactable = i != selected;
             int button = i;
             go.GetComponent<Button>().onClick.AddListener(() =>
