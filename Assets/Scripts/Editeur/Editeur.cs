@@ -469,8 +469,8 @@ public class Editeur : MonoBehaviour
         if (_saveMethode == SaveMethode.Everytime) yield return new WaitForFixedUpdate();
         else if (_saveMethode == SaveMethode.EveryChange)
         {
-            string[] oldComponent = component;
-            while (oldComponent == component)
+            string oldComponent = string.Join("", component);
+            while (oldComponent == string.Join("", component))
                 yield return new WaitForEndOfFrame();
         }
         else if (_saveMethode == SaveMethode.EveryMinute) yield return new WaitForSeconds(60);
