@@ -104,13 +104,13 @@ public class Inventory : MonoBehaviour
 
         FileFormat.XML.RootElement root = new FileFormat.XML.XML(Result).RootElement;
         FileFormat.XML.Item ItemsRoot = root.GetItemByAttribute("version", "v", Application.version);
-        for (int i = 0; i < items.Length; i++)
+        FileFormat.XML.Item[] shopItem = ItemsRoot.GetItems("item");
+        items = new InvItem[shopItem.Length];
+        for (int i = 0; i < shopItem.Length; i++)
         {
-            FileFormat.XML.Item item = ItemsRoot.GetItemByAttribute("item", "name", i.ToString());
             float price = 0;
-            if (item != null) float.TryParse(item.Value, out price);
-            string Name = i.ToString();
-            if (item != null) item.Attribute("name");
+            float.TryParse(shopItem[i].Value, out price);
+            string Name = shopItem[i].Attribute("name");
             items[i] = new InvItem(Name, price);
         }
 

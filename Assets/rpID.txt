@@ -61,6 +61,9 @@ native/PLAYERS/6
 native/PLAYERS/7
 native/PLAYERS/8
 native/PLAYERS/9
+native/PLAYERS/10
+native/PLAYERS/11
+native/PLAYERS/12
 native/TRACES/0_Moving
 native/TRACES/0_Success
 native/TRACES/0_SuccessEnd
@@ -71,3 +74,8 @@ native/TRACES/1_Success
 native/TRACES/1_SuccessEnd
 native/TRACES/1_Missed
 native/TRACES/1_MissedEnd
+native/TRACES/-1_Moving
+native/TRACES/-1_Success
+native/TRACES/-1_SuccessEnd
+native/TRACES/-1_Missed
+native/TRACES/-1_MissedEnd

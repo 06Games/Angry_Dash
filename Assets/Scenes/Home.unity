@@ -3052,27 +3052,7 @@ MonoBehaviour:
   category: native/PLAYERS/
   fileSuffix: 
   selected: 0
-  items:
-  - name: 
-    price: 0
-  - name: 
-    price: 0
-  - name: 
-    price: 0
-  - name: 
-    price: 0
-  - name: 
-    price: 0
-  - name: 
-    price: 0
-  - name: 
-    price: 0
-  - name: 
-    price: 0
-  - name: 
-    price: 0
-  - name: 
-    price: 0
+  items: []
 --- !u!222 &72716180
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -35070,11 +35050,7 @@ MonoBehaviour:
   category: native/TRACES/
   fileSuffix: _Success
   selected: 0
-  items:
-  - name: 
-    price: 0
-  - name: 
-    price: 0
+  items: []
 --- !u!222 &1364703557
 CanvasRenderer:
   m_ObjectHideFlags: 0
