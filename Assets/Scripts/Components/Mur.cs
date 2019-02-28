@@ -1,6 +1,6 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Tools;
 
 public class Mur : MonoBehaviour
 {
@@ -27,7 +27,7 @@ public class Mur : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
         Colliding = true;
         player = collision.gameObject.GetComponent<Player>();
@@ -49,50 +49,22 @@ public class Mur : MonoBehaviour
             player.vitesse = (boostMultiplier / 10F) + 1;
         else if ((int)colider == 3) //Bounce
         {
-            Vector3 rotpos = player.transform.rotation.eulerAngles;
-            Quaternion rot = new Quaternion();
-
-            float z = rotpos.z + 180;
-            if ((int)blockID == 2 | (int)blockID == 3)
+            if (!player.Touched)
             {
-                Vector2 pos = player.transform.position;
-                Vector2 direction = new Vector2();
+                Vector2 playerPos = player.transform.TransformDirection(Vector2.up);
+                ContactPoint2D contact = collision.GetContact(0);
+                Vector2 reflect = Vector2.Reflect(playerPos, contact.normal);
+                player.transform.rotation = Quaternion.FromToRotation(Vector2.up, reflect);
 
-                if (pos.x > (transform.position.x + transform.lossyScale.x / 2))
-                    direction.x = 1;
-                else if (pos.x < (transform.position.x - transform.lossyScale.x / 2))
-                    direction.x = -1;
-                else direction.x = 0;
-
-                if (pos.y > (transform.position.y + transform.lossyScale.y / 2))
-                    direction.y = 1;
-                else if (pos.y < (transform.position.y - transform.lossyScale.y / 2))
-                    direction.y = -1;
-                else direction.y = 0;
-
-
-                if (direction.x == 1 & direction.y == 0)
-                    z = 0;
-                else if (direction.x == 0 & direction.y == 1)
-                    z = -90;
-                else if (direction.x == 0 & direction.y == 0) //Bug, le player arrive trop vite
-                    z = 0;
-                else z = rotpos.z + 180;
-
-                if (transform.rotation.eulerAngles.z >= 0)
-                    z = z + (int)transform.rotation.eulerAngles.z;
-                else z = z + 180 + ((int)transform.rotation.eulerAngles.z * -1);
+                if (colider >= 3.1F & boostMultiplier > 0) player.vitesse = boostMultiplier;
             }
-
-            rot.eulerAngles = new Vector3(0, 0, z);
-            player.transform.rotation = rot;
-            if (colider >= 3.1F & boostMultiplier > 0)
-                player.vitesse = boostMultiplier;
         }
+        player.Touched = true;
     }
-    void OnTriggerExit2D(Collider2D collision)
+    void OnCollisionExit2D(Collision2D collision)
     {
         Colliding = false;
+        player.Touched = false;
     }
 
     private void Start()

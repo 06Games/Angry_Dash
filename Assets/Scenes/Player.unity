@@ -734,7 +734,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83a0f27867fc84b4983e28dc862db165, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 341064143}
+  Player: {fileID: 1292801394490212}
   OnPlayer: 1
 --- !u!114 &191689104
 MonoBehaviour:
@@ -1240,6 +1240,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4751011872096730, guid: 79265f9128f23e74d89893cb362141a7, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 4751011872096730, guid: 79265f9128f23e74d89893cb362141a7, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 35
+      objectReference: {fileID: 0}
     - target: {fileID: 114739312834396952, guid: 79265f9128f23e74d89893cb362141a7,
         type: 3}
       propertyPath: Trace
@@ -1255,14 +1263,28 @@ PrefabInstance:
       propertyPath: LP
       value: 
       objectReference: {fileID: 191689105}
+    - target: {fileID: 212664551128490190, guid: 79265f9128f23e74d89893cb362141a7,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 212664551128490190, guid: 79265f9128f23e74d89893cb362141a7,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 20.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 212664551128490190, guid: 79265f9128f23e74d89893cb362141a7,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 20.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 212664551128490190, guid: 79265f9128f23e74d89893cb362141a7,
+        type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 79265f9128f23e74d89893cb362141a7, type: 3}
---- !u!1 &341064143 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1292801592918698, guid: 79265f9128f23e74d89893cb362141a7,
-    type: 3}
-  m_PrefabInstance: {fileID: 341064142}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &380698641
 GameObject:
   m_ObjectHideFlags: 0
@@ -4636,3 +4658,9 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2130409515}
   m_CullTransparentMesh: 0
+--- !u!1 &1292801394490212 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1292801592918698, guid: 79265f9128f23e74d89893cb362141a7,
+    type: 3}
+  m_PrefabInstance: {fileID: 341064142}
+  m_PrefabAsset: {fileID: 0}

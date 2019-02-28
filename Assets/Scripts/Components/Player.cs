@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     //Avancer
     public bool PeutAvancer = false; //Pas de mur
     public Vector2 PositionInitiale; //Dernier point d'arrivé valide
+    public bool Touched = false; //Le joueur est-il déjà géré par un bloc
 
     //Traces
     int selectedTrace = 0;
