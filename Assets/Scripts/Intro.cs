@@ -6,9 +6,11 @@ using UnityEngine.Video;
 public class Intro : MonoBehaviour {
 
     public VideoClip videoToPlay;
+    public GameObject Fond;
     [System.Serializable] public class OnCompleteEvent : UnityEngine.Events.UnityEvent { }
 
     void Start () {
+        Fond.SetActive(true);
         OnCompleteEvent onComplete = new OnCompleteEvent();
         onComplete.AddListener(() => PlayEnd());
         StartCoroutine(playVideo(onComplete));
@@ -66,6 +68,7 @@ public class Intro : MonoBehaviour {
 
     void PlayEnd()
     {
+        Fond.SetActive(false);
         GameObject.Find("Dependencies").GetComponent<DependenciesManager>().DownloadDefaultsRP();
     }
 }

@@ -7693,6 +7693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   videoToPlay: {fileID: 32900000, guid: 0e18275a9bc371341a7e966a53d4e8c8, type: 3}
+  Fond: {fileID: 1709457052}
 --- !u!1 &1235547474
 GameObject:
   m_ObjectHideFlags: 0
@@ -10903,7 +10904,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1709457053
 RectTransform:
   m_ObjectHideFlags: 0
