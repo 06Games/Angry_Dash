@@ -103,7 +103,7 @@ public class VideoSettings : MonoBehaviour
     }
 
     public void FullScreen(Toggle _Toggle) { FullScreen(_Toggle.isOn, _Toggle); }
-    void FullScreen(bool on, Toggle _Toggle = null)
+    public void FullScreen(bool on, Toggle _Toggle = null)
     {
         ConfigAPI.SetBool("window.fullscreen", on);
         if (on) Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
