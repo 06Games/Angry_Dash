@@ -27,10 +27,12 @@ public class Mur : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collider) { Collision(collider.gameObject); }
+    void OnCollisionEnter2D(Collision2D collision) { if ((int)colider == 3) Collision(collision.gameObject, collision); }
+    void Collision(GameObject Player, Collision2D collision = null)
     {
         Colliding = true;
-        player = collision.gameObject.GetComponent<Player>();
+        player = Player.GetComponent<Player>();
 
         if ((int)colider == 0) //Stop
         {
@@ -49,7 +51,7 @@ public class Mur : MonoBehaviour
             player.vitesse = (boostMultiplier / 10F) + 1;
         else if ((int)colider == 3) //Bounce
         {
-            if (!player.Touched)
+            if (!player.Touched & collision != null)
             {
                 Vector2 playerPos = player.transform.TransformDirection(Vector2.up);
                 ContactPoint2D contact = collision.GetContact(0);
@@ -57,11 +59,14 @@ public class Mur : MonoBehaviour
                 player.transform.rotation = Quaternion.FromToRotation(Vector2.up, reflect);
 
                 if (colider >= 3.1F & boostMultiplier > 0) player.vitesse = boostMultiplier;
+                player.Touched = true;
             }
         }
-        player.Touched = true;
     }
-    void OnCollisionExit2D(Collision2D collision)
+
+    void OnTriggerExit2D(Collider2D collision) { if ((int)colider != 3) CollisionExit(); }
+    void OnCollisionExit2D(Collision2D collision) { if ((int)colider == 3) CollisionExit(); }
+    void CollisionExit()
     {
         Colliding = false;
         player.Touched = false;
