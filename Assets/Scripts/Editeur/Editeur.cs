@@ -678,7 +678,7 @@ public class Editeur : MonoBehaviour
                 if (i == (int)newblockid & AddBlocking)
                     Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
                 else Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
-                Contenu[3].transform.GetChild(i).GetChild(0).GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + newblockid.ToString("0.0####")).Load();
+                if (i == (int)newblockid) Contenu[3].transform.GetChild(i).GetChild(0).GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + newblockid.ToString("0.0####")).Load();
             }
         }
         else
