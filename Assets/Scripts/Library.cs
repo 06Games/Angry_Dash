@@ -621,7 +621,36 @@ namespace Display
         public static Vector2 Resolution
         {
             get { return new Vector2(UnityEngine.Screen.width, UnityEngine.Screen.height); }
-            set { UnityEngine.Screen.SetResolution((int)value.x, (int)value.y, UnityEngine.Screen.fullScreen); }
+            set { UnityEngine.Screen.SetResolution((int)value.x, (int)value.y, fullScreen); }
+        }
+
+        public static bool fullScreen
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return UnityEditor.EditorWindow.GetWindow(System.Type.GetType("UnityEditor.GameView,UnityEditor")).maximized;
+#else
+                return UnityEngine.Screen.fullScreen;
+#endif
+            }
+            set
+            {
+#if UNITY_EDITOR
+                UnityEditor.EditorWindow.GetWindow(System.Type.GetType("UnityEditor.GameView,UnityEditor")).maximized = value;
+#else
+                UnityEngine.Screen.fullScreen = value;
+#endif
+            }
+        }
+
+        public static void SetResolution(int width, int height, bool fullscreen)
+        {
+#if UNITY_EDITOR
+            fullScreen = fullscreen;
+#else
+            UnityEngine.Screen.SetResolution(width, height, fullscreen);
+#endif
         }
     }
 }
