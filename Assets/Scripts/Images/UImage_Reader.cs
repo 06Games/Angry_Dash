@@ -81,6 +81,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         StartAnimating(0);
     }
 
+    void OnEnable() { StartAnimating(0); }
     public void OnPointerEnter(PointerEventData eventData) { if (lastInteractable) StartAnimating(1, 1); }
     public void OnPointerExit(PointerEventData eventData) { if (lastInteractable) StartAnimating(1, -1); }
     public void OnSelect(BaseEventData eventData) { if (lastInteractable) StartAnimating(2, 1); }
