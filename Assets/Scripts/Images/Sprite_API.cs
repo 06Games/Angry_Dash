@@ -230,7 +230,7 @@ namespace Sprite_API
                 float[] Delay = new float[apng.Frames.Length];
                 Sprite[] Frames = new Sprite[apng.Frames.Length];
 
-                if (apng.IsSimplePNG | Application.platform == RuntimePlatform.Android) //PNG
+                if (apng.IsSimplePNG | !ConfigAPI.GetBool("video.APNG")) //PNG
                 {
                     Frames = new Sprite[1];
                     Delay = new float[1] { 0 };

@@ -35,6 +35,8 @@ public class VideoSettings : MonoBehaviour
             GraphicalOptions.GetChild(3).gameObject.SetActive(false);
         }
         else FullScreen(ConfigAPI.GetBool("video.fullScreen"));
+
+        APNG(ConfigAPI.GetBool("video.APNG"));
     }
 
     public void ShowFPS(Toggle _Toggle) { ShowFPS(_Toggle.isOn, _Toggle); }
@@ -111,5 +113,12 @@ public class VideoSettings : MonoBehaviour
 
         if (_Toggle == null)
             GraphicalOptions.GetChild(3).GetComponent<Toggle>().isOn = on;
+    }
+
+    public void APNG(Toggle toggle) { APNG(toggle.isOn, toggle); }
+    void APNG(bool on, Toggle toggle = null)
+    {
+        ConfigAPI.SetBool("video.APNG", on);
+        if (toggle == null) GraphicalOptions.GetChild(4).GetComponent<Toggle>().isOn = on;
     }
 }
