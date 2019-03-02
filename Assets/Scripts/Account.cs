@@ -1,75 +1,108 @@
 ﻿using System.IO;
 using System.Net;
-using System.Security.Cryptography;
-using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
-using System.Linq;
+using Tools;
 
 public class Account : MonoBehaviour
 {
+    public static string accountFile
+    {
+        get
+        {
+#if UNITY_EDITOR || UNITY_STANDALONE
+            return Application.persistentDataPath + "/../06Games Launcher/account.account";
+#elif UNITY_ANDROID
+            return Application.persistentDataPath + "/../com.fr_06Games.Launcher/account.account";
+#endif
+        }
+    }
+    const string passwordKey = "VWtjNGJVbFhTbmhXVkRCNlQwVjBXVTFqUzI1VVZsSlJaREZKTVZkclVXOUtNbFV4VkVad01Fa3lRbTVsYlVWdVdsZEdSbEZYZUdaWGJURkRZbFJOYWxkVlJqaE9WamxKWW10dmVWTnpTM2RQUTA1MVYydFdSVXN3V2taVlYxcHNXVmRTTTB4SVpHbGlhMGx1VldwR1YxQjZXRVJ4VjFFd1RVWnZNVTVFUmpOak1sSTBaV3BGZDNkeVFYSlBWR1pFZFZVdlEzTk5UelZpVFV0dllUSjNjbmR4WnpkM2NXaE1VREZTTUZacldraE9WV1JYVGxSVVJIRkVWVEZOUkZVMFQwUmpNVTVFVGtsV1IxcGFWa2h1UkhGRE1HbDNOa1JFYjAxUGNFdFRURVJ4UjNoMFNWTnlSSFJIZEhOM04ydHhkemRTZDNjMlprUnZUVTl2VVRKYWVXUnRjSEpqTTJNM1RFUkZlVnB0YUhKUGFVVnNkM0pXYzJGWWJEQmthM0Iy";
+
+    public static string Username { get; private set; } = "EvanG";
+    public static string Password { get; private set; }
 
     void Start()
     {
-        transform.GetChild(0).gameObject.SetActive(false);
-        transform.GetChild(0).GetChild(4).gameObject.SetActive(false);
-        transform.GetChild(1).gameObject.SetActive(false);
-
-#if UNITY_EDITOR || UNITY_STANDALONE
-        string path = Application.persistentDataPath.Replace("Angry Dash", "06Games Launcher/") + "account.account";
-#elif UNITY_ANDROID
-        string path = Application.persistentDataPath.Replace("AngryDash", "Launcher") + "/account.account";
-#endif
-        if (InternetAPI.IsConnected())
+        LoadingScreenControl LSC = FindObjectOfType<LoadingScreenControl>();
+        string[] args = LSC.GetArgs();
+        if (args.Length >= 2)
         {
-            if (File.Exists(path))
+            if (args[0] == "Account")
             {
-                try
+                for (int i = 0; i < transform.parent.childCount; i++)
                 {
-                    string[] details = File.ReadAllLines(path);
-                    if (!File.Exists(Application.temporaryCachePath + "/ac.txt"))
-                        Connect(details[0].Replace("1 = ", ""), details[1].Replace("2 = ", ""), true);
-                    else if (Security.Encrypting.Decrypt(File.ReadAllLines(Application.temporaryCachePath + "/ac.txt")[0], details[1].Replace("2 = ", "")) != details[0].Replace("1 = ", "") + Logging.pathToLogFile)
-                        Connect(details[0].Replace("1 = ", ""), details[1].Replace("2 = ", ""), true);
+                    GameObject child = transform.parent.GetChild(i).gameObject;
+                    if (child != gameObject) child.SetActive(false);
                 }
-                catch
-                {
-                    if (!Directory.Exists(path.Replace("account.account", "")))
-                        Directory.CreateDirectory(path.Replace("account.account", ""));
-                    transform.GetChild(0).gameObject.SetActive(true);
-                }
-            }
-            else
-            {
-                if (!Directory.Exists(path.Replace("account.account", "")))
-                    Directory.CreateDirectory(path.Replace("account.account", ""));
-                transform.GetChild(0).gameObject.SetActive(true);
+                complete += (sender, e) => LSC.LoadScreen(args[1]);
+                Initialize();
             }
         }
     }
 
-    public void ConnectBtn()
+    public bool logErrors { get; set; } = true;
+    public event BetterEventHandler complete;
+    public void Initialize()
     {
-        transform.GetChild(0).GetChild(4).gameObject.SetActive(false);
-        Connect(transform.GetChild(0).GetChild(1).GetComponent<InputField>().text, transform.GetChild(0).GetChild(2).GetComponent<InputField>().text, false);
-    }
-    public bool Connect(string user, string mdp, bool hash) { return Connect(user, mdp, hash, true); }
-    public bool Connect(string user, string mdp, bool hash, bool showErrors = true)
-    { 
-        string MDP = mdp;
-        if (!hash)
-            MDP = Security.Hashing.SHA384(mdp);
+        void NoConnectionInformation()
+        {
+            transform.GetChild(0).GetChild(3).GetComponent<Button>().onClick.AddListener(() =>
+            {
+                transform.GetChild(0).GetChild(3).GetComponent<Button>().interactable = false;
+                string username = transform.GetChild(0).GetChild(1).GetComponent<InputField>().text;
+                string password = transform.GetChild(0).GetChild(2).GetComponent<InputField>().text;
+                bool success = Connect(username, password, (sender, e) => complete.Invoke(sender, e));
 
-        string url = "https://06games.ddns.net/accounts/lite/connect.php?id=" + user + "&mdp=" + MDP + "&hash=true";
+                if (success)
+                {
+                    FileInfo accountF = new FileInfo(accountFile);
+                    if (!accountF.Directory.Exists) Directory.CreateDirectory(accountF.DirectoryName);
+                    File.WriteAllLines(accountF.FullName, new string[] { username, Security.Encrypting.Encrypt(password, passwordKey) });
+                }
+                else transform.GetChild(0).GetChild(3).GetComponent<Button>().interactable = true;
+            });
+            transform.GetChild(0).GetChild(4).gameObject.SetActive(false);
+            transform.GetChild(0).gameObject.SetActive(true);
+        }
+
+        if (InternetAPI.IsConnected())
+        {
+            if (File.Exists(accountFile))
+            {
+                string[] details = File.ReadAllLines(accountFile);
+                if (details.Length >= 2)
+                {
+                    string username = details[0];
+                    string password = null;
+                    try { password = Security.Encrypting.Decrypt(details[1], passwordKey); }
+                    catch { NoConnectionInformation(); return; }
+
+                    bool success = Connect(username, password, (sender, e) => complete.Invoke(sender, e));
+                    if (!success) NoConnectionInformation();
+                }
+                else NoConnectionInformation();
+            }
+            else NoConnectionInformation();
+        }
+    }
+
+    public static void Disconnect()
+    {
+        File.WriteAllLines(accountFile, new string[] { });
+        FindObjectOfType<LoadingScreenControl>().LoadScreen("Start",
+            new string[] { "Account", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name });
+    }
+
+    public bool Connect(string username, string password, BetterEventHandler success = null)
+    {
+        string url = "https://06games.ddns.net/accounts/lite/connect.php?id=" + username + "&mdp=" + password;
         WebClient client = new WebClient();
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
         string Result = "";
-        try
-        {
-            Result = client.DownloadString(url);
-        }
+        try { Result = client.DownloadString(url); }
         catch
         {
 #if UNITY_EDITOR
@@ -82,25 +115,32 @@ public class Account : MonoBehaviour
             Logging.Log("Successful connection to 06Games account", LogType.Log);
             transform.GetChild(0).gameObject.SetActive(false);
 
-#if UNITY_EDITOR || UNITY_STANDALONE
-            string path = Application.persistentDataPath.Replace("Angry Dash", "06Games Launcher/") + "account.account";
-#elif UNITY_ANDROID
-        string path = Application.persistentDataPath.Replace("AngryDash", "Launcher") + "/account.account";
-#endif
             string[] a = Result.Split(new string[] { "<br>" }, StringSplitOptions.None);
-            ConfigAPI.SetString("Account.Username", a[3]);
-            File.WriteAllLines(path, new string[2] { "1 = " + user, "2 = " + MDP });
-            File.WriteAllLines(Application.temporaryCachePath + "/ac.txt", new string[1] { Security.Encrypting.Encrypt(user + Logging.pathToLogFile, mdp) });
+            Username = a[3];
+            Password = password;
+
+            if (success != null) success.Invoke(null, null);
         }
         else
         {
-                if(showErrors) Logging.Log("06Games account connection failure", LogType.Warning);
+            if (logErrors) Logging.Log("06Games account connection failure", LogType.Warning);
             transform.GetChild(0).gameObject.SetActive(true);
-            if(!hash)
-                transform.GetChild(0).GetChild(4).gameObject.SetActive(true);
+            transform.GetChild(0).GetChild(4).gameObject.SetActive(true);
+
+
+            string errorId = "";
+            if (Result == "You must enter a username (or an e-mail address) !") errorId = "AccountErrorNoUsername";
+            else if (Result == "This account doesn't exist !") errorId = "AccountErrorUsername";
+            else if (Result == "You must enter a password !") errorId = "AccountErrorNoPassword";
+            else if (Result == "The password you entered doesn't match the one on our databases !") errorId = "AccountErrorPassword";
+            else if (Result == "Bad URL") errorId = "AccountErrorInternal";
+
+            if (!string.IsNullOrEmpty(errorId))
+                transform.GetChild(0).GetChild(4).GetComponent<Text>().text = LangueAPI.String("native", errorId, Result);
+            else transform.GetChild(0).GetChild(4).GetComponent<Text>().text =
+                    LangueAPI.StringWithArgument("native", "AccountErrorUnkown", Result, "[0]");
         }
 
-        transform.GetChild(1).gameObject.SetActive(false);
         return Result.Contains("Connection succesful !");
     }
 }

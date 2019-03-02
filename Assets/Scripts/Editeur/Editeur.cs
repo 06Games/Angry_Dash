@@ -60,7 +60,7 @@ public class Editeur : MonoBehaviour
             "background = 1; 4b4b4b255",
             "music = ",
             "version = " + Application.version,
-            "author = " + ConfigAPI.GetString("Account.Username"),
+            "author = " + Account.Username,
             "respawnMode = 0",
             " ",
             "Blocks {",

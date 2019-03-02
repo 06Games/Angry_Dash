@@ -9,7 +9,6 @@ public class Profile : MonoBehaviour
 {
 
     public int menu;
-    public Account account;
 
     Transform Main;
     Transform _Menu;
@@ -33,7 +32,7 @@ public class Profile : MonoBehaviour
 
         if (open)
         {
-            Main.GetChild(1).GetComponent<Text>().text = ConfigAPI.GetString("Account.Username");
+            Main.GetChild(1).GetComponent<Text>().text = Account.Username;
             Menu(menu);
         }
     }
@@ -63,7 +62,7 @@ public class Profile : MonoBehaviour
     {
         if (lvlNames.Length == 0 | force)
         {
-            string key = ConfigAPI.GetString("Account.Username") + "/";
+            string key = Account.Username + "/";
             string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/index.php?key=" + key;
             WebClient client = new WebClient();
             client.Encoding = System.Text.Encoding.UTF8;
@@ -141,7 +140,7 @@ public class Profile : MonoBehaviour
     {
         if (lvlNames.Length > levelNumber)
         {
-            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + ConfigAPI.GetString("Account.Username") + "/" + lvlNames[levelNumber] + ".level";
+            string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/files/" + Account.Username + "/" + lvlNames[levelNumber] + ".level";
             string path = Application.persistentDataPath + "/Levels/Edited Levels/" + lvlNames[levelNumber] + ".level";
             WebClient client = new WebClient();
             client.Encoding = System.Text.Encoding.UTF8;
@@ -169,15 +168,7 @@ public class Profile : MonoBehaviour
     }
     public void Delete(int levelNumber)
     {
-#if UNITY_EDITOR || UNITY_STANDALONE
-        string accPath = Application.persistentDataPath.Replace("Angry Dash", "06Games Launcher/") + "account.account";
-#elif UNITY_ANDROID
-        string accPath = Application.persistentDataPath.Replace("AngryDash", "Launcher") + "/account.account";
-#endif
-        string[] details = File.ReadAllLines(accPath);
-        string id = details[0].Replace("1 = ", "");
-        string mdp = details[1].Replace("2 = ", "");
-        string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/delete.php?id=" + id + "&mdp=" + mdp + "&level=" + lvlNames[levelNumber];
+        string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/delete.php?id=" + Account.Username + "&mdp=" + Account.Password + "&level=" + lvlNames[levelNumber];
         WebClient client = new WebClient();
         client.Encoding = System.Text.Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
@@ -194,17 +185,6 @@ public class Profile : MonoBehaviour
     #endregion
 
     #region MyAccount
-    public void Disconnect()
-    {
-#if UNITY_EDITOR || UNITY_STANDALONE
-        string path = Application.persistentDataPath.Replace("Angry Dash", "06Games Launcher/") + "account.account";
-#elif UNITY_ANDROID
-        string path = Application.persistentDataPath.Replace("AngryDash", "Launcher") + "/account.account";
-#endif
-        System.IO.File.WriteAllLines(path, new string[2] { "1 = ", "2 = " });
-        System.IO.File.Delete(Application.temporaryCachePath + "/ac.txt");
-        ConfigAPI.SetString("Account.Username", "");
-        account.Connect("", "", true, false);
-    }
+    public void Disconnect() { Account.Disconnect(); }
     #endregion
 }

@@ -297,11 +297,10 @@ public class DependenciesManager : MonoBehaviour
             else if (sender.ToString() != "pass") c = true;
             else
             {
-                UnityThread.executeInUpdate(() =>
-                {
                     transform.GetChild(2).gameObject.SetActive(false);
-                    _Social.NewStart();
-                });
+                Account ac = GameObject.Find("Account").GetComponent<Account>();
+                ac.complete += (s, args) => _Social.NewStart();
+                ac.Initialize();
             }
 
             if (c)
