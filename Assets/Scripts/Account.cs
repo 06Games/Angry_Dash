@@ -63,7 +63,7 @@ public class Account : MonoBehaviour
                 }
                 else transform.GetChild(0).GetChild(3).GetComponent<Button>().interactable = true;
             });
-            transform.GetChild(0).GetChild(4).gameObject.SetActive(false);
+            transform.GetChild(0).GetChild(5).gameObject.SetActive(false);
             transform.GetChild(0).gameObject.SetActive(true);
         }
 
@@ -125,7 +125,7 @@ public class Account : MonoBehaviour
         {
             if (logErrors) Logging.Log("06Games account connection failure", LogType.Warning);
             transform.GetChild(0).gameObject.SetActive(true);
-            transform.GetChild(0).GetChild(4).gameObject.SetActive(true);
+            transform.GetChild(0).GetChild(5).gameObject.SetActive(true);
 
 
             string errorId = "";
@@ -136,8 +136,8 @@ public class Account : MonoBehaviour
             else if (Result == "Bad URL") errorId = "AccountErrorInternal";
 
             if (!string.IsNullOrEmpty(errorId))
-                transform.GetChild(0).GetChild(4).GetComponent<Text>().text = LangueAPI.String("native", errorId, Result);
-            else transform.GetChild(0).GetChild(4).GetComponent<Text>().text =
+                transform.GetChild(0).GetChild(5).GetComponent<Text>().text = LangueAPI.String("native", errorId, Result);
+            else transform.GetChild(0).GetChild(5).GetComponent<Text>().text =
                     LangueAPI.StringWithArgument("native", "AccountErrorUnkown", Result, "[0]");
         }
 
