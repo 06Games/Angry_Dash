@@ -27,6 +27,7 @@ public class Account : MonoBehaviour
     {
         LoadingScreenControl LSC = FindObjectOfType<LoadingScreenControl>();
         string[] args = LSC.GetArgs();
+        if (args == null) return;
         if (args.Length >= 2)
         {
             if (args[0] == "Account")
