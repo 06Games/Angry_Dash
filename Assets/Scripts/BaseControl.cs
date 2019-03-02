@@ -115,7 +115,7 @@ public class BaseControl : MonoBehaviour
             if (!Display.Screen.fullScreen)
                 Display.Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
             else Display.Screen.SetResolution(1366, 768, false);
-            ConfigAPI.SetBool("window.fullscreen", Display.Screen.fullScreen);
+            ConfigAPI.SetBool("video.fullScreen", Display.Screen.fullScreen);
             
             if (SceneManager.GetActiveScene().name == "Home")
                 FindObjectOfType<SettingsApplicator>().objects[0].GetComponent<VideoSettings>().FullScreen(Display.Screen.fullScreen);

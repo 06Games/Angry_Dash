@@ -18,29 +18,29 @@ public class VideoSettings : MonoBehaviour
     void Start() { NewStart(); }
     public void NewStart()
     {
-        ShowFPS(ConfigAPI.GetBool("FPS.show"));
+        ShowFPS(ConfigAPI.GetBool("video.showFPS"));
 
         if (mobile())
         {
             MaxFPS(0);
             GraphicalOptions.GetChild(1).gameObject.SetActive(false);
         }
-        else MaxFPS(ConfigAPI.GetInt("FPS.maxValue"));
+        else MaxFPS(ConfigAPI.GetInt("video.maxFPSValue"));
 
-        MSAA(ConfigAPI.GetInt("MSAA.level"));
+        MSAA(ConfigAPI.GetInt("video.MSAALevel"));
 
         if (mobile())
         {
             FullScreen(true);
             GraphicalOptions.GetChild(3).gameObject.SetActive(false);
         }
-        else FullScreen(ConfigAPI.GetBool("window.fullscreen"));
+        else FullScreen(ConfigAPI.GetBool("video.fullScreen"));
     }
 
     public void ShowFPS(Toggle _Toggle) { ShowFPS(_Toggle.isOn, _Toggle); }
     void ShowFPS(bool show, Toggle _Toggle = null)
     {
-        ConfigAPI.SetBool("FPS.show", show);
+        ConfigAPI.SetBool("video.showFPS", show);
         if (_Toggle == null)
             GraphicalOptions.GetChild(0).GetComponent<Toggle>().isOn = show;
     }
@@ -78,7 +78,7 @@ public class VideoSettings : MonoBehaviour
             Text = LangueAPI.String("native", "SettingsVideoFpsLimitUnlimited");
         _Slider.transform.GetChild(0).GetComponent<Text>().text = Text;
 
-        ConfigAPI.SetInt("FPS.maxValue", FPS);
+        ConfigAPI.SetInt("video.maxFPSValue", FPS);
     }
 
     public void MSAA(Dropdown _Dropdown) { MSAA(_Dropdown.value, _Dropdown); }
@@ -99,13 +99,13 @@ public class VideoSettings : MonoBehaviour
 
         if (value == 1)
             value = 0;
-        ConfigAPI.SetInt("MSAA.level", value);
+        ConfigAPI.SetInt("video.MSAALevel", value);
     }
 
     public void FullScreen(Toggle _Toggle) { FullScreen(_Toggle.isOn, _Toggle); }
     public void FullScreen(bool on, Toggle _Toggle = null)
     {
-        ConfigAPI.SetBool("window.fullscreen", on);
+        ConfigAPI.SetBool("video.fullScreen", on);
         if (on) Display.Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
         else Display.Screen.SetResolution(1366, 768, false);
 

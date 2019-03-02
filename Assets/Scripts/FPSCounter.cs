@@ -17,8 +17,8 @@ namespace UnityStandardAssets.Utility
 
         private void Start()
         {
-            if (string.IsNullOrEmpty(ConfigAPI.GetString("FPS.show")))
-                ConfigAPI.SetBool("FPS.show", true);
+            if (string.IsNullOrEmpty(ConfigAPI.GetString("video.showFPS")))
+                ConfigAPI.SetBool("video.showFPS", true);
 
             if (TextMode)
             {
@@ -26,7 +26,7 @@ namespace UnityStandardAssets.Utility
                 m_Text = GetComponent<Text>();
                 m_Text.text = "";
             }
-            else GetComponent<Toggle>().isOn = ConfigAPI.GetBool("FPS.show");
+            else GetComponent<Toggle>().isOn = ConfigAPI.GetBool("video.showFPS");
         }
 
 
@@ -44,10 +44,10 @@ namespace UnityStandardAssets.Utility
 
                     m_Text.text = string.Format(display, m_CurrentFps);
 
-                    GetComponent<Text>().enabled = ConfigAPI.GetBool("FPS.show");
+                    GetComponent<Text>().enabled = ConfigAPI.GetBool("video.showFPS");
                 }
             }
-            else ConfigAPI.SetBool("FPS.show", GetComponent<Toggle>().isOn);
+            else ConfigAPI.SetBool("video.showFPS", GetComponent<Toggle>().isOn);
         }
     }
 }
