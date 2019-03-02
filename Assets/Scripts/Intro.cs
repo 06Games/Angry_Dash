@@ -9,6 +9,7 @@ public class Intro : MonoBehaviour {
     public GameObject Fond;
     [System.Serializable] public class OnCompleteEvent : UnityEngine.Events.UnityEvent { }
 
+    void Update() { if (Input.anyKey) PlayEnd(); }
     void Start () {
         Fond.SetActive(true);
         OnCompleteEvent onComplete = new OnCompleteEvent();
@@ -68,6 +69,7 @@ public class Intro : MonoBehaviour {
 
     void PlayEnd()
     {
+        gameObject.SetActive(false);
         Fond.SetActive(false);
         GameObject.Find("Dependencies").GetComponent<DependenciesManager>().DownloadDefaultsRP();
     }
