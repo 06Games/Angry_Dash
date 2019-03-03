@@ -9,9 +9,10 @@ public class DebugMode : MonoBehaviour
 
     void Start()
     {
-        if (ConfigAPI.GetBool("debug.enable"))
+        if (ConfigAPI.GetBool("debug.enable") & FindObjectsOfType<DebugMode>().Length <= 1)
         {
             DontDestroyOnLoad(gameObject);
+            Actualize();
             OpenClose(false);
         }
         else Destroy(gameObject);
@@ -23,7 +24,6 @@ public class DebugMode : MonoBehaviour
         if (open)
         {
             Transform content = transform.GetChild(1).GetChild(2).GetComponent<ScrollRect>().content;
-
             DeviceInfo(content.GetChild(content.childCount - 1).GetChild(1).GetComponent<Text>());
         }
 
@@ -31,13 +31,29 @@ public class DebugMode : MonoBehaviour
         transform.GetChild(1).gameObject.SetActive(open);
     }
 
-    public void Graphy(Toggle toggle)
+    public void Actualize() { Actualize(transform.GetChild(1).GetChild(2).GetComponent<ScrollRect>().content); }
+    void Actualize(Transform content)
     {
-        if (toggle.isOn) graphy.Enable();
-        else graphy.Disable();
+        content.GetChild(0).GetComponent<Toggle>().isOn = ConfigAPI.GetBool("debug.graphy");
+        graphy.Enable();
+        Graphy(ConfigAPI.GetBool("debug.graphy"));
+        content.GetChild(1).GetComponent<Toggle>().isOn = ConfigAPI.GetBool("debug.showLogs");
+        ShowLogs(ConfigAPI.GetBool("debug.showLogs"));
+        content.GetChild(2).GetComponent<Toggle>().isOn = ConfigAPI.GetBool("debug.showCoordinates");
+        ShowCoordinates(ConfigAPI.GetBool("debug.showCoordinates"));
     }
 
-    public void ShowLogs(Toggle toggle)
+    public void Graphy(Toggle toggle) { Graphy(toggle.isOn); }
+    void Graphy(bool on)
+    {
+        if (on) graphy.Enable();
+        else graphy.Disable();
+
+        ConfigAPI.SetBool("debug.graphy", on);
+    }
+
+    public void ShowLogs(Toggle toggle) { ShowLogs(toggle.isOn); }
+    void ShowLogs(bool on)
     {
         Transform content = transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<ScrollRect>().content;
         GameObject template = content.GetChild(0).gameObject;
@@ -57,9 +73,12 @@ public class DebugMode : MonoBehaviour
             go.SetActive(true);
             StartCoroutine(LogAutoSuppr(go));
         }
-        
-        if (toggle.isOn) Logging.NewMessage += Logs;
+
+        Logging.NewMessage = null;
+        if (on) Logging.NewMessage += Logs;
         else Logging.NewMessage = null;
+
+        ConfigAPI.SetBool("debug.showLogs", on);
     }
     IEnumerator LogAutoSuppr(GameObject go)
     {
@@ -77,16 +96,21 @@ public class DebugMode : MonoBehaviour
     }
 
     bool Coordinates;
-    public void ShowCoordinates(Toggle toggle)
+    public void ShowCoordinates(Toggle toggle) { ShowCoordinates(toggle.isOn); }
+    void ShowCoordinates(bool on)
     {
-        if (toggle.isOn)
+        ConfigAPI.SetBool("debug.showCoordinates", on);
+
+        if (on)
         {
-            StartCoroutine(CoordinatesRefresh(toggle, transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>()));
+            StartCoroutine(CoordinatesRefresh(transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>()));
             LoadingScreenControl.OnSceneChange += (sender, e) => Coordinates = (string)e.UserState == "Player";
         }
     }
-    IEnumerator CoordinatesRefresh(Toggle toggle, Text text, GameObject player = null)
+    IEnumerator CoordinatesRefresh(Text text, GameObject player = null)
     {
+        bool on = ConfigAPI.GetBool("debug.showCoordinates");
+
         if (player == null & Coordinates) player = GameObject.Find("Main Camera").GetComponent<MainCam>().Player;
         if(Coordinates) text.gameObject.SetActive(true);
 
@@ -102,7 +126,7 @@ public class DebugMode : MonoBehaviour
         }
         else yield return new WaitForEndOfFrame();
 
-        if (toggle.isOn) StartCoroutine(CoordinatesRefresh(toggle, text, player));
+        if (on) StartCoroutine(CoordinatesRefresh(text, player));
         else text.gameObject.SetActive(false);
     }
 
