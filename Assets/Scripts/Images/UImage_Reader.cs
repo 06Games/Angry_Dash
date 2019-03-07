@@ -60,6 +60,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             lastInteractable = GetComponent<Selectable>().interactable;
             GetComponent<Selectable>().transition = Selectable.Transition.None;
         }
+        Type = data.type;
 
         if (TextConfiguration)
         {

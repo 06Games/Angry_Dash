@@ -119,17 +119,16 @@ namespace Sprite_API
                     FileFormat.JSON.Category paramCategory = category.GetCategory(paramNames[i]);
 
                     data.path[i] = spritesPath(baseID + " " + paramNames[i] + ".png");
-                    Vector4 border = new Vector4();
                     if (paramCategory.ContainsValues)
                     {
                         //Border
                         FileFormat.JSON.Category borderCategory = paramCategory.GetCategory("border");
                         if (borderCategory.ContainsValues)
                         {
-                            if (borderCategory.ValueExist("left")) border.x = borderCategory.Value<float>("left");
-                            if (borderCategory.ValueExist("right")) border.z = borderCategory.Value<float>("right");
-                            if (borderCategory.ValueExist("top")) border.w = borderCategory.Value<float>("top");
-                            if (borderCategory.ValueExist("bottom")) border.y = borderCategory.Value<float>("bottom");
+                            if (borderCategory.ValueExist("left")) data.border[i].x = borderCategory.Value<float>("left");
+                            if (borderCategory.ValueExist("right")) data.border[i].z = borderCategory.Value<float>("right");
+                            if (borderCategory.ValueExist("top")) data.border[i].w = borderCategory.Value<float>("top");
+                            if (borderCategory.ValueExist("bottom")) data.border[i].y = borderCategory.Value<float>("bottom");
                         }
 
                         //Path
