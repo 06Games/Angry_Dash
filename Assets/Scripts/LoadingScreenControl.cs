@@ -12,10 +12,11 @@ public class LoadingScreenControl : MonoBehaviour {
     public static bool CanChange { get; set; } = true;
     public static event Tools.BetterEventHandler OnSceneChange;
 
-    public void LoadScreen(string Scene) { LoadScreen(Scene, null); }
+    public void LoadScreen(string Scene, bool keep = false) { LoadScreen(Scene, null, keep); }
 
-    public void LoadScreen(string Scene, string[] args)
+    public void LoadScreen(string Scene, string[] args, bool keep = false)
     {
+        if (async != default) return;
         if (GameObject.Find("Temp_var") != null)
             Destroy(GameObject.Find("Temp_var"));
         if (args == null) args = new string[0];
@@ -38,7 +39,7 @@ public class LoadingScreenControl : MonoBehaviour {
             i = Backgrounds.Length - 1;
         loadingScreenObj.transform.GetChild(1).GetChild(0).GetComponent<Image>().sprite = Backgrounds[i];
 
-        StartCoroutine(LoadingScreen(Scene));
+        StartCoroutine(LoadingScreen(Scene, keep));
     }
 
     public string[] GetArgs() {
@@ -50,12 +51,30 @@ public class LoadingScreenControl : MonoBehaviour {
         }
     }
 
-    IEnumerator LoadingScreen(string Scene) {
+    IEnumerator LoadingScreen(string scene, bool keep) {
         if (!CanChange) yield return new WaitUntil(() => CanChange);
 
+        LoadSceneMode lsm = LoadSceneMode.Single;
+        if (keep) lsm = LoadSceneMode.Additive;
+
         loadingScreenObj.SetActive(true);
-        async = SceneManager.LoadSceneAsync(Scene);
-        if (OnSceneChange != null) async.completed += new System.Action<AsyncOperation>((task) => OnSceneChange.Invoke(null, new Tools.BetterEventArgs(Scene)));
+        if (SceneManager.GetSceneByName(scene) == default) async = SceneManager.LoadSceneAsync(scene, lsm);
+        else {
+            async = SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
+            foreach (GameObject go in SceneManager.GetSceneByName(scene).GetRootGameObjects()) go.SetActive(true);
+        }
+
+        async.completed += new System.Action<AsyncOperation>((task) => {
+            if (keep)
+            {
+                async = default;
+                loadingScreenObj.SetActive(false);
+                Scene oldScene = SceneManager.GetActiveScene();
+                foreach (GameObject go in oldScene.GetRootGameObjects()) go.SetActive(false);
+                SceneManager.SetActiveScene(SceneManager.GetSceneByName(scene));
+            }
+            if (OnSceneChange != null) OnSceneChange.Invoke(null, new Tools.BetterEventArgs(scene));
+        });
         async.allowSceneActivation = false;
         while (async.isDone == false)
         {

@@ -212,14 +212,17 @@ public class Editeur : MonoBehaviour
         {
             if (args.Length > 2)
             {
-                FromScene = args[0];
-                if (args[1] == "Edit")
+                if (args[0] != "Player")
                 {
-                    file = args[2];
-                    EditFile(file);
+                    FromScene = args[0];
+                    if (args[1] == "Edit")
+                    {
+                        file = args[2];
+                        EditFile(file);
+                    }
+                    else if (args[1] == "Create" & args.Length > 3)
+                        CreateFile(args[2], args[3]);
                 }
-                else if (args[1] == "Create" & args.Length > 3)
-                    CreateFile(args[2], args[3]);
             }
             else LSC.LoadScreen(FromScene);
         }
@@ -1079,8 +1082,8 @@ public class Editeur : MonoBehaviour
     public void PlayLevel()
     {
         string[] args = new string[] { "Editor", "File", file };
-        string[] passThrough = new string[] { FromScene, "Edit", file };
-        GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player", args.Concat(passThrough).ToArray());
+        string[] passThrough = new string[] { "Player", "Edit", file };
+        GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player", args.Concat(passThrough).ToArray(), true);
     }
 
     public void SelectModeChang(bool enable) { SelectMode = enable; }
