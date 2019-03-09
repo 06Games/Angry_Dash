@@ -72,7 +72,9 @@ public class RessourcePackManager : MonoBehaviour
     }
     public void ApplyRP()
     {
-        LS.LoadScreen(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, new string[] { "Settings", "Ressource Pack" });
+        CacheManager.Dictionary.Static().dictionary.Remove("Ressources/textures/json");
+        CacheManager.Dictionary.Static().dictionary.Remove("Ressources/textures");
+        LS.LoadScreen("Load", new string[] { "Settings", "Ressource Pack" });
     }
 
     string Format(string s)
