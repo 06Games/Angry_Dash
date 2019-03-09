@@ -23,6 +23,10 @@ native/GUI/settingsMenu/editor
 native/GUI/inventoryMenu/background
 native/GUI/inventoryMenu/players
 native/GUI/inventoryMenu/traces
+native/GUI/profileMenu/background
+native/GUI/profileMenu/myLevels
+native/GUI/profileMenu/myFriends
+native/GUI/profileMenu/myAccount
 native/GUI/levelLauncher/pause
 native/GUI/editor/play
 native/GUI/editor/selected
