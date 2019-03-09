@@ -317,14 +317,8 @@ public class EditorLevelSelector : MonoBehaviour
     /// <param name="index">Index of desired level</param>
     public void PublishLevel(int index)
     {
-#if UNITY_EDITOR || UNITY_STANDALONE
-        string accPath = Application.persistentDataPath.Replace("Angry Dash", "06Games Launcher/") + "account.account";
-#elif UNITY_ANDROID
-        string accPath = Application.persistentDataPath.Replace("AngryDash", "Launcher") + "/account.account";
-#endif
-        string[] details = File.ReadAllLines(accPath);
-        string id = details[0].Replace("1 = ", "");
-        string mdp = details[1].Replace("2 = ", "");
+        string id = Account.Username;
+        string mdp = Account.Password;
 
         CreatorManager PublishPanel = transform.GetChild(5).GetComponent<CreatorManager>();
         PublishPanel.Array(0);
@@ -336,7 +330,7 @@ public class EditorLevelSelector : MonoBehaviour
         byte[] responseArray = client.UploadData(URL, File.ReadAllBytes(files[index].FullName));
         string Result = System.Text.Encoding.ASCII.GetString(responseArray);
 
-        if (Result.Contains("Sucess")) PublishPanel.Array(2);
+        if (Result.Contains("Success")) PublishPanel.Array(2);
         else
         {
             PublishPanel.Array(1);
