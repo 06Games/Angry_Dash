@@ -58,7 +58,7 @@ public class LoadingScreenControl : MonoBehaviour {
         if (keep) lsm = LoadSceneMode.Additive;
 
         loadingScreenObj.SetActive(true);
-        if (SceneManager.GetSceneByName(scene) == default) async = SceneManager.LoadSceneAsync(scene, lsm);
+        if (SceneManager.GetSceneByName(scene) == default | !keep) async = SceneManager.LoadSceneAsync(scene, lsm);
         else {
             async = SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
             foreach (GameObject go in SceneManager.GetSceneByName(scene).GetRootGameObjects()) go.SetActive(true);
