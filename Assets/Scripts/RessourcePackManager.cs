@@ -50,11 +50,12 @@ public class RessourcePackManager : MonoBehaviour
                     else if (infos[0] == "wallpaper") wallpaperPath = "../" + infos[1];
                 }
             }
+            wallpaperPath = RPs[i] + "/textures/" + wallpaperPath;
 
             go.name = name;
             go.GetChild(0).GetComponent<Text>().text = name;
             go.GetChild(1).GetComponent<Text>().text = description;
-            go.GetComponent<UImage_Reader>().baseID = wallpaperPath;
+            go.GetComponent<UImage_Reader>().SetPath(wallpaperPath);
 
             go.gameObject.SetActive(true);
         }

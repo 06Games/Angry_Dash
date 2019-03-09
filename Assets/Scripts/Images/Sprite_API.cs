@@ -86,7 +86,7 @@ namespace Sprite_API
             else return Application.persistentDataPath + "/Ressources/default/textures/" + id;
         }
 
-        public static JSON_PARSE_DATA Parse(string baseID, FileFormat.JSON.JSON json = null)
+        public static JSON_PARSE_DATA Parse(string baseID, FileFormat.JSON.JSON json = null, bool path = false)
         {
             CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures/json");
             if (!cache.ValueExist(baseID))
@@ -94,14 +94,21 @@ namespace Sprite_API
                 if (json == null)
                 {
                     json = new FileFormat.JSON.JSON("");
-                    string jsonID = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/" + baseID + ".json";
+                    string jsonID = baseID + ".json";
+                    if (!path)
+                    {
+                        string rpPath = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
+                        if(File.Exists(jsonID = rpPath + baseID + ".json") | File.Exists(rpPath + baseID + " basic.png"))
+                            jsonID = rpPath + baseID + ".json";
+                        else jsonID = Application.persistentDataPath + "/Ressources/default/textures/" + baseID + ".json";
+                    }
                     if (File.Exists(jsonID)) json = new FileFormat.JSON.JSON(File.ReadAllText(jsonID));
                 }
-                cache.Set(baseID, LoadParse(baseID, json));
+                cache.Set(baseID, LoadParse(baseID, json, path));
             }
             return cache.Get<JSON_PARSE_DATA>(baseID);
         }
-        public static JSON_PARSE_DATA LoadParse(string baseID, FileFormat.JSON.JSON json)
+        public static JSON_PARSE_DATA LoadParse(string baseID, FileFormat.JSON.JSON json, bool path)
         {
             JSON_PARSE_DATA data = new JSON_PARSE_DATA();
 
@@ -118,7 +125,8 @@ namespace Sprite_API
                 {
                     FileFormat.JSON.Category paramCategory = category.GetCategory(paramNames[i]);
 
-                    data.path[i] = spritesPath(baseID + " " + paramNames[i] + ".png");
+                    if (path) data.path[i] = baseID + " " + paramNames[i] + ".png";
+                    else data.path[i] = spritesPath(baseID + " " + paramNames[i] + ".png");
                     if (paramCategory.ContainsValues)
                     {
                         //Border
@@ -133,8 +141,12 @@ namespace Sprite_API
 
                         //Path
                         if (paramCategory.ValueExist("path"))
-                            data.path[i] = new FileInfo(spritesPath(baseID + ".json")).Directory.FullName +
-                                "/" + paramCategory.Value<string>("path");
+                        {
+                            if (path) data.path[i] = new FileInfo(baseID + ".json").Directory.FullName +
+                                    "/" + paramCategory.Value<string>("path");
+                            else data.path[i] = new FileInfo(spritesPath(baseID + ".json")).Directory.FullName +
+                                    "/" + paramCategory.Value<string>("path");
+                        }
 
                         if (paramCategory.ValueExist("type"))
                         {
