@@ -25,6 +25,8 @@ native/GUI/inventoryMenu/players
 native/GUI/inventoryMenu/traces
 native/GUI/profileMenu/background
 native/GUI/profileMenu/myLevels
+native/GUI/profileMenu/myLevels/delete
+native/GUI/profileMenu/myLevels/download
 native/GUI/profileMenu/myFriends
 native/GUI/profileMenu/myAccount
 native/GUI/levelLauncher/pause
