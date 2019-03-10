@@ -30,7 +30,13 @@ native/GUI/profileMenu/myLevels/download
 native/GUI/profileMenu/myFriends
 native/GUI/profileMenu/myAccount
 native/GUI/levelLauncher/pause
+native/GUI/editor/toolbox
+native/GUI/editor/gridOff
+native/GUI/editor/gridOn
 native/GUI/editor/play
+native/GUI/editor/exit
+native/GUI/editor/zoom
+native/GUI/editor/zoomIndicator
 native/GUI/editor/selected
 native/GUI/editor/selectedByTrigger
 native/GUI/editor/movements/down

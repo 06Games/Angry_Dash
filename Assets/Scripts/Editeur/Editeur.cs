@@ -36,7 +36,6 @@ public class Editeur : MonoBehaviour
     public Sprite[] BulleDeveloppementCatSp;
 
     public Sprite GrilleSp;
-    public Sprite[] GrilleBtn;
 
     public bool bloqueEchap;
 
@@ -202,7 +201,7 @@ public class Editeur : MonoBehaviour
         cam.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, -10);
         cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;
         
-        GrilleOnOff(ConfigAPI.GetBool("editor.Grid"), transform.GetChild(0).GetChild(5).GetComponent<Image>());
+        GrilleOnOff(ConfigAPI.GetBool("editor.Grid"), transform.GetChild(0).GetChild(5).GetComponent<UImage_Reader>());
 
         zoomIndicator.gameObject.SetActive(false);
         BulleDeveloppementCat.SetActive(false);
@@ -249,11 +248,6 @@ public class Editeur : MonoBehaviour
         transform.GetChild(0).GetChild(6).GetComponent<Text>().text = 
         GetWorldPosition(Display.Screen.Resolution / 2, false).ToString("0.0");
 #endif
-
-        Color32 backColor = new Color32(32, 32, 32, 255);
-        if (SelectMode)
-            backColor = new Color32(70, 70, 70, 255);
-        transform.GetChild(0).GetChild(2).GetComponent<Image>().color = backColor;
 
         //Détection de la localisation lors de l'ajout d'un bloc
         if (AddBlocking & !bloqueSelect)
@@ -542,22 +536,22 @@ public class Editeur : MonoBehaviour
         if (Input.GetAxis("Mouse ScrollWheel") == 0 & !Ctrl)
             zoomIndicator.gameObject.SetActive(false);
     }
-    public void GrilleOnOff(Image Img)
+    public void GrilleOnOff(UImage_Reader Img)
     {
         Transform _Grille = transform.GetChild(1).GetChild(1);
         GrilleOnOff(!_Grille.GetComponent<SpriteRenderer>().enabled, Img);
     }
-    void GrilleOnOff(bool on, Image Img)
+    void GrilleOnOff(bool on, UImage_Reader Img)
     {
         ConfigAPI.SetBool("editor.Grid", on);
         if (on) //Grid ON
         {
-            Img.sprite = GrilleBtn[0];
+            Img.SetID("native/GUI/editor/gridOn").Load();
             Grille(true, false);
         }
         else //Grid OFF
         {
-            Img.sprite = GrilleBtn[1];
+            Img.SetID("native/GUI/editor/gridOff").Load();
             Grille(false, true);
         }
     }
