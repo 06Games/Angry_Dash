@@ -889,11 +889,11 @@ public class Editeur : MonoBehaviour
                         if (StatusID[s] == "ID")
                             a[0] = _component[s];
                         else if (StatusID[s] == "Position")
-                            a[1] = "(" + _component[s] + ", " + Pos[2];
+                            a[1] = _component[s].Replace(")", ", ") + Pos[2];
                         else if (StatusID[s] == "PositionX")
-                            a[1] = "(" + _component[s] + ", " + Pos[1] + ", " + Pos[2] + ")";
+                            a[1] = "(" + _component[s] + ", " + Pos[1] + ", " + Pos[2];
                         else if (StatusID[s] == "PositionY")
-                            a[1] = Pos[0] + ", " + _component[s] + ", " + Pos[2] + ")";
+                            a[1] = Pos[0] + ", " + _component[s] + ", " + Pos[2];
                         else if (StatusID[s] == "Layer")
                             a[1] = Pos[0] + ", " + Pos[1] + ", " + _component[s] + ")";
                         else

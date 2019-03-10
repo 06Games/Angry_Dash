@@ -33,6 +33,12 @@ native/GUI/levelLauncher/pause
 native/GUI/editor/play
 native/GUI/editor/selected
 native/GUI/editor/selectedByTrigger
+native/GUI/editor/movements/down
+native/GUI/editor/movements/up
+native/GUI/editor/movements/left
+native/GUI/editor/movements/right
+native/GUI/editor/movements/rotateLeft
+native/GUI/editor/movements/rotateRight
 native/GUI/editor/events/0.1
 native/GUI/editor/events/0.2
 native/GUI/editor/events/0.4
