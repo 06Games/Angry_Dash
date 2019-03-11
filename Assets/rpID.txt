@@ -31,6 +31,7 @@ native/GUI/profileMenu/myFriends
 native/GUI/profileMenu/myAccount
 native/GUI/levelLauncher/pause
 native/GUI/editor/toolbox
+native/GUI/editor/toolboxMenu
 native/GUI/editor/gridOff
 native/GUI/editor/gridOn
 native/GUI/editor/play
