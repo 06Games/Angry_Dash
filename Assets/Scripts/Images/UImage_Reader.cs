@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.IO;
 
-public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
+public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
     public UImage_Reader SetID(string id) { baseID = id; return this; }
 
@@ -96,8 +96,8 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     void OnEnable() { StartAnimating(0); }
     public void OnPointerEnter(PointerEventData eventData) { if (lastInteractable) StartAnimating(1, 1); }
     public void OnPointerExit(PointerEventData eventData) { if (lastInteractable) StartAnimating(1, -1); }
-    public void OnSelect(BaseEventData eventData) { if (lastInteractable) StartAnimating(2, 1); }
-    public void OnDeselect(BaseEventData eventData) { if (lastInteractable) StartAnimating(2, -1); }
+    public void OnPointerDown(PointerEventData pointerEventData) { if (lastInteractable) StartAnimating(2, 1); }
+    public void OnPointerUp(PointerEventData pointerEventData) { if (lastInteractable) StartAnimating(2, -1); }
     bool lastInteractable = true;
     void Update()
     {
