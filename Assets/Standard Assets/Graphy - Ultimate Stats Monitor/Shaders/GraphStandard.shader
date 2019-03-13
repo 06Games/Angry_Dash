@@ -15,15 +15,15 @@
 	}
 
 		SubShader
-		{
-//			Tags
-//			{
-//				"Queue" = "Overlay"
-//				"IgnoreProjector" = "True"
-//				"RenderType" = "Transparent"
-//				"PreviewType" = "Plane"
-//				"CanUseSpriteAtlas" = "True"
-//			}
+		{			
+			Tags
+			{ 
+				"Queue"="Transparent" 
+				"IgnoreProjector"="True" 
+				"RenderType"="Transparent" 
+				"PreviewType"="Plane"
+				"CanUseSpriteAtlas"="True"
+			}
 
 			Cull Off
 			Lighting Off
@@ -33,11 +33,13 @@
 
 			Pass
 			{
+				Name "Default"
 				CGPROGRAM
 
 				#pragma vertex vert
 				#pragma fragment frag
 				#pragma multi_compile _ PIXELSNAP_ON
+				
 				#include "UnityCG.cginc"
 
 				struct appdata_t
@@ -98,7 +100,7 @@
 				// If you see a pink box or that the graphs are not working, try lowering this value
 				// or using the GraphMobile.shader
 				
-				uniform float GraphValues[224];
+				uniform float GraphValues[512];
 
 				uniform float GraphValues_Length;
 
