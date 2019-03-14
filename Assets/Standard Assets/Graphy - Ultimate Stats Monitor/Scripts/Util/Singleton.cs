@@ -74,19 +74,21 @@ namespace Tayx.Graphy.Utils
                             //_instance = singleton.AddComponent<T>();
                             //singleton.name = "(singleton) " + typeof(T).ToString();
 
-                            //DontDestroyOnLoad(singleton);
+//DontDestroyOnLoad(singleton);
 
-                            //Debug.Log("[Singleton] An instance of " + typeof(T) +
-                            //    " is needed in the scene, so '" + singleton +
-                            //    "' was created with DontDestroyOnLoad.");
+//Debug.Log("[Singleton] An instance of " + typeof(T) +
+//    " is needed in the scene, so '" + singleton +
+//    "' was created with DontDestroyOnLoad.");
 
-                            /*Debug.Log
+#if !UNITY_EDITOR
+                            Debug.Log
                             (
                                 "[Singleton] An instance of " + typeof(T) +
                                 " is trying to be accessed, but it wasn't initialized first. " +
                                 "Make sure to add an instance of " + typeof(T) + " in the scene before " +
                                 " trying to access it."
-                            );*/
+                            );
+#endif
                         }
                         else
                         {
@@ -100,9 +102,9 @@ namespace Tayx.Graphy.Utils
             }
         }
 
-        #endregion
+#endregion
 
-        #region Methods -> Unity Callbacks
+#region Methods -> Unity Callbacks
 
         void Awake()
         {
@@ -130,6 +132,6 @@ namespace Tayx.Graphy.Utils
             _applicationIsQuitting = true;
         }
 
-        #endregion
+#endregion
     }
 }

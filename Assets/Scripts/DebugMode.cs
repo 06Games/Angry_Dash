@@ -34,9 +34,12 @@ public class DebugMode : MonoBehaviour
     public void Actualize() { Actualize(transform.GetChild(1).GetChild(2).GetComponent<ScrollRect>().content); }
     void Actualize(Transform content)
     {
-        content.GetChild(0).GetComponent<Toggle>().isOn = ConfigAPI.GetBool("debug.graphy");
-        graphy.Enable();
-        Graphy(ConfigAPI.GetBool("debug.graphy"));
+        UnityThread.executeInUpdate(() =>
+        {
+            content.GetChild(0).GetComponent<Toggle>().isOn = ConfigAPI.GetBool("debug.graphy");
+            graphy.Enable();
+            Graphy(ConfigAPI.GetBool("debug.graphy"));
+        });
         content.GetChild(1).GetComponent<Toggle>().isOn = ConfigAPI.GetBool("debug.showLogs");
         ShowLogs(ConfigAPI.GetBool("debug.showLogs"));
         content.GetChild(2).GetComponent<Toggle>().isOn = ConfigAPI.GetBool("debug.showCoordinates");
