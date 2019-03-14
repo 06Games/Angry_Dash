@@ -6,15 +6,126 @@ using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
+namespace Level
+{
+    [System.Serializable]
+    public class Infos : System.IEquatable<Infos>
+    {
+        public string name;
+        public string description;
+        public string author;
+        public Background background;
+        public SongItem music;
+        public Versioning version;
+        public int respawnMode;
+
+        public Block[] blocks;
+
+        public override string ToString() { return FileFormat.XML.Utils.ClassToXML(this, !ConfigAPI.GetBool("editor.beautify")); }
+        public static Infos Parse(string xml) { return FileFormat.XML.Utils.XMLtoClass<Infos>(xml); }
+
+        public bool Equals(Infos other)
+        {
+
+            if (ReferenceEquals(other, null)) return false; //If parameter is null, return false.
+            if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
+            if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
+
+            if (name == other.name
+                & description == other.description
+                & author == other.author
+                & background == other.background
+                & music == other.music
+                & version == other.version
+                & respawnMode == other.respawnMode
+                & blocks == other.blocks)
+                return true;
+            else return false;
+        }
+        public override bool Equals(object obj) { return Equals(obj as Infos); }
+        public static bool operator ==(Infos left, Infos right) { return left.Equals(right); }
+        public static bool operator !=(Infos left, Infos right) { return !left.Equals(right); }
+        public override int GetHashCode() { return base.GetHashCode(); }
+
+        public void CopyTo(Infos other)
+        {
+            other.name = name;
+            other.description = description;
+            other.author = author;
+            other.background = background;
+            other.music = music;
+            other.version = version;
+            other.respawnMode = respawnMode;
+            other.blocks = blocks;
+        }
+    }
+
+    [System.Serializable]
+    public class Background
+    {
+        public string category = "native";
+        public int id;
+        public Color32 color;
+
+        public bool Equals(Background other)
+        {
+            if (ReferenceEquals(other, null)) return false; //If parameter is null, return false.
+            if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
+            if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
+
+            if (category == other.category
+                & id == other.id
+                & color.Equals(other.color))
+                return true;
+            else return false;
+        }
+        public override bool Equals(object obj) { return Equals(obj as Background); }
+        public static bool operator ==(Background left, Background right) { return left.Equals(right); }
+        public static bool operator !=(Background left, Background right) { return !left.Equals(right); }
+        public override int GetHashCode() { return base.GetHashCode(); }
+    }
+
+    [System.Serializable]
+    public class Block
+    {
+        public enum Type { Block, Event } public Type type;
+        public string category = "native";
+        public float id;
+        public Vector3 position;
+        public string parameter;
+
+        public bool Equals(Block other)
+        {
+            if (other is null) return false; //If parameter is null, return false.
+            if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
+            if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
+            
+            if (type == other.type
+                & category == other.category
+                & id == other.id
+                & position == other.position
+                & parameter == other.parameter)
+                return true;
+            else return false;
+        }
+        public override bool Equals(object obj) { return Equals(obj as Block); }
+        public static bool operator ==(Block left, Block right) { return left.Equals(right); }
+        public static bool operator !=(Block left, Block right) { return !left.Equals(right); }
+        public override int GetHashCode() { return base.GetHashCode(); }
+    }
+}
+
 public class Editeur : MonoBehaviour
 {
     public LoadingScreenControl LSC;
     public Transform LoadingLevel;
     public Soundboard SoundBoard;
     public string FromScene = "Home";
+    
+    public string[] component; //Will be removed
 
     public string file;
-    public string[] component;
+    public Level.Infos level;
 
     bool AddBlocking;
     float newblockid;
@@ -54,18 +165,20 @@ public class Editeur : MonoBehaviour
         file = path;
         gameObject.SetActive(true);
 
-        component = new string[] {
-            "description = " + desc,
-            "background = 1; 4b4b4b255",
-            "music = ",
-            "version = " + Application.version,
-            "author = " + Account.Username,
-            "respawnMode = 0",
-            " ",
-            "Blocks {",
-            "}"
+        Level.Infos lvl = new Level.Infos()
+        {
+            name = Path.GetFileNameWithoutExtension(new FileInfo(path).Name),
+            description = desc,
+            author = Account.Username,
+            version = Versioning.Actual,
+            background = new Level.Background() { category = "native", id = 1, color = new Color32(75, 75, 75, 255) },
+            music = null,
+            respawnMode = 0,
+            blocks = new Level.Block[] {}
         };
-        File.WriteAllLines(file, component);
+    
+        
+        File.WriteAllText(file, lvl.ToString());
         EditFile(file);
     }
 
@@ -88,9 +201,9 @@ public class Editeur : MonoBehaviour
             int maxValue = 5;
 
             file = txt;
-            component = File.ReadAllLines(txt);
+            level = Level.Infos.Parse(File.ReadAllText(file));
 
-            if (component.Length == 0)
+            if (level == null)
             {
                 string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
                 LSC.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
@@ -105,33 +218,14 @@ public class Editeur : MonoBehaviour
                 actualValue++;
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBlocks", "Placing Blocks"));
                 yield return new WaitForEndOfFrame();
-
-                int d = -1;
-                for (int x = 0; x < component.Length; x++)
+                
+                float each = (int)(level.blocks.Length * 0.25F);
+                if (level.blocks.Length < 100) each = -1F;
+                for (int i = 0; i < level.blocks.Length; i++)
                 {
-                    if (component[x].Contains("Blocks {") & d == -1)
+                    if (each > 0 & (int)(i / each) == i / each)
                     {
-                        d = x + 1;
-                        x = component.Length;
-                    }
-                }
-                int end = -1;
-                for (int i = component.Length - 1; i >= d; i--)
-                {
-                    if (component[i] == "}" & end == -1)
-                    {
-                        end = i;
-                        i = component.Length;
-                    }
-                }
-
-                float each = (int)((end - d) * 0.25F);
-                if ((end - d) < 100) each = -1F;
-                for (int i = d; i < end; i++)
-                {
-                    if (each > 0 & (int)((i - d) / each) == (i - d) / each)
-                    {
-                        LvlLoadingStatus(actualValue, maxValue, LangueAPI.StringWithArgument("native", "editorExploreLoadingBlocksStatus", new string[] { (i - d).ToString(), (end - d).ToString() }, "Placing Blocks : [0]/[1]"));
+                        LvlLoadingStatus(actualValue, maxValue, LangueAPI.StringWithArgument("native", "editorExploreLoadingBlocksStatus", new string[] { i.ToString(), level.blocks.Length.ToString() }, "Placing Blocks : [0]/[1]"));
                         yield return new WaitForEndOfFrame();
                     }
                     Instance(i);
@@ -153,9 +247,8 @@ public class Editeur : MonoBehaviour
                 actualValue++;
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingOpen", "Opening Level"));
                 OpenCat(-1);
-
-                string[] dirToPath = file.Split(new string[2] { "/", "\\" }, System.StringSplitOptions.None);
-                Discord.Presence(LangueAPI.String("native", "discordEditor_title"), LangueAPI.StringWithArgument("native", "discordEditor_subtitle", dirToPath[dirToPath.Length - 1].Replace(".level", "")), new DiscordClasses.Img("default"));
+                
+                Discord.Presence(LangueAPI.String("native", "discordEditor_title"), LangueAPI.StringWithArgument("native", "discordEditor_subtitle", level.name), new DiscordClasses.Img("default"));
                 cam.GetComponent<BaseControl>().returnScene = false;
 
                 LvlLoadingActivation(false);
@@ -292,9 +385,9 @@ public class Editeur : MonoBehaviour
                 if (Selected == -1 & !SelectCtrl) SelectedBlock = new int[0];
                 else if (Selected != -1 & SelectCtrl)
                 {
-                    float blockId = float.Parse(GetBlocStatus("ID", Selected));
+                    float blockId = level.blocks[Selected].id;
                     float firstId = -1;
-                    if (SelectedBlock.Length > 0) firstId = float.Parse(GetBlocStatus("ID", SelectedBlock[0]));
+                    if (SelectedBlock.Length > 0) firstId = level.blocks[SelectedBlock[0]].id;
 
                     bool pass = false;
                     if (blockId >= 1 & firstId >= 1) pass = true;
@@ -466,8 +559,9 @@ public class Editeur : MonoBehaviour
         if (_saveMethode == SaveMethode.Everytime) yield return new WaitForFixedUpdate();
         else if (_saveMethode == SaveMethode.EveryChange)
         {
-            string oldComponent = string.Join("", component);
-            while (oldComponent == string.Join("", component))
+            Level.Infos oldComponent = new Level.Infos();
+            level.CopyTo(oldComponent);
+            while (level.Equals(oldComponent))
                 yield return new WaitForEndOfFrame();
         }
         else if (_saveMethode == SaveMethode.EveryMinute) yield return new WaitForSeconds(60);
@@ -480,8 +574,8 @@ public class Editeur : MonoBehaviour
     public void SaveLevel()
     {
         Logging.Log("Start saving...", LogType.Log);
-        if (file != "" & component.Length != 0)
-            File.WriteAllLines(file, component);
+        if (file != "" & level != null)
+            File.WriteAllText(file, level.ToString());
         Logging.Log("Saving completed !", LogType.Log);
     }
     public Vector2 GetWorldPosition(Vector2 pos, bool round = true) { return GetWorldPosition(pos, round, cam.transform.position); }
@@ -587,67 +681,27 @@ public class Editeur : MonoBehaviour
         if (Input.touchCount == 1)
         {
 #endif
-        if (newblockid <= 0)
-            return;
-
+        if (newblockid <= 0) return; 
         Vector3 a = new Vector3(x, y, 0);
-        string color = ColorToHex(_Color);
 
-        float id = newblockid;
-        if (id > 10000)
-            id = (newblockid - 10000F) / 10F;
+        float _id = newblockid;
+        Level.Block.Type _type = Level.Block.Type.Block;
+        if (newblockid > 10000) { _id = (newblockid - 10000F) / 10F; _type = Level.Block.Type.Event; }
 
-        int start = -1;
-        for (int i = 0; i < component.Length; i++)
+        Level.Block newBlock = new Level.Block
         {
-            if (component[i].Contains("Blocks {") & start == -1)
-                start = i + 1;
-        }
-        int end = -1;
-        for (int i = start; i < component.Length; i++)
+            type = _type,
+            category = "native",
+            id = _id,
+            position = a
+        };
+
+        if (!level.blocks.Contains(newBlock))
         {
-            if (component[i] == "}" & end == -1)
-                end = i;
-        }
-        string[] newComponent = new string[component.Length + 1];
-        for (int i = 0; i < newComponent.Length; i++)
-        {
-            if (i < end)
-                newComponent[i] = component[i];
-            else if (i == end)
-            {
-                if (id < 1 & id > 0) newComponent[i] = id.ToString("0.0####") + "; " + a + "; {}";
-                else if (id >= 1) newComponent[i] = id.ToString("0.0####") + "; " + a + "; {Rotate:0; Color:" + color + "; Behavior:0}";
-            }
-            else newComponent[i] = component[i - 1];
+            level.blocks = level.blocks.Union(new Level.Block[] { newBlock }).ToArray();
+            if (level.blocks.Length > 0) Instance(level.blocks.Length - 1);
         }
 
-        bool t = true;
-        for (int i = 0; i < component.Length; i++)
-        {
-            string blockI = "";
-            string[] I = component[i].Split(new string[] { "; " }, System.StringSplitOptions.None);
-            for (int v = 1; v < I.Length; v++)
-            {
-                if (v > 1) blockI = blockI + "; " + I[v];
-                else blockI = I[v];
-            }
-            string blockNew = "";
-            string[] New = newComponent[end].Split(new string[] { "; " }, System.StringSplitOptions.None);
-            for (int v = 1; v < New.Length; v++)
-            {
-                if (v > 1) blockNew = blockNew + "; " + New[v];
-                else blockNew = New[v];
-            }
-
-            if (blockI == blockNew)
-                t = false;
-        }
-        if (t)
-        {
-            component = newComponent;
-            Instance(end);
-        }
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         }
 #endif
@@ -758,12 +812,8 @@ public class Editeur : MonoBehaviour
 
     public void Instance(int num, bool keep = false)
     {
-        float id = 0;
-        try { id = float.Parse(GetBlocStatus("ID", num)); }
-        catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
-        Vector3 p = new Vector3();
-        try { p = GetObjectPos(num); }
-        catch { Debug.LogWarning("The block at the line " + num + " as an invalid position"); return; }
+        float id = level.blocks[num].id;
+        Vector3 p = level.blocks[num].position * 50 + new Vector3(25, 25, 0);
         Vector3 pos = new Vector3(p.x, p.y, 0);
         Quaternion rot = new Quaternion();
         try { rot.eulerAngles = new Vector3(0, 0, int.Parse(GetBlocStatus("Rotate", num))); }
@@ -791,8 +841,8 @@ public class Editeur : MonoBehaviour
             go.name = "Objet n° " + num;
 
             UImage_Reader UImage = go.GetComponent<UImage_Reader>();
-            if (id < 1) UImage.SetID("native/GUI/editor/events/" + id.ToString("0.0####")).Load();
-            else UImage.SetID("native/BLOCKS/" + id.ToString("0.0####")).Load();
+            if (id < 1) UImage.SetID(level.blocks[num].category + "/GUI/editor/events/" + id.ToString("0.0####")).Load();
+            else UImage.SetID(level.blocks[num].category + "/BLOCKS/" + id.ToString("0.0####")).Load();
 
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
             go.transform.localScale = new Vector2(100, 100) / UImage.FrameSize * 50;
@@ -808,15 +858,13 @@ public class Editeur : MonoBehaviour
                 SR.color = new Color32(190, 190, 190, 255);
                 Debug.LogWarning("The block at the line " + num + " as an invalid color");
             }
-            SR.sortingOrder = (int)p.z;
+            SR.sortingOrder = (int)level.blocks[num].position.z;
         }
     }
     public Vector3 GetObjectPos(int num)
     {
-        string a = GetBlocStatus("Position", num);
-        string[] b = a.Replace("(", "").Replace(" ", "").Replace(")", "").Replace(".0", "").Split(new string[] { "," }, System.StringSplitOptions.None);
-        float[] c = new float[] { float.Parse(b[0]) * 50 + 25, float.Parse(b[1]) * 50 + 25, float.Parse(b[2]) };
-        return new Vector3(c[0], c[1], c[2]);
+        Vector2 pos = level.blocks[num].position * 50 + new Vector3(25, 25, 0);
+        return new Vector3(pos.x, pos.y, level.blocks[num].position.z);
     }
     public static string ColorToHex(Color32 color)
     {
@@ -842,10 +890,9 @@ public class Editeur : MonoBehaviour
     public int GetBloc(int x, int y)
     {
         int a = -1;
-        for (int i = 0; i < component.Length; i++)
+        for (int i = 0; i < level.blocks.Length; i++)
         {
-            if (component[i].Contains("(" + x + ".0, " + y + ".0, "))
-                a = i;
+            if ((Vector2)level.blocks[i].position == new Vector2(x, y)) a = i;
         }
         return a;
     }
@@ -981,12 +1028,12 @@ public class Editeur : MonoBehaviour
             {
                 int SB = SelectedBlock[v];
                 SelectedBlock[v] = -1;
-                string[] NewComponent = new string[component.Length - 1];
 
                 Transform obj = transform.GetChild(1).Find("Objet n° " + SB);
                 if (obj != null)
                     Destroy(obj.gameObject);
 
+                Level.Block[] NewComponent = new Level.Block[level.blocks.Length - 1];
                 for (int i = 0; i < NewComponent.Length; i++)
                 {
                     if (i < SB)
@@ -1009,7 +1056,7 @@ public class Editeur : MonoBehaviour
                             ChangBlocStatus("Blocks", blocks, new int[] { i });
                         }
 
-                        NewComponent[i] = component[i];
+                        NewComponent[i] = level.blocks[i];
                     }
                     else
                     {
@@ -1035,11 +1082,10 @@ public class Editeur : MonoBehaviour
                         if (objet != null)
                             objet.name = "Objet n° " + i;
 
-                        NewComponent[i] = component[i + 1];
+                        NewComponent[i] = level.blocks[i + 1];
                     }
                 }
-                component = NewComponent;
-                File.WriteAllLines(file, component);
+                level.blocks = NewComponent;
                 SelectedBlock[v] = -1;
             }
             else if (!fromUpdateScript)

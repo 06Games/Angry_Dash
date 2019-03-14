@@ -44,12 +44,13 @@ namespace FileFormat
     {
         public static class Utils
         {
-            public static string ClassToXML<T>(T data)
+            public static string ClassToXML<T>(T data, bool minimised = true)
             {
                 System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
                 var settings = new System.Xml.XmlWriterSettings
                 {
-                    NewLineHandling = System.Xml.NewLineHandling.Entitize
+                    NewLineHandling = System.Xml.NewLineHandling.Entitize,
+                    Indent = !minimised
                 };
 
                 using (var stream = new StringWriter())
@@ -395,15 +396,20 @@ namespace FileFormat
     }
 }
 
+[System.Serializable]
 public class Versioning
 {
+    //For serialization
+    public string number = ""; //Store serialized version number
+    private Versioning() { version = number.Split(new string[] { "." }, System.StringSplitOptions.None); } //Set the real var
+
     public static Versioning Actual { get { return new Versioning(Application.version); } }
     public enum Sort { Newer, Equal, Older, Error }
     public enum SortConditions { Newer, NewerOrEqual, Equal, OlderOrEqual, Older }
 
     string[] version;
-    public Versioning(float _version) { version = _version.ToString().Split(new string[] { "." }, System.StringSplitOptions.None); }
-    public Versioning(string _version) { version = _version.Split(new string[] { "." }, System.StringSplitOptions.None); }
+    public Versioning(float _version) { number = _version.ToString(); version = _version.ToString().Split(new string[] { "." }, System.StringSplitOptions.None); }
+    public Versioning(string _version) { number = _version; version = _version.Split(new string[] { "." }, System.StringSplitOptions.None); }
 
     public override string ToString() { return string.Join(".", version); }
     public bool CompareTo(Versioning compared, SortConditions conditions)
