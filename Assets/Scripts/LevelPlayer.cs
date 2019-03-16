@@ -82,7 +82,7 @@ public class LevelPlayer : MonoBehaviour
     public void PlayLevel(LevelItem item)
     {
         level = item;
-        component = Editeur.UpdateLevel(item.Data);
+        component = Editeur.UpdateLevel(string.Join("\n", item.Data)).Split(new string[] { "\n" }, System.StringSplitOptions.None);
         Base.GetChild(3).GetChild(0).GetComponent<Text>().text = item.Name; //Sets the level name
         Parse(); //Spawn blocks
         Discord.Presence(LangueAPI.String("native", "discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("native", "discordPlaying_caption", item.Name)), null, -1, 0); //Sets the Discord Infos

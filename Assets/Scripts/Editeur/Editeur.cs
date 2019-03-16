@@ -240,7 +240,7 @@ public class Editeur : MonoBehaviour
         {
             LvlLoadingActivation(true);
             int actualValue = 0;
-            int maxValue = 6;
+            int maxValue = 5;
 
             file = txt;
             string fileText = File.ReadAllText(file);
@@ -255,12 +255,9 @@ public class Editeur : MonoBehaviour
                 actualValue++;
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingVersionCheck", "Checking the level version"));
                 yield return new WaitForEndOfFrame();
-                //UpdateLevel(new string[] { fileText });
-
-                actualValue++;
-                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingLevel", "Loading level"));
-                yield return new WaitForEndOfFrame();
-                level = Level.Infos.Parse(fileText);
+                string updated = UpdateLevel(fileText, file);
+                level = Level.Infos.Parse(updated);
+                if (updated != fileText) File.WriteAllText(file, updated); //The level was updated, save changes
 
                 actualValue++;
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBlocks", "Placing Blocks"));
@@ -1126,73 +1123,158 @@ public class Editeur : MonoBehaviour
     /// Warning : The level will be incompatible with older versions
     /// </summary>
     /// <param name="path">Path to the file</param>
-    public static void UpdateLevel(string path)
+    public static void UpdateLevel(FileInfo path)
     {
-        string[] fileLines = File.ReadAllLines(path);
-        File.WriteAllLines(path, UpdateLevel(fileLines));
+        string fileLines = File.ReadAllText(path.FullName);
+        File.WriteAllText(path.FullName, UpdateLevel(fileLines, path.FullName));
     }
 
     /// <summary>
     /// Update a level to the newest version
     /// Warning : The level will be incompatible with older versions
     /// </summary>
-    /// <param name="fileLines">File content line by line</param>
-    public static string[] UpdateLevel(string[] fileLines)
+    /// <param name="fileLines">File content</param>
+    public static string UpdateLevel(string fileLines, string path = "")
     {
-        string[] newFileLines = fileLines;
-
-        int v = -1;
-        for (int x = 0; x < newFileLines.Length; x++)
+        if (FileFormat.XML.Utils.IsValid(fileLines)) //0.3 and upper
         {
-            if (newFileLines[x].Contains("version = ") & v == -1)
-            {
-                v = x;
-                x = newFileLines.Length;
-            }
+            return fileLines;
         }
-        Versioning version = new Versioning(0.2F);
-        if (v != -1) version = new Versioning(newFileLines[v].Replace("version = ", ""));
-        else
+        else //0.2 - 0.2.2
         {
-            newFileLines = new string[] { "version = 0.2" };
-            v = 0;
-            newFileLines = newFileLines.Union(fileLines).ToArray();
-        }
-
-        //Upgrade to 0.2.1
-        if (version.CompareTo(new Versioning("0.2"), Versioning.SortConditions.OlderOrEqual))
-        {
-            int d = -1;
+            string[] newFileLines = fileLines.Split(new string[] { "\n" }, System.StringSplitOptions.None);
+            int v = -1;
             for (int x = 0; x < newFileLines.Length; x++)
             {
-                if (newFileLines[x].Contains("Blocks {") & d == -1)
+                if (newFileLines[x].Contains("version = ") & v == -1)
                 {
-                    d = x + 1;
+                    v = x;
                     x = newFileLines.Length;
                 }
             }
-            if (d != -1)
+            Versioning version = new Versioning(0.2F);
+            if (v != -1) version = new Versioning(newFileLines[v].Replace("version = ", ""));
+            else
             {
-                for (int i = d; i < newFileLines.Length; i++)
-                {
-                    if (newFileLines[i] == "}") i = newFileLines.Length;
-                    else
-                    {
-                        string[] parm = newFileLines[i].Split(new string[] { "; " }, System.StringSplitOptions.None);
-                        try
-                        {
-                            if (float.Parse(parm[0]) >= 1) newFileLines[i] = parm[0] + "; " + parm[1] + "; {Rotate:" + parm[2] + "; Color:" + parm[3] + "; Behavior:" + parm[4] + "}";
-                            else newFileLines[i] = parm[0] + "; " + parm[1] + "; {}";
-                        }
-                        catch { }
-                    }
-                }
+                v = 0;
+                newFileLines = new string[] { "version = 0.2" }.Union(newFileLines).ToArray();
             }
 
-            newFileLines[v] = "version = 0.2.1"; //Set new version number
-        }
+            //Upgrade to 0.2.1
+            if (version.CompareTo(new Versioning("0.2"), Versioning.SortConditions.OlderOrEqual))
+            {
+                int d = -1;
+                for (int x = 0; x < newFileLines.Length; x++)
+                {
+                    if (newFileLines[x].Contains("Blocks {") & d == -1)
+                    {
+                        d = x + 1;
+                        x = newFileLines.Length;
+                    }
+                }
+                if (d != -1)
+                {
+                    for (int i = d; i < newFileLines.Length; i++)
+                    {
+                        if (newFileLines[i] == "}") i = newFileLines.Length;
+                        else
+                        {
+                            string[] parm = newFileLines[i].Split(new string[] { "; " }, System.StringSplitOptions.None);
+                            try
+                            {
+                                if (float.Parse(parm[0]) >= 1) newFileLines[i] = parm[0] + "; " + parm[1] + "; {Rotate:" + parm[2] + "; Color:" + parm[3] + "; Behavior:" + parm[4] + "}";
+                                else newFileLines[i] = parm[0] + "; " + parm[1] + "; {}";
+                            }
+                            catch { }
+                        }
+                    }
+                }
 
-        return newFileLines;
+                //Set new version number
+                newFileLines[v] = "version = 0.2.1";
+                version = new Versioning("0.2.1");
+            }
+            if(version.CompareTo(new Versioning("0.3"), Versioning.SortConditions.Older)) //Upgrade from 0.2.1 - 0.2.2 to 0.3
+            {
+                string Name = "";
+                if (!string.IsNullOrEmpty(path))
+                {
+                    Name = Path.GetFileNameWithoutExtension(path);
+
+                    //Drastic changes to the format, backup the level in case...
+                    string backupFolder = Application.persistentDataPath + "/Levels/Edited Levels/Backups/";
+                    if (!Directory.Exists(backupFolder)) Directory.CreateDirectory(backupFolder);
+                    File.WriteAllText(backupFolder + Name + ".level", fileLines);
+                }
+                Level.Infos updated = new Level.Infos();
+                updated.name = Name;
+                updated.blocks = new Level.Block[0];
+
+                bool blockArea = false;
+                foreach (string line in newFileLines)
+                {
+                    if (line.Contains("description = ")) updated.description = line.Replace("description = ", "").Replace("\r", "");
+                    else if (line.Contains("background = "))
+                    {
+                        string[] data = line.Replace("background = ", "").Replace("\r", "").Split(new string[] { "; " }, System.StringSplitOptions.None);
+                        int ID = 1; int.TryParse(data[0], out ID);
+                        updated.background = new Level.Background()
+                        {
+                            category = "native",
+                            id = ID,
+                            color = HexToColor(data[1])
+                        };
+                    }
+                    else if (line.Contains("music = "))
+                    {
+                        string[] data = line.Replace("music = ", "").Replace("\r", "").Split(new string[] { " - " }, System.StringSplitOptions.None);
+                        updated.music = new Level.SongItem() { Artist = data[0], Name = data[1] };
+                    }
+                    else if (line.Contains("author = ")) updated.author = line.Replace("author = ", "").Replace("\r", "");
+                    else if (line.Contains("respawnMode = ")) int.TryParse(line.Replace("respawnMode = ", "").Replace("\r", ""), out updated.respawnMode);
+                    else if (line.Contains("Blocks {")) blockArea = true;
+                    else if (blockArea)
+                    {
+                        if (line == "}") blockArea = false;
+                        else if (!string.IsNullOrEmpty(line))
+                        {
+                            string[] data = line.Replace("\r", "").Split(new string[] { "; " }, System.StringSplitOptions.None);
+                            if (data.Length >= 2)
+                            {
+                                float ID = 1; float.TryParse(data[0], out ID);
+                                Level.Block.Type type = Level.Block.Type.Block;
+                                if (ID < 1) type = Level.Block.Type.Event;
+
+                                Tools.Dictionary.Serializable<string, string> parameters = new Tools.Dictionary.Serializable<string, string>();
+                                try
+                                {
+                                    string[] pData = line.Split(new string[] { "; {" }, System.StringSplitOptions.None)[1].Split(new string[] { "}" }, System.StringSplitOptions.None)[0].Split(new string[] { "; " }, System.StringSplitOptions.None);
+                                    foreach (string p in pData)
+                                    {
+                                        string[] param = p.Split(new string[] { ":" }, System.StringSplitOptions.None);
+                                        if (param.Length == 2) parameters.Add(param[0], param[1]);
+                                    }
+                                }
+                                catch { }
+
+                                var array = new Level.Block[]{new Level.Block()
+                                {
+                                    type = type,
+                                    category = "native",
+                                    id = ID,
+                                    position = Vector3Extensions.Parse(data[1]),
+                                    parameter = parameters
+                                }};
+                                updated.blocks = updated.blocks.Concat(array).ToArray();
+                            }
+                        }
+                    }
+                }
+                updated.version = new Versioning("0.3");
+                return updated.ToString();
+            }
+            else return string.Join("\n", newFileLines);
+        }
     }
     #endregion
 }

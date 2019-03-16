@@ -73,6 +73,13 @@ namespace FileFormat
                     return (T)_serializer.Deserialize(reader);
                 }
             }
+
+            public static bool IsValid(string xmlFile)
+            {
+                try { new System.Xml.XmlDocument().LoadXml(xmlFile); }
+                catch { return false; }
+                return true;
+            }
         }
 
         public class XML
