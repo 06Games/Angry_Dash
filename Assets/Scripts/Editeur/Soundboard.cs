@@ -190,29 +190,8 @@ public class Soundboard : MonoBehaviour
 
     public void NewStart()
     {
-        int d = -1;
-        for (int x = 0; x < editor.component.Length; x++)
-        {
-            if (editor.component[x].Contains("music = ") & d == -1)
-                d = x;
-            else if (d != -1) x = editor.component.Length;
-        }
-        if (d > -1 & !string.IsNullOrEmpty(editor.component[d].Replace("music = ", "")))
-        {
-            int p = -1;
-            for (int i = 0; i < Song.Length; i++)
-            {
-                if ((Song[i].Artist + " - " + Song[i].Name) == editor.component[d].Replace("music = ", "") & p == -1)
-                {
-                    Music.text = LangueAPI.StringWithArgument("native", ids[3], new string[1] { Song[i].Name });
-                    p = i;
-                }
-                else if (p != -1) i = editor.component.Length;
-            }
-            if (p == -1)
-                Music.text = LangueAPI.StringWithArgument("native", ids[3], new string[1] { "Unkown Music" });
-        }
-        else Music.text = LangueAPI.StringWithArgument("native", ids[3], new string[1] { "No Music" });
+        if (editor.level.music == null) Music.text = LangueAPI.StringWithArgument("native", ids[3], new string[1] { "No Music" });
+        else Music.text = LangueAPI.StringWithArgument("native", ids[3], new string[1] { editor.level.music.Name });
 
         if (!Refreshed) RefreshList(false);
         Page(0);
@@ -227,13 +206,8 @@ public class Soundboard : MonoBehaviour
         go.GetChild(0).GetChild(1).GetComponent<Text>().text = Song[SongOpened].Artist;
         go.GetChild(0).GetChild(2).GetComponent<Text>().text = Song[SongOpened].Licence;
 
-        int d = -1;
-        for (int x = 0; x < editor.component.Length; x++)
-        {
-            if (editor.component[x].Contains("music = ") & d == -1)
-                d = x;
-        }
-        if (Song[SongOpened].Name == editor.component[d].Replace("music = ", ""))
+        
+        if (Song[SongOpened] == editor.level.music)
             go.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", ids[5]);
         else go.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", ids[4]);
         go.GetChild(0).GetChild(3).GetChild(1).GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", ids[6]);
@@ -311,13 +285,7 @@ public class Soundboard : MonoBehaviour
 
     public void Choose()
     {
-        int d = -1;
-        for (int x = 0; x < editor.component.Length; x++)
-        {
-            if (editor.component[x].Contains("music = ") & d == -1)
-                d = x;
-        }
-        editor.component[d] = "music = " + Song[SongOpened].Artist + " - " + Song[SongOpened].Name;
+        editor.level.music = Song[SongOpened];
 
         MusicSelectorPanel.transform.GetChild(3).GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", ids[5]);
         Music.text = LangueAPI.StringWithArgument("native", ids[3], new string[1] { Song[SongOpened].Name });
