@@ -198,10 +198,10 @@ public class Editeur : MonoBehaviour
         {
             LvlLoadingActivation(true);
             int actualValue = 0;
-            int maxValue = 5;
+            int maxValue = 6;
 
             file = txt;
-            level = Level.Infos.Parse(File.ReadAllText(file));
+            string fileText = File.ReadAllText(file);
 
             if (level == null)
             {
@@ -216,9 +216,14 @@ public class Editeur : MonoBehaviour
                 UpdateLevel(component);
 
                 actualValue++;
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingLevel", "Loading level"));
+                yield return new WaitForEndOfFrame();
+                level = Level.Infos.Parse(fileText);
+
+                actualValue++;
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBlocks", "Placing Blocks"));
                 yield return new WaitForEndOfFrame();
-                
+
                 float each = (int)(level.blocks.Length * 0.25F);
                 if (level.blocks.Length < 100) each = -1F;
                 for (int i = 0; i < level.blocks.Length; i++)
@@ -236,6 +241,7 @@ public class Editeur : MonoBehaviour
 
                 actualValue++;
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBackgrounds", "Caching Backgrounds"));
+                yield return new WaitForEndOfFrame();
                 transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this); //Caching Backgrounds
 
                 actualValue++;
@@ -246,14 +252,17 @@ public class Editeur : MonoBehaviour
 
                 actualValue++;
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingOpen", "Opening Level"));
+                yield return new WaitForEndOfFrame();
                 OpenCat(-1);
-                
+
                 Discord.Presence(LangueAPI.String("native", "discordEditor_title"), LangueAPI.StringWithArgument("native", "discordEditor_subtitle", level.name), new DiscordClasses.Img("default"));
                 cam.GetComponent<BaseControl>().returnScene = false;
 
                 LvlLoadingActivation(false);
                 History.LvlPlayed(file, "E");
                 if (GameObject.Find("Audio") != null) GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
+
+                saveMethode = (SaveMethode)ConfigAPI.GetInt("editor.autoSave");
             }
         }
     }
