@@ -401,7 +401,7 @@ public class Versioning
 {
     //For serialization
     public string number = ""; //Store serialized version number
-    private Versioning() { version = number.Split(new string[] { "." }, System.StringSplitOptions.None); } //Set the real var
+    public Versioning() { version = number.Split(new string[] { "." }, System.StringSplitOptions.None); } //Set the real var
 
     public static Versioning Actual { get { return new Versioning(Application.version); } }
     public enum Sort { Newer, Equal, Older, Error }
@@ -789,7 +789,8 @@ namespace Tools
 
     public static class SpriteExtensions
     {
-        public static Vector2 Size(this Sprite sp) {
+        public static Vector2 Size(this Sprite sp)
+        {
             if (sp == null) return new Vector2();
             Rect rect = sp.rect; return new Vector2(rect.width, rect.height);
         }
@@ -805,6 +806,23 @@ namespace Tools
 
     public static class Vector2Extensions
     {
+        public static Vector2 Parse(string s)
+        {
+            Vector2 vector = new Vector2();
+            if (TryParse(s, out vector)) return vector;
+            else throw new System.FormatException("The string entered wasn't in a correct format ! : {s}");
+        }
+        public static bool TryParse(string s, out Vector2 vector)
+        {
+            string[] temp = s.Substring(1, s.Length - 2).Split(',');
+
+            bool success = true;
+            if (!float.TryParse(temp[0], out vector.x)) success = false;
+            if (!float.TryParse(temp[1], out vector.y)) success = false;
+            if (!success) vector = new Vector2();
+            return success;
+        }
+
         public static Vector2 Round(this Vector2 v, float round)
         { return new Vector2((int)(v.x / round), (int)(v.y / round)) * round; }
 
@@ -816,6 +834,24 @@ namespace Tools
     }
     public static class Vector3Extensions
     {
+        public static Vector3 Parse(string s)
+        {
+            Vector3 vector = new Vector3();
+            if (TryParse(s, out vector)) return vector;
+            else throw new System.FormatException("The string entered wasn't in a correct format ! : {s}");
+        }
+        public static bool TryParse(string s, out Vector3 vector)
+        {
+            string[] temp = s.Substring(1, s.Length - 2).Split(',');
+
+            bool success = true;
+            if (!float.TryParse(temp[0], out vector.x)) success = false;
+            if (!float.TryParse(temp[1], out vector.y)) success = false;
+            if (!float.TryParse(temp[1], out vector.z)) success = false;
+            if (!success) vector = new Vector3();
+            return success;
+        }
+
         public static Vector3 Round(this Vector3 v, float round)
         { return new Vector3((int)(v.x / round), (int)(v.y / round), (int)(v.z / round)) * round; }
     }
@@ -827,6 +863,109 @@ namespace Tools
         {
             quaternion.eulerAngles = vector;
             return quaternion;
+        }
+    }
+
+    namespace Dictionary
+    {
+        [System.Serializable]
+        public class Serializable<TKey, TValue> : System.IEquatable<Serializable<TKey, TValue>>
+        {
+            [System.Xml.Serialization.XmlIgnore]
+            public System.Collections.Generic.Dictionary<TKey, TValue> dictionary = new System.Collections.Generic.Dictionary<TKey, TValue>();
+            public Pair<TKey, TValue>[] pair
+            {
+                get
+                {
+                    System.Collections.Generic.List<Pair<TKey, TValue>> list = new System.Collections.Generic.List<Pair<TKey, TValue>>();
+                    foreach (System.Collections.Generic.KeyValuePair<TKey, TValue> keyValue in dictionary)
+                        list.Add(new Pair<TKey, TValue>() { Key = keyValue.Key, Value = keyValue.Value });
+                    return list.ToArray();
+                }
+                set
+                {
+                    dictionary = new System.Collections.Generic.Dictionary<TKey, TValue>();
+                    foreach (var item in value) { if (item.Key != null & item.Value != null) dictionary.Add(item.Key, item.Value); }
+                }
+            }
+
+            public TValue this[TKey key]
+            {
+                get { if (dictionary.ContainsKey(key)) return dictionary[key]; else return default; }
+                set
+                {
+                    if (dictionary.ContainsKey(key)) dictionary[key] = value;
+                    else dictionary.Add(key, value);
+                }
+            }
+            public bool TryGetValue(TKey key, out TValue value) { return dictionary.TryGetValue(key, out value); }
+            public bool ContainsKey(TKey key) { return dictionary.ContainsKey(key); }
+            public bool ContainsValue(TValue value) { return dictionary.ContainsValue(value); }
+            public int Count => dictionary.Count;
+            public void Add(TKey key, TValue value) { dictionary.Add(key, value); }
+            public bool Remove(TKey key) { return dictionary.Remove(key); }
+            public void Clear() { dictionary.Clear(); }
+            public System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<TKey, TValue>> GetEnumerator() { return dictionary.GetEnumerator(); }
+
+            public bool Equals(Serializable<TKey, TValue> other)
+            {
+                if (other is null) return false; //If parameter is null, return false.
+                if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
+                if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
+
+                bool match = true;
+                Pair<TKey, TValue>[] pSelf = pair;
+                Pair<TKey, TValue>[] pOther = other.pair;
+                if (pSelf.Length != pOther.Length) match = false;
+                else
+                {
+                    for (int i = 0; i < pSelf.Length & i < pOther.Length; i++)
+                    {
+                        if (!pSelf[i].Equals(pOther[i])) match = false;
+                    }
+                }
+                return match;
+            }
+            public override bool Equals(object obj) { return Equals(obj as Serializable<TKey, TValue>); }
+            public static bool operator ==(Serializable<TKey, TValue> left, Serializable<TKey, TValue> right)
+            {
+                if (left is null & right is null) return true;
+                else if (left is null | right is null) return false;
+                else return left.Equals(right);
+            }
+            public static bool operator !=(Serializable<TKey, TValue> left, Serializable<TKey, TValue> right) { return !(left == right); }
+            public override int GetHashCode() { return base.GetHashCode(); }
+            public void CopyTo(out Serializable<TKey, TValue> other)
+            {
+                other = new Serializable<TKey, TValue>();
+                foreach (System.Collections.Generic.KeyValuePair<TKey, TValue> kv in dictionary) other.Add(kv.Key, kv.Value);
+            }
+        }
+
+        [System.Serializable]
+        public class Pair<TKey, TValue> : System.IEquatable<Pair<TKey, TValue>>
+        {
+            public TKey Key;
+            public TValue Value;
+
+            public bool Equals(Pair<TKey, TValue> other)
+            {
+                if (other is null) return false; //If parameter is null, return false.
+                if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
+                if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
+                if (Key == null | Value == null) return (Key == null & other.Key == null) & (Value == null & other.Value == null);
+
+                return Key.ToString() == other.Key.ToString() & Value.ToString() == other.Value.ToString();
+            }
+            public override bool Equals(object obj) { return Equals(obj as Pair<TKey, TValue>); }
+            public static bool operator ==(Pair<TKey, TValue> left, Pair<TKey, TValue> right)
+            {
+                if (left is null & right is null) return true;
+                else if (left is null | right is null) return false;
+                else return left.Equals(right);
+            }
+            public static bool operator !=(Pair<TKey, TValue> left, Pair<TKey, TValue> right) { return !(left == right); }
+            public override int GetHashCode() { return base.GetHashCode(); }
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Level
             if (ReferenceEquals(other, null)) return false; //If parameter is null, return false.
             if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
             if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
-
+            
             if (name == other.name
                 & description == other.description
                 & author == other.author
@@ -38,17 +38,22 @@ namespace Level
                 & music == other.music
                 & version == other.version
                 & respawnMode == other.respawnMode
-                & blocks == other.blocks)
+                & Block.Equals(blocks,other.blocks))
                 return true;
             else return false;
         }
         public override bool Equals(object obj) { return Equals(obj as Infos); }
-        public static bool operator ==(Infos left, Infos right) { return left.Equals(right); }
-        public static bool operator !=(Infos left, Infos right) { return !left.Equals(right); }
-        public override int GetHashCode() { return base.GetHashCode(); }
-
-        public void CopyTo(Infos other)
+        public static bool operator ==(Infos left, Infos right)
         {
+            if (left is null & right is null) return true;
+            else if (left is null | right is null) return false;
+            else return left.Equals(right);
+        }
+        public static bool operator !=(Infos left, Infos right) { return !(left == right); }
+        public override int GetHashCode() { return base.GetHashCode(); }
+        public void CopyTo(out Infos other)
+        {
+            other = new Infos();
             other.name = name;
             other.description = description;
             other.author = author;
@@ -56,7 +61,8 @@ namespace Level
             other.music = music;
             other.version = version;
             other.respawnMode = respawnMode;
-            other.blocks = blocks;
+            other.blocks = new Block[blocks.Length];
+            for (int i = 0; i < blocks.Length; i++) blocks[i].CopyTo(out other.blocks[i]);
         }
     }
 
@@ -80,8 +86,13 @@ namespace Level
             else return false;
         }
         public override bool Equals(object obj) { return Equals(obj as Background); }
-        public static bool operator ==(Background left, Background right) { return left.Equals(right); }
-        public static bool operator !=(Background left, Background right) { return !left.Equals(right); }
+        public static bool operator ==(Background left, Background right)
+        {
+            if (left is null & right is null) return true;
+            else if (left is null | right is null) return false;
+            else return left.Equals(right);
+        }
+        public static bool operator !=(Background left, Background right) { return !(left == right); }
         public override int GetHashCode() { return base.GetHashCode(); }
     }
 
@@ -92,14 +103,14 @@ namespace Level
         public string category = "native";
         public float id;
         public Vector3 position;
-        public string parameter;
+        public Tools.Dictionary.Serializable<string, string> parameter = new Tools.Dictionary.Serializable<string, string>();
 
         public bool Equals(Block other)
         {
             if (other is null) return false; //If parameter is null, return false.
             if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
             if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
-            
+
             if (type == other.type
                 & category == other.category
                 & id == other.id
@@ -109,9 +120,42 @@ namespace Level
             else return false;
         }
         public override bool Equals(object obj) { return Equals(obj as Block); }
-        public static bool operator ==(Block left, Block right) { return left.Equals(right); }
-        public static bool operator !=(Block left, Block right) { return !left.Equals(right); }
+        public static bool Equals(Block[] left, Block[] right)
+        {
+            bool match = true;
+            if(left is null & right is null) match = true;
+            if (left is null | right is null) match = false;
+            else if (left.Length != right.Length) match = false;
+            else
+            {
+                for (int i = 0; i < left.Length & i < right.Length; i++)
+                {
+                    if (!(left[i] is null & right[i] is null))
+                    {
+                        if (left[i] is null | right[i] is null) match = false;
+                        else if (!left[i].Equals(right[i])) match = false;
+                    }
+                }
+            }
+            return match;
+        }
+        public static bool operator ==(Block left, Block right)
+        {
+            if (left is null & right is null) return true;
+            else if (left is null | right is null) return false;
+            else return left.Equals(right);
+        }
+        public static bool operator !=(Block left, Block right) { return !(left == right); }
         public override int GetHashCode() { return base.GetHashCode(); }
+        public void CopyTo(out Block other)
+        {
+            other = new Block();
+            other.type = type;
+            other.category = category;
+            other.id = id;
+            other.position = position;
+            parameter.CopyTo(out other.parameter);
+        }
     }
 }
 
@@ -121,8 +165,6 @@ public class Editeur : MonoBehaviour
     public Transform LoadingLevel;
     public Soundboard SoundBoard;
     public string FromScene = "Home";
-    
-    public string[] component; //Will be removed
 
     public string file;
     public Level.Infos level;
@@ -174,10 +216,10 @@ public class Editeur : MonoBehaviour
             background = new Level.Background() { category = "native", id = 1, color = new Color32(75, 75, 75, 255) },
             music = null,
             respawnMode = 0,
-            blocks = new Level.Block[] {}
+            blocks = new Level.Block[] { }
         };
-    
-        
+
+
         File.WriteAllText(file, lvl.ToString());
         EditFile(file);
     }
@@ -213,7 +255,7 @@ public class Editeur : MonoBehaviour
                 actualValue++;
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingVersionCheck", "Checking the level version"));
                 yield return new WaitForEndOfFrame();
-                UpdateLevel(component);
+                //UpdateLevel(new string[] { fileText });
 
                 actualValue++;
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingLevel", "Loading level"));
@@ -302,7 +344,7 @@ public class Editeur : MonoBehaviour
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         cam.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, -10);
         cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;
-        
+
         GrilleOnOff(ConfigAPI.GetBool("editor.Grid"), transform.GetChild(0).GetChild(5).GetComponent<UImage_Reader>());
 
         zoomIndicator.gameObject.SetActive(false);
@@ -337,7 +379,6 @@ public class Editeur : MonoBehaviour
         }
 
         transform.GetChild(0).GetChild(6).gameObject.SetActive(ConfigAPI.GetBool("editor.showCoordinates"));
-        saveMethode = (SaveMethode)ConfigAPI.GetInt("editor.autoSave");
     }
 
     void Update()
@@ -563,13 +604,12 @@ public class Editeur : MonoBehaviour
     IEnumerator AutoSaveLevel()
     {
         AutoSaveLevelEnabled = true;
-        SaveLevel();
 
         if (_saveMethode == SaveMethode.Everytime) yield return new WaitForFixedUpdate();
         else if (_saveMethode == SaveMethode.EveryChange)
         {
             Level.Infos oldComponent = new Level.Infos();
-            level.CopyTo(oldComponent);
+            level.CopyTo(out oldComponent);
             while (level.Equals(oldComponent))
                 yield return new WaitForEndOfFrame();
         }
@@ -577,6 +617,7 @@ public class Editeur : MonoBehaviour
         else if (_saveMethode == SaveMethode.EveryFiveMinutes) yield return new WaitForSeconds(60 * 5);
         else throw new System.NotImplementedException("¯\\_(ツ)_/¯");
 
+        SaveLevel();
         AutoSaveLevelEnabled = false;
         StartCoroutine(AutoSaveLevel());
     }
@@ -690,7 +731,7 @@ public class Editeur : MonoBehaviour
         if (Input.touchCount == 1)
         {
 #endif
-        if (newblockid <= 0) return; 
+        if (newblockid <= 0) return;
         Vector3 a = new Vector3(x, y, 0);
 
         float _id = newblockid;
@@ -882,7 +923,8 @@ public class Editeur : MonoBehaviour
     }
     public static Color HexToColor(string hex)
     {
-        if (hex.Length < 6 | hex.Length > 9) return new Color32(190, 190, 190, 255);
+        if (hex == null) return new Color32(190, 190, 190, 255);
+        else if (hex.Length < 6 | hex.Length > 9) return new Color32(190, 190, 190, 255);
 
         byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
         byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
@@ -928,58 +970,16 @@ public class Editeur : MonoBehaviour
             {
                 if (Bloc[i] != -1)
                 {
-                    string[] a = component[Bloc[i]].Split(new string[] { "; " }, System.StringSplitOptions.None);
-                    string[] Pos = a[1].Split(new string[] { ", " }, System.StringSplitOptions.None);
-                    string[] b = component[Bloc[i]].Split(new string[] { "; {" }, System.StringSplitOptions.None)[1].Split(new string[] { "}" }, System.StringSplitOptions.None)[0].Split(new string[] { "; " }, System.StringSplitOptions.None);
+                    Level.Block block = level.blocks[Bloc[i]];
 
-                    string _Modified = "";
+                    if (StatusID[i] == "ID") float.TryParse(_component[i], out block.id);
+                    else if (StatusID[i] == "Position") Vector3Extensions.TryParse(_component[i], out block.position);
+                    else if (StatusID[i] == "PositionX") float.TryParse(_component[i], out block.position.x);
+                    else if (StatusID[i] == "PositionY") float.TryParse(_component[i], out block.position.y);
+                    else if (StatusID[i] == "Layer") float.TryParse(_component[i], out block.position.z);
+                    else if (block.parameter.ContainsKey(StatusID[i])) block.parameter[StatusID[i]] = _component[i];
+                    else block.parameter.Add(StatusID[i], _component[i]);
 
-                    for (int s = 0; s < StatusID.Length & s < _component.Length; s++)
-                    {
-                        if (StatusID[s] == "ID")
-                            a[0] = _component[s];
-                        else if (StatusID[s] == "Position")
-                            a[1] = _component[s].Replace(")", ", ") + Pos[2];
-                        else if (StatusID[s] == "PositionX")
-                            a[1] = "(" + _component[s] + ", " + Pos[1] + ", " + Pos[2];
-                        else if (StatusID[s] == "PositionY")
-                            a[1] = Pos[0] + ", " + _component[s] + ", " + Pos[2];
-                        else if (StatusID[s] == "Layer")
-                            a[1] = Pos[0] + ", " + Pos[1] + ", " + _component[s] + ")";
-                        else
-                        {
-                            int pNb = -1;
-                            for (int p = 0; p < b.Length; p++)
-                            {
-                                string[] param = b[p].Split(new string[] { ":" }, System.StringSplitOptions.None);
-                                if (param[0] == StatusID[s])
-                                    pNb = p;
-                            }
-                            if (pNb == -1)
-                            {
-                                if (b.Length > 0)
-                                    if (!string.IsNullOrEmpty(b[0])) b = b.Union(new string[] { StatusID[s] + ":" + _component[s] }).ToArray();
-                                    else b = new string[] { StatusID[s] + ":" + _component[s] };
-                                else b = new string[] { StatusID[s] + ":" + _component[s] };
-                            }
-                            else
-                            {
-                                string[] param = b[pNb].Split(new string[] { ":" }, System.StringSplitOptions.None);
-                                b[pNb] = param[0] + ":" + _component[s];
-                            }
-                        }
-                    }
-
-                    _Modified = a[0] + "; " + a[1];
-                    for (int iB = 0; iB < b.Length; iB++)
-                    {
-                        if (iB == 0) _Modified = _Modified + "; {" + b[iB];
-                        else _Modified = _Modified + "; " + b[iB];
-                        if (iB == b.Length - 1) _Modified = _Modified + "}";
-                    }
-
-
-                    component[Bloc[i]] = _Modified;
                     Instance(Bloc[i], true);
                 }
             }
@@ -995,36 +995,17 @@ public class Editeur : MonoBehaviour
     /// <returns></returns>
     public string GetBlocStatus(string StatusID, int Bloc)
     {
-        if (file != "" & component.Length > Bloc)
+        if (file != "" & level.blocks.Length > Bloc)
         {
-            try
-            {
-                string[] a = component[Bloc].Split(new string[] { "; " }, System.StringSplitOptions.None);
+            Level.Block block = level.blocks[Bloc];
 
-                if (StatusID == "ID")
-                    return a[0];
-                else if (StatusID == "Position")
-                    return a[1];
-                else if (StatusID == "PositionX")
-                    return a[1].Split(new string[] { ", " }, System.StringSplitOptions.None)[0].Replace(")", "").Replace("(", "");
-                else if (StatusID == "PositionY")
-                    return a[1].Split(new string[] { ", " }, System.StringSplitOptions.None)[1].Replace(")", "").Replace("(", "");
-                else if (StatusID == "Layer")
-                    return a[1].Split(new string[] { ", " }, System.StringSplitOptions.None)[2].Replace(")", "").Replace("(", "");
-                else
-                {
-                    string[] b = component[Bloc].Split(new string[] { "; {" }, System.StringSplitOptions.None)[1].Split(new string[] { "}" }, System.StringSplitOptions.None)[0].Split(new string[] { "; " }, System.StringSplitOptions.None);
-                    for (int i = 0; i < b.Length; i++)
-                    {
-                        string[] param = b[i].Split(new string[] { ":" }, System.StringSplitOptions.None);
-                        if (param[0] == StatusID)
-                            return param[1];
-                    }
-
-                    return "";
-                }
-            }
-            catch { return ""; }
+            if (StatusID == "ID") return block.id.ToString();
+            else if (StatusID == "Position") return block.position.ToString();
+            else if (StatusID == "PositionX") return block.position.x.ToString();
+            else if (StatusID == "PositionY") return block.position.y.ToString();
+            else if (StatusID == "Layer") return block.position.z.ToString();
+            else if (block.parameter.ContainsKey(StatusID)) return block.parameter[StatusID];
+            else return "";
         }
         else return "";
     }
