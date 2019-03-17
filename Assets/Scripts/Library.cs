@@ -587,13 +587,13 @@ namespace Level
         public string Author = "";
         public string Description = "";
         public string Music = "";
-        public string[] Data = new string[0];
+        public string Data = "";
         public LevelItem() { }
-        public LevelItem(string name, string author = "", string[] data = null, string description = "", string music = "")
+        public LevelItem(string name, string author = "", string data = null, string description = "", string music = "")
         {
             Name = name;
             Author = author;
-            if (data == null) Data = new string[0];
+            if (data == null) Data = "";
             else Data = data;
             Description = description;
             Music = music;

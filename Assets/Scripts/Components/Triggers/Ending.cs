@@ -107,13 +107,13 @@ public class Ending : MonoBehaviour
         LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
         int gain = 0;
         int lastGain = 0;
-        FileFormat.XML.Item lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.Name);
+        FileFormat.XML.Item lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
         if (lvlItem != null)
             int.TryParse(lvlItem.Value, out lastGain);
         else
         {
-            xml.GetItemByAttribute("PlayedLevels", "type", "Official").CreateItem("level").CreateAttribute("name", lvlPlayer.level.Name);
-            lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.Name);
+            xml.GetItemByAttribute("PlayedLevels", "type", "Official").CreateItem("level").CreateAttribute("name", lvlPlayer.level.name);
+            lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
         }
 
         int money = 0;
@@ -121,7 +121,7 @@ public class Ending : MonoBehaviour
 
         if (lvlPlayer.FromScene == "Home/Play/Official Levels")
         {
-            RewardChecker.Official reward = new RewardChecker.Official(lvlPlayer.level.Name);
+            RewardChecker.Official reward = new RewardChecker.Official(lvlPlayer.level.name);
             reward.turn = lvlPlayer.nbLancer;
             gain = reward.money;
         }
