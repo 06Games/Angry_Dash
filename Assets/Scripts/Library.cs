@@ -854,7 +854,7 @@ namespace Tools
             bool success = true;
             if (!float.TryParse(temp[0], out vector.x)) success = false;
             if (!float.TryParse(temp[1], out vector.y)) success = false;
-            if (!float.TryParse(temp[1], out vector.z)) success = false;
+            if (!float.TryParse(temp[2], out vector.z)) success = false;
             if (!success) vector = new Vector3();
             return success;
         }
