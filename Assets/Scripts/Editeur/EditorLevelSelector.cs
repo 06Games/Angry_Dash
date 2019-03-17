@@ -98,9 +98,13 @@ public class EditorLevelSelector : MonoBehaviour
             Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
             int button = i;
             go.GetComponent<Button>().onClick.AddListener(() => Select(button)); //Sets the script to excute on click
-            go.name = Path.GetFileNameWithoutExtension(files[i].Name); //Changes the editor gameObject name (useful only for debugging)
 
-            go.GetChild(0).GetComponent<Text>().text = Path.GetFileNameWithoutExtension(files[i].Name); //Sets the level's name
+            string fileName = PathExtensions.GetRelativePath(files[i].DirectoryName, directory).Replace("\\", "/");
+            if (!string.IsNullOrEmpty(fileName)) fileName = fileName + "/";
+            fileName = fileName + Path.GetFileNameWithoutExtension(files[i].Name);
+
+            go.name = fileName; //Changes the editor gameObject name (useful only for debugging)
+            go.GetChild(0).GetComponent<Text>().text = fileName; //Sets the level's name
             go.GetChild(1).GetComponent<Text>().text = files[i].LastWriteTime.Format(); //Sets the level's last open date
             go.gameObject.SetActive(true);
             if (selectedFile != null & reselect)
