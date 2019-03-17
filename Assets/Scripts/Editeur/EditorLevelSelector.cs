@@ -43,8 +43,8 @@ public class EditorLevelSelector : MonoBehaviour
     public FileInfo[] files;
     /// <summary> Index of the selected level, value equal to -1 if no level is selected </summary>
     public int currentFile = -1;
-    /// <summary> Line of the description in the selected level, value equal to -1 if no description is found </summary>
-    int descriptionLine = -1;
+    /// <summary> The root of the selected level </summary>
+    FileFormat.XML.RootElement xmlRoot;
 
     void Start()
     {
@@ -141,20 +141,13 @@ public class EditorLevelSelector : MonoBehaviour
     /// <param name="selected">Index of the level</param>
     public void Select(int selected)
     {
-        string[] content = File.ReadAllLines(files[selected].FullName);
         Transform infos = transform.GetChild(2);
+        try { xmlRoot = new FileFormat.XML.XML(File.ReadAllText(files[selected].FullName)).RootElement; } catch { xmlRoot = null; }
 
         //Description
         DescriptionEditMode(false);
-        int d = -1;
-        for (int x = 0; x < content.Length; x++)
-        {
-            if (content[x].Contains("description = ") & d == -1)
-                d = x;
-        }
         string Desc = LangueAPI.String("native", "EditorEditInfosDescriptionError", "<color=red>Can not read the description</color>");
-        if (d >= 0) Desc = content[d].Replace("description = ", "");
-        descriptionLine = d;
+        if (xmlRoot != null) Desc = xmlRoot.GetItem("description").Value;
         infos.GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text = Desc.Format();
 
         //If infos panel is inactive, display it !
@@ -223,7 +216,7 @@ public class EditorLevelSelector : MonoBehaviour
 
     public void SwitchDescriptionEditMode() { DescriptionEditMode(transform.GetChild(2).GetChild(0).GetChild(1).gameObject.activeInHierarchy); }
     public void DescriptionEditMode(bool edit)
-    { 
+    {
         Transform desc = transform.GetChild(2).GetChild(0);
         string description = "";
         if (edit) description = desc.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text;
@@ -239,11 +232,10 @@ public class EditorLevelSelector : MonoBehaviour
     public void DescriptionEdit(InputField field) { DescriptionEdit(field.text); }
     public void DescriptionEdit(string description)
     {
-        if(descriptionLine >= 0)
+        if (xmlRoot != null)
         {
-            string[] content = File.ReadAllLines(files[currentFile].FullName);
-            if(content[descriptionLine].Contains("description = ")) content[descriptionLine] = "description = " + description;
-            File.WriteAllLines(files[currentFile].FullName, content);
+            xmlRoot.GetItem("description").Value = description;
+            File.WriteAllText(files[currentFile].FullName, xmlRoot.xmlFile.ToString());
         }
     }
 
