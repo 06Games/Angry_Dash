@@ -209,7 +209,7 @@ public class Editeur : MonoBehaviour
 
         Level.Infos lvl = new Level.Infos()
         {
-            name = Path.GetFileNameWithoutExtension(new FileInfo(path).Name),
+            name = Path.GetFileNameWithoutExtension(new FileInfo(path).FullName),
             description = desc,
             author = Account.Username,
             version = Versioning.Actual,

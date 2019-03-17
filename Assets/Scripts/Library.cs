@@ -50,6 +50,7 @@ namespace FileFormat
                 var settings = new System.Xml.XmlWriterSettings
                 {
                     NewLineHandling = System.Xml.NewLineHandling.Entitize,
+                    Encoding = Encoding.UTF8,
                     Indent = !minimised
                 };
 

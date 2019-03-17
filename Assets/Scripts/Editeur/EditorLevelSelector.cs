@@ -323,7 +323,11 @@ public class EditorLevelSelector : MonoBehaviour
         WebClient client = new WebClient();
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/upload.php?id=" + id + "&mdp=" + mdp + "&level=" + Path.GetFileNameWithoutExtension(files[index].Name);
-        byte[] responseArray = client.UploadData(URL, File.ReadAllBytes(files[index].FullName));
+
+        string lvl = File.ReadAllText(files[index].FullName); //Read the level file
+        if (FileFormat.XML.Utils.IsValid(lvl)) // If the level is in XML, minimize it
+            lvl = lvl.Replace("\n", "").Replace("\r", "").Replace("\t", "");
+        byte[] responseArray = client.UploadData(URL, lvl.ToByte());
         string Result = System.Text.Encoding.ASCII.GetString(responseArray);
 
         if (Result.Contains("Success")) PublishPanel.Array(2);
