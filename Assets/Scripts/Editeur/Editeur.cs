@@ -899,12 +899,7 @@ public class Editeur : MonoBehaviour
                 go.transform.GetChild(i).localScale = new Vector2(UImage.FrameSize.x / SelectedZoneSize.width, UImage.FrameSize.y / SelectedZoneSize.height);
             }
 
-            try { SR.color = HexToColor(GetBlocStatus("Color", num)); }
-            catch
-            {
-                SR.color = new Color32(190, 190, 190, 255);
-                Debug.LogWarning("The block at the line " + num + " as an invalid color");
-            }
+            SR.color = HexToColor(GetBlocStatus("Color", num));
             SR.sortingOrder = (int)level.blocks[num].position.z;
         }
     }
