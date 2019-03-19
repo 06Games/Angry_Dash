@@ -98,7 +98,7 @@ namespace Sprite_API
                     if (!path)
                     {
                         string rpPath = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
-                        if(File.Exists(jsonID = rpPath + baseID + ".json") | File.Exists(rpPath + baseID + " basic.png"))
+                        if(File.Exists(jsonID) | File.Exists(rpPath + baseID + " basic.png"))
                             jsonID = rpPath + baseID + ".json";
                         else jsonID = Application.persistentDataPath + "/Ressources/default/textures/" + baseID + ".json";
                     }
