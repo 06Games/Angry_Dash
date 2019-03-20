@@ -958,21 +958,24 @@ public class Editeur : MonoBehaviour
     {
         if (Bloc != null)
         {
-            for (int i = 0; i < Bloc.Length; i++)
+            for (int s = 0; s < StatusID.Length; s++)
             {
-                if (Bloc[i] != -1)
+                for (int i = 0; i < Bloc.Length; i++)
                 {
-                    Level.Block block = level.blocks[Bloc[i]];
+                    if (Bloc[i] != -1)
+                    {
+                        Level.Block block = level.blocks[Bloc[i]];
 
-                    if (StatusID[i] == "ID") float.TryParse(_component[i], out block.id);
-                    else if (StatusID[i] == "Position") Vector3Extensions.TryParse(_component[i], out block.position);
-                    else if (StatusID[i] == "PositionX") float.TryParse(_component[i], out block.position.x);
-                    else if (StatusID[i] == "PositionY") float.TryParse(_component[i], out block.position.y);
-                    else if (StatusID[i] == "Layer") float.TryParse(_component[i], out block.position.z);
-                    else if (block.parameter.ContainsKey(StatusID[i])) block.parameter[StatusID[i]] = _component[i];
-                    else block.parameter.Add(StatusID[i], _component[i]);
+                        if (StatusID[s] == "ID") float.TryParse(_component[s], out block.id);
+                        else if (StatusID[s] == "Position") Vector3Extensions.TryParse(_component[s], out block.position);
+                        else if (StatusID[s] == "PositionX") float.TryParse(_component[s], out block.position.x);
+                        else if (StatusID[s] == "PositionY") float.TryParse(_component[s], out block.position.y);
+                        else if (StatusID[s] == "Layer") float.TryParse(_component[s], out block.position.z);
+                        else if (block.parameter.ContainsKey(StatusID[s])) block.parameter[StatusID[s]] = _component[s];
+                        else block.parameter.Add(StatusID[s], _component[s]);
 
-                    Instance(Bloc[i], true);
+                        Instance(Bloc[i], true);
+                    }
                 }
             }
         }
