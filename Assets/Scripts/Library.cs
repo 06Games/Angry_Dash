@@ -981,8 +981,8 @@ namespace Tools
     {
         public static string GetRelativePath(string p_fullDestinationPath, string p_startPath)
         {
-            string[] l_startPathParts = Path.GetFullPath(p_startPath).Trim(Path.DirectorySeparatorChar).Split(Path.DirectorySeparatorChar);
-            string[] l_destinationPathParts = p_fullDestinationPath.Split(Path.DirectorySeparatorChar);
+            string[] l_startPathParts = Path.GetFullPath(p_startPath).Trim('/', '\\').Split('/', '\\');
+            string[] l_destinationPathParts = p_fullDestinationPath.Split('/', '\\');
 
             int l_sameCounter = 0;
             while ((l_sameCounter < l_startPathParts.Length) && (l_sameCounter < l_destinationPathParts.Length) && l_startPathParts[l_sameCounter].Equals(l_destinationPathParts[l_sameCounter], System.StringComparison.InvariantCultureIgnoreCase))
@@ -998,12 +998,12 @@ namespace Tools
             StringBuilder l_builder = new StringBuilder();
             for (int i = l_sameCounter; i < l_startPathParts.Length; i++)
             {
-                l_builder.Append(".." + Path.DirectorySeparatorChar);
+                l_builder.Append("../");
             }
 
             for (int i = l_sameCounter; i < l_destinationPathParts.Length; i++)
             {
-                l_builder.Append(l_destinationPathParts[i] + Path.DirectorySeparatorChar);
+                l_builder.Append(l_destinationPathParts[i] + "/");
             }
 
             if(l_builder.Length > 0) l_builder.Length--;
