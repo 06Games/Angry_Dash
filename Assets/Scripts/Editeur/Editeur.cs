@@ -1215,18 +1215,21 @@ public class Editeur : MonoBehaviour
                     else if (line.Contains("background = "))
                     {
                         string[] data = line.Replace("background = ", "").Replace("\r", "").Split(new string[] { "; " }, System.StringSplitOptions.None);
-                        int ID = 1; int.TryParse(data[0], out ID);
-                        updated.background = new Level.Background()
+                        if (data.Length >= 2)
                         {
-                            category = "native",
-                            id = ID,
-                            color = HexToColor(data[1])
-                        };
+                            int ID = 1; int.TryParse(data[0], out ID);
+                            updated.background = new Level.Background()
+                            {
+                                category = "native",
+                                id = ID,
+                                color = HexToColor(data[1])
+                            };
+                        }
                     }
                     else if (line.Contains("music = "))
                     {
                         string[] data = line.Replace("music = ", "").Replace("\r", "").Split(new string[] { " - " }, System.StringSplitOptions.None);
-                        updated.music = new Level.SongItem() { Artist = data[0], Name = data[1] };
+                        if(data.Length >= 2) updated.music = new Level.SongItem() { Artist = data[0], Name = data[1] };
                     }
                     else if (line.Contains("author = ")) updated.author = line.Replace("author = ", "").Replace("\r", "");
                     else if (line.Contains("respawnMode = ")) int.TryParse(line.Replace("respawnMode = ", "").Replace("\r", ""), out updated.respawnMode);
