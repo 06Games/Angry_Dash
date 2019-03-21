@@ -29,7 +29,7 @@ public class EditorMovements : MonoBehaviour
             if (go != null)
             {
                 go.transform.Translate(mvt * 50F);
-                Editor.ChangBlocStatus("Position", ((Vector2)(go.transform.position - new Vector3(25,25)) / 50F).ToString(), new int[] { blocks[i] });
+                Editor.level.blocks[blocks[i]].position = (Vector2)(go.transform.position - new Vector3(25, 25)) / 50F;
             }
         }
     }

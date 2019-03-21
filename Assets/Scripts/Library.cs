@@ -853,9 +853,13 @@ namespace Tools
             string[] temp = s.Substring(1, s.Length - 2).Split(',');
 
             bool success = true;
-            if (!float.TryParse(temp[0], out vector.x)) success = false;
-            if (!float.TryParse(temp[1], out vector.y)) success = false;
-            if (!float.TryParse(temp[2], out vector.z)) success = false;
+            if (temp.Length != 3) { vector = new Vector3(); success = false; }
+            else
+            {
+                if (!float.TryParse(temp[0], out vector.x)) success = false;
+                if (!float.TryParse(temp[1], out vector.y)) success = false;
+                if (!float.TryParse(temp[2], out vector.z)) success = false;
+            }
             if (!success) vector = new Vector3();
             return success;
         }
