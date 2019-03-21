@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
 
     //Joystick
     public GameObject JoyStick; //Le Joystick
+    Vector2 joystickOffset;
     public Vector3 Sensibility; //Min et max de l'aléatoire + Sensibilité actuelle (distance en nombre blocs)
     int x; //pos x du joystick
     int y; //pos y du joystick
@@ -93,16 +94,15 @@ public class Player : MonoBehaviour
 
 
         vitesse = 1;
-
-        JoyStick.GetComponent<RectTransform>().position = new Vector2(
-            Screen.width / 2 - (JoyStick.GetComponent<RectTransform>().rect.width * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2,
-            Display.Screen.Resolution.y * 0.2F - (JoyStick.GetComponent<RectTransform>().rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
-
+        joystickOffset = new Vector2((JoyStick.GetComponent<RectTransform>().rect.width * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2,
+            (JoyStick.GetComponent<RectTransform>().rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
+        
         PositionInitiale = transform.position;
     }
 
     void Update()
     {
+        JoyStick.GetComponent<RectTransform>().position = (Vector2)LP.GetComponent<Camera>().WorldToScreenPoint(transform.position) - joystickOffset;
         Sensibility.z = Random.Range(Sensibility.x, Sensibility.y);
         int xa = (int)(CnInputManager.GetAxis("Horizontal") * 50 * Sensibility.z); //x actuel
         int ya = (int)(CnInputManager.GetAxis("Vertical") * 50 * Sensibility.z); //y actuel
