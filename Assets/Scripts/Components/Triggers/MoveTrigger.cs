@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using System.Linq;
 
 public class MoveTrigger : MonoBehaviour
 {
@@ -84,8 +84,18 @@ public class MoveTrigger : MonoBehaviour
         Vector3[] InitialRot = new Vector3[Objects.Length];
         for (int i = 0; i < Objects.Length; i++)
         {
-            InitialPos[i] = Objects[i].transform.position;
-            InitialRot[i] = Objects[i].transform.eulerAngles;
+            if (Objects[i] != null)
+            {
+                InitialPos[i] = Objects[i].transform.position;
+                InitialRot[i] = Objects[i].transform.eulerAngles;
+            }
+            else
+            {
+                var list = Objects.ToList();
+                list.RemoveAt(i);
+                Objects = list.ToArray();
+                i--;
+            }
         }
         Vector2 InitialPlayerPos = GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.position;
 
