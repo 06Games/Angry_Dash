@@ -12,8 +12,8 @@ public class Player : MonoBehaviour
     public Transform Trace;
 
     //Joystick
-    public GameObject JoyStick; //Le Joystick
-    Vector2 joystickOffset;
+    public GameObject JoyStick; //The joystick
+    Vector2 joystickOffset; //The joystick's offset on screen
     public Vector3 Sensibility; //Min et max de l'aléatoire + Sensibilité actuelle (distance en nombre blocs)
     int x; //pos x du joystick
     int y; //pos y du joystick
@@ -26,10 +26,8 @@ public class Player : MonoBehaviour
     public Vector2 PositionInitiale; //Dernier point d'arrivé valide
     public bool Touched = false; //Le joueur est-il déjà géré par un bloc
 
-    //Traces
-    int selectedTrace = 0;
-
     //Paramètres
+    int selectedTrace = 0; //Trace Type
     public float vitesse = 1; //Multiplicateur de la vitesse du joueur
     public int respawnMode = 0; //Action à effectuer en cas de mort
 
@@ -65,7 +63,7 @@ public class Player : MonoBehaviour
         if (xmlPlayerItem != null) playerSkin = xmlPlayerItem.value<int>();
         if (!Inventory.Owned(xml, playerSkin.ToString()) | xmlPlayerItem != null)
         {
-            if(xmlPlayerItem == null)
+            if (xmlPlayerItem == null)
             {
                 xmlPlayerItem = xml.GetItem("SelectedItems").CreateItem("item");
                 xmlPlayerItem.CreateAttribute("category", "native/PLAYERS/");
@@ -79,7 +77,7 @@ public class Player : MonoBehaviour
 
         //Trace Image
         FileFormat.XML.Item xmlTraceItem = xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", "native/TRACES/");
-        if(xmlTraceItem != null) selectedTrace = xmlTraceItem.value<int>();
+        if (xmlTraceItem != null) selectedTrace = xmlTraceItem.value<int>();
         if (!Inventory.Owned(xml, selectedTrace.ToString()) | xmlTraceItem == null)
         {
             if (xmlTraceItem == null)
@@ -96,7 +94,7 @@ public class Player : MonoBehaviour
         vitesse = 1;
         joystickOffset = new Vector2((JoyStick.GetComponent<RectTransform>().rect.width * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2,
             (JoyStick.GetComponent<RectTransform>().rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
-        
+
         PositionInitiale = transform.position;
     }
 
@@ -138,8 +136,7 @@ public class Player : MonoBehaviour
         float hypothenuse = Mathf.Sqrt(Mathf.Pow(adjacent, 2) + Mathf.Pow(oppose, 2));
         float cos = adjacent / hypothenuse;
         double z = (Mathf.Acos(cos) * 180) / Mathf.PI;
-        if (transform.position.y < Ar.y)
-            z = z - 90;
+        if (transform.position.y < Ar.y) z = z - 90;
         else z = z * -1 - 90;
         Quaternion rot = new Quaternion();
         rot.eulerAngles = new Vector3(0, 0, (float)z);
@@ -192,7 +189,7 @@ public class Player : MonoBehaviour
                     TraceEnd(traceObj, endPos); //End the old trace
                     traceObj = CreateTrace(); //Create another
                 }
-                
+
                 Vector2 imgSize = traceObj.GetComponent<UImage_Reader>().FrameSize;
                 traceObj.localScale = new Vector2(100F / imgSize.x * 25, Vector2Extensions.Distance(transform.position, InitialPos) * 100F / imgSize.y);
                 traceObj.position = Vector2Extensions.Center(transform.position, InitialPos);

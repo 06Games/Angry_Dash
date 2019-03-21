@@ -1,6 +1,6 @@
-native/GUI/mainMenu/button
 native/GUI/logo
 native/GUI/mainMenu/background
+native/GUI/mainMenu/button
 native/GUI/mainMenu/profile
 native/GUI/playMenu/background
 native/GUI/playMenu/OfficialServers

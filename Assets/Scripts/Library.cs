@@ -142,7 +142,8 @@ namespace FileFormat
             public void SetAttribute(string key, string value) { node.Attributes[key].Value = value; }
             public void RemoveAttribute(string key) { node.Attributes.Remove(node.Attributes[key]); }
 
-            public T value<T>() {
+            public T value<T>()
+            {
                 string v = Value;
                 if (v == null) return default;
                 else try { return Tools.StringExtensions.ParseTo<T>(v); } catch { return default; }
@@ -1010,7 +1011,7 @@ namespace Tools
                 l_builder.Append(l_destinationPathParts[i] + "/");
             }
 
-            if(l_builder.Length > 0) l_builder.Length--;
+            if (l_builder.Length > 0) l_builder.Length--;
 
             return l_builder.ToString();
         }

@@ -134,9 +134,9 @@ public class MoveTrigger : MonoBehaviour
                         long vi = i + 1;
                         if (i > MoveTime.TotalMilliseconds / 2F)
                             vi = (long)MoveTime.TotalMilliseconds - i;
-                        moveFrame = moveFrame + ((Translation / ((maxDistance / vi) / maxDistance)) / (long)MoveTime.TotalMilliseconds / (maxDistance/2F));
+                        moveFrame = moveFrame + ((Translation / ((maxDistance / vi) / maxDistance)) / (long)MoveTime.TotalMilliseconds / (maxDistance / 2F));
                     }
-                    
+
                     Vector2 movedRange = ((Vector2)Objects[b].transform.position - InitialPos[b]) / 50F;
                     moveVector = (moveFrame - movedRange);
                 }
@@ -149,7 +149,11 @@ public class MoveTrigger : MonoBehaviour
                         for (int m = 0; m < 2; m++)
                         {
                             if (TranslationFromPlayer[m])
-                                pos[m] = (InitialPos[b][m] - InitialPlayerPos[m]) + GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.position[m] + (Translation[m] * 50);
+                            {
+                                float distanceObjectPlayer = InitialPos[b][m] - InitialPlayerPos[m];
+                                float playerPos = GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.position[m];
+                                pos[m] = distanceObjectPlayer + playerPos + (Translation[m] * 50);
+                            }
                             else pos[m] = pos[m] + moveVector[m] * 50;
                         }
                         Objects[b].transform.position = pos;
@@ -183,7 +187,7 @@ public class MoveTrigger : MonoBehaviour
                     }
                 }
             }
-            
+
             yield return new WaitForEndOfFrame();
             l++;
         }
