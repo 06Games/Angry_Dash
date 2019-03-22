@@ -708,7 +708,7 @@ public class Editeur : MonoBehaviour
 
             //Grid Size
             _Grille.GetComponent<SpriteRenderer>().size = GetWorldPosition(Display.Screen.Resolution, false,
-                Display.Screen.Resolution * (cam.orthographicSize / Display.Screen.Resolution.y)) + new Vector2(2, 2);
+                Display.Screen.Resolution * (cam.orthographicSize / Display.Screen.Resolution.y)) + new Vector2(3, 3);
         }
 
 
@@ -717,7 +717,7 @@ public class Editeur : MonoBehaviour
         {
             Vector2 bottomLeft = (GetWorldPosition(new Vector2(0, 0), false) * 50F) + new Vector2(25, 25); //Bottom Left Corner
             Vector2 center = _Grille.GetComponent<SpriteRenderer>().size * _Grille.localScale * 0.5F; //Grid Center
-            _Grille.localPosition = (bottomLeft.Round(50) + center);
+            _Grille.localPosition = (bottomLeft.Round(50) + center) - new Vector2(50, 50);
         }
     }
 
