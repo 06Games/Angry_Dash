@@ -6349,7 +6349,7 @@ GameObject:
   - component: {fileID: 240402268}
   - component: {fileID: 240402270}
   m_Layer: 5
-  m_Name: Creator
+  m_Name: Toolbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24626,7 +24626,6 @@ MonoBehaviour:
   LoadingLevel: {fileID: 1948087404}
   SoundBoard: {fileID: 213619079}
   FromScene: Home
-  component: []
   file: 
   level:
     name: 

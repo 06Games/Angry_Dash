@@ -76,7 +76,7 @@ public class History : MonoBehaviour
         else if (action == "O")
         {
             PublishedLevels.transform.parent.parent.gameObject.SetActive(true);
-            PublishedLevels.transform.parent.GetComponent<CreatorManager>().Array(1);
+            PublishedLevels.transform.parent.GetComponent<MenuManager>().Array(1);
             PublishedLevels.Filter(file);
             PublishedLevels.Select(0);
             transform.parent.parent.gameObject.SetActive(false);

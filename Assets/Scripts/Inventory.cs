@@ -81,7 +81,7 @@ public class Inventory : MonoBehaviour
     {
         if (!InternetAPI.IsConnected())
         {
-            transform.parent.GetComponent<CreatorManager>().Array(0);
+            transform.parent.GetComponent<MenuManager>().Array(0);
             return; //If no connection then stop loading
         }
         xml = xmlDefault;
@@ -98,7 +98,7 @@ public class Inventory : MonoBehaviour
         try { Result = client.DownloadString(serverURL); }
         catch
         {
-            transform.parent.GetComponent<CreatorManager>().Array(0);
+            transform.parent.GetComponent<MenuManager>().Array(0);
             return; //If no connection then stop loading
         }
 

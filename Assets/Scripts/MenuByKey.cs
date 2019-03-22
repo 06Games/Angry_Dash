@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(CreatorManager))]
+[RequireComponent(typeof(MenuManager))]
 public class MenuByKey : MonoBehaviour
 {
 
@@ -18,7 +18,7 @@ public class MenuByKey : MonoBehaviour
             {
                 KeyCode key = (KeyCode)System.Enum.Parse(typeof(KeyCode), k[v]);
                 if (Input.GetKeyDown(key))
-                    GetComponent<CreatorManager>().array = menu[i];
+                    GetComponent<MenuManager>().array = menu[i];
             }
         }
     }

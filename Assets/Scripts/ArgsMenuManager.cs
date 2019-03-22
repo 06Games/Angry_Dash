@@ -4,11 +4,11 @@ using UnityEngine;
 public class ArgsMenuManager : MonoBehaviour {
 
     public LoadingScreenControl LS;
-    public CreatorManager[] CM;
+    public MenuManager[] CM;
 
 	void Start ()
     {
-        if (CM.Length < transform.childCount) CM = CM.Concat(new CreatorManager[transform.childCount - CM.Length]).ToArray();
+        if (CM.Length < transform.childCount) CM = CM.Concat(new MenuManager[transform.childCount - CM.Length]).ToArray();
 
         string[] args = LS.GetArgs();
         if(args == null) return;
@@ -16,7 +16,7 @@ public class ArgsMenuManager : MonoBehaviour {
 
         for (int p = 0; p < transform.childCount; p++)
         {
-            if (CM[p] == null) CM[p] = transform.GetChild(p).gameObject.GetComponentInChildren<CreatorManager>();
+            if (CM[p] == null) CM[p] = transform.GetChild(p).gameObject.GetComponentInChildren<MenuManager>();
 
             if (CM[p] != null)
             {

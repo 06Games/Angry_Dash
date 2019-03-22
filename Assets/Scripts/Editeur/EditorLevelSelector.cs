@@ -316,7 +316,7 @@ public class EditorLevelSelector : MonoBehaviour
         string id = Account.Username;
         string mdp = Account.Password;
 
-        CreatorManager PublishPanel = transform.GetChild(5).GetComponent<CreatorManager>();
+        MenuManager PublishPanel = transform.GetChild(5).GetComponent<MenuManager>();
         PublishPanel.Array(0);
         PublishPanel.gameObject.SetActive(true);
 

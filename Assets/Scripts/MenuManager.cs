@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CreatorManager : MonoBehaviour
+public class MenuManager : MonoBehaviour
 {
     public GameObject[] GO;
     public UnityEngine.UI.Selectable[] Buttons;

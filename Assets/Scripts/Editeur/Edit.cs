@@ -18,7 +18,7 @@ public class Edit : MonoBehaviour
     public void EnterToEdit()
     {
         editeur.NoBlocSelectedPanel.SetActive(editeur.SelectedBlock.Length == 0);
-        try { transform.GetChild(GetComponent<CreatorManager>().array).GetComponent<CreatorManager>().Array(0); } catch { EnterToEdit(); return; }
+        try { transform.GetChild(GetComponent<MenuManager>().array).GetComponent<MenuManager>().Array(0); } catch { EnterToEdit(); return; }
 
 #if UNITY_STANDALONE || UNITY_EDITOR
         MultiSelectBtn.SetActive(false);
@@ -42,12 +42,12 @@ public class Edit : MonoBehaviour
                     float bID = menus[i].BlockID[b];
                     if ((bID < 0 & bID*-1 <= blocID) | (bID == blocID & bID >= 0))
                     {
-                        GetComponent<CreatorManager>().Array(menus[i].Object);
+                        GetComponent<MenuManager>().Array(menus[i].Object);
                         find = true;
                     }
                 }
             }
-            if (!find) GetComponent<CreatorManager>().Array(0);
+            if (!find) GetComponent<MenuManager>().Array(0);
         }
     }
 }

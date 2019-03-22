@@ -73,11 +73,11 @@ public class Editor_MoveTrigger : MonoBehaviour
         }
 
         #region BlockSelection
-        if (GetComponent<CreatorManager>().array == 1 & AffectationType == 0)
+        if (GetComponent<MenuManager>().array == 1 & AffectationType == 0)
         {
             editor.bloqueSelect = true;
 
-            if (array != GetComponent<CreatorManager>().array | AffectationType != affected)
+            if (array != GetComponent<MenuManager>().array | AffectationType != affected)
             {
                 for (int i = 0; i < Blocks.Length; i++)
                 {
@@ -163,7 +163,7 @@ public class Editor_MoveTrigger : MonoBehaviour
             editor.bloqueSelect = false;
         }
 
-        array = GetComponent<CreatorManager>().array;
+        array = GetComponent<MenuManager>().array;
         affected = AffectationType;
         #endregion
     }
