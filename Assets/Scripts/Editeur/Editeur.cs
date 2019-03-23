@@ -164,16 +164,16 @@ public class Editeur : MonoBehaviour
     public LoadingScreenControl LSC;
     public Transform LoadingLevel;
     public Soundboard SoundBoard;
-    public string FromScene = "Home";
+    string FromScene = "Home";
 
-    public string file;
+    [HideInInspector] public string file;
     public Level.Infos level;
 
     bool AddBlocking;
     float newblockid;
     public GameObject Prefab;
 
-    public bool SelectBlocking;
+    [HideInInspector] public bool SelectBlocking;
     public int[] SelectedBlock;
     public GameObject NoBlocSelectedPanel;
     public GameObject[] Contenu;
@@ -183,14 +183,13 @@ public class Editeur : MonoBehaviour
     public int ZoomSensitive = 20;
 
     bool SelectMode = false;
-    public bool bloqueSelect = false;
+    [HideInInspector] public bool bloqueSelect = false;
 
     public GameObject BulleDeveloppementCat;
-    public Sprite[] BulleDeveloppementCatSp;
 
     public Sprite GrilleSp;
 
-    public bool bloqueEchap;
+    [HideInInspector] public bool bloqueEchap;
 
 #if UNITY_STANDALONE || UNITY_EDITOR
     public int CameraMouvementSpeed = 10;
@@ -771,20 +770,21 @@ public class Editeur : MonoBehaviour
         BulleDeveloppementCat.SetActive(false);
         if (id <= 10000)
         {
-            for (int i = 1; i < Contenu[3].transform.childCount - 2; i++)
+            Transform Content = Contenu[3].GetComponent<ScrollRect>().content;
+            for (int i = 0; i < Content.childCount; i++)
             {
-                if (i == (int)newblockid & AddBlocking)
-                    Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
-                else Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
-                if (i == (int)newblockid) Contenu[3].transform.GetChild(i).GetChild(0).GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + newblockid.ToString("0.0####")).Load();
+                if (i + 1 == (int)newblockid & AddBlocking)
+                    Content.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
+                else Content.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
+                if (i + 1 == (int)newblockid) Content.GetChild(i).GetChild(0).GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + newblockid.ToString("0.0####")).Load();
             }
         }
         else
         {
-            for (int i = 1; i < Contenu[1].transform.childCount - 1; i++)
+            for (int i = 0; i < Contenu[1].transform.childCount; i++)
             {
                 int v = (int)(newblockid - 10000F);
-                if (i == v & AddBlocking) Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
+                if (i + 1 == v & AddBlocking) Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
                 else Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(45, 45, 45, 255);
             }
         }
@@ -799,44 +799,70 @@ public class Editeur : MonoBehaviour
         }
         else if (id >= 0)
         {
-            Vector2 pos = Contenu[3].transform.GetChild(id).localPosition;
+            Vector2 pos = Contenu[3].GetComponent<ScrollRect>().content.GetChild(id - 1).localPosition;
+
+            BulleDeveloppementCat.GetComponent<UImage_Reader>().Load();
+            Vector2 sizeObject = new Vector2(100, 80);
+            Vector2 sizeImage = BulleDeveloppementCat.GetComponent<Image>().sprite.Size();
+
+            Vector2 sizeRelative = sizeObject / sizeImage;
+            if (sizeRelative.x < sizeRelative.y) sizeRelative.y = sizeRelative.x;
+            else if (sizeRelative.x > sizeRelative.y) sizeRelative.x = sizeRelative.y;
+
+            BulleDeveloppementCat.transform.localScale = sizeRelative;
+            BulleDeveloppementCat.GetComponent<RectTransform>().sizeDelta = sizeObject / sizeRelative;
+
+            Vector4 border = BulleDeveloppementCat.GetComponent<Image>().sprite.border;
+            BulleDeveloppementCat.GetComponent<HorizontalLayoutGroup>().padding =
+                new RectOffset((int)border.z, (int)border.z, (int)border.w, (int)border.y);
+
             pos.x = pos.x + 20;
+            BulleDeveloppementCat.transform.GetChild(0).localScale = new Vector2(1, 1) / sizeRelative;
             if (id / 2F != id / 2)
             {
                 pos.y = pos.y - 80;
-                Image im = BulleDeveloppementCat.GetComponent<Image>();
-                im.sprite = BulleDeveloppementCatSp[0];
-                BulleDeveloppementCat.transform.GetChild(0).GetComponent<Image>().sprite = BulleDeveloppementCatSp[3];
-                BulleDeveloppementCat.transform.GetChild(0).GetChild(0).localPosition = new Vector3(0, -8.75F, 0);
+                BulleDeveloppementCat.transform.rotation = QuaternionExtensions.SetEuler(0, 0, 0);
+                BulleDeveloppementCat.transform.GetChild(0).localPosition = new Vector3(0, -8.75F, 0);
             }
             else
             {
                 pos.y = pos.y + 80;
-                Image im = BulleDeveloppementCat.GetComponent<Image>();
-                im.sprite = BulleDeveloppementCatSp[1];
-                BulleDeveloppementCat.transform.GetChild(0).GetComponent<Image>().sprite = BulleDeveloppementCatSp[2];
-                BulleDeveloppementCat.transform.GetChild(0).GetChild(0).localPosition = new Vector3(0, 8.75F, 0);
+                BulleDeveloppementCat.transform.rotation = QuaternionExtensions.SetEuler(180, 0, 0);
+                BulleDeveloppementCat.transform.GetChild(0).localPosition = new Vector3(0, 8.75F, 0);
             }
 
-            if (!BulleDeveloppementCat.activeInHierarchy | BulleDeveloppementCat.transform.localPosition != (Vector3)pos)
+            if (!BulleDeveloppementCat.activeInHierarchy)
             {
                 for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++)
                     Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
                 BulleDeveloppementCat.transform.GetChild(0).gameObject.SetActive(false);
 
                 string path = Application.persistentDataPath + "/Ressources/default/textures/native/BLOCKS/";
-                for (int i = 0; i < Directory.GetFiles(path, id + ".*", SearchOption.AllDirectories).Length; i++)
+                int length = Directory.GetFiles(path, id + ".*", SearchOption.AllDirectories).Length;
+                BulleDeveloppementCat.GetComponent<RectTransform>().sizeDelta = (sizeObject / sizeRelative) * new Vector2(length, 1);
+                pos.x = pos.x + (sizeObject.x * (length - 1) / 2F);
+
+                Contenu[3].GetComponent<Button>().onClick.RemoveAllListeners();
+                Contenu[3].GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++)
+                        Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
+                    BulleDeveloppementCat.SetActive(false);
+                });
+
+                for (int i = 0; i < length; i++)
                 {
                     GameObject newRef = Instantiate(BulleDeveloppementCat.transform.GetChild(0).gameObject, BulleDeveloppementCat.transform);
                     newRef.SetActive(true);
                     newRef.name = i.ToString();
                     newRef.transform.localPosition = new Vector3(i * 80, 0, 0);
-                    newRef.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(() => AddBlock(id.ToString() + "." + newRef.name));
+                    newRef.transform.rotation = QuaternionExtensions.SetEuler(BulleDeveloppementCat.transform.rotation.eulerAngles.x, 0, 0);
+                    newRef.transform.GetComponent<Button>().onClick.AddListener(() => AddBlock(id.ToString() + "." + newRef.name));
 
-                    newRef.transform.GetChild(0).GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id + "." + i).Load();
+                    newRef.transform.GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id + "." + i).Load();
                 }
                 BulleDeveloppementCat.SetActive(true);
-                BulleDeveloppementCat.transform.localPosition = pos;
+                BulleDeveloppementCat.GetComponent<RectTransform>().anchoredPosition = pos;
             }
             else
             {
@@ -852,8 +878,9 @@ public class Editeur : MonoBehaviour
                 Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
             BulleDeveloppementCat.SetActive(false);
 
-            for (int i = 1; i < Contenu[3].transform.childCount - 2; i++)
-                Contenu[3].transform.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
+            Transform Content = Contenu[3].GetComponent<ScrollRect>().content;
+            for (int i = 1; i < Content.childCount - 2; i++)
+                Content.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
         }
     }
 
@@ -1192,7 +1219,7 @@ public class Editeur : MonoBehaviour
                 newFileLines[v] = "version = 0.2.1";
                 version = new Versioning("0.2.1");
             }
-            if(version.CompareTo(new Versioning("0.3"), Versioning.SortConditions.Older)) //Upgrade from 0.2.1 - 0.2.2 to 0.3
+            if (version.CompareTo(new Versioning("0.3"), Versioning.SortConditions.Older)) //Upgrade from 0.2.1 - 0.2.2 to 0.3
             {
                 string Name = "";
                 if (!string.IsNullOrEmpty(path))
@@ -1229,7 +1256,7 @@ public class Editeur : MonoBehaviour
                     else if (line.Contains("music = "))
                     {
                         string[] data = line.Replace("music = ", "").Replace("\r", "").Split(new string[] { " - " }, System.StringSplitOptions.None);
-                        if(data.Length >= 2) updated.music = new Level.SongItem() { Artist = data[0], Name = data[1] };
+                        if (data.Length >= 2) updated.music = new Level.SongItem() { Artist = data[0], Name = data[1] };
                     }
                     else if (line.Contains("author = ")) updated.author = line.Replace("author = ", "").Replace("\r", "");
                     else if (line.Contains("respawnMode = ")) int.TryParse(line.Replace("respawnMode = ", "").Replace("\r", ""), out updated.respawnMode);

@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using System.IO;
 
 public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
@@ -25,7 +24,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public Vector2 FrameSize { get { return new Vector2(data[0].Frames[0].texture.width, data[0].Frames[0].texture.height); } }
 
-    void Start() { if(!string.IsNullOrEmpty(baseID)) Load(); }
+    void Start() { if (!string.IsNullOrEmpty(baseID)) Load(); }
     public void Load(Sprite_API.Sprite_API_Data spriteData, string id = null) { Load(new Sprite_API.Sprite_API_Data[] { spriteData }, id); }
     public void Load(Sprite_API.Sprite_API_Data[] spriteData, string id = null)
     {

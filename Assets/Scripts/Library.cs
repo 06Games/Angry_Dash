@@ -870,13 +870,8 @@ namespace Tools
     }
     public static class QuaternionExtensions
     {
-        public static Quaternion SetEuler(this Quaternion q, float x, float y, float z = 0)
-        { return SetEuler(q, new Vector3(x, y, z)); }
-        public static Quaternion SetEuler(this Quaternion quaternion, Vector3 vector)
-        {
-            quaternion.eulerAngles = vector;
-            return quaternion;
-        }
+        public static Quaternion SetEuler(float x, float y, float z = 0) { return SetEuler(new Vector3(x, y, z)); }
+        public static Quaternion SetEuler(Vector3 vector) { return new Quaternion { eulerAngles = vector }; }
     }
 
     namespace Dictionary
