@@ -75,8 +75,7 @@ public class Soundboard : MonoBehaviour
 
             Search(null);
             if(DesactiveGO) gameObject.SetActive(false);
-            if (lenght > 0) return;
-            Refreshed = true;
+            if (lenght > 0) { Refreshed = true; return; }
         }
         
         string[] sFiles = Directory.GetFiles(Application.persistentDataPath + "/Musics/");
