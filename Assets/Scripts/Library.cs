@@ -981,34 +981,31 @@ namespace Tools
     {
         public static string GetRelativePath(string p_fullDestinationPath, string p_startPath)
         {
-            string[] l_startPathParts = Path.GetFullPath(p_startPath).Trim('/', '\\').Split('/', '\\');
-            string[] l_destinationPathParts = p_fullDestinationPath.Split('/', '\\');
+            p_fullDestinationPath = p_fullDestinationPath.Replace("\\", "/").Trim('/');
+            p_startPath = p_startPath.Replace("\\", "/").Trim('/');
 
-            int l_sameCounter = 0;
-            while ((l_sameCounter < l_startPathParts.Length) && (l_sameCounter < l_destinationPathParts.Length) && l_startPathParts[l_sameCounter].Equals(l_destinationPathParts[l_sameCounter], System.StringComparison.InvariantCultureIgnoreCase))
+            if (p_fullDestinationPath.StartsWith(p_startPath)) return p_fullDestinationPath.Remove(0, p_startPath.Length);
+            else
             {
-                l_sameCounter++;
+                string[] l_startPathParts = p_startPath.Split('/');
+                string[] l_destinationPathParts = p_fullDestinationPath.Split('/');
+
+                int l_sameCounter = 0;
+                while ((l_sameCounter < l_startPathParts.Length) && (l_sameCounter < l_destinationPathParts.Length) && l_startPathParts[l_sameCounter].Equals(l_destinationPathParts[l_sameCounter], System.StringComparison.InvariantCultureIgnoreCase))
+                {
+                    l_sameCounter++;
+                }
+
+                if (l_sameCounter == 0) return p_fullDestinationPath; // There is no relative link.
+
+                StringBuilder l_builder = new StringBuilder();
+                for (int i = l_sameCounter; i < l_startPathParts.Length; i++) l_builder.Append("../");
+
+                for (int i = l_sameCounter; i < l_destinationPathParts.Length; i++) l_builder.Append(l_destinationPathParts[i] + "/");
+
+                if (l_builder.Length > 0) l_builder.Length--;
+                return l_builder.ToString();
             }
-
-            if (l_sameCounter == 0)
-            {
-                return p_fullDestinationPath; // There is no relative link.
-            }
-
-            StringBuilder l_builder = new StringBuilder();
-            for (int i = l_sameCounter; i < l_startPathParts.Length; i++)
-            {
-                l_builder.Append("../");
-            }
-
-            for (int i = l_sameCounter; i < l_destinationPathParts.Length; i++)
-            {
-                l_builder.Append(l_destinationPathParts[i] + "/");
-            }
-
-            if (l_builder.Length > 0) l_builder.Length--;
-
-            return l_builder.ToString();
         }
     }
 }
