@@ -774,8 +774,8 @@ public class Editeur : MonoBehaviour
             for (int i = 0; i < Content.childCount; i++)
             {
                 if (i + 1 == (int)newblockid & AddBlocking)
-                    Content.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
-                else Content.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
+                    Content.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/buttonSelected").Load();
+                else Content.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").Load();
                 if (i + 1 == (int)newblockid) Content.GetChild(i).GetChild(0).GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + newblockid.ToString("0.0####")).Load();
             }
         }
@@ -784,8 +784,9 @@ public class Editeur : MonoBehaviour
             for (int i = 0; i < Contenu[1].transform.childCount; i++)
             {
                 int v = (int)(newblockid - 10000F);
-                if (i + 1 == v & AddBlocking) Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(70, 70, 70, 255);
-                else Contenu[1].transform.GetChild(i).GetComponent<Image>().color = new Color32(45, 45, 45, 255);
+                if (i + 1 == v & AddBlocking)
+                    Contenu[1].transform.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/buttonSelected").Load();
+                else Contenu[1].transform.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/button").Load();
             }
         }
     }
@@ -880,7 +881,7 @@ public class Editeur : MonoBehaviour
 
             Transform Content = Contenu[3].GetComponent<ScrollRect>().content;
             for (int i = 1; i < Content.childCount - 2; i++)
-                Content.GetChild(i).GetComponent<Image>().color = new Color32(0, 0, 0, 255);
+                Content.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").Load();
         }
     }
 
