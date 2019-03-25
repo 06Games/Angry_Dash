@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Tools;
@@ -24,22 +25,24 @@ public class Background : MonoBehaviour {
     {
         if (sp == null)
         {
-            FileInfo[] files = new DirectoryInfo(Application.persistentDataPath + "/Ressources/default/textures/native/BACKGROUNDS/").GetFiles("* basic.png", SearchOption.TopDirectoryOnly);
-            sp = new Sprite_API.Sprite_API_Data[files.Length];
-            jsonData = new Sprite_API.JSON_PARSE_DATA[files.Length];
-
-            for (int i = 0; i < files.Length; i++)
+#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+            IEnumerable<CodeProject.FileData> files = CodeProject.FastDirectoryEnumerator.EnumerateFiles(Application.persistentDataPath + "/Ressources/default/textures/native/BACKGROUNDS/", "* basic.png", SearchOption.TopDirectoryOnly);
+#else
+            IEnumerable<FileInfo> files = new DirectoryInfo(Application.persistentDataPath + "/Ressources/default/textures/native/BACKGROUNDS/").EnumerateFiles("* basic.png", SearchOption.TopDirectoryOnly);
+#endif
+            List<Sprite_API.Sprite_API_Data> sprites = new List<Sprite_API.Sprite_API_Data>();
+            List<Sprite_API.JSON_PARSE_DATA> jsons = new List<Sprite_API.JSON_PARSE_DATA>();
+            foreach (var file in files.OrderBy(f => f.Name, new EnumerableExtensions.Comparer<string>(EnumerableExtensions.CompareNatural)))
             {
-                string bgName = Path.GetFileNameWithoutExtension(files[i].Name);
+                string bgName = Path.GetFileNameWithoutExtension(file.Name);
                 string baseID = "native/BACKGROUNDS/" + bgName.Remove(bgName.Length - 6);
 
-                FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
-                if (File.Exists(Sprite_API.Sprite_API.spritesPath(baseID + ".json")))
-                    json = new FileFormat.JSON.JSON(File.ReadAllText(Sprite_API.Sprite_API.spritesPath(baseID + ".json")));
-                jsonData[i] = Sprite_API.Sprite_API.Parse(baseID, json);
-                
-                sp[i] = Sprite_API.Sprite_API.GetSprites(jsonData[i].path[0], jsonData[i].border[0]);
+                Sprite_API.JSON_PARSE_DATA jData = Sprite_API.Sprite_API.Parse(baseID);
+                jsons.Add(jData);
+                sprites.Add(Sprite_API.Sprite_API.GetSprites(jData.path[0], jData.border[0]));
             }
+            sp = sprites.ToArray();
+            jsonData = jsons.ToArray();
         }
     }
 
@@ -76,10 +79,8 @@ public class Background : MonoBehaviour {
     public void ActualiseFond(Editeur Editor)
     {
         if (sp == null) Charg();
+
         Transform go = GameObject.Find("BackgroundDiv").transform;
-        
-
-
         int selected = Editor.level.background.id;
         for (int i = 0; i < go.childCount; i++)
         {
