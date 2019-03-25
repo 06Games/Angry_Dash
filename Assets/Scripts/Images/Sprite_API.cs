@@ -91,19 +91,22 @@ namespace Sprite_API
             CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures/json");
             if (!cache.ValueExist(baseID))
             {
-                if (json == null)
+                if (json == null) NewJSON();
+                else if (json.jObject == null) NewJSON();
+                void NewJSON()
                 {
                     json = new FileFormat.JSON.JSON("");
                     string jsonID = baseID + ".json";
                     if (!path)
                     {
                         string rpPath = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
-                        if(File.Exists(jsonID) | File.Exists(rpPath + baseID + " basic.png"))
+                        if (File.Exists(rpPath + jsonID) | File.Exists(rpPath + baseID + " basic.png"))
                             jsonID = rpPath + baseID + ".json";
                         else jsonID = Application.persistentDataPath + "/Ressources/default/textures/" + baseID + ".json";
                     }
                     if (File.Exists(jsonID)) json = new FileFormat.JSON.JSON(File.ReadAllText(jsonID));
                 }
+
                 cache.Set(baseID, LoadParse(baseID, json, path));
             }
             return cache.Get<JSON_PARSE_DATA>(baseID);
