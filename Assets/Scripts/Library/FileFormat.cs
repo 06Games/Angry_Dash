@@ -156,7 +156,7 @@ namespace FileFormat
             public Item GetItem(string key)
             {
                 System.Xml.XmlNode xmlNode = node.SelectSingleNode(key);
-                if (xmlNode == null) return null;
+                if (xmlNode == null) return new Item(null);
                 else return new Item(xmlNode);
             }
             public Item[] GetItems(string key)
@@ -171,7 +171,7 @@ namespace FileFormat
             public Item GetItemByAttribute(string key, string attribute, string attributeValue)
             {
                 System.Xml.XmlNode xmlNode = node.SelectSingleNode(key + "[@" + attribute + " = '" + attributeValue + "']");
-                if (xmlNode == null) return null;
+                if (xmlNode == null) return new Item(null);
                 else return new Item(xmlNode);
             }
             public Item[] GetItemsByAttribute(string key, string attribute, string attributeValue)

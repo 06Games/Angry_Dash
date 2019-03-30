@@ -169,7 +169,7 @@ public class _NetworkManager : NetworkBehaviour
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
 
         MyMsgBase msg = netMsg.ReadMessage<MyMsgBase>();
-        GameObject.Find("Main Camera").GetComponent<LevelPlayer>().PlayLevel(new LevelItem("Multiplayer", "", msg.map));
+        GameObject.Find("Main Camera").GetComponent<LevelPlayer>().PlayLevel(new LevelItem() { Name = "Multiplayer", Data = msg.map });
         Selection.SetActive(false);
     }
 }

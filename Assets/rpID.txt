@@ -10,6 +10,10 @@ native/GUI/playMenu/communityServers
 native/GUI/editorMenu/background
 native/GUI/editorMenu/edit
 native/GUI/editorMenu/communityLevels
+native/GUI/editorMenu/communityLevels/starAssigned
+native/GUI/editorMenu/communityLevels/starUnassigned
+native/GUI/editorMenu/communityLevels/newComment
+native/GUI/editorMenu/communityLevels/writeComment
 native/GUI/settingsMenu/background
 native/GUI/settingsMenu/sound
 native/GUI/settingsMenu/languages

@@ -23,16 +23,6 @@ namespace Level
         public string Description = "";
         public string Music = "";
         public string Data = "";
-        public LevelItem() { }
-        public LevelItem(string name, string author = "", string data = null, string description = "", string music = "")
-        {
-            Name = name;
-            Author = author;
-            if (data == null) Data = "";
-            else Data = data;
-            Description = description;
-            Music = music;
-        }
 
         public override string ToString() { return FileFormat.XML.Utils.ClassToXML(this); }
         public static LevelItem Parse(string data) { return FileFormat.XML.Utils.XMLtoClass<LevelItem>(data); }

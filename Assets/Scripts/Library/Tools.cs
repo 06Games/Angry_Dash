@@ -16,13 +16,13 @@ namespace Tools
         /// <returns></returns>
         public static string Format(this string str)
         {
-            if (str != null)
+            if (!string.IsNullOrEmpty(str))
             {
-                str = str.Replace("\\n", "\n");
-                str = str.Replace("\\r", "\r");
-                str = str.Replace("\\t", "\t");
+                return str.Replace("\\n", "\n")
+                    .Replace("\\r", "\r")
+                    .Replace("\\t", "\t");
             }
-            return str;
+            else return str;
         }
 
         /// <summary>
@@ -31,13 +31,13 @@ namespace Tools
         /// <param name="str">The string to unformat</param>
         public static string Unformat(this string str)
         {
-            if (str != null)
+            if (!string.IsNullOrEmpty(str))
             {
-                str = str.Replace("\n", "\\n");
-                str = str.Replace("\r", "\\r");
-                str = str.Replace("\t", "\\t");
+                return str.Replace("\n", "\\n")
+                    .Replace("\r", "\\r")
+                    .Replace("\t", "\\t");
             }
-            return str;
+            else return str;
         }
 
         /// <summary>
@@ -49,10 +49,51 @@ namespace Tools
 
         public static byte[] ToByte(this string str) { return ToByte(str, Encoding.UTF8); }
         public static byte[] ToByte(this string str, Encoding encoding) { return encoding.GetBytes(str); }
+
+        public static string HtmlEncode(this string s)
+        {
+            if (!string.IsNullOrEmpty(s))
+            {
+                return s.Replace("'", "\\\'")
+                    .Replace("\"", "\\\"")
+                    .Replace("#", "!DIESE!");
+            }
+            else return s;
+        }
+
+        public static string HtmlDecode(this string s)
+        {
+            if (!string.IsNullOrEmpty(s))
+            {
+                return s.Replace("\\'", "'")
+                    .Replace("\\\"", "\"")
+                    .Replace("!DIESE!", "#");
+            }
+            else return s;
+        }
+    }
+
+    public static class Texture2DExtensions
+    {
+        public static Texture2D PremultiplyAlpha(this Texture2D texture)
+        {
+            Color[] pixels = texture.GetPixels();
+            for (int i = 0; i < pixels.Length; i++) pixels[i] = Premultiply(pixels[i]);
+            texture.SetPixels(pixels);
+            return texture;
+        }
+
+        private static Color32 Premultiply(Color color)
+        {
+            return new Color(color.r * color.a, color.g * color.a, color.b * color.a, color.a);
+        }
     }
 
     public static class ArrayExtensions
     {
+        /// <summary> Delete an array element </summary>
+        /// <param name="source">The array to edit</param>
+        /// <param name="index">The index of the element</param>
         public static T[] RemoveAt<T>(this T[] source, int index)
         {
             T[] dest = new T[source.Length - 1];
@@ -64,6 +105,11 @@ namespace Tools
 
             return dest;
         }
+
+        ///<summary> Delete array elements</summary>
+        /// <param name="source">The array to edit</param>
+        /// <param name="from">The index of the first element to delete</param>
+        /// <param name="to">The index of the last element to delete</param>
         public static T[] RemoveAt<T>(this T[] source, int from, int to)
         {
             T[] dest = new T[source.Length - (to - from) - 1];
@@ -76,6 +122,10 @@ namespace Tools
             return dest;
         }
 
+        /// <summary> Extract a smaller array from an array </summary>
+        /// <param name="list">The source array</param>
+        /// <param name="from">The index of the first element to copy</param>
+        /// <param name="to">The index of the last element to copy</param>
         public static T[] Get<T>(this T[] list, int from, int to)
         {
             if (from < 0) throw new System.Exception("From index can not be less than 0");
@@ -96,11 +146,8 @@ namespace Tools
 
     public static class DateExtensions
     {
-        /// <summary>
-        ///  Return a DateTime as a string
-        /// </summary>
+        /// <summary> Return a DateTime as a string </summary>
         /// <param name="DT"></param>
-        /// <returns></returns>
         public static string Format(this System.DateTime DT)
         {
             string a = "dd'/'MM'/'yyyy";
@@ -110,14 +157,12 @@ namespace Tools
 
     public static class ScrollRectExtensions
     {
-        /// <summary>
-        /// Scroll to a child of the content
-        /// </summary>
+        /// <summary> Scroll to a child of the content </summary>
         /// <param name="scroll">The ScrollRect</param>
         /// <param name="target">The child to scroll to</param>
         /// <param name="myMonoBehaviour">Any MonoBehaviour script</param>
         public static void SnapTo(this UnityEngine.UI.ScrollRect scroll, Transform target, MonoBehaviour myMonoBehaviour) { myMonoBehaviour.StartCoroutine(Snap(scroll, target)); }
-        static System.Collections.IEnumerator Snap(UnityEngine.UI.ScrollRect scroll, Transform target)
+        static IEnumerator Snap(UnityEngine.UI.ScrollRect scroll, Transform target)
         {
             float Frames = 30;
             float normalizePosition = 1 - (target.GetSiblingIndex() - 1F) / (scroll.content.childCount - 2F);
@@ -132,10 +177,32 @@ namespace Tools
 
     public static class SpriteExtensions
     {
+        /// <summary> Get the sprite size </summary>
         public static Vector2 Size(this Sprite sp)
         {
             if (sp == null) return new Vector2();
             Rect rect = sp.rect; return new Vector2(rect.width, rect.height);
+        }
+
+        public static Sprite Flip(this Sprite sp)
+        {
+            Texture2D original = sp.texture;
+            Texture2D flipped = new Texture2D(original.width, original.height);
+
+            int xN = original.width;
+            int yN = original.height;
+
+
+            for (int i = 0; i < xN; i++)
+            {
+                for (int j = 0; j < yN; j++)
+                {
+                    flipped.SetPixel(xN - i - 1, j, original.GetPixel(i, j));
+                }
+            }
+            flipped.Apply();
+
+            return Sprite.Create(flipped, new Rect(0, 0, flipped.width, flipped.height), new Vector2(.5f, .5f), 100, 0, SpriteMeshType.FullRect, sp.border);
         }
     }
     public static class TransformExtensions

@@ -1,11 +1,10 @@
 ﻿using Level;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
+using Tools;
 
 public class EditorPublishedLevels : MonoBehaviour
 {
@@ -28,6 +27,9 @@ public class EditorPublishedLevels : MonoBehaviour
     public string keywords = "/";
     /// <summary> Index of the selected level, value equal to -1 if no level is selected </summary>
     public int currentFile = -1;
+
+    FileFormat.XML.RootElement markXML;
+    int userIndex = -1;
 
     public LevelItem[] items;
     void Start()
@@ -125,6 +127,73 @@ public class EditorPublishedLevels : MonoBehaviour
         infos.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text = items[selected].Name;
         infos.GetChild(0).GetChild(1).GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorCommunityLevelsAuthor", items[selected].Author, "by [0]");
         infos.GetChild(1).GetChild(1).GetComponent<ScrollRect>().content.GetChild(0).GetComponent<Text>().text = items[selected].Description;
+
+        WebClient client = new WebClient();
+        client.Encoding = System.Text.Encoding.UTF8;
+        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        string URL = serverURL + "mark.php?action=get&level=" + items[selected].Author + "/" + items[selected].Name;
+        markXML = new FileFormat.XML.XML(client.DownloadString(URL)).RootElement;
+
+        float mark = -1;
+        userIndex = -1;
+        if (markXML.GetItems("item") != null)
+        {
+            Transform comments = infos.GetChild(2).GetChild(1).GetComponent<ScrollRect>().content;
+            for (int i = 1; i < comments.childCount; i++) Destroy(comments.GetChild(i).gameObject);
+            int coef = 0;
+            foreach (FileFormat.XML.Item item in markXML.GetItems("item"))
+            {
+                string user = item.GetItem("user").Value;
+                System.DateTime.TryParse(item.GetItem("date").Value, out System.DateTime date);
+                string markV = item.GetItem("mark").Value;
+                string comment = item.GetItem("comment").Value;
+
+                if (user == Account.Username) userIndex = coef;
+                if (float.TryParse(markV, out float itemMark))
+                {
+                    mark = (mark * coef + itemMark) / (coef + 1);
+                    coef++;
+                }
+
+                if (!string.IsNullOrEmpty(comment))
+                {
+                    Transform cGO = Instantiate(comments.GetChild(0).gameObject, comments).transform;
+                    cGO.GetChild(0).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorCommunityLevelsInfosCommentHeader", new string[] { user, date.ToString(System.Threading.Thread.CurrentThread.CurrentUICulture) }, "[0] <i><color=grey>[1]</color></i>");
+                    cGO.GetChild(1).GetComponent<Text>().text = comment.HtmlDecode();
+                    cGO.gameObject.SetActive(true);
+                }
+            }
+        }
+
+        for (int s = 0; s < 2; s++)
+        {
+            float note = mark;
+            if (s == 0 & userIndex >= 0) float.TryParse(markXML.GetItems("item")[userIndex].GetItem("mark").Value, out note);
+
+            Transform stars = infos.GetChild(2).GetChild(0).GetChild(s).GetChild(1);
+            foreach (Transform go in stars) Destroy(go.gameObject);
+            for (int i = 0; i < 10 & !(note == -1 & s == 1); i++)
+            {
+                GameObject go = new GameObject(((i * 0.5F) + 0.5F).ToString());
+                go.transform.parent = stars;
+                if (i / 2F != i / 2) go.AddComponent<RectTransform>().localScale = new Vector3(-1, 1, 1);
+                else go.AddComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+
+                if (s == 0)
+                {
+                    int button = i;
+                    go.AddComponent<Button>().onClick.AddListener(() => Mark(button * 0.5F));
+                }
+
+                string id = "native/GUI/editorMenu/communityLevels/starUnassigned";
+                try { if (i < note * 2) id = "native/GUI/editorMenu/communityLevels/starAssigned"; } catch { }
+                go.AddComponent<Image>();
+                go.AddComponent<UImage_Reader>().SetID(id).Load();
+            }
+            stars.parent.GetChild(2).gameObject.SetActive(note != -1);
+            stars.parent.GetChild(2).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorCommunityLevelsInfosStarsCount", note.ToString("0.#"), "[0]/5");
+        }
+
         if (!string.IsNullOrEmpty(items[selected].Music))
         {
             string[] music = items[selected].Music.Split(new string[] { " - " }, System.StringSplitOptions.None);
@@ -158,7 +227,7 @@ public class EditorPublishedLevels : MonoBehaviour
         loadingScreenControl.LoadScreen("Player", new string[] { "Home/Editor/Community Levels", "Data", item.ToString() });
     }
 
-    
+
     /// <summary> Download the selected level's  </summary>
     public void DownloadCurrentLevelMusic() { DownloadLevelMusic(currentFile); }
     /// <summary> Play the music of level at the index specified </summary>
@@ -226,5 +295,46 @@ public class EditorPublishedLevels : MonoBehaviour
         int index = (int)e.UserState;
 
         UnityThread.executeInUpdate(() => transform.GetChild(2).GetChild(3).GetChild(3).gameObject.SetActive(false));
+    }
+
+    public void Mark(float note)
+    {
+        WebClient client = new WebClient();
+        client.Encoding = System.Text.Encoding.UTF8;
+        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        string URL = serverURL + "mark.php?action=set&level=" + items[currentFile].Author + "/" + items[currentFile].Name
+            + "&id=" + Account.Username + "&mdp=" + Account.Password + "&mark=" + (note + 0.5F);
+        string result = client.DownloadString(URL);
+        if (result.Contains("Success")) Select(currentFile);
+        else Debug.LogError("Connection error: " + result);
+    }
+
+    public void NewComment(Transform panel)
+    {
+        string commentText = "";
+        if(userIndex >= 0) commentText = markXML.GetItems("item")[userIndex].GetItem("comment").Value.HtmlDecode();
+
+        panel.GetChild(0).GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorCommunityLevelsInfosCommentWrite", items[currentFile].Name, "Write a Comment\n<size=50><color=grey>about [0]</color></size>");
+        panel.GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text = commentText;
+        panel.gameObject.SetActive(true);
+    }
+
+    public void SubmitComment(Transform panel)
+    {
+        WebClient client = new WebClient();
+        client.Encoding = System.Text.Encoding.UTF8;
+        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        string URL = serverURL + "mark.php?action=set&level=" + items[currentFile].Author + "/" + items[currentFile].Name
+            + "&id=" + Account.Username + "&mdp=" + Account.Password 
+            + "&comment=" + panel.GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text.HtmlEncode();
+        Debug.Log(URL);
+        string result = client.DownloadString(URL);
+        if (result.Contains("Success"))
+        {
+            Select(currentFile);
+            panel.gameObject.SetActive(false);
+        }
+        else Debug.LogError("Connection error: " + result);
+        
     }
 }
