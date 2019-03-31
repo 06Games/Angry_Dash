@@ -327,7 +327,6 @@ public class EditorPublishedLevels : MonoBehaviour
         string URL = serverURL + "mark.php?action=set&level=" + items[currentFile].Author + "/" + items[currentFile].Name
             + "&id=" + Account.Username + "&mdp=" + Account.Password 
             + "&comment=" + panel.GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text.HtmlEncode();
-        Debug.Log(URL);
         string result = client.DownloadString(URL);
         if (result.Contains("Success"))
         {
