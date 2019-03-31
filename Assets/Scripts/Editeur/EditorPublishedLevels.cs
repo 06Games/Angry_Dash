@@ -136,10 +136,10 @@ public class EditorPublishedLevels : MonoBehaviour
 
         float mark = -1;
         userIndex = -1;
+        Transform comments = infos.GetChild(2).GetChild(1).GetComponent<ScrollRect>().content;
+        for (int i = 1; i < comments.childCount; i++) Destroy(comments.GetChild(i).gameObject);
         if (markXML.GetItems("item") != null)
         {
-            Transform comments = infos.GetChild(2).GetChild(1).GetComponent<ScrollRect>().content;
-            for (int i = 1; i < comments.childCount; i++) Destroy(comments.GetChild(i).gameObject);
             int coef = 0;
             foreach (FileFormat.XML.Item item in markXML.GetItems("item"))
             {
