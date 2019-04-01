@@ -1281,7 +1281,20 @@ public class Editeur : MonoBehaviour
                                     foreach (string p in pData)
                                     {
                                         string[] param = p.Split(new string[] { ":" }, System.StringSplitOptions.None);
-                                        if (param.Length == 2) parameters.Add(param[0], param[1]);
+                                        if (param.Length == 2)
+                                        {
+                                            if (param[0] == "Blocks")
+                                            {
+                                                string[] pID = param[1].Split(',');
+                                                for(int i = 0; i < pID.Length; i++)
+                                                {
+                                                    int.TryParse(pID[i], out int id);
+                                                    pID[i] = (id - 8).ToString();
+                                                }
+                                                param[1] = string.Join(",", pID);
+                                            }
+                                            parameters.Add(param[0], param[1]);
+                                        }
                                     }
                                 }
                                 catch { }
