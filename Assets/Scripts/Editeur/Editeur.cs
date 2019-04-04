@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class Editeur : MonoBehaviour
 {
+    Camera cam;
     public LoadingScreenControl LSC;
     public Transform LoadingLevel;
     public Soundboard SoundBoard;
@@ -18,22 +19,20 @@ public class Editeur : MonoBehaviour
 
     bool AddBlocking;
     float newblockid;
+    [HideInInspector] public int selectedLayer = -2;
     public GameObject Prefab;
+    public GameObject BulleDeveloppementCat;
 
     [HideInInspector] public bool SelectBlocking;
+    [HideInInspector] public bool bloqueSelect = false;
+    bool SelectMode = false;
     public int[] SelectedBlock;
     public GameObject NoBlocSelectedPanel;
     public GameObject[] Contenu;
+
     public Scrollbar zoomIndicator;
-
-    Camera cam;
     public int ZoomSensitive = 20;
-
-    bool SelectMode = false;
-    [HideInInspector] public bool bloqueSelect = false;
-
-    public GameObject BulleDeveloppementCat;
-
+    
     public Sprite GrilleSp;
 
     [HideInInspector] public bool bloqueEchap;
@@ -222,6 +221,7 @@ public class Editeur : MonoBehaviour
         }
 
         transform.GetChild(0).GetChild(6).gameObject.SetActive(ConfigAPI.GetBool("editor.showCoordinates"));
+        transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).GetComponent<InputField>().text = LangueAPI.String("native", "editorLayerAll", "All");
     }
 
     void Update()
@@ -240,21 +240,22 @@ public class Editeur : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.Mouse0) & !SelectMode)
             {
-                if (Input.mousePosition.y > Screen.height / 4)
+                bool isHoverGUI = false;
+                foreach (Transform go in transform.GetChild(0))
                 {
-                    bool isInTop = Input.mousePosition.y > Screen.height - (Screen.height / 10);
-                    bool isInRightTop = Input.mousePosition.x > Screen.width - (Screen.width / 6);
+                    if (go.GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
+                }
+                if (transform.GetChild(0).GetChild(2).GetChild(3).GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
 
-                    if (!(isInTop & isInRightTop))
-                    {
-                        Vector2 pos = GetWorldPosition(Input.mousePosition);
+                if (!isHoverGUI)
+                {
+                    Vector2 pos = GetWorldPosition(Input.mousePosition);
 
-                        float id = newblockid;
-                        if (id > 10000)
-                            id = (newblockid - 10000F) / 10F;
+                    float id = newblockid;
+                    if (id > 10000)
+                        id = (newblockid - 10000F) / 10F;
 
-                        CreateBloc((int)pos.x, (int)pos.y, new Color32(190, 190, 190, 255));
-                    }
+                    CreateBloc((int)pos.x, (int)pos.y, new Color32(190, 190, 190, 255));
                 }
             }
         }
@@ -569,6 +570,47 @@ public class Editeur : MonoBehaviour
         }
     }
 
+    public void ChangeDisplayedLayer(int operation)
+    {
+        InputField input = transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).GetComponent<InputField>();
+        if (int.TryParse(input.text, out int l))
+        {
+            l = l + operation;
+            if (l > -2) input.text = l.ToString();
+            else input.text = LangueAPI.String("native", "editorLayerAll", "All");
+            ChangeDisplayedLayer(input);
+        }
+        else if (operation > 0)
+        {
+            input.text = "-1";
+            ChangeDisplayedLayer(input);
+        }
+    }
+    public void ChangeDisplayedLayer(InputField input)
+    {
+        if (!int.TryParse(input.text, out int l) | l < -2) input.text = LangueAPI.String("native", "editorLayerAll", "All");
+        else if (l > 999) input.text = "999";
+        ChangeDisplayedLayer(input.text);
+    }
+    public void ChangeDisplayedLayer(string layer)
+    {
+        Transform trans = transform.GetChild(0).GetChild(2).GetChild(3);
+        InputField input = trans.GetChild(1).GetComponent<InputField>();
+
+        if (!int.TryParse(layer, out int l) | l < -2) l = -2;
+        else if (l > 999) l = 999;
+
+        trans.GetChild(0).GetComponent<Button>().interactable = l > -2;
+        trans.GetChild(2).GetComponent<Button>().interactable = l < 999;
+
+        selectedLayer = l;
+        for (int i = 2; i < transform.GetChild(1).childCount; i++)
+        {
+            GameObject go = transform.GetChild(1).GetChild(i).gameObject;
+            go.SetActive(go.GetComponent<SpriteRenderer>().sortingOrder == l | l == -2);
+        }
+    }
+
     #region GestionBloc
     void CreateBloc(int x, int y, Color32 _Color)
     {
@@ -577,7 +619,9 @@ public class Editeur : MonoBehaviour
         {
 #endif
         if (newblockid <= 0) return;
-        Vector3 a = new Vector3(x, y, 0);
+        int l = selectedLayer;
+        if (l == -2) l = 0;
+        Vector3 a = new Vector3(x, y, l);
 
         float _id = newblockid;
         Level.Block.Type _type = Level.Block.Type.Block;
@@ -793,12 +837,13 @@ public class Editeur : MonoBehaviour
     }
     public int GetBloc(int x, int y)
     {
-        int a = -1;
         for (int i = 0; i < level.blocks.Length; i++)
         {
-            if ((Vector2)level.blocks[i].position == new Vector2(x, y)) a = i;
+            if ((Vector2)level.blocks[i].position == new Vector2(x, y) 
+                & (level.blocks[i].position.z == selectedLayer | selectedLayer == -2))
+                return i;
         }
-        return a;
+        return -1;
     }
 
     /// <summary>
