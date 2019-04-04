@@ -275,6 +275,35 @@ namespace Tools
         public static Quaternion SetEuler(Vector3 vector) { return new Quaternion { eulerAngles = vector }; }
     }
 
+    public static class ColorExtensions
+    {
+        /// <summary> Convert an RGBA based color to Hex </summary>
+        /// <param name="color">RGBA color</param>
+        public static string ToHex(this Color color) { return ToHex((Color32)color); }
+
+        /// <summary> Convert an RGBA based color to Hex </summary>
+        /// <param name="color">RGBA color</param>
+        public static string ToHex(this Color32 color)
+        {
+            string hex = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2") + color.a.ToString();
+            return hex;
+        }
+
+        /// <summary> Convert an Hex based color to RGBA </summary>
+        /// <param name="hex">Hex color</param>
+        public static Color ParseHex(string hex)
+        {
+            if (hex == null) return new Color32(190, 190, 190, 255);
+            else if (hex.Length < 6 | hex.Length > 9) return new Color32(190, 190, 190, 255);
+
+            byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
+            byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
+            byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
+            byte a = byte.Parse(hex.Substring(6), System.Globalization.NumberStyles.Number);
+            return new Color32(r, g, b, a);
+        }
+    }
+
     public static class EnumerableExtensions
     {
         public static int CompareNatural(string strA, string strB)

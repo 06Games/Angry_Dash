@@ -12,43 +12,6 @@ public static class InspectorUtilities
     }
 }
 
-
-namespace Level
-{
-    [System.Serializable]
-    public class LevelItem
-    {
-        public string Name = "";
-        public string Author = "";
-        public string Description = "";
-        public string Music = "";
-        public string Data = "";
-
-        public override string ToString() { return FileFormat.XML.Utils.ClassToXML(this); }
-        public static LevelItem Parse(string data) { return FileFormat.XML.Utils.XMLtoClass<LevelItem>(data); }
-    }
-
-    [System.Serializable]
-    public class SongItem
-    {
-        public string Name = "";
-        public string Artist = "";
-        public string Licence = "";
-        public string URL = "";
-        public SongItem() { }
-        public SongItem(string name, string artist = "", string licence = "", string url = "")
-        {
-            Name = name;
-            Artist = artist;
-            Licence = licence;
-            URL = url;
-        }
-
-        public override string ToString() { return FileFormat.XML.Utils.ClassToXML(this); }
-        public static SongItem Parse(string data) { return FileFormat.XML.Utils.XMLtoClass<SongItem>(data); }
-    }
-}
-
 namespace Display
 {
     public static class Screen

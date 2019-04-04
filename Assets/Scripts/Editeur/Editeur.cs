@@ -6,159 +6,6 @@ using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Level
-{
-    [System.Serializable]
-    public class Infos : System.IEquatable<Infos>
-    {
-        public string name;
-        public string description;
-        public string author;
-        public Background background;
-        public SongItem music;
-        public Versioning version;
-        public int respawnMode;
-
-        public Block[] blocks;
-
-        public override string ToString() { return FileFormat.XML.Utils.ClassToXML(this, !ConfigAPI.GetBool("editor.beautify")); }
-        public static Infos Parse(string xml) { return FileFormat.XML.Utils.XMLtoClass<Infos>(xml); }
-
-        public bool Equals(Infos other)
-        {
-
-            if (ReferenceEquals(other, null)) return false; //If parameter is null, return false.
-            if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
-            if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
-            
-            if (name == other.name
-                & description == other.description
-                & author == other.author
-                & background == other.background
-                & music == other.music
-                & version == other.version
-                & respawnMode == other.respawnMode
-                & Block.Equals(blocks,other.blocks))
-                return true;
-            else return false;
-        }
-        public override bool Equals(object obj) { return Equals(obj as Infos); }
-        public static bool operator ==(Infos left, Infos right)
-        {
-            if (left is null & right is null) return true;
-            else if (left is null | right is null) return false;
-            else return left.Equals(right);
-        }
-        public static bool operator !=(Infos left, Infos right) { return !(left == right); }
-        public override int GetHashCode() { return base.GetHashCode(); }
-        public void CopyTo(out Infos other)
-        {
-            other = new Infos();
-            other.name = name;
-            other.description = description;
-            other.author = author;
-            other.background = background;
-            other.music = music;
-            other.version = version;
-            other.respawnMode = respawnMode;
-            other.blocks = new Block[blocks.Length];
-            for (int i = 0; i < blocks.Length; i++) blocks[i].CopyTo(out other.blocks[i]);
-        }
-    }
-
-    [System.Serializable]
-    public class Background
-    {
-        public string category = "native";
-        public int id;
-        public Color32 color;
-
-        public bool Equals(Background other)
-        {
-            if (ReferenceEquals(other, null)) return false; //If parameter is null, return false.
-            if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
-            if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
-
-            if (category == other.category
-                & id == other.id
-                & color.Equals(other.color))
-                return true;
-            else return false;
-        }
-        public override bool Equals(object obj) { return Equals(obj as Background); }
-        public static bool operator ==(Background left, Background right)
-        {
-            if (left is null & right is null) return true;
-            else if (left is null | right is null) return false;
-            else return left.Equals(right);
-        }
-        public static bool operator !=(Background left, Background right) { return !(left == right); }
-        public override int GetHashCode() { return base.GetHashCode(); }
-    }
-
-    [System.Serializable]
-    public class Block
-    {
-        public enum Type { Block, Event } public Type type;
-        public string category = "native";
-        public float id;
-        public Vector3 position;
-        public Tools.Dictionary.Serializable<string, string> parameter = new Tools.Dictionary.Serializable<string, string>();
-
-        public bool Equals(Block other)
-        {
-            if (other is null) return false; //If parameter is null, return false.
-            if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
-            if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
-
-            if (type == other.type
-                & category == other.category
-                & id == other.id
-                & position == other.position
-                & parameter == other.parameter)
-                return true;
-            else return false;
-        }
-        public override bool Equals(object obj) { return Equals(obj as Block); }
-        public static bool Equals(Block[] left, Block[] right)
-        {
-            bool match = true;
-            if(left is null & right is null) match = true;
-            if (left is null | right is null) match = false;
-            else if (left.Length != right.Length) match = false;
-            else
-            {
-                for (int i = 0; i < left.Length & i < right.Length; i++)
-                {
-                    if (!(left[i] is null & right[i] is null))
-                    {
-                        if (left[i] is null | right[i] is null) match = false;
-                        else if (!left[i].Equals(right[i])) match = false;
-                    }
-                }
-            }
-            return match;
-        }
-        public static bool operator ==(Block left, Block right)
-        {
-            if (left is null & right is null) return true;
-            else if (left is null | right is null) return false;
-            else return left.Equals(right);
-        }
-        public static bool operator !=(Block left, Block right) { return !(left == right); }
-        public override int GetHashCode() { return base.GetHashCode(); }
-        public void CopyTo(out Block other)
-        {
-            other = new Block();
-            other.type = type;
-            other.category = category;
-            other.id = id;
-            other.position = position;
-            parameter.CopyTo(out other.parameter);
-        }
-    }
-}
-
 public class Editeur : MonoBehaviour
 {
     public LoadingScreenControl LSC;
@@ -624,6 +471,7 @@ public class Editeur : MonoBehaviour
             File.WriteAllText(file, level.ToString());
         Logging.Log("Saving completed !", LogType.Log);
     }
+
     public Vector2 GetWorldPosition(Vector2 pos, bool round = true) { return GetWorldPosition(pos, round, cam.transform.position); }
     public Vector2 GetWorldPosition(Vector2 pos, bool round, Vector2 camPos)
     {
@@ -676,6 +524,7 @@ public class Editeur : MonoBehaviour
         if (Input.GetAxis("Mouse ScrollWheel") == 0 & !Ctrl)
             zoomIndicator.gameObject.SetActive(false);
     }
+
     public void GrilleOnOff(UImage_Reader Img)
     {
         Transform _Grille = transform.GetChild(1).GetChild(1);
@@ -927,7 +776,7 @@ public class Editeur : MonoBehaviour
                 go.transform.GetChild(i).localScale = new Vector2(UImage.FrameSize.x / SelectedZoneSize.width, UImage.FrameSize.y / SelectedZoneSize.height);
             }
 
-            SR.color = HexToColor(GetBlocStatus("Color", num));
+            SR.color = ColorExtensions.ParseHex(GetBlocStatus("Color", num));
             SR.sortingOrder = (int)level.blocks[num].position.z;
         }
     }
@@ -935,22 +784,6 @@ public class Editeur : MonoBehaviour
     {
         Vector2 pos = level.blocks[num].position * 50 + new Vector3(25, 25, 0);
         return new Vector3(pos.x, pos.y, level.blocks[num].position.z);
-    }
-    public static string ColorToHex(Color32 color)
-    {
-        string hex = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2") + color.a.ToString();
-        return hex;
-    }
-    public static Color HexToColor(string hex)
-    {
-        if (hex == null) return new Color32(190, 190, 190, 255);
-        else if (hex.Length < 6 | hex.Length > 9) return new Color32(190, 190, 190, 255);
-
-        byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-        byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-        byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-        byte a = byte.Parse(hex.Substring(6), System.Globalization.NumberStyles.Number);
-        return new Color32(r, g, b, a);
     }
     #endregion
 
@@ -1250,7 +1083,7 @@ public class Editeur : MonoBehaviour
                             {
                                 category = "native",
                                 id = ID,
-                                color = HexToColor(data[1])
+                                color = ColorExtensions.ParseHex(data[1])
                             };
                         }
                     }

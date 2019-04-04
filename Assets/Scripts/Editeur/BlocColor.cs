@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,8 +27,8 @@ public class BlocColor : MonoBehaviour {
         else
         {
             if (transform.GetChild(0).gameObject.activeInHierarchy)
-                editeur.ChangBlocStatus("Color", Editeur.ColorToHex(CP.CurrentColor), Bloc);
-            else editeur.ChangBlocStatus("Color", Editeur.ColorToHex(cpExpend.CurrentColor), Bloc);
+                editeur.ChangBlocStatus("Color", CP.CurrentColor.ToHex(), Bloc);
+            else editeur.ChangBlocStatus("Color", cpExpend.CurrentColor.ToHex(), Bloc);
         }
     }
 
@@ -43,8 +42,8 @@ public class BlocColor : MonoBehaviour {
             CP.transform.GetChild(4).GetChild(3).gameObject.SetActive(true); //Sets to RGBA
 
             if (Bloc.Length == 0) { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
-            CP.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus("Color", Bloc[0]));
-            cpExpend.CurrentColor = Editeur.HexToColor(editeur.GetBlocStatus("Color", Bloc[0]));
+            CP.CurrentColor = ColorExtensions.ParseHex(editeur.GetBlocStatus("Color", Bloc[0]));
+            cpExpend.CurrentColor = ColorExtensions.ParseHex(editeur.GetBlocStatus("Color", Bloc[0]));
             editeur.SelectBlocking = false;
             editeur.bloqueSelect = expend;
             editeur.SelectedBlock = Bloc;
