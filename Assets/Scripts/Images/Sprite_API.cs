@@ -248,7 +248,7 @@ namespace Sprite_API
                 {
                     Frames = new Sprite[1];
                     Delay = new float[1] { 0 };
-                    Texture2D tex = new Texture2D(1, 1, TextureFormat.RGBA32, false, !true);
+                    Texture2D tex = new Texture2D(1, 1);
                     tex.LoadImage(File.ReadAllBytes(filePath));
                     tex = Tools.Texture2DExtensions.PremultiplyAlpha(tex);
                     tex.Apply();

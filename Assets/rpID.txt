@@ -36,6 +36,8 @@ native/GUI/profileMenu/myAccount
 native/GUI/levelLauncher/pause
 native/GUI/editor/toolbox
 native/GUI/editor/toolboxMenu
+native/GUI/editor/layerInput
+native/GUI/editor/layerArrow
 native/GUI/editor/gridOff
 native/GUI/editor/gridOn
 native/GUI/editor/play
@@ -49,7 +51,6 @@ native/GUI/editor/build/buttonSelected
 native/GUI/editor/build/bubble
 native/GUI/editor/edit/button
 native/GUI/editor/edit/blocks/behavior
-native/GUI/editor/edit/blocks/layer
 native/GUI/editor/edit/blocks/color
 native/GUI/editor/edit/move/translation
 native/GUI/editor/edit/move/rotation
@@ -74,6 +75,8 @@ native/GUI/editor/movements/left
 native/GUI/editor/movements/right
 native/GUI/editor/movements/rotateLeft
 native/GUI/editor/movements/rotateRight
+native/GUI/editor/movements/backward
+native/GUI/editor/movements/forward
 native/BACKGROUNDS/0
 native/BACKGROUNDS/1
 native/BACKGROUNDS/2

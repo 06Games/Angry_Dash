@@ -212,6 +212,12 @@ namespace Tools
             transform.localScale = Vector3.one;
             transform.localScale = new Vector3(globalScale.x / transform.lossyScale.x, globalScale.y / transform.lossyScale.y, globalScale.z / transform.lossyScale.z);
         }
+
+        public static bool IsHover(this RectTransform transform, Vector2 hoverObj)
+        {
+            Vector2 localMousePosition = transform.InverseTransformPoint(hoverObj);
+            return transform.rect.Contains(localMousePosition);
+        }
     }
 
     public static class Vector2Extensions

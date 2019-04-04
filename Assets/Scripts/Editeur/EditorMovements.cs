@@ -47,4 +47,25 @@ public class EditorMovements : MonoBehaviour
             }
         }
     }
+
+    public void Layer(int mvt)
+    {
+        int[] blocks = Editor.SelectedBlock;
+        for (int i = 0; i < blocks.Length; i++)
+        {
+            GameObject go = GameObject.Find("Objet n° " + blocks[i]);
+            if (go != null)
+            {
+                int layer = (int)Editor.level.blocks[blocks[i]].position.z + mvt;
+                if (layer > -2 & layer < 1000)
+                {
+                    go.GetComponent<SpriteRenderer>().sortingOrder = layer;
+                    Editor.level.blocks[blocks[i]].position.z = layer;
+
+                    if (layer != Editor.selectedLayer & Editor.selectedLayer != -2)
+                        Editor.ChangeDisplayedLayer(layer - Editor.selectedLayer);
+                }
+            }
+        }
+    }
 }
