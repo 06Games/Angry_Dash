@@ -604,10 +604,14 @@ public class Editeur : MonoBehaviour
         trans.GetChild(2).GetComponent<Button>().interactable = l < 999;
 
         selectedLayer = l;
+        float opacity = 0.2F;
+        if (!string.IsNullOrEmpty(ConfigAPI.GetString("editor.layerOpacity"))) opacity = ConfigAPI.GetFloat("editor.layerOpacity");
         for (int i = 2; i < transform.GetChild(1).childCount; i++)
         {
-            GameObject go = transform.GetChild(1).GetChild(i).gameObject;
-            go.SetActive(go.GetComponent<SpriteRenderer>().sortingOrder == l | l == -2);
+            SpriteRenderer renderer = transform.GetChild(1).GetChild(i).GetComponent<SpriteRenderer>();
+            Color color = ColorExtensions.ParseHex(GetBlocStatus("Color", i - 2));
+            if (renderer.sortingOrder != l & l != -2) color.a = color.a * opacity;
+            renderer.color = color;
         }
     }
 
