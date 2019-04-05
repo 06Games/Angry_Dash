@@ -1,10 +1,9 @@
 ﻿#if UNITY_IOS
 using System.Runtime.InteropServices;
-using System;
 #else
 using UnityEngine;
-using System.IO;
 #endif
+using System.IO;
 using Crosstales.FB;
 using System;
 

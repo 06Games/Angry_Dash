@@ -13,7 +13,7 @@ public class Account : MonoBehaviour
         {
 #if UNITY_EDITOR || UNITY_STANDALONE
             return Application.persistentDataPath + "/../06Games Launcher/account.account";
-#elif UNITY_ANDROID
+#elif UNITY_ANDROID || UNITY_IOS
             return Application.persistentDataPath + "/../com.fr_06Games.Launcher/account.account";
 #endif
         }
