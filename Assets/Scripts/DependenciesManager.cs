@@ -57,7 +57,7 @@ public class DependenciesManager : MonoBehaviour
 
         UnityThread.executeInUpdate(() =>
         {
-            slider.value = (actual + 1) / lines.Length;
+            slider.value = actual / lines.Length;
             slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "downloadRPNumber", new string[2] { (actual + 1).ToString(), lines.Length.ToString() }, "File : [0] / [1]");
         });
 
@@ -159,7 +159,7 @@ public class DependenciesManager : MonoBehaviour
 
             //Progression plus détaillée
             string[] lines = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None);
-            float baseValue = (int.Parse(downData[0]) + 1) / lines.Length;
+            float baseValue = int.Parse(downData[0]) / lines.Length;
             float oneValue = 1 / (float)lines.Length;
             slider.value = baseValue + ((pourcentage / 100F) * oneValue);
         });
