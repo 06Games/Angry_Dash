@@ -13,12 +13,7 @@ namespace FileFormat
             public Newtonsoft.Json.Linq.JObject jObject;
             public JSON(string plainText)
             {
-                dynamic stuff = Newtonsoft.Json.JsonConvert.DeserializeObject(plainText);
-                if (stuff != null)
-                {
-                    foreach (Newtonsoft.Json.Linq.JObject jobject in stuff)
-                        if (jObject == null) jObject = jobject;
-                }
+                if (!string.IsNullOrEmpty(plainText)) jObject = Newtonsoft.Json.Linq.JObject.Parse(plainText);
             }
 
             public Category GetCategory(string token) { if (jObject == null) return new Category(null); else return new Category(jObject.SelectToken(token)); }
