@@ -13,7 +13,11 @@ namespace FileFormat
             public Newtonsoft.Json.Linq.JObject jObject;
             public JSON(string plainText)
             {
-                if (!string.IsNullOrEmpty(plainText)) jObject = Newtonsoft.Json.Linq.JObject.Parse(plainText);
+                if (!string.IsNullOrEmpty(plainText))
+                {
+                    try { jObject = Newtonsoft.Json.Linq.JObject.Parse(plainText); }
+                    catch (System.Exception e) { Debug.LogError("Error with:\n" + plainText + "\nError details:\n" + e.Message); }
+                }
             }
 
             public Category GetCategory(string token) { if (jObject == null) return new Category(null); else return new Category(jObject.SelectToken(token)); }
