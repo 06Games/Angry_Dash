@@ -11,7 +11,7 @@ public class audio : MonoBehaviour
 
     public int[] Value = new int[3] { -15, -15, -15 };
     public Scrollbar[] scroll;
-    
+
     [Header("Other parameters")]
     public Toggle FullyLoaded;
 

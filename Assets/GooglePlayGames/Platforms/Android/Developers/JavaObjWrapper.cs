@@ -105,12 +105,12 @@ namespace Google.Developers
             IntPtr method = AndroidJNIHelper.GetConstructorID(RawClass, args);
             jvalue[] jArgs = ConstructArgArray(args);
 
-            try 
+            try
             {
                 // assign the raw object.
                 raw = AndroidJNI.NewObject(RawClass, method, jArgs);
             }
-            finally 
+            finally
             {
                 AndroidJNIHelper.DeleteJNIArgArray(args, jArgs);
             }
@@ -181,8 +181,8 @@ namespace Google.Developers
             IntPtr rawClass = AndroidJNI.FindClass(type);
             IntPtr method = AndroidJNI.GetStaticMethodID(rawClass, name, sig);
             jvalue[] jArgs = ConstructArgArray(args);
-            
-            try 
+
+            try
             {
                 IntPtr val = AndroidJNI.CallStaticObjectMethod(rawClass, method, jArgs);
                 ConstructorInfo c = typeof(T).GetConstructor(new Type[] { val.GetType() });
@@ -200,7 +200,7 @@ namespace Google.Developers
                 Type t = typeof(T);
                 return (T)Marshal.PtrToStructure(val, t);
             }
-            finally 
+            finally
             {
                 AndroidJNIHelper.DeleteJNIArgArray(args, jArgs);
             }
@@ -219,11 +219,11 @@ namespace Google.Developers
             IntPtr rawClass = AndroidJNI.FindClass(type);
             IntPtr method = AndroidJNI.GetStaticMethodID(rawClass, name, sig);
             jvalue[] jArgs = ConstructArgArray(args);
-            try 
+            try
             {
                 AndroidJNI.CallStaticVoidMethod(rawClass, method, jArgs);
             }
-            finally 
+            finally
             {
                 AndroidJNIHelper.DeleteJNIArgArray(args, jArgs);
             }
@@ -303,11 +303,11 @@ namespace Google.Developers
             IntPtr method = AndroidJNI.GetMethodID(RawClass, name, sig);
 
             jvalue[] jArgs = ConstructArgArray(args);
-            try 
+            try
             {
                 AndroidJNI.CallVoidMethod(raw, method, jArgs);
             }
-            finally 
+            finally
             {
                 AndroidJNIHelper.DeleteJNIArgArray(args, jArgs);
             }
@@ -325,7 +325,7 @@ namespace Google.Developers
 
             jvalue[] jArgs = ConstructArgArray(args);
 
-            try 
+            try
             {
                 if (t == typeof(bool))
                 {
@@ -372,10 +372,10 @@ namespace Google.Developers
                     return InvokeObjectCall<T>(name, sig, args);
                 }
             }
-            finally 
+            finally
             {
                 AndroidJNIHelper.DeleteJNIArgArray(args, jArgs);
-            } 
+            }
         }
 
         public static T StaticInvokeCall<T>(string type, string name, string sig, params object[] args)
@@ -385,7 +385,7 @@ namespace Google.Developers
             IntPtr method = AndroidJNI.GetStaticMethodID(rawClass, name, sig);
             jvalue[] jArgs = ConstructArgArray(args);
 
-            try 
+            try
             {
                 if (t == typeof(bool))
                 {
@@ -442,10 +442,10 @@ namespace Google.Developers
                     return StaticInvokeObjectCall<T>(type, name, sig, args);
                 }
             }
-            finally 
+            finally
             {
                 AndroidJNIHelper.DeleteJNIArgArray(args, jArgs);
-            }           
+            }
         }
 
         /// <summary>
@@ -464,7 +464,7 @@ namespace Google.Developers
             jvalue[] jArgs = ConstructArgArray(theArgs);
 
             try
-            { 
+            {
                 IntPtr val = AndroidJNI.CallObjectMethod(raw, methodId, jArgs);
 
                 if (val.Equals(IntPtr.Zero))
@@ -481,7 +481,7 @@ namespace Google.Developers
                 Type t = typeof(T);
                 return (T)Marshal.PtrToStructure(val, t);
             }
-            finally 
+            finally
             {
                 AndroidJNIHelper.DeleteJNIArgArray(theArgs, jArgs);
             }

@@ -107,7 +107,7 @@ public class BaseControl : MonoBehaviour
                 LSC.LoadScreen(scene);
                 sceneChanging = true;
             }
-            
+
             OnEchap.Invoke();
         }
         if (Input.GetKeyDown(KeyCode.F11) & !VideoSettings.mobile())
@@ -116,7 +116,7 @@ public class BaseControl : MonoBehaviour
                 Display.Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
             else Display.Screen.SetResolution(1366, 768, false);
             ConfigAPI.SetBool("video.fullScreen", Display.Screen.fullScreen);
-            
+
             if (SceneManager.GetActiveScene().name == "Home")
                 FindObjectOfType<SettingsApplicator>().objects[0].GetComponent<VideoSettings>().FullScreen(Display.Screen.fullScreen);
         }

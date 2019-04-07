@@ -72,7 +72,7 @@ public class LevelPlayer : MonoBehaviour
             else FromScene = _fromScene;
 
             Infos lvl = Infos.Parse(Editeur.UpdateLevel(File.ReadAllText(file)));
-            if(string.IsNullOrEmpty(lvl.name)) lvl.name = Path.GetFileNameWithoutExtension(file);
+            if (string.IsNullOrEmpty(lvl.name)) lvl.name = Path.GetFileNameWithoutExtension(file);
             PlayLevel(lvl);
         }
         else FromFile(Application.persistentDataPath + "/Levels/Official Levels/4.level", "Home");
@@ -104,7 +104,7 @@ public class LevelPlayer : MonoBehaviour
         float match = 1;
         if (size.y < size.x) match = 0;
         ArrierePlan.GetComponent<CanvasScaler>().matchWidthOrHeight = match;
-        
+
         while (GetComponent<MainCam>().Player == null) { }
         GetComponent<MainCam>().Player.GetComponent<Player>().respawnMode = level.respawnMode;
 
@@ -116,7 +116,7 @@ public class LevelPlayer : MonoBehaviour
 
 
         string music = "";
-        if(level.music != null) music = Application.persistentDataPath + "/Musics/" + level.music.Artist + " - " + level.music.Name;
+        if (level.music != null) music = Application.persistentDataPath + "/Musics/" + level.music.Artist + " - " + level.music.Name;
 
         if (GameObject.Find("Audio") != null)
         {

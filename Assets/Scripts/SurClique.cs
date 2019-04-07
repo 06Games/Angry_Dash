@@ -2,8 +2,9 @@
 using System;
 using UnityEngine.Events;
 
-public class SurClique : MonoBehaviour {
-    
+public class SurClique : MonoBehaviour
+{
+
     [SerializeField] private OnCompleteEvent OnCompleteMethods = new OnCompleteEvent();
     public enum QuelClique
     {
@@ -14,13 +15,14 @@ public class SurClique : MonoBehaviour {
     public bool WantKeyUp = false;
 
     public QuelClique SurQuelClique;
-	void Update () {
+    void Update()
+    {
 #if UNITY_STANDALONE || UNITY_EDITOR
         if (SurQuelClique == QuelClique.Gauche & !WantKeyUp)
             clic = Input.GetKey(KeyCode.Mouse0);
-        else if(SurQuelClique == QuelClique.Gauche)
+        else if (SurQuelClique == QuelClique.Gauche)
             clic = Input.GetKeyDown(KeyCode.Mouse0);
-        else if(!WantKeyUp)
+        else if (!WantKeyUp)
             clic = Input.GetKey(KeyCode.Mouse1);
         else clic = Input.GetKeyDown(KeyCode.Mouse1);
 
@@ -35,5 +37,5 @@ public class SurClique : MonoBehaviour {
 
     public void Tap() { OnCompleteMethods.Invoke(); }
 
-    [Serializable]public class OnCompleteEvent : UnityEvent { }
+    [Serializable] public class OnCompleteEvent : UnityEvent { }
 }

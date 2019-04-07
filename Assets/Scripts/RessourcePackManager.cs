@@ -64,7 +64,7 @@ public class RessourcePackManager : MonoBehaviour
     public void SetRP(int index)
     {
         ConfigAPI.SetString("ressources.pack", new DirectoryInfo(RPs[index]).Name);
-        for(int i = 0; i < transform.GetChild(0).GetChild(0).GetChild(0).childCount-1; i++)
+        for (int i = 0; i < transform.GetChild(0).GetChild(0).GetChild(0).childCount - 1; i++)
         {
             Transform go = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(i + 1);
             go.GetComponent<Button>().interactable = i != index;

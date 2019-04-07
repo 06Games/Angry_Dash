@@ -110,9 +110,9 @@ public class Discord : MonoBehaviour
         //End Timestamp
         if (remainingTime >= 0)
             presence.endTimestamp = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds) + remainingTime;
-        else if(remainingTime == -1)
+        else if (remainingTime == -1)
             presence.endTimestamp = 0;
-        
+
         //Start Timestamp
         if (startTime == 0)
             presence.startTimestamp = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds);
@@ -195,7 +195,8 @@ public class Discord : MonoBehaviour
 #endif
 }
 
-namespace DiscordClasses {
+namespace DiscordClasses
+{
     public class Img
     {
         /// <summary>

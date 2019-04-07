@@ -67,7 +67,7 @@ public class ConfigAPI
         string id = d + " = ";
 
         string[] lines = new string[5] { "# Angry Dash config file", "# Edit this carefully", "# 06Games,", "# All rights reserved", "" };
-        if(File.Exists(configPath))
+        if (File.Exists(configPath))
             lines = File.ReadAllLines(configPath);
         int l = -1;
         for (int i = 0; i < lines.Length; i++)

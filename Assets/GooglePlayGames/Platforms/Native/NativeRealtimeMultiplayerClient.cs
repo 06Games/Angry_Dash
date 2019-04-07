@@ -190,7 +190,7 @@ namespace GooglePlayGames.Native
                 mCurrentSession.ShowWaitingRoomUI();
             }
         }
-            
+
         public void GetAllInvitations(Action<Invitation[]> callback)
         {
             mRealtimeManager.FetchInvitations((response) =>
@@ -564,7 +564,7 @@ namespace GooglePlayGames.Native
                 {
                     Logger.d("Not leaving room since showing UI");
                 }
-                    
+
             }
 
             internal void ShowWaitingRoomUI()

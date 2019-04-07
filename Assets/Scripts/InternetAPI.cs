@@ -5,7 +5,8 @@ using UnityEngine.Events;
 using System.Linq;
 using System.IO;
 
-public class InternetAPI : MonoBehaviour {
+public class InternetAPI : MonoBehaviour
+{
 
     void Start()
     {
@@ -30,7 +31,7 @@ public class InternetAPI : MonoBehaviour {
         return (int)kbsec; // Retourne la vitesse en kb/sec
     }
 
-    /// <summary> Vérifie si l'appareil est connecter à internet </summary> 
+    /// <summary> Vérifie si l'appareil est connecter à internet </summary>
     public static bool IsConnected()
     {
         return Application.internetReachability != NetworkReachability.NotReachable;
@@ -52,7 +53,7 @@ public class InternetAPI : MonoBehaviour {
                     using (StreamReader reader = new StreamReader(resp.GetResponseStream()))
                     {
                         //We are limiting the array to 80 so we don't have
-                        //to parse the entire html document feel free to 
+                        //to parse the entire html document feel free to
                         //adjust (probably stay under 300)
                         char[] cs = new char[80];
                         reader.Read(cs, 0, cs.Length);
@@ -73,13 +74,13 @@ public class InternetAPI : MonoBehaviour {
         return HtmlText != "";
     }
 
-    /// <summary> Vérifie si l'appareil est connecter à internet grace à un réseau mobile </summary> 
+    /// <summary> Vérifie si l'appareil est connecter à internet grace à un réseau mobile </summary>
     public static bool IsOnMobileData()
     {
-        return Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork; 
+        return Application.internetReachability == NetworkReachability.ReachableViaCarrierDataNetwork;
     }
 
-    /// <summary> Initialise une url en URi pour le bon fonctionnement d'un téléchargement avec la classe WebClient </summary> 
+    /// <summary> Initialise une url en URi pour le bon fonctionnement d'un téléchargement avec la classe WebClient </summary>
     public static Uri UrlTransformator(string URL)
     {
         string start = "";
@@ -97,7 +98,7 @@ public class InternetAPI : MonoBehaviour {
         return URi;
     }
 
-    public void ActiveGameObjectIfDisconected(GameObject GO){ GO.SetActive(!IsConnected()); }
+    public void ActiveGameObjectIfDisconected(GameObject GO) { GO.SetActive(!IsConnected()); }
 
     public static bool ValidateIPv4(string ipString)
     {

@@ -22,7 +22,7 @@ using System;
 using UnityEngine;
 namespace Com.Google.Android.Gms.Common.Api
 {
-    
+
     public abstract class ResultCallbackProxy<R> : JavaInterfaceProxy , ResultCallback<R>
         where R : Result
     {

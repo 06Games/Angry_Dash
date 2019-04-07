@@ -16,7 +16,7 @@ public class Behavior : MonoBehaviour
 
         Toggle Boost = transform.GetChild(1).GetComponent<Toggle>();
         InputField t = Boost.transform.GetChild(2).GetComponent<InputField>();
-        
+
         if (SB != editor.SelectedBlock)
         {
             if (editor.SelectedBlock.Length > 0)

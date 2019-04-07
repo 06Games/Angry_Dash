@@ -6,7 +6,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Tools;
 
-public class Background : MonoBehaviour {
+public class Background : MonoBehaviour
+{
 
     public int Selected;
     public Editeur Editor;

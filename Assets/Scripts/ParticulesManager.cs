@@ -15,7 +15,7 @@ public class ParticulesManager : MonoBehaviour
     public Vector2 FallDirector = new Vector2(0, -1);
     public Vector2 SpawnZoneMultiplier = new Vector2(1, 1);
 
-    [Range(0, 360)]public double oldH = 0;
+    [Range(0, 360)] public double oldH = 0;
 
     private void Start()
     {
@@ -84,7 +84,7 @@ public class ParticulesManager : MonoBehaviour
             if (pa.Mode == 2)
             {
                 HsvColor hsv = HSVUtil.ConvertRgbToHsv(pa.GetComponent<Image>().color);
-                
+
                 double h = oldH + (rnd.Next(0, 6) * 30);
                 if (h <= 0) h = h * -1;
                 if (h >= 360) h = h - (360 * (int)(h / 360));

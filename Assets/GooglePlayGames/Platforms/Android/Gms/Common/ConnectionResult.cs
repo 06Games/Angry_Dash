@@ -22,7 +22,7 @@ using System;
 using UnityEngine;
 namespace Com.Google.Android.Gms.Common
 {
-    
+
     public class ConnectionResult : JavaObjWrapper
     {
         public ConnectionResult (IntPtr ptr) : base(ptr)

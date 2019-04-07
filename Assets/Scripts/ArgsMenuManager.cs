@@ -1,17 +1,18 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-public class ArgsMenuManager : MonoBehaviour {
+public class ArgsMenuManager : MonoBehaviour
+{
 
     public LoadingScreenControl LS;
     public MenuManager[] CM;
 
-	void Start ()
+    void Start()
     {
         if (CM.Length < transform.childCount) CM = CM.Concat(new MenuManager[transform.childCount - CM.Length]).ToArray();
 
         string[] args = LS.GetArgs();
-        if(args == null) return;
+        if (args == null) return;
         else if (args.Length < 2) return;
 
         for (int p = 0; p < transform.childCount; p++)
@@ -34,8 +35,9 @@ public class ArgsMenuManager : MonoBehaviour {
             }
         }
     }
-	
-	void Update () {
-		
-	}
+
+    void Update()
+    {
+
+    }
 }

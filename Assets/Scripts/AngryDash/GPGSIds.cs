@@ -23,10 +23,10 @@
 
 namespace AngryDash
 {
-public static class GPGSIds
-{
+    public static class GPGSIds
+    {
         public const string achievement_bienvenue = "CgkI9r-go54eEAIQAg"; // <GPGSID>
         public const string leaderboard_solo_levels = "CgkI9r-go54eEAIQAQ"; // <GPGSID>
 
-}
+    }
 }

@@ -29,7 +29,7 @@ public class MsgID
 }
 
 
-    public class ServRequest : MessageBase{};
+public class ServRequest : MessageBase { };
 
 public class _NetworkManager : NetworkBehaviour
 {
@@ -79,7 +79,7 @@ public class _NetworkManager : NetworkBehaviour
         StartData();
         mapRequested = false;
 
-        Discord.Presence(LangueAPI.Get("native", "discordServer_title", "Play in a server"), "", new DiscordClasses.Img("default", LangueAPI.Get("native", "discordServer_caption", "Server : [0]:[1]", adress, port.ToString() )), null, -1, 0);
+        Discord.Presence(LangueAPI.Get("native", "discordServer_title", "Play in a server"), "", new DiscordClasses.Img("default", LangueAPI.Get("native", "discordServer_caption", "Server : [0]:[1]", adress, port.ToString())), null, -1, 0);
         History.LvlPlayed(adress + ":" + port, "S", "");
     }
 

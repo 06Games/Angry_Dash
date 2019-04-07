@@ -24,7 +24,7 @@ using System;
 using UnityEngine;
 namespace Com.Google.Android.Gms.Common.Api
 {
-    
+
     public class GoogleApiClient : JavaObjWrapper
     {
         public GoogleApiClient (IntPtr ptr) : base(ptr)

@@ -9,9 +9,13 @@ public class Editor_StartTrigger : MonoBehaviour
     public Editeur editor;
     int[] SB;
 
-    string All { get {
-                return LangueAPI.Get("native", "editorMenuEditPlayerInfinity", "All");
-        }}
+    string All
+    {
+        get
+        {
+            return LangueAPI.Get("native", "editorMenuEditPlayerInfinity", "All");
+        }
+    }
 
     public int[] Players = new int[2];
 

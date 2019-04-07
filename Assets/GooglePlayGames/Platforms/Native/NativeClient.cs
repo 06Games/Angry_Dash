@@ -631,7 +631,7 @@ namespace GooglePlayGames.Native
 
         public void SetGravityForPopups(Gravity gravity)
         {
-            PlayGamesHelperObject.RunOnGameThread(() => 
+            PlayGamesHelperObject.RunOnGameThread(() =>
              clientImpl.SetGravityForPopups(GetApiClient(), gravity));
         }
 

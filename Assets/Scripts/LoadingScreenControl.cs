@@ -3,7 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class LoadingScreenControl : MonoBehaviour {
+public class LoadingScreenControl : MonoBehaviour
+{
     public GameObject loadingScreenObj;
     public Slider slider;
     public Sprite[] Backgrounds;
@@ -29,7 +30,7 @@ public class LoadingScreenControl : MonoBehaviour {
             for (int v = 1; v < args.Length; v++)
                 txt.text = txt.text + "\\newParam" + args[v];
         }
-        
+
         loadingScreenObj = transform.GetChild(0).gameObject;
         slider = loadingScreenObj.transform.GetChild(0).GetComponent<Slider>();
 
@@ -42,16 +43,19 @@ public class LoadingScreenControl : MonoBehaviour {
         StartCoroutine(LoadingScreen(Scene, keep));
     }
 
-    public string[] GetArgs() {
+    public string[] GetArgs()
+    {
         if (GameObject.Find("Temp_var") == null) return null;
-        else {
+        else
+        {
             string[] args = GameObject.Find("Temp_var").GetComponent<Text>().text.Split(new string[] { "\\newParam" }, System.StringSplitOptions.None);
             Destroy(GameObject.Find("Temp_var"));
             return args;
         }
     }
 
-    IEnumerator LoadingScreen(string scene, bool keep) {
+    IEnumerator LoadingScreen(string scene, bool keep)
+    {
         if (!CanChange) yield return new WaitUntil(() => CanChange);
 
         LoadSceneMode lsm = LoadSceneMode.Single;
@@ -60,12 +64,14 @@ public class LoadingScreenControl : MonoBehaviour {
         loadingScreenObj.SetActive(true);
         if (SceneManager.GetSceneByName(scene) == default | (!keep & scene == SceneManager.GetActiveScene().name))
             async = SceneManager.LoadSceneAsync(scene, lsm);
-        else {
+        else
+        {
             async = SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
             foreach (GameObject go in SceneManager.GetSceneByName(scene).GetRootGameObjects()) go.SetActive(true);
         }
 
-        async.completed += new System.Action<AsyncOperation>((task) => {
+        async.completed += new System.Action<AsyncOperation>((task) =>
+        {
             if (keep)
             {
                 async = default;

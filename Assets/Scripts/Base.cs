@@ -9,7 +9,8 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using PlayerPrefs = PreviewLabs.PlayerPrefs;
 
-public class Base : MonoBehaviour {
+public class Base : MonoBehaviour
+{
 
     [Serializable] public class OnCompleteEvent : UnityEvent { }
     [SerializeField] private OnCompleteEvent OnUpdate = new OnCompleteEvent();
@@ -89,12 +90,13 @@ public class Base : MonoBehaviour {
         if (File.Exists(Application.persistentDataPath + "/Levels/Official Levels/" + LevelName + ".level"))
         {
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
-            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player", new string[]{ "Home/Play/Official Levels", "File", Application.persistentDataPath + "/Levels/Official Levels/" + LevelName + ".level"});
+            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player", new string[] { "Home/Play/Official Levels", "File", Application.persistentDataPath + "/Levels/Official Levels/" + LevelName + ".level" });
         }
         else GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Start");
     }
 
-    public void Gold(Text t) {
+    public void Gold(Text t)
+    {
         if (string.IsNullOrEmpty(PlayerPrefs.GetString("money")))
             t.text = "0";
         else t.text = PlayerPrefs.GetString("money");

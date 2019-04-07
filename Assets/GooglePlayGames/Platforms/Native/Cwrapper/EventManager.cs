@@ -23,7 +23,7 @@ namespace GooglePlayGames.Native.Cwrapper
 
     internal static class EventManager
     {
-        
+
         internal delegate void FetchAllCallback(
         /* from(EventManager_FetchAllResponse_t) */ IntPtr arg0,
         /* from(void *) */ IntPtr arg1);

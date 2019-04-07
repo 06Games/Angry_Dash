@@ -32,7 +32,7 @@ public class Editeur : MonoBehaviour
 
     public Scrollbar zoomIndicator;
     public int ZoomSensitive = 20;
-    
+
     public Sprite GrilleSp;
 
     [HideInInspector] public bool bloqueEchap;
@@ -231,7 +231,7 @@ public class Editeur : MonoBehaviour
         transform.GetChild(0).GetChild(6).GetComponent<Text>().text =
         GetWorldPosition(Input.mousePosition, false).ToString("0.0");
 #else
-        transform.GetChild(0).GetChild(6).GetComponent<Text>().text = 
+        transform.GetChild(0).GetChild(6).GetComponent<Text>().text =
         GetWorldPosition(Display.Screen.Resolution / 2, false).ToString("0.0");
 #endif
 
@@ -418,7 +418,7 @@ public class Editeur : MonoBehaviour
                 float Speed = 1F;
                 if ((Input.touchCount == 2 & isSimple) | (Input.touchCount == 3 & isAdvence))
                     Speed = Speed * 2;
-                
+
                 Vector2 TouchPosition =  touchZero.position;
                 if(touchLastPosition == new Vector2(-50000, -50000))
                     touchLastPosition = TouchPosition;
@@ -843,7 +843,7 @@ public class Editeur : MonoBehaviour
     {
         for (int i = 0; i < level.blocks.Length; i++)
         {
-            if ((Vector2)level.blocks[i].position == new Vector2(x, y) 
+            if ((Vector2)level.blocks[i].position == new Vector2(x, y)
                 & (level.blocks[i].position.z == selectedLayer | selectedLayer == -2))
                 return i;
         }
@@ -1168,7 +1168,7 @@ public class Editeur : MonoBehaviour
                                             if (param[0] == "Blocks")
                                             {
                                                 string[] pID = param[1].Split(',');
-                                                for(int i = 0; i < pID.Length; i++)
+                                                for (int i = 0; i < pID.Length; i++)
                                                 {
                                                     int.TryParse(pID[i], out int id);
                                                     pID[i] = (id - 8).ToString();

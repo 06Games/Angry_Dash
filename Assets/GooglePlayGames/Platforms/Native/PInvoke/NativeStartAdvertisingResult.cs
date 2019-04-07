@@ -69,4 +69,4 @@ namespace GooglePlayGames.Native.PInvoke
         }
     }
 }
-#endif // #if UNITY_ANDROID 
+#endif // #if UNITY_ANDROID

@@ -41,7 +41,7 @@ namespace SoundAPI
                     filePath = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/sounds/" + id + ".ogg";
                     if (!System.IO.File.Exists(filePath)) filePath = Application.persistentDataPath + "/Ressources/default/sounds/" + id + ".ogg";
                 }
-                
+
                 if (System.IO.File.Exists(filePath))
                 {
 #if UNITY_EDITOR || UNITY_STANDALONE
@@ -163,7 +163,7 @@ public class menuMusic : MonoBehaviour
 
     public void Stop() { GetComponent<AudioSource>().Stop(); }
     public void Play() { GetComponent<AudioSource>().Play(); }
-    
+
     public void LoadUnpackagedMusic(string path, float timePos = 0)
     {
         SoundAPI.Load load = new SoundAPI.Load(path);

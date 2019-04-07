@@ -22,7 +22,7 @@ using System;
 using UnityEngine;
 namespace Com.Google.Android.Gms.Common.Api
 {
-    
+
     public class Status : JavaObjWrapper, Result
     {
         public Status (IntPtr ptr) : base(ptr)

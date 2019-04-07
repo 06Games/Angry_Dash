@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Rotation : MonoBehaviour {
+public class Rotation : MonoBehaviour
+{
 
     public InputField IF;
     public Editeur editeur;
@@ -45,6 +46,6 @@ public class Rotation : MonoBehaviour {
 
     public void ChangIFValue(int positive)
     {
-        IF.text = (int.Parse(IF.text) + (positive*90)).ToString();
+        IF.text = (int.Parse(IF.text) + (positive * 90)).ToString();
     }
 }

@@ -92,7 +92,8 @@ public class ProfileLevels : MonoBehaviour
 
             int button = i;
             go.GetChild(0).GetComponent<Text>().text = items[i]; //Sets the level's name
-            go.GetChild(1).GetComponent<Button>().onClick.AddListener(() => {
+            go.GetChild(1).GetComponent<Button>().onClick.AddListener(() =>
+            {
                 Transform panel = transform.GetChild(2);
                 panel.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "ProfileMyLevelsDeleteWarning", "Are you sure you want to delete [0] ?", items[button]);
                 panel.GetChild(1).GetComponent<Button>().onClick.AddListener(() => { Delete(button); panel.gameObject.SetActive(false); });
@@ -126,7 +127,7 @@ public class ProfileLevels : MonoBehaviour
     public void Delete(int i)
     {
         if (i >= items.Length) return;
-        string url = serverURL+"delete.php?id=" + Account.Username + "&mdp=" + Account.Password + "&level=" + items[i];
+        string url = serverURL + "delete.php?id=" + Account.Username + "&mdp=" + Account.Password + "&level=" + items[i];
         WebClient client = new WebClient();
         client.Encoding = System.Text.Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };

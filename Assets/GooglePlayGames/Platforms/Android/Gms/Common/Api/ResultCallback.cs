@@ -22,7 +22,7 @@ using System;
 using UnityEngine;
 namespace Com.Google.Android.Gms.Common.Api
 {
-    
+
     public interface ResultCallback<R>
         where R : Result
     {

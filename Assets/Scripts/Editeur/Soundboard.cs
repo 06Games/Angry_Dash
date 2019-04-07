@@ -73,10 +73,10 @@ public class Soundboard : MonoBehaviour
             }
 
             Search(null);
-            if(DesactiveGO) gameObject.SetActive(false);
+            if (DesactiveGO) gameObject.SetActive(false);
             if (lenght > 0) { Refreshed = true; return; }
         }
-        
+
         string[] sFiles = Directory.GetFiles(Application.persistentDataPath + "/Musics/");
         Base = new SongItem[sFiles.Length];
         for (int i = 0; i < sFiles.Length; i++)
@@ -117,7 +117,7 @@ public class Soundboard : MonoBehaviour
             }
         }
     }
-    
+
     [Obsolete("Now, ogg is supported on all platforms")]
     public static AudioType NativeFileFormat()
     {
@@ -188,7 +188,7 @@ public class Soundboard : MonoBehaviour
 
     public void NewStart()
     {
-        if (editor.level.music == null) Music.text = LangueAPI.Get("native", "editorSoundBoardActualMusic", "<b> Music :</b> <i> [0] </i>", "No Music" );
+        if (editor.level.music == null) Music.text = LangueAPI.Get("native", "editorSoundBoardActualMusic", "<b> Music :</b> <i> [0] </i>", "No Music");
         else Music.text = LangueAPI.Get("native", "editorSoundBoardActualMusic", "<b> Music :</b> <i> [0] </i>", editor.level.music.Name);
 
         if (!Refreshed) RefreshList(false);
@@ -204,7 +204,7 @@ public class Soundboard : MonoBehaviour
         go.GetChild(0).GetChild(1).GetComponent<Text>().text = Song[SongOpened].Artist;
         go.GetChild(0).GetChild(2).GetComponent<Text>().text = Song[SongOpened].Licence;
 
-        
+
         if (Song[SongOpened] == editor.level.music)
             go.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "editorSoundBoardChosen", "Chosen");
         else go.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "editorSoundBoardChoose", "Choose");
@@ -229,7 +229,7 @@ public class Soundboard : MonoBehaviour
     {
         Transform ResultPanel = MusicSelectorPanel.transform.GetChild(1);
         lastFirstLine = firstLine;
-        ResultPanel.GetChild(ResultPanel.childCount-1).GetChild(0).GetComponent<Button>().interactable = firstLine > 0;
+        ResultPanel.GetChild(ResultPanel.childCount - 1).GetChild(0).GetComponent<Button>().interactable = firstLine > 0;
         ResultPanel.GetChild(ResultPanel.childCount - 1).GetChild(1).GetComponent<Button>().interactable = firstLine + ResultPanel.childCount - 1 < Song.Length;
 
         for (int i = 0; i < ResultPanel.childCount - 1; i++)

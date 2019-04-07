@@ -66,7 +66,7 @@ namespace GooglePlayGames.Native.Android
                                 }
                             });
                     });
-                if (clientConfig.IsHidingPopups) 
+                if (clientConfig.IsHidingPopups)
                 {
                     config.SetOptionalViewForPopups(AndroidTokenClient.CreateInvisibleView().GetRawObject());
                 }

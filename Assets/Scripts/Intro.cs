@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 
-public class Intro : MonoBehaviour {
+public class Intro : MonoBehaviour
+{
 
     public VideoClip videoToPlay;
     public GameObject Fond;
     [System.Serializable] public class OnCompleteEvent : UnityEngine.Events.UnityEvent { }
 
     void Update() { if (Input.anyKey) PlayEnd(); }
-    void Start () {
+    void Start()
+    {
         Fond.SetActive(true);
         OnCompleteEvent onComplete = new OnCompleteEvent();
         onComplete.AddListener(() => PlayEnd());
         StartCoroutine(playVideo(onComplete));
-	}
+    }
 
     IEnumerator playVideo(OnCompleteEvent onComplete = null)
     {
@@ -57,14 +59,14 @@ public class Intro : MonoBehaviour {
 
         //Play Sound
         audioSource.Play();
-        
+
         while (videoPlayer.isPlaying) yield return null;
 
         Destroy(videoPlayer);
         Destroy(audioSource);
         Destroy(rawImage);
 
-        if(onComplete != null) onComplete.Invoke();
+        if (onComplete != null) onComplete.Invoke();
     }
 
     void PlayEnd()

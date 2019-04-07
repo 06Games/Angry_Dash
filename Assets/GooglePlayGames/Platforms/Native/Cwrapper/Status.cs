@@ -75,7 +75,7 @@ namespace GooglePlayGames.Native.Cwrapper
             ERROR_MATCH_OUT_OF_DATE = -11,
             ERROR_REAL_TIME_ROOM_NOT_JOINED = -17,
         }
-            
+
         internal enum CommonErrorStatus
         {
             ERROR_INTERNAL = -2,

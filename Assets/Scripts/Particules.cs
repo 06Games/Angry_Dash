@@ -14,7 +14,8 @@ public class Particules : MonoBehaviour
     public int Mode = 1;
 
     void Start() { StartCoroutine(Move()); }
-    IEnumerator Move() { 
+    IEnumerator Move()
+    {
         if (!Static)
             transform.Translate(new Vector2(FallDirection.x * FallSpeed, FallDirection.y * FallSpeed));
         else transform.position = new Vector3(transform.position.x, transform.position.y - FallSpeed);
@@ -33,7 +34,7 @@ public class Particules : MonoBehaviour
             GetComponent<Image>().color = HSVUtil.ConvertHsvToRgb(hsv, 255);
         }
 
-            yield return new WaitForSeconds(1 / 60F);
+        yield return new WaitForSeconds(1 / 60F);
         StartCoroutine(Move());
     }
 }

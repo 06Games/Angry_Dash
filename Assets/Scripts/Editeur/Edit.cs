@@ -40,7 +40,7 @@ public class Edit : MonoBehaviour
                 for (int b = 0; b < menus[i].BlockID.Length & !find; b++)
                 {
                     float bID = menus[i].BlockID[b];
-                    if ((bID < 0 & bID*-1 <= blocID) | (bID == blocID & bID >= 0))
+                    if ((bID < 0 & bID * -1 <= blocID) | (bID == blocID & bID >= 0))
                     {
                         GetComponent<MenuManager>().Array(menus[i].Object);
                         find = true;

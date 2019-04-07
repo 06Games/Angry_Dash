@@ -142,7 +142,7 @@ namespace GooglePlayGames
         /// </returns>
         public string metaData
         {
-            get 
+            get
             {
                 return mMetadata;
             }

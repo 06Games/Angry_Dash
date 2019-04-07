@@ -18,7 +18,7 @@ public class MenuManager : MonoBehaviour
                 if (Buttons != null)
                 {
                     if (Buttons.Length > i)
-                        if(Buttons[i] != null) Buttons[i].interactable = !(i == array);
+                        if (Buttons[i] != null) Buttons[i].interactable = !(i == array);
                 }
             }
         }

@@ -170,7 +170,7 @@ namespace GooglePlayGames.Native.PInvoke
                 {
                     AndroidJavaObject activity = jc.GetStatic<AndroidJavaObject>("currentActivity");
                     return activity.Call<string>("getPackageName");
-                   
+
                 }
 
 #else

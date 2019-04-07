@@ -21,7 +21,8 @@ public class EditorMovements : MonoBehaviour
 
     public void DownUp(float mvt) { Translate(new Vector2(0, mvt)); }
     public void LeftRight(float mvt) { Translate(new Vector2(mvt, 0)); }
-    public void Translate(Vector2 mvt){
+    public void Translate(Vector2 mvt)
+    {
         int[] blocks = Editor.SelectedBlock;
         for (int i = 0; i < blocks.Length; i++)
         {

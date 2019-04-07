@@ -312,7 +312,7 @@ public class EditorPublishedLevels : MonoBehaviour
     public void NewComment(Transform panel)
     {
         string commentText = "";
-        if(userIndex >= 0) commentText = markXML.GetItems("item")[userIndex].GetItem("comment").Value.HtmlDecode();
+        if (userIndex >= 0) commentText = markXML.GetItems("item")[userIndex].GetItem("comment").Value.HtmlDecode();
 
         panel.GetChild(0).GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsInfosCommentWrite", "Write a Comment\n<size=50><color=grey>about [0]</color></size>", items[currentFile].Name);
         panel.GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text = commentText;
@@ -325,7 +325,7 @@ public class EditorPublishedLevels : MonoBehaviour
         client.Encoding = System.Text.Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         string URL = serverURL + "mark.php?action=set&level=" + items[currentFile].Author + "/" + items[currentFile].Name
-            + "&id=" + Account.Username + "&mdp=" + Account.Password 
+            + "&id=" + Account.Username + "&mdp=" + Account.Password
             + "&comment=" + panel.GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text.HtmlEncode();
         string result = client.DownloadString(URL);
         if (result.Contains("Success"))
@@ -334,6 +334,6 @@ public class EditorPublishedLevels : MonoBehaviour
             panel.gameObject.SetActive(false);
         }
         else Debug.LogError("Connection error: " + result);
-        
+
     }
 }

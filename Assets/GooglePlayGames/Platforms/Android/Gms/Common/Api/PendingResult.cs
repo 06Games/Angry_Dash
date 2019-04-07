@@ -22,7 +22,7 @@ using System;
 using UnityEngine;
 namespace Com.Google.Android.Gms.Common.Api
 {
-    
+
     public class PendingResult<R> : JavaObjWrapper
         where R : Result
     {

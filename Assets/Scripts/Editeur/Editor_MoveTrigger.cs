@@ -268,11 +268,11 @@ public class Editor_MoveTrigger : MonoBehaviour
     {
         Transform go = transform.GetChild(ScrollID);
         Toggle reset = null;
-        if(ScrollID == 2) reset = go.GetChild(go.childCount - 1).GetComponent<Toggle>();
+        if (ScrollID == 2) reset = go.GetChild(go.childCount - 1).GetComponent<Toggle>();
         else if (ScrollID == 4) reset = go.GetChild(go.childCount - 2).GetComponent<Toggle>();
 
         for (int i = 1; i < go.childCount; i++)
-            if(go.GetChild(i) != reset.transform)
+            if (go.GetChild(i) != reset.transform)
                 go.GetChild(i).gameObject.SetActive(!reset.isOn);
 
         Reset[(ScrollID / 2) - 1] = reset.isOn;
@@ -288,7 +288,7 @@ public class Editor_MoveTrigger : MonoBehaviour
         Transform go = transform.GetChild(4);
 
         GlobalRotation = go.GetChild(go.childCount - 1).GetComponent<Toggle>();
-        
+
         editor.ChangBlocStatus("GlobalRotation", GlobalRotation.ToString(), SB);
     }
 

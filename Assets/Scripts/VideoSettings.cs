@@ -10,7 +10,7 @@ public class VideoSettings : MonoBehaviour
     {
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         return true;
-#else 
+#else
         return false;
 #endif
     }

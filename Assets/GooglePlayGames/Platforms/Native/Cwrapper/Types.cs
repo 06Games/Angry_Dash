@@ -120,7 +120,7 @@ namespace GooglePlayGames.Native.Cwrapper
             CANCELED = 6,
             EXPIRED = 7,
         }
-         
+
         internal enum MultiplayerEvent
         {
             UPDATED = 1,

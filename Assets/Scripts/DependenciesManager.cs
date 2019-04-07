@@ -297,7 +297,7 @@ public class DependenciesManager : MonoBehaviour
             else if (sender.ToString() != "pass") c = true;
             else
             {
-                    transform.GetChild(2).gameObject.SetActive(false);
+                transform.GetChild(2).gameObject.SetActive(false);
                 Account ac = GameObject.Find("Account").GetComponent<Account>();
                 ac.complete += (s, args) => _Social.NewStart();
                 ac.Initialize();

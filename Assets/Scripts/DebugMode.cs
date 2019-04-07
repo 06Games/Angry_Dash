@@ -60,7 +60,7 @@ public class DebugMode : MonoBehaviour
     {
         Transform content = transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<ScrollRect>().content;
         GameObject template = content.GetChild(0).gameObject;
-        void Logs (object sender, Tools.BetterEventArgs e)
+        void Logs(object sender, Tools.BetterEventArgs e)
         {
             string type = "";
             LogType logType = (LogType)sender;
@@ -115,7 +115,7 @@ public class DebugMode : MonoBehaviour
         bool on = ConfigAPI.GetBool("debug.showCoordinates");
 
         if (player == null & Coordinates) player = GameObject.Find("Main Camera").GetComponent<MainCam>().Player;
-        if(Coordinates) text.gameObject.SetActive(true);
+        if (Coordinates) text.gameObject.SetActive(true);
 
         Vector2 playerPos = new Vector2(25, 25);
         if (player != null) playerPos = player.transform.position;

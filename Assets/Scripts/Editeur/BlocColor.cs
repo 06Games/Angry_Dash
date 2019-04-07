@@ -2,7 +2,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BlocColor : MonoBehaviour {
+public class BlocColor : MonoBehaviour
+{
 
     public Editeur editeur;
     public int[] Bloc;

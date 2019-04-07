@@ -349,7 +349,7 @@ namespace Sprite_API
 
         static void TamponCleaner(APNGFrameInfo info, Texture2D frameTampon)
         {
-            if (info.index == 0 & info.dispose == DisposeOps.APNGDisposeOpPrevious) //Previous in the first frame 
+            if (info.index == 0 & info.dispose == DisposeOps.APNGDisposeOpPrevious) //Previous in the first frame
                 info.dispose = DisposeOps.APNGDisposeOpBackground; //is treated as Background
 
             if (info.dispose == DisposeOps.APNGDisposeOpPrevious) { } //don't apply anything

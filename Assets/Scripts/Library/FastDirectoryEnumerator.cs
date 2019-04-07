@@ -10,7 +10,7 @@ using Microsoft.Win32.SafeHandles;
 namespace CodeProject
 {
     /// <summary>
-    /// Contains information about a file returned by the 
+    /// Contains information about a file returned by the
     /// <see cref="FastDirectoryEnumerator"/> class.
     /// </summary>
     [Serializable]
@@ -38,7 +38,7 @@ namespace CodeProject
         {
             get { return this.LastAccessTimeUtc.ToLocalTime(); }
         }
-        
+
         /// <summary>
         /// File last access time in UTC
         /// </summary>
@@ -51,12 +51,12 @@ namespace CodeProject
         {
             get { return this.LastWriteTimeUtc.ToLocalTime(); }
         }
-        
+
         /// <summary>
         /// File last write time in UTC
         /// </summary>
         public readonly DateTime LastWriteTimeUtc;
-        
+
         /// <summary>
         /// Size of the file in bytes
         /// </summary>
@@ -89,12 +89,12 @@ namespace CodeProject
         /// <param name="dir">The directory that the file is stored at</param>
         /// <param name="findData">WIN32_FIND_DATA structure that this
         /// object wraps.</param>
-        internal FileData(string dir, WIN32_FIND_DATA findData) 
+        internal FileData(string dir, WIN32_FIND_DATA findData)
         {
             this.Attributes = findData.dwFileAttributes;
 
 
-            this.CreationTimeUtc = ConvertDateTime(findData.ftCreationTime_dwHighDateTime, 
+            this.CreationTimeUtc = ConvertDateTime(findData.ftCreationTime_dwHighDateTime,
                                                 findData.ftCreationTime_dwLowDateTime);
 
             this.LastAccessTimeUtc = ConvertDateTime(findData.ftLastAccessTime_dwHighDateTime,
@@ -122,7 +122,7 @@ namespace CodeProject
     }
 
     /// <summary>
-    /// Contains information about the file that is found 
+    /// Contains information about the file that is found
     /// by the FindFirstFile or FindNextFile functions.
     /// </summary>
     [Serializable, StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto), BestFitMapping(false)]
@@ -157,12 +157,12 @@ namespace CodeProject
     }
 
     /// <summary>
-    /// A fast enumerator of files in a directory.  Use this if you need to get attributes for 
+    /// A fast enumerator of files in a directory.  Use this if you need to get attributes for
     /// all files in a directory.
     /// </summary>
     /// <remarks>
     /// This enumerator is substantially faster than using <see cref="Directory.GetFiles(string)"/>
-    /// and then creating a new FileInfo object for each path.  Use this version when you 
+    /// and then creating a new FileInfo object for each path.  Use this version when you
     /// will need to look at the attibutes of each file returned (for example, you need
     /// to check each file in a directory to see if it was modified after a specific date).
     /// </remarks>
@@ -172,7 +172,7 @@ namespace CodeProject
         /// Gets <see cref="FileData"/> for all the files in a directory.
         /// </summary>
         /// <param name="path">The path to search.</param>
-        /// <returns>An object that implements <see cref="IEnumerable{FileData}"/> and 
+        /// <returns>An object that implements <see cref="IEnumerable{FileData}"/> and
         /// allows you to enumerate the files in the given directory.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is a null reference (Nothing in VB)
@@ -183,12 +183,12 @@ namespace CodeProject
         }
 
         /// <summary>
-        /// Gets <see cref="FileData"/> for all the files in a directory that match a 
+        /// Gets <see cref="FileData"/> for all the files in a directory that match a
         /// specific filter.
         /// </summary>
         /// <param name="path">The path to search.</param>
         /// <param name="searchPattern">The search string to match against files in the path.</param>
-        /// <returns>An object that implements <see cref="IEnumerable{FileData}"/> and 
+        /// <returns>An object that implements <see cref="IEnumerable{FileData}"/> and
         /// allows you to enumerate the files in the given directory.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is a null reference (Nothing in VB)
@@ -202,16 +202,16 @@ namespace CodeProject
         }
 
         /// <summary>
-        /// Gets <see cref="FileData"/> for all the files in a directory that 
+        /// Gets <see cref="FileData"/> for all the files in a directory that
         /// match a specific filter, optionally including all sub directories.
         /// </summary>
         /// <param name="path">The path to search.</param>
         /// <param name="searchPattern">The search string to match against files in the path.</param>
         /// <param name="searchOption">
-        /// One of the SearchOption values that specifies whether the search 
+        /// One of the SearchOption values that specifies whether the search
         /// operation should include all subdirectories or only the current directory.
         /// </param>
-        /// <returns>An object that implements <see cref="IEnumerable{FileData}"/> and 
+        /// <returns>An object that implements <see cref="IEnumerable{FileData}"/> and
         /// allows you to enumerate the files in the given directory.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is a null reference (Nothing in VB)
@@ -244,12 +244,12 @@ namespace CodeProject
         }
 
         /// <summary>
-        /// Gets <see cref="FileData"/> for all the files in a directory that match a 
+        /// Gets <see cref="FileData"/> for all the files in a directory that match a
         /// specific filter.
         /// </summary>
         /// <param name="path">The path to search.</param>
         /// <param name="searchPattern">The search string to match against files in the path.</param>
-        /// <returns>An object that implements <see cref="IEnumerable{FileData}"/> and 
+        /// <returns>An object that implements <see cref="IEnumerable{FileData}"/> and
         /// allows you to enumerate the files in the given directory.</returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="path"/> is a null reference (Nothing in VB)
@@ -269,7 +269,7 @@ namespace CodeProject
         }
 
         /// <summary>
-        /// Provides the implementation of the 
+        /// Provides the implementation of the
         /// <see cref="T:System.Collections.Generic.IEnumerable`1"/> interface
         /// </summary>
         private class FileEnumerable : IEnumerable<FileData>
@@ -284,7 +284,7 @@ namespace CodeProject
             /// <param name="path">The path to search.</param>
             /// <param name="filter">The search string to match against files in the path.</param>
             /// <param name="searchOption">
-            /// One of the SearchOption values that specifies whether the search 
+            /// One of the SearchOption values that specifies whether the search
             /// operation should include all subdirectories or only the current directory.
             /// </param>
             public FileEnumerable(string path, string filter, SearchOption searchOption)
@@ -300,7 +300,7 @@ namespace CodeProject
             /// Returns an enumerator that iterates through the collection.
             /// </summary>
             /// <returns>
-            /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can 
+            /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can
             /// be used to iterate through the collection.
             /// </returns>
             public IEnumerator<FileData> GetEnumerator()
@@ -316,7 +316,7 @@ namespace CodeProject
             /// Returns an enumerator that iterates through a collection.
             /// </summary>
             /// <returns>
-            /// An <see cref="T:System.Collections.IEnumerator"/> object that can be 
+            /// An <see cref="T:System.Collections.IEnumerator"/> object that can be
             /// used to iterate through the collection.
             /// </returns>
             System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -349,8 +349,8 @@ namespace CodeProject
             /// When overridden in a derived class, executes the code required to free the handle.
             /// </summary>
             /// <returns>
-            /// true if the handle is released successfully; otherwise, in the 
-            /// event of a catastrophic failure, false. In this case, it 
+            /// true if the handle is released successfully; otherwise, in the
+            /// event of a catastrophic failure, false. In this case, it
             /// generates a releaseHandleFailed MDA Managed Debugging Assistant.
             /// </returns>
             protected override bool ReleaseHandle()
@@ -360,18 +360,18 @@ namespace CodeProject
         }
 
         /// <summary>
-        /// Provides the implementation of the 
+        /// Provides the implementation of the
         /// <see cref="T:System.Collections.Generic.IEnumerator`1"/> interface
         /// </summary>
         [System.Security.SuppressUnmanagedCodeSecurity]
         private class FileEnumerator : IEnumerator<FileData>
         {
             [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-            private static extern SafeFindHandle FindFirstFile(string fileName, 
+            private static extern SafeFindHandle FindFirstFile(string fileName,
                 [In, Out] WIN32_FIND_DATA data);
 
             [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-            private static extern bool FindNextFile(SafeFindHandle hndFindFile, 
+            private static extern bool FindNextFile(SafeFindHandle hndFindFile,
                     [In, Out, MarshalAs(UnmanagedType.LPStruct)] WIN32_FIND_DATA lpFindFileData);
 
             /// <summary>
@@ -403,7 +403,7 @@ namespace CodeProject
             /// <param name="path">The path to search.</param>
             /// <param name="filter">The search string to match against files in the path.</param>
             /// <param name="searchOption">
-            /// One of the SearchOption values that specifies whether the search 
+            /// One of the SearchOption values that specifies whether the search
             /// operation should include all subdirectories or only the current directory.
             /// </param>
             public FileEnumerator(string path, string filter, SearchOption searchOption)
@@ -412,7 +412,7 @@ namespace CodeProject
                 m_filter = filter;
                 m_searchOption = searchOption;
                 m_currentContext = new SearchContext(path);
-                
+
                 if (m_searchOption == SearchOption.AllDirectories)
                 {
                     m_contextStack = new Stack<SearchContext>();
@@ -438,7 +438,7 @@ namespace CodeProject
             #region IDisposable Members
 
             /// <summary>
-            /// Performs application-defined tasks associated with freeing, releasing, 
+            /// Performs application-defined tasks associated with freeing, releasing,
             /// or resetting unmanaged resources.
             /// </summary>
             public void Dispose()
@@ -469,7 +469,7 @@ namespace CodeProject
             /// Advances the enumerator to the next element of the collection.
             /// </summary>
             /// <returns>
-            /// true if the enumerator was successfully advanced to the next element; 
+            /// true if the enumerator was successfully advanced to the next element;
             /// false if the enumerator has passed the end of the collection.
             /// </returns>
             /// <exception cref="T:System.InvalidOperationException">
@@ -479,7 +479,7 @@ namespace CodeProject
             {
                 bool retval = false;
 
-                //If the handle is null, this is first call to MoveNext in the current 
+                //If the handle is null, this is first call to MoveNext in the current
                 // directory.  In that case, start a new search.
                 if (m_currentContext.SubdirectoriesToProcess == null)
                 {
@@ -503,7 +503,7 @@ namespace CodeProject
                 {
                     if (((FileAttributes)m_win_find_data.dwFileAttributes & FileAttributes.Directory) == FileAttributes.Directory)
                     {
-                        //Ignore folders for now.   We call MoveNext recursively here to 
+                        //Ignore folders for now.   We call MoveNext recursively here to
                         // move to the next item that FindNextFile will return.
                         return MoveNext();
                     }
@@ -532,7 +532,7 @@ namespace CodeProject
                         return MoveNext();
                     }
 
-                    //If there are no more files in this directory and we are 
+                    //If there are no more files in this directory and we are
                     // in a sub directory, pop back up to the parent directory and
                     // continue the search from there.
                     if (m_contextStack.Count > 0)

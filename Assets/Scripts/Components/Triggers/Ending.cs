@@ -14,21 +14,23 @@ namespace RewardChecker
         public Official(string lvlName) { int.TryParse(lvlName, out name); }
 
         /// <summary> The money to give the player </summary>
-        public int money { get
+        public int money
+        {
+            get
             {
-                if(turn == 0)
+                if (turn == 0)
                 {
                     Debug.LogError("You are a cheater !");
                     return 0;
                 }
-                else if(name == 1)
+                else if (name == 1)
                 {
                     if (turn <= 8) return 25;
                     else if (turn <= 10) return 15;
                     else if (turn <= 12) return 10;
                     else return 5;
                 }
-                else if(name == 2)
+                else if (name == 2)
                 {
                     if (turn <= 6) return 25;
                     else if (turn == 7) return 15;

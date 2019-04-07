@@ -92,7 +92,7 @@ namespace GooglePlayGames.Native.Cwrapper {
 
         [DllImport(SymbolLocation.NativeSymbolLocation)]
         internal static extern void NearbyConnections_Stop(HandleRef self);
-    
+
         [DllImport(SymbolLocation.NativeSymbolLocation)]
         internal static extern void NearbyConnections_AcceptConnectionRequest(
             HandleRef self,

@@ -234,7 +234,7 @@ namespace GooglePlayGames.Native
             mManager.RejectConnectionRequest(requestingEndpointId);
         }
 
-        
+
         public void DisconnectFromEndpoint(string remoteEndpointId)
         {
             mManager.DisconnectFromEndpoint(remoteEndpointId);
