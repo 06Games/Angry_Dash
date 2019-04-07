@@ -27,7 +27,7 @@ public class DownloadedMusicsManager : MonoBehaviour
             TagLib.Tag TL = TagLib.File.Create(files[i].FullName, mime, TagLib.ReadStyle.None).Tag;
             Transform go = Instantiate(Template, scroll.content).transform;
 
-            go.GetChild(0).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "", new string[] { TL.Title, TL.Performers[0] }, "[0]\n<color=grey>by [1]</color>");
+            go.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "SettingsSoundDownloadedItem", "[0]\n<color=grey>by [1]</color>", TL.Title, TL.Performers[0]);
             int button = i;
             go.GetChild(1).GetChild(0).GetComponent<Button>().onClick.AddListener(() => Play(files[button].FullName));
             go.GetChild(1).GetChild(1).GetComponent<Button>().onClick.AddListener(() => Delete(files[button].FullName));

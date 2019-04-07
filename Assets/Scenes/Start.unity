@@ -167,7 +167,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: downloadRequireInternetSubtitle
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &48804772
 MonoBehaviour:
@@ -339,7 +338,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: AccountLogin
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &66502534
 MonoBehaviour:
@@ -477,7 +475,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: downloadLangWait
-  keepIfNotExist: 1
   arg: []
 --- !u!1 &98446536
 GameObject:
@@ -531,7 +528,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: AccountPassword
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &98446539
 MonoBehaviour:
@@ -1022,7 +1018,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: downloadRPSubtitle
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &222504337
 MonoBehaviour:
@@ -2235,7 +2230,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: googleServiceAuthenticationExitNo
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &393948076
 MonoBehaviour:
@@ -3919,7 +3913,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: AccountUsername
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &664166160
 MonoBehaviour:
@@ -4344,7 +4337,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: AccountTitle
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &763788729
 MonoBehaviour:
@@ -4759,7 +4751,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: googleServiceAuthenticationExitWarning
-  keepIfNotExist: 1
   arg: []
 --- !u!1 &885154194
 GameObject:
@@ -4912,7 +4903,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: downloadLevels
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &918673451
 MonoBehaviour:
@@ -5257,7 +5247,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: googleServiceReconnect
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1004107882
 MonoBehaviour:
@@ -6407,7 +6396,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: AccountRegister
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1235175846
 MonoBehaviour:
@@ -6809,7 +6797,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: googleServiceAuthenticationExitYes
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1401372811
 MonoBehaviour:
@@ -6910,7 +6897,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: downloadRPTitle
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1456008403
 MonoBehaviour:
@@ -7747,7 +7733,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: downloadRequireInternetTitle
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1607402709
 MonoBehaviour:
@@ -7862,7 +7847,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: downloadRequireInternetExit
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1629237941
 MonoBehaviour:
@@ -8937,7 +8921,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: AccountPasswordExemple
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1801418350
 MonoBehaviour:
@@ -9535,7 +9518,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: AccountUsernameExemple
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &2055583152
 MonoBehaviour:

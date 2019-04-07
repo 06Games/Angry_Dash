@@ -787,14 +787,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level:
-    Name: 
-    Author: 
-    Description: 
-    Music: 
-    Data: []
+    name: 
+    description: 
+    author: 
+    background:
+      category: native
+      id: 0
+      color:
+        serializedVersion: 2
+        rgba: 0
+    music:
+      Name: 
+      Artist: 
+      Licence: 
+      URL: 
+    version:
+      number: 
+    respawnMode: 0
+    blocks: []
   FromScene: 
   passThroughArgs: []
-  component: []
   Prefabs:
   - {fileID: 1063887458892150, guid: 32bf6bf4e16da964d87773a275cb9051, type: 3}
   - {fileID: 1063887458892150, guid: 90506414de06ca04da00ffc04afaf8cb, type: 3}
@@ -1418,7 +1430,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: levelRewardCoins
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &430156028
 MonoBehaviour:
@@ -1795,7 +1806,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: levelRestart
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &560339840
 MonoBehaviour:
@@ -3013,7 +3023,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: levelQuit
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1097100373
 MonoBehaviour:
@@ -3114,7 +3123,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: levelFinished
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1150619770
 MonoBehaviour:
@@ -3219,7 +3227,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: levelReward
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1154371119
 MonoBehaviour:
@@ -3570,7 +3577,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: levelPaused
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1327728704
 MonoBehaviour:
@@ -3938,7 +3944,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: levelResume
-  keepIfNotExist: 1
   arg: []
 --- !u!114 &1539524618
 MonoBehaviour:

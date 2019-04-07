@@ -160,7 +160,7 @@ public class Inventory : MonoBehaviour
 
                 if (items[i].price == 0)
                 {
-                    go.GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", "InventoryItemFree", "Free");
+                    go.GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "InventoryItemFree", "Free");
                     go.GetChild(1).GetChild(0).GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
                 }
                 else {

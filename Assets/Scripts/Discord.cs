@@ -180,7 +180,7 @@ public class Discord : MonoBehaviour
         handlers.spectateCallback += SpectateCallback;
         handlers.requestCallback += RequestCallback;
         DiscordRpc.Initialize("470264480786284544", ref handlers, true, "");
-        Presence(LangueAPI.String("native", "discordStarting_title"), "", new Img("default"));
+        Presence(LangueAPI.Get("native", "discordStarting_title", "Starting the game"), "", new Img("default"));
     }
 
     void OnDisable()

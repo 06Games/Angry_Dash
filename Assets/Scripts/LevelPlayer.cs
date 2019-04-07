@@ -33,7 +33,7 @@ public class LevelPlayer : MonoBehaviour
 
     private void Update()
     {
-        nbLancerTxt.text = LangueAPI.StringWithArgument("native", "playerTurn", new string[1] { nbLancer.ToString() }, "[0] Turn");
+        nbLancerTxt.text = LangueAPI.Get("native", "playerTurn", "[0] Turn", nbLancer);
     }
 
     private void Start()
@@ -89,7 +89,7 @@ public class LevelPlayer : MonoBehaviour
         level = item;
         Base.GetChild(3).GetChild(0).GetComponent<Text>().text = level.name; //Sets the level name
         Parse(); //Spawn blocks
-        Discord.Presence(LangueAPI.String("native", "discordPlaying_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("native", "discordPlaying_caption", level.name)), null, -1, 0); //Sets the Discord Infos
+        Discord.Presence(LangueAPI.Get("native", "discordPlaying_title", "Play a level"), "", new DiscordClasses.Img("default", LangueAPI.Get("native", "discordPlaying_caption", "Level : [0]", level.name)), null, -1, 0); //Sets the Discord Infos
     }
 
     void Parse()

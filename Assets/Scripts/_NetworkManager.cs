@@ -79,7 +79,7 @@ public class _NetworkManager : NetworkBehaviour
         StartData();
         mapRequested = false;
 
-        Discord.Presence(LangueAPI.String("native", "discordServer_title"), "", new DiscordClasses.Img("default", LangueAPI.StringWithArgument("native", "discordServer_caption", new string[] { adress, port.ToString() })), null, -1, 0);
+        Discord.Presence(LangueAPI.Get("native", "discordServer_title", "Play in a server"), "", new DiscordClasses.Img("default", LangueAPI.Get("native", "discordServer_caption", "Server : [0]:[1]", adress, port.ToString() )), null, -1, 0);
         History.LvlPlayed(adress + ":" + port, "S", "");
     }
 
@@ -93,13 +93,13 @@ public class _NetworkManager : NetworkBehaviour
 
         if (netMsg.msgType == 33)
         {
-            title = LangueAPI.String("native", "ServerErrorNotResponding_title");
-            subtitle = LangueAPI.String("native", "ServerErrorNotResponding_subtitle");
+            title = LangueAPI.Get("native", "ServerErrorNotResponding_title", "The server is not responding");
+            subtitle = LangueAPI.Get("native", "ServerErrorNotResponding_subtitle", "Try again later\nIf the problem persists, please contact the administrator");
         }
         else
         {
-            title = LangueAPI.String("native", "ServerErrorUnknown_title");
-            subtitle = LangueAPI.StringWithArgument("native", "ServerErrorUnknown_subtitle", netMsg.msgType);
+            title = LangueAPI.Get("native", "ServerErrorUnknown_title", "An error has occurred");
+            subtitle = LangueAPI.Get("native", "ServerErrorUnknown_subtitle", "Error code : [0]", netMsg.msgType);
         }
 
         ErrorPanel.GetChild(0).GetComponent<Text>().text = title;
@@ -122,7 +122,7 @@ public class _NetworkManager : NetworkBehaviour
         for (int i = 0; i < Items.transform.childCount; i++)
             Destroy(Items.transform.GetChild(i).gameObject);
 
-        Discord.Presence(LangueAPI.String("native", "discordHome_title"), "", new DiscordClasses.Img("default"));
+        Discord.Presence(LangueAPI.Get("native", "discordHome_title", "In the home menu"), "", new DiscordClasses.Img("default"));
         LSC.LoadScreen("Home", new string[] { "Play", "Community Servers" });
     }
 

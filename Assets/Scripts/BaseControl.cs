@@ -74,7 +74,7 @@ public class BaseControl : MonoBehaviour
         if (eventSystem.firstSelectedGameObject != null) baseSelectable = eventSystem.firstSelectedGameObject.GetComponent<Selectable>();
 
         if (SceneManager.GetActiveScene().name == "Home")
-            Discord.Presence(LangueAPI.String("native", "discordHome_title"), "", new DiscordClasses.Img("default"));
+            Discord.Presence(LangueAPI.Get("native", "discordHome_title", "In the home menu"), "", new DiscordClasses.Img("default"));
     }
 
     public void SelectButton(Selectable obj)

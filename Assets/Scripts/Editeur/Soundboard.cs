@@ -25,7 +25,6 @@ public class Soundboard : MonoBehaviour
     public GameObject DownloadPanel;
     string labelSpeed = "0 kb/s";
     string labelDownloaded = "0 MB sur 0 MB";
-    public string[] ids;
 
     public GameObject MusicSelectorPanel;
 
@@ -139,16 +138,16 @@ public class Soundboard : MonoBehaviour
         UnityThread.executeInUpdate(() =>
         {
             if (NbChiffreEntier(speed) >= 0 & NbChiffreEntier(speed) < 4)
-                labelSpeed = LangueAPI.StringWithArgument("native", ids[0], new string[1] { Math.Round(speed, 1).ToString() });
+                labelSpeed = LangueAPI.Get("native", "editorSoundBoardDownloadingKB", "[0] KB/s", Math.Round(speed, 1));
             else if (NbChiffreEntier(speed) >= 4)
-                labelSpeed = LangueAPI.StringWithArgument("native", ids[1], new string[1] { Math.Round(speed / 1000, 1).ToString() });
+                labelSpeed = LangueAPI.Get("native", "editorSoundBoardDownloadingMB", "[0] MB/s", Math.Round(speed / 1000, 1));
 
             Transform tr = DownloadPanel.transform.GetChild(0);
             tr.GetComponent<Slider>().value = e.ProgressPercentage; //barre de progression
             tr.GetChild(1).GetComponent<Text>().text = labelDownloaded;
             tr.GetChild(2).GetComponent<Text>().text = labelSpeed;
 
-            labelDownloaded = LangueAPI.StringWithArgument("native", ids[2], new string[2] { (e.BytesReceived / 1024d / 1024d).ToString("0.0"), (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.0") });
+            labelDownloaded = LangueAPI.Get("native", "editorSoundBoardDownloadingStatus", "[0] MB on [1] MB", (e.BytesReceived / 1024d / 1024d).ToString("0.0"), (e.TotalBytesToReceive / 1024d / 1024d).ToString("0.0"));
         });
     }
     int NbChiffreEntier(double d)
@@ -189,8 +188,8 @@ public class Soundboard : MonoBehaviour
 
     public void NewStart()
     {
-        if (editor.level.music == null) Music.text = LangueAPI.StringWithArgument("native", ids[3], new string[1] { "No Music" });
-        else Music.text = LangueAPI.StringWithArgument("native", ids[3], new string[1] { editor.level.music.Name });
+        if (editor.level.music == null) Music.text = LangueAPI.Get("native", "editorSoundBoardActualMusic", "<b> Music :</b> <i> [0] </i>", "No Music" );
+        else Music.text = LangueAPI.Get("native", "editorSoundBoardActualMusic", "<b> Music :</b> <i> [0] </i>", editor.level.music.Name);
 
         if (!Refreshed) RefreshList(false);
         Page(0);
@@ -207,9 +206,9 @@ public class Soundboard : MonoBehaviour
 
         
         if (Song[SongOpened] == editor.level.music)
-            go.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", ids[5]);
-        else go.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", ids[4]);
-        go.GetChild(0).GetChild(3).GetChild(1).GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", ids[6]);
+            go.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "editorSoundBoardChosen", "Chosen");
+        else go.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "editorSoundBoardChoose", "Choose");
+        go.GetChild(0).GetChild(3).GetChild(1).GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "editorSoundBoardPlay", "Play");
 
         bool FileExists = File.Exists(Application.persistentDataPath + "/Musics/" + Song[SongOpened].Artist + " - " + Song[SongOpened].Name);
         go.GetChild(0).GetChild(3).GetChild(0).gameObject.SetActive(!FileExists);
@@ -258,7 +257,7 @@ public class Soundboard : MonoBehaviour
                 MusicPos = mm.GetComponent<AudioSource>().time;
                 mm.Stop();
             }
-            txt.text = LangueAPI.String("native", ids[6]);
+            txt.text = LangueAPI.Get("native", "editorSoundBoardPlay", "Play");
             Play = false;
         }
         else //Fait play
@@ -268,7 +267,7 @@ public class Soundboard : MonoBehaviour
                 menuMusic mm = GameObject.Find("Audio").GetComponent<menuMusic>();
                 mm.LoadUnpackagedMusic(Application.persistentDataPath + "/Musics/" + Song[SongOpened].Artist + " - " + Song[SongOpened].Name, MusicPos);
             }
-            txt.text = LangueAPI.String("native", ids[7]);
+            txt.text = LangueAPI.Get("native", "editorSoundBoardPause", "Pause");
             Play = true;
         }
 
@@ -278,7 +277,7 @@ public class Soundboard : MonoBehaviour
         if (GameObject.Find("Audio") != null)
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
         MusicPos = 0;
-        MusicSelectorPanel.transform.GetChild(3).GetChild(0).GetChild(3).GetChild(1).GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", ids[6]);
+        MusicSelectorPanel.transform.GetChild(3).GetChild(0).GetChild(3).GetChild(1).GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "editorSoundBoardPlay", "Play");
         Play = false;
     }
 
@@ -286,8 +285,8 @@ public class Soundboard : MonoBehaviour
     {
         editor.level.music = Song[SongOpened];
 
-        MusicSelectorPanel.transform.GetChild(3).GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", ids[5]);
-        Music.text = LangueAPI.StringWithArgument("native", ids[3], new string[1] { Song[SongOpened].Name });
+        MusicSelectorPanel.transform.GetChild(3).GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "editorSoundBoardChosen", "Chosen");
+        Music.text = LangueAPI.Get("native", "editorSoundBoardActualMusic", "<b> Music :</b> <i> [0] </i>", Song[SongOpened].Name);
     }
 
     public void Exit()

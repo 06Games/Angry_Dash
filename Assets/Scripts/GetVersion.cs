@@ -6,6 +6,6 @@ using UnityEngine.UI;
 public class GetVersion : MonoBehaviour {
 
     void Start() {
-        GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "gameVersion", new string[1]{Base.GetVersion()});
+        GetComponent<Text>().text = LangueAPI.Get("native", "gameVersion", "v[0]", Base.GetVersion());
 	}
 }

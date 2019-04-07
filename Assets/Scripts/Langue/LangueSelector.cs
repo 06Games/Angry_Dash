@@ -19,7 +19,7 @@ public class LangueSelector : MonoBehaviour
 
     void NewStart()
     {
-        if (string.IsNullOrEmpty(LangueAPI.LangGet()))
+        if (string.IsNullOrEmpty(LangueAPI.selectedLanguage))
             ReloadScene();
 
         if (Langues != null)
@@ -28,7 +28,7 @@ public class LangueSelector : MonoBehaviour
 
         for (int i = 0; i < LangueDispo.Length; i++)
         {
-            if (LangueAPI.LangGet() == LangueDispo[i])
+            if (LangueAPI.selectedLanguage == LangueDispo[i])
                 actuel = i;
         }
     }
@@ -51,8 +51,8 @@ public class LangueSelector : MonoBehaviour
         if (i != actuel)
             actuel = i;
     }
-    public void ReloadScene() { if (LangueAPI.LangGet() == LangueDispo[actuel]) return; Apply(); LS.LoadScreen(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, new string[] { "Settings", "Langues" }); }
-    void Apply() { if (LangueDispo.Length > actuel) LangueAPI.LangSet(LangueDispo[actuel]); else Debug.LogError((actuel + 1) + " is more than the number of language file : " + LangueDispo.Length); }
+    public void ReloadScene() { if (LangueAPI.selectedLanguage == LangueDispo[actuel]) return; Apply(); LS.LoadScreen(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, new string[] { "Settings", "Langues" }); }
+    void Apply() { if (LangueDispo.Length > actuel) LangueAPI.selectedLanguage = LangueDispo[actuel]; else Debug.LogError((actuel + 1) + " is more than the number of language file : " + LangueDispo.Length); }
 
     void GetLangDispo(bool forceUpdate = false)
     {
@@ -77,12 +77,12 @@ public class LangueSelector : MonoBehaviour
             go.gameObject.SetActive(true);
         }
 
-        if (LangueAPI.LangGet() == null)
+        if (LangueAPI.selectedLanguage == null)
             Apply();
 
         for (int i = 0; i < LangueDispo.Length; i++)
         {
-            if (LangueAPI.LangGet() == LangueDispo[i])
+            if (LangueAPI.selectedLanguage == LangueDispo[i])
                 actuel = i;
         }
     }

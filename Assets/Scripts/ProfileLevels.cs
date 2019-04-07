@@ -94,7 +94,7 @@ public class ProfileLevels : MonoBehaviour
             go.GetChild(0).GetComponent<Text>().text = items[i]; //Sets the level's name
             go.GetChild(1).GetComponent<Button>().onClick.AddListener(() => {
                 Transform panel = transform.GetChild(2);
-                panel.GetChild(0).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "ProfileMyLevelsDeleteWarning", items[button], "Are you sure you want to delete [0] ?");
+                panel.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "ProfileMyLevelsDeleteWarning", "Are you sure you want to delete [0] ?", items[button]);
                 panel.GetChild(1).GetComponent<Button>().onClick.AddListener(() => { Delete(button); panel.gameObject.SetActive(false); });
                 panel.gameObject.SetActive(true);
             });

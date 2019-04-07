@@ -38,8 +38,8 @@ public class CommunityServers : MonoBehaviour
 
     public void OnValueChang(InputField IF)
     {
-        if (isInFav(IF.text)) transform.GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersRemove");
-        else transform.GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersAdd");
+        if (isInFav(IF.text)) transform.GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "PlayCommunityServersRemove", "Remove");
+        else transform.GetChild(1).GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "PlayCommunityServersAdd", "Add");
 
         int f = whereIsItInFav(IF.text);
         Transform trans = transform.GetChild(0).GetChild(0).GetChild(0);
@@ -153,8 +153,8 @@ public class CommunityServers : MonoBehaviour
                 int btn = v;
                 go.GetComponent<Button>().onClick.AddListener(() => OpenFavServ(btn));
                 go.GetChild(0).GetComponent<Image>().sprite = DefaultServerIcon;
-                go.GetChild(1).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersSyncing");
-                go.GetChild(2).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersPlayersUnkown");
+                go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "PlayCommunityServersSyncing", "Syncing");
+                go.GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "PlayCommunityServersPlayersUnkown", "?/?");
                 go.GetChild(3).GetComponent<Text>().text = fav[v];
                 go.gameObject.SetActive(true);
             }
@@ -179,8 +179,8 @@ public class CommunityServers : MonoBehaviour
             Client.RegisterHandler(MsgID.GetServerInfo, ServInfoRecup);
 
             go.GetChild(0).GetComponent<Image>().sprite = DefaultServerIcon;
-            go.GetChild(1).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersSyncing");
-            go.GetChild(2).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersPlayersUnkown");
+            go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "PlayCommunityServersSyncing", "Syncing");
+            go.GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "PlayCommunityServersPlayersUnkown", "?/?");
             go.GetChild(3).GetComponent<Text>().text = fav[i];
         }
         else NM.StopClient();
@@ -198,8 +198,8 @@ public class CommunityServers : MonoBehaviour
             RefreshFav(infoActual);
 
         Transform go = transform.GetChild(0).GetChild(0).GetChild(0).GetChild(infoActual + 1);
-        go.GetChild(1).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersError");
-        go.GetChild(2).GetComponent<Text>().text = LangueAPI.String("native", "PlayCommunityServersPlayersUnkown");
+        go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "PlayCommunityServersError", "Error");
+        go.GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "PlayCommunityServersPlayersUnkown", "?/?");
         refreshing = false;
         OnValueChang(transform.GetChild(1).GetChild(0).GetComponent<InputField>());
     }
@@ -211,7 +211,7 @@ public class CommunityServers : MonoBehaviour
         text.LoadImage(msg.icon);
         go.GetChild(0).GetComponent<Image>().sprite = Sprite.Create(text, new Rect(0, 0, text.width, text.height), new Vector2(.5f, .5f));
         go.GetChild(1).GetComponent<Text>().text = msg.Name;
-        go.GetChild(2).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "PlayCommunityServersPlayers", new string[2] { msg.player.ToString(), msg.maxPlayer.ToString() });
+        go.GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "PlayCommunityServersPlayers", "[0]/[1]", msg.player.ToString(), msg.maxPlayer.ToString());
 
         if (!onlyOne)
             RefreshFav(infoActual);

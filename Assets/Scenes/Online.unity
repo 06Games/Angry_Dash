@@ -686,14 +686,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   level:
-    Name: 
-    Author: 
-    Description: 
-    Music: 
-    Data: []
+    name: 
+    description: 
+    author: 
+    background:
+      category: native
+      id: 0
+      color:
+        serializedVersion: 2
+        rgba: 0
+    music:
+      Name: 
+      Artist: 
+      Licence: 
+      URL: 
+    version:
+      number: 
+    respawnMode: 0
+    blocks: []
   FromScene: 
   passThroughArgs: []
-  component: []
   Prefabs:
   - {fileID: 1063887458892150, guid: 32bf6bf4e16da964d87773a275cb9051, type: 3}
   - {fileID: 1063887458892150, guid: 90506414de06ca04da00ffc04afaf8cb, type: 3}
@@ -1780,5 +1792,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: ServerConnecting
-  keepIfNotExist: 1
   arg: []

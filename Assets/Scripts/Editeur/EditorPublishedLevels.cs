@@ -102,7 +102,7 @@ public class EditorPublishedLevels : MonoBehaviour
             go.name = items[i].Name; //Changes the editor gameObject name (useful only for debugging)
 
             go.GetChild(0).GetComponent<Text>().text = items[i].Name; //Sets the level's name
-            go.GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorCommunityLevelsAuthor", items[i].Author, "by [0]"); //Sets the level's author
+            go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsAuthor", "by [0]", items[i].Author); //Sets the level's author
             go.gameObject.SetActive(true);
         }
     }
@@ -125,7 +125,7 @@ public class EditorPublishedLevels : MonoBehaviour
     {
         Transform infos = transform.GetChild(2);
         infos.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text = items[selected].Name;
-        infos.GetChild(0).GetChild(1).GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorCommunityLevelsAuthor", items[selected].Author, "by [0]");
+        infos.GetChild(0).GetChild(1).GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsAuthor", "by [0]", items[selected].Author);
         infos.GetChild(1).GetChild(1).GetComponent<ScrollRect>().content.GetChild(0).GetComponent<Text>().text = items[selected].Description;
 
         WebClient client = new WebClient();
@@ -158,7 +158,7 @@ public class EditorPublishedLevels : MonoBehaviour
                 if (!string.IsNullOrEmpty(comment))
                 {
                     Transform cGO = Instantiate(comments.GetChild(0).gameObject, comments).transform;
-                    cGO.GetChild(0).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorCommunityLevelsInfosCommentHeader", new string[] { user, date.ToString(System.Threading.Thread.CurrentThread.CurrentUICulture) }, "[0] <i><color=grey>[1]</color></i>");
+                    cGO.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsInfosCommentHeader", "[0] <i><color=grey>[1]</color></i>", user, date.ToString(System.Threading.Thread.CurrentThread.CurrentUICulture));
                     cGO.GetChild(1).GetComponent<Text>().text = comment.HtmlDecode();
                     cGO.gameObject.SetActive(true);
                 }
@@ -191,7 +191,7 @@ public class EditorPublishedLevels : MonoBehaviour
                 go.AddComponent<UImage_Reader>().SetID(id).Load();
             }
             stars.parent.GetChild(2).gameObject.SetActive(note != -1);
-            stars.parent.GetChild(2).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorCommunityLevelsInfosStarsCount", note.ToString("0.#"), "[0]/5");
+            stars.parent.GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsInfosStarsCount", "[0]/5", note.ToString("0.#"));
         }
 
         if (!string.IsNullOrEmpty(items[selected].Music))
@@ -199,7 +199,7 @@ public class EditorPublishedLevels : MonoBehaviour
             string[] music = items[selected].Music.Split(new string[] { " - " }, System.StringSplitOptions.None);
             if (music.Length == 2)
             {
-                infos.GetChild(3).GetChild(1).GetComponent<Text>().text = music[1] + "\n" + LangueAPI.StringWithArgument("native", "EditorCommunityLevelsAuthor", music[0], "<color=grey>by [0]</color>");
+                infos.GetChild(3).GetChild(1).GetComponent<Text>().text = music[1] + "\n" + LangueAPI.Get("native", "EditorCommunityLevelsAuthor", "<color=grey>by [0]</color>", music[0]);
                 infos.GetChild(3).GetChild(2).gameObject.SetActive(!File.Exists(Application.persistentDataPath + "/Musics/" + items[selected].Music));
                 infos.GetChild(3).gameObject.SetActive(true);
             }
@@ -280,8 +280,8 @@ public class EditorPublishedLevels : MonoBehaviour
 
         UnityThread.executeInUpdate(() =>
         {
-            string downloaded = LangueAPI.StringWithArgument("native", LangueID[0], new string[] { Actual.ToString("0.0"), Total.ToString("0.0") }, LangueID[1]);
-            string pourcent = LangueAPI.StringWithArgument("native", "downloadStatePercentage", pourcentage.ToString("00"), "[0]%");
+            string downloaded = LangueAPI.Get("native", LangueID[0], LangueID[1], Actual.ToString("0.0"), Total.ToString("0.0"));
+            string pourcent = LangueAPI.Get("native", "downloadStatePercentage", "[0]%", pourcentage.ToString("00"));
 
             Text DownloadInfo = transform.GetChild(2).GetChild(3).GetChild(3).GetComponent<Text>();
             DownloadInfo.gameObject.SetActive(true);
@@ -314,7 +314,7 @@ public class EditorPublishedLevels : MonoBehaviour
         string commentText = "";
         if(userIndex >= 0) commentText = markXML.GetItems("item")[userIndex].GetItem("comment").Value.HtmlDecode();
 
-        panel.GetChild(0).GetChild(1).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorCommunityLevelsInfosCommentWrite", items[currentFile].Name, "Write a Comment\n<size=50><color=grey>about [0]</color></size>");
+        panel.GetChild(0).GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsInfosCommentWrite", "Write a Comment\n<size=50><color=grey>about [0]</color></size>", items[currentFile].Name);
         panel.GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text = commentText;
         panel.gameObject.SetActive(true);
     }

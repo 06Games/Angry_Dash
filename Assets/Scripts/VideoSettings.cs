@@ -73,11 +73,11 @@ public class VideoSettings : MonoBehaviour
             if (value >= 0) _Slider.value = value / 60;
             else _Slider.value = 7;
         }
-        string Text = LangueAPI.StringWithArgument("native", "SettingsVideoFpsLimit", FPS);
+        string Text = LangueAPI.Get("native", "SettingsVideoFpsLimit", "[0] FPS", FPS);
         if (value == 0)
-            Text = LangueAPI.String("native", "SettingsVideoFpsLimitV-Sync");
+            Text = LangueAPI.Get("native", "SettingsVideoFpsLimitV-Sync", "V-Sync");
         else if (FPS == -1)
-            Text = LangueAPI.String("native", "SettingsVideoFpsLimitUnlimited");
+            Text = LangueAPI.Get("native", "SettingsVideoFpsLimitUnlimited", "Unlimited");
         _Slider.transform.GetChild(0).GetComponent<Text>().text = Text;
 
         ConfigAPI.SetInt("video.maxFPSValue", FPS);
@@ -91,9 +91,9 @@ public class VideoSettings : MonoBehaviour
             _Dropdown = GraphicalOptions.GetChild(2).GetComponent<Dropdown>();
             _Dropdown.value = (int)Mathf.Log(value, 2);
             List<Dropdown.OptionData> OD = _Dropdown.options;
-            OD[0].text = LangueAPI.String("native", "SettingsVideoAntiAliasingDisabled");
+            OD[0].text = LangueAPI.Get("native", "SettingsVideoAntiAliasingDisabled", "Disabled");
             for (int i = 1; i < OD.ToArray().Length; i++)
-                OD[i].text = LangueAPI.StringWithArgument("native", "SettingsVideoAntiAliasing", Mathf.Pow(2, i));
+                OD[i].text = LangueAPI.Get("native", "SettingsVideoAntiAliasing", "MSAA [0]x", Mathf.Pow(2, i));
 
             _Dropdown.options = OD;
         }

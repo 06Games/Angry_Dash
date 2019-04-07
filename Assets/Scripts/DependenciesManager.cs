@@ -58,7 +58,7 @@ public class DependenciesManager : MonoBehaviour
         UnityThread.executeInUpdate(() =>
         {
             slider.value = actual / lines.Length;
-            slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "downloadRPNumber", new string[2] { (actual + 1).ToString(), lines.Length.ToString() }, "File : [0] / [1]");
+            slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.Get("native", "downloadRPNumber", "File : [0] / [1]", actual + 1, lines.Length);
         });
 
 
@@ -149,9 +149,9 @@ public class DependenciesManager : MonoBehaviour
 
         UnityThread.executeInUpdate(() =>
         {
-            string speedText = LangueAPI.StringWithArgument("native", SpeedLangueID[0], speed, SpeedLangueID[1]);
-            string downloaded = LangueAPI.StringWithArgument("native", LangueID[0], new string[] { Actual.ToString("0.0"), Total.ToString("0.0") }, LangueID[1]);
-            string pourcent = LangueAPI.StringWithArgument("native", "downloadStatePercentage", pourcentage.ToString("00"), "[0]%");
+            string speedText = LangueAPI.Get("native", SpeedLangueID[0], SpeedLangueID[1], speed);
+            string downloaded = LangueAPI.Get("native", LangueID[0], LangueID[1], Actual.ToString("0.0"), Total.ToString("0.0"));
+            string pourcent = LangueAPI.Get("native", "downloadStatePercentage", "[0]%", pourcentage.ToString("00"));
 
             Text DownloadInfo = slider.transform.GetChild(4).GetComponent<Text>();
             DownloadInfo.gameObject.SetActive(true);

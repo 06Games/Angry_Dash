@@ -150,7 +150,7 @@ public class EditorLevelSelector : MonoBehaviour
 
         //Description
         DescriptionEditMode(false);
-        string Desc = LangueAPI.String("native", "EditorEditInfosDescriptionError", "<color=red>Can not read the description</color>");
+        string Desc = LangueAPI.Get("native", "EditorEditInfosDescriptionError", "<color=red>Can not read the description</color>");
         if (xmlRoot != null) Desc = xmlRoot.GetItem("description").Value;
         infos.GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text = Desc.Format();
 
@@ -334,7 +334,7 @@ public class EditorLevelSelector : MonoBehaviour
         else
         {
             PublishPanel.Array(1);
-            PublishPanel.GO[1].transform.GetChild(0).GetComponent<Text>().text = LangueAPI.StringWithArgument("native", "EditorEditPublishError", Result, "<color=red>Error</color> : [0]");
+            PublishPanel.GO[1].transform.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "EditorEditPublishError", "<color=red>Error</color> : [0]", Result);
         }
     }
 }

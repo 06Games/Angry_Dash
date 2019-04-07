@@ -206,7 +206,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: native
   id: downloadLangWait
-  keepIfNotExist: 1
   arg: []
 --- !u!1 &153814029
 GameObject:
@@ -1000,7 +999,6 @@ MonoBehaviour:
   BigSlider: {fileID: 0}
   SmallSlider: {fileID: 0}
   AudioPrefs: {fileID: 1458537501854406, guid: 2cfcea02e17130a43b3499549985c4a0, type: 3}
-  ButtonSoundOnClick: {fileID: 8300000, guid: 7f487e4748fd40643adb86125a40f81e, type: 3}
   DiscordPref: {fileID: 1650686116138130, guid: 23fa7d3e42dcf5a489750d3576031f1e,
     type: 3}
   Controller: 0

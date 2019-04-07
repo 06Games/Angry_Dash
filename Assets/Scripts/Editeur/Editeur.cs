@@ -98,14 +98,14 @@ public class Editeur : MonoBehaviour
             else
             {
                 actualValue++;
-                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingVersionCheck", "Checking the level version"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingVersionCheck", "Checking the level version"));
                 yield return new WaitForEndOfFrame();
                 string updated = UpdateLevel(fileText, file);
                 level = Level.Infos.Parse(updated);
                 if (updated != fileText) File.WriteAllText(file, updated); //The level was updated, save changes
 
                 actualValue++;
-                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBlocks", "Placing Blocks"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingBlocks", "Placing Blocks"));
                 yield return new WaitForEndOfFrame();
 
                 float each = (int)(level.blocks.Length * 0.25F);
@@ -114,7 +114,7 @@ public class Editeur : MonoBehaviour
                 {
                     if (each > 0 & (int)(i / each) == i / each)
                     {
-                        LvlLoadingStatus(actualValue, maxValue, LangueAPI.StringWithArgument("native", "editorExploreLoadingBlocksStatus", new string[] { i.ToString(), level.blocks.Length.ToString() }, "Placing Blocks : [0]/[1]"));
+                        LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingBlocksStatus", "Placing Blocks : [0]/[1]", i, level.blocks.Length));
                         yield return new WaitForEndOfFrame();
                     }
                     Instance(i);
@@ -124,22 +124,22 @@ public class Editeur : MonoBehaviour
 
 
                 actualValue++;
-                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingBackgrounds", "Caching Backgrounds"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingBackgrounds", "Caching Backgrounds"));
                 yield return new WaitForEndOfFrame();
                 transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this); //Caching Backgrounds
 
                 actualValue++;
-                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingMusics", "Refreshing the list of music"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingMusics", "Refreshing the list of music"));
                 yield return new WaitForEndOfFrame();
                 SoundBoard.RefreshList(); //Refresh musics list
 
 
                 actualValue++;
-                LvlLoadingStatus(actualValue, maxValue, LangueAPI.String("native", "editorExploreLoadingOpen", "Opening Level"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingOpen", "Opening Level"));
                 yield return new WaitForEndOfFrame();
                 OpenCat(-1);
 
-                Discord.Presence(LangueAPI.String("native", "discordEditor_title"), LangueAPI.StringWithArgument("native", "discordEditor_subtitle", level.name), new DiscordClasses.Img("default"));
+                Discord.Presence(LangueAPI.Get("native", "discordEditor_title", "In the editor"), LangueAPI.Get("native", "discordEditor_subtitle", "Editing [0]", level.name), new DiscordClasses.Img("default"));
                 cam.GetComponent<BaseControl>().returnScene = false;
 
                 LvlLoadingActivation(false);
@@ -182,7 +182,7 @@ public class Editeur : MonoBehaviour
 
     private void Start()
     {
-        Discord.Presence(LangueAPI.String("native", "discordEditor_title"), "", new DiscordClasses.Img("default"));
+        Discord.Presence(LangueAPI.Get("native", "discordEditor_title", "In the editor"), "", new DiscordClasses.Img("default"));
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         cam.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, -10);
         cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;
@@ -221,7 +221,7 @@ public class Editeur : MonoBehaviour
         }
 
         transform.GetChild(0).GetChild(6).gameObject.SetActive(ConfigAPI.GetBool("editor.showCoordinates"));
-        transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).GetComponent<InputField>().text = LangueAPI.String("native", "editorLayerAll", "All");
+        transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).GetComponent<InputField>().text = LangueAPI.Get("native", "editorLayerAll", "All");
     }
 
     void Update()
@@ -577,7 +577,7 @@ public class Editeur : MonoBehaviour
         {
             l = l + operation;
             if (l > -2) input.text = l.ToString();
-            else input.text = LangueAPI.String("native", "editorLayerAll", "All");
+            else input.text = LangueAPI.Get("native", "editorLayerAll", "All");
             ChangeDisplayedLayer(input);
         }
         else if (operation > 0)
@@ -588,7 +588,7 @@ public class Editeur : MonoBehaviour
     }
     public void ChangeDisplayedLayer(InputField input)
     {
-        if (!int.TryParse(input.text, out int l) | l < -2) input.text = LangueAPI.String("native", "editorLayerAll", "All");
+        if (!int.TryParse(input.text, out int l) | l < -2) input.text = LangueAPI.Get("native", "editorLayerAll", "All");
         else if (l > 999) input.text = "999";
         ChangeDisplayedLayer(input.text);
     }
