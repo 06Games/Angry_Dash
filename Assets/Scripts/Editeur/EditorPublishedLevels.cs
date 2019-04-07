@@ -8,7 +8,6 @@ using Tools;
 
 public class EditorPublishedLevels : MonoBehaviour
 {
-
     /// <summary> To change scene </summary>
     public LoadingScreenControl loadingScreenControl;
     /// <summary> URL of the community server root </summary>
