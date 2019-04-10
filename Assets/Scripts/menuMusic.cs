@@ -16,9 +16,15 @@ namespace SoundAPI
 
     public class Load
     {
+        string id = null;
+        System.Uri url = null;
         public Load(string _id) { id = _id; }
+        public Load(System.Uri uri) { url = uri; }
 
-        string id = "";
+        bool work = true;
+        public void Cancel() { work = false; }
+
+        public event Tools.BetterEventHandler ReadProgressChanged;
         public event Tools.BetterEventHandler Readable;
         public event Tools.BetterEventHandler Complete;
         public IEnumerator Start(bool storeInCache = true)
@@ -42,14 +48,17 @@ namespace SoundAPI
                     if (!System.IO.File.Exists(filePath)) filePath = Application.persistentDataPath + "/Ressources/default/sounds/" + id + ".ogg";
                 }
 
-                if (System.IO.File.Exists(filePath))
+                if ((id != null & System.IO.File.Exists(filePath)) | url != null)
                 {
 #if UNITY_EDITOR || UNITY_STANDALONE
                     if (FullyLoaded) //If it is necessary to wait for the end of the loading, the native method is more advantageous
                     {
-                        UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip("file:///" + filePath, AudioType.OGGVORBIS);
+                        if(ReadProgressChanged != null) ReadProgressChanged.Invoke(null, new Tools.BetterEventArgs(0F));
+                        if (id != null & url == null) url = new System.Uri("file:///" + filePath);
+                        UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip(url, AudioType.OGGVORBIS);
                         yield return www.SendWebRequest();
                         clip = UnityEngine.Networking.DownloadHandlerAudioClip.GetContent(www);
+                        if (ReadProgressChanged != null) ReadProgressChanged.Invoke(null, new Tools.BetterEventArgs(1F));
                         if (Readable != null) Readable.Invoke(null, new Tools.BetterEventArgs(clip));
                         if (storeInCache & string.IsNullOrEmpty(id)) throw new System.Exception("ID must be set if you want to cache audio");
                         else if (storeInCache) cache.Set(id, clip);
@@ -57,37 +66,70 @@ namespace SoundAPI
                     else //Otherwise, NVorbis offers faster loading chunk by chunk
                     {
 #endif
-                        System.IO.Stream stream = new System.IO.FileStream(filePath, System.IO.FileMode.Open);
                         System.IO.Stream str = new System.IO.MemoryStream();
-                        stream.CopyTo(str);
-                        stream.Close();
-                        using (var vorbis = new NVorbis.VorbisReader(str, true))
+                        if (id != null & url == null)
                         {
-                            var channels = vorbis.Channels; //number of channels
-                            var sampleRate = vorbis.SampleRate; //sampling frequency
-
-                            //create a buffer for reading samples
-                            double bufferLength = 0.2; //the buffer is 200ms long
-                            var readBuffer = new float[(long)(channels * sampleRate * bufferLength)];
-
-                            double sampleLength = sampleRate * vorbis.TotalTime.TotalSeconds;
-                            clip = AudioClip.Create(id, (int)sampleLength, channels, sampleRate, false);
-                            if (Readable != null & !FullyLoaded) Readable.Invoke(null, new Tools.BetterEventArgs(clip));
-                            if (storeInCache & string.IsNullOrEmpty(id)) throw new System.Exception("ID must be set if you want to cache audio");
-                            else if (storeInCache) cache.Set(id, clip);
-
-                            int cnt; //used buffer size
-                            long i = 0; //loop number
-                            while ((cnt = vorbis.ReadSamples(readBuffer, 0, readBuffer.Length)) > 0)
+                            if (ReadProgressChanged != null) ReadProgressChanged.Invoke(null, new Tools.BetterEventArgs(0F));
+                            System.IO.Stream stream = new System.IO.FileStream(filePath, System.IO.FileMode.Open);
+                            stream.CopyTo(str);
+                            stream.Close();
+                            if (ReadProgressChanged != null) ReadProgressChanged.Invoke(null, new Tools.BetterEventArgs(1F));
+                        }
+                        else
+                        {
+                            System.Net.WebClient client = new System.Net.WebClient();
+                            System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                            bool finish = false;
+                            client.DownloadProgressChanged += (sender, e) =>
                             {
-                                yield return null;
-                                int offset = (int)(i * sampleRate * bufferLength);
-                                if (cnt < readBuffer.Length) clip.SetData(Tools.ArrayExtensions.Get(readBuffer, 0, cnt), offset);
-                                else clip.SetData(readBuffer, offset);
-                                i++;
-                            }
+                                if (ReadProgressChanged != null & work)
+                                    ReadProgressChanged.Invoke(null, new Tools.BetterEventArgs(e.ProgressPercentage / 100F));
+                            };
+                            client.DownloadDataCompleted += (sender, e) =>
+                            {
+                                if (!e.Cancelled)
+                                {
+                                    System.IO.Stream stream = new System.IO.MemoryStream(e.Result);
+                                    stream.CopyTo(str);
+                                    stream.Close();
+                                    id = url.AbsoluteUri;
+                                    finish = true;
+                                }
+                            };
+                            client.DownloadDataAsync(url);
+                            yield return new WaitUntil(() => finish | !work);
+                            if (!work) client.CancelAsync();
                         }
 
+                        if (work)
+                        {
+                            using (var vorbis = new NVorbis.VorbisReader(str, true))
+                            {
+                                var channels = vorbis.Channels; //number of channels
+                                var sampleRate = vorbis.SampleRate; //sampling frequency
+
+                                //create a buffer for reading samples
+                                double bufferLength = 0.2; //the buffer is 200ms long
+                                var readBuffer = new float[(long)(channels * sampleRate * bufferLength)];
+
+                                double sampleLength = sampleRate * vorbis.TotalTime.TotalSeconds;
+                                clip = AudioClip.Create(id, (int)sampleLength, channels, sampleRate, false);
+                                if (Readable != null & !FullyLoaded) Readable.Invoke(null, new Tools.BetterEventArgs(clip));
+                                if (storeInCache & string.IsNullOrEmpty(id)) throw new System.Exception("ID must be set if you want to cache audio");
+                                else if (storeInCache) cache.Set(id, clip);
+
+                                int cnt; //used buffer size
+                                long i = 0; //loop number
+                                while ((cnt = vorbis.ReadSamples(readBuffer, 0, readBuffer.Length)) > 0)
+                                {
+                                    yield return null;
+                                    int offset = (int)(i * sampleRate * bufferLength);
+                                    if (cnt < readBuffer.Length) clip.SetData(Tools.ArrayExtensions.Get(readBuffer, 0, cnt), offset);
+                                    else clip.SetData(readBuffer, offset);
+                                    i++;
+                                }
+                            }
+                        }
 #if UNITY_EDITOR || UNITY_STANDALONE
                     }
 #endif
@@ -162,6 +204,7 @@ public class menuMusic : MonoBehaviour
     }
 
     public void Stop() { GetComponent<AudioSource>().Stop(); }
+    public void Pause() { GetComponent<AudioSource>().Pause(); }
     public void Play() { GetComponent<AudioSource>().Play(); }
 
     public void LoadUnpackagedMusic(string path, float timePos = 0)

@@ -182,5 +182,23 @@
 
         public override string ToString() { return FileFormat.XML.Utils.ClassToXML(this); }
         public static SongItem Parse(string data) { return FileFormat.XML.Utils.XMLtoClass<SongItem>(data); }
+
+        public override bool Equals(object obj) { return Equals(obj as SongItem); }
+        public bool Equals(SongItem other)
+        {
+            if (ReferenceEquals(other, null)) return false; //If parameter is null, return false.
+            if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
+            if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
+
+            return Name == other.Name & Artist == other.Artist;
+        }
+        public static bool operator ==(SongItem left, SongItem right)
+        {
+            if (left is null & right is null) return true;
+            else if (left is null | right is null) return false;
+            else return left.Equals(right);
+        }
+        public static bool operator !=(SongItem left, SongItem right) { return !(left == right); }
+        public override int GetHashCode() { return base.GetHashCode(); }
     }
 }

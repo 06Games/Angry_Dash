@@ -65,7 +65,27 @@ namespace Tools
         {
             if (!string.IsNullOrEmpty(s))
             {
-                return s.Replace("\\'", "'")
+                string s2 = s;
+                try
+                {
+                    string[] code = s.Split(new string[] { "&" }, System.StringSplitOptions.None);
+                    string newString = code[0];
+                    if (code.Length > 1)
+                    {
+                        for (int i = 1; i < code.Length; i++)
+                        {
+                            string[] t = s.Split(new string[] { ";" }, System.StringSplitOptions.None);
+                            string c = System.Text.RegularExpressions.Regex.Replace(s, "[^0-9]", "");
+                            newString = newString + code[i].Replace(code[i], System.Char.ConvertFromUtf32(int.Parse(c))) + t[2];
+                        }
+                        s = newString;
+                    }
+
+                    s2 = s;
+                }
+                catch {}
+
+                return s2.Replace("\\'", "'")
                     .Replace("\\\"", "\"")
                     .Replace("!DIESE!", "#");
             }

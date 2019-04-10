@@ -11,7 +11,7 @@ public class Editeur : MonoBehaviour
     Camera cam;
     public LoadingScreenControl LSC;
     public Transform LoadingLevel;
-    public Soundboard SoundBoard;
+    public Background backgroundManager;
     string FromScene = "Home";
 
     [HideInInspector] public string file;
@@ -122,16 +122,10 @@ public class Editeur : MonoBehaviour
                 transform.GetChild(0).gameObject.SetActive(true);
 
 
-
                 actualValue++;
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingBackgrounds", "Caching Backgrounds"));
                 yield return new WaitForEndOfFrame();
-                transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).GetChild(1).GetComponent<Background>().ActualiseFond(this); //Caching Backgrounds
-
-                actualValue++;
-                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingMusics", "Refreshing the list of music"));
-                yield return new WaitForEndOfFrame();
-                SoundBoard.RefreshList(); //Refresh musics list
+                backgroundManager.ActualiseFond(this); //Caching Backgrounds
 
 
                 actualValue++;
@@ -340,8 +334,8 @@ public class Editeur : MonoBehaviour
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         });
 #endif
-        if (NoBlocSelectedPanel.activeInHierarchy & !(!Contenu[3].activeInHierarchy & !Contenu[0].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock.Length == 0)) Contenu[2].GetComponent<Edit>().EnterToEdit();
-        NoBlocSelectedPanel.SetActive(!Contenu[3].activeInHierarchy & !Contenu[0].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock.Length == 0);
+        if (NoBlocSelectedPanel.activeInHierarchy & !(!Contenu[3].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock.Length == 0)) Contenu[2].GetComponent<Edit>().EnterToEdit();
+        NoBlocSelectedPanel.SetActive(!Contenu[3].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock.Length == 0);
         if (SelectedBlock.Length > 0)
         {
             for (int i = 0; i < SelectedBlock.Length; i++)

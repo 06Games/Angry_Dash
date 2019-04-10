@@ -66,6 +66,6 @@ namespace CacheManager
             else return null;
         }
 
-        public bool ValueExist(string id) { return dictionary.ContainsKey(id); }
+        public bool ValueExist(string id) { if (id == null) return false; else return dictionary.ContainsKey(id); }
     }
 }

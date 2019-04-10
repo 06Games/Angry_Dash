@@ -61,10 +61,10 @@ native/GUI/editor/events/0.1
 native/GUI/editor/events/0.2
 native/GUI/editor/events/0.3
 native/GUI/editor/events/0.4
-native/GUI/editor/options/button
 native/GUI/editor/options/background
+native/GUI/editor/options/levelBackground
+native/GUI/editor/options/gameplay
 native/GUI/editor/options/music
-native/GUI/editor/options/respawn
 native/GUI/editor/options/respawn/position
 native/GUI/editor/options/respawn/start
 native/GUI/editor/options/respawn/checkpoint

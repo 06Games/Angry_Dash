@@ -38,7 +38,7 @@ public class BlocColor : MonoBehaviour
         if (gameObject.activeInHierarchy)
         {
             transform.GetChild(0).gameObject.SetActive(!expend);
-            cpExpend.gameObject.SetActive(expend);
+            cpExpend.transform.parent.gameObject.SetActive(expend);
             CP.transform.GetChild(0).GetChild(1).GetComponent<HexColorField>().displayAlpha = true; //Don't include alpha in hex codes
             CP.transform.GetChild(4).GetChild(3).gameObject.SetActive(true); //Sets to RGBA
 
@@ -49,7 +49,7 @@ public class BlocColor : MonoBehaviour
             editeur.bloqueSelect = expend;
             editeur.SelectedBlock = Bloc;
 
-            GameObject BG = cpExpend.transform.GetChild(2).gameObject;
+            GameObject BG = cpExpend.transform.GetChild(0).GetChild(0).gameObject;
             BG.SetActive(true); //Actives preview
             try
             {
@@ -60,8 +60,7 @@ public class BlocColor : MonoBehaviour
         }
         else
         {
-            cpExpend.gameObject.SetActive(expend);
-            cpExpend.transform.GetChild(2).gameObject.SetActive(false);
+            cpExpend.transform.parent.gameObject.SetActive(expend);
             editeur.bloqueSelect = false;
         }
     }
