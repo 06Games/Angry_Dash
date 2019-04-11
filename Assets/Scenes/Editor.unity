@@ -979,7 +979,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: editor.options.Music.title
+  id: editor.options.music.title
   arg: []
 --- !u!114 &18482137
 MonoBehaviour:
@@ -4879,6 +4879,7 @@ GameObject:
   - component: {fileID: 196130152}
   - component: {fileID: 196130154}
   - component: {fileID: 196130153}
+  - component: {fileID: 196130155}
   m_Layer: 5
   m_Name: Placeholder
   m_TagString: Untagged
@@ -4938,7 +4939,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Hex Code
+  m_Text: Hexadecimal Code
 --- !u!222 &196130154
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4947,6 +4948,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 196130151}
   m_CullTransparentMesh: 0
+--- !u!114 &196130155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196130151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  category: native
+  id: editor.options.background.hexCode
+  arg: []
 --- !u!1 &197704639
 GameObject:
   m_ObjectHideFlags: 0
@@ -5228,6 +5244,7 @@ GameObject:
   - component: {fileID: 204252744}
   - component: {fileID: 204252746}
   - component: {fileID: 204252745}
+  - component: {fileID: 204252747}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -5267,7 +5284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -5296,6 +5313,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 204252743}
   m_CullTransparentMesh: 0
+--- !u!114 &204252747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 204252743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  category: native
+  id: editor.options.music.details.download
+  arg: []
 --- !u!1 &206698786
 GameObject:
   m_ObjectHideFlags: 0
@@ -5389,8 +5421,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
-    m_Right: 0
+    m_Left: 25
+    m_Right: 25
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 7
@@ -8195,6 +8227,7 @@ GameObject:
   - component: {fileID: 364204806}
   - component: {fileID: 364204805}
   - component: {fileID: 364204804}
+  - component: {fileID: 364204807}
   m_Layer: 5
   m_Name: LeftText
   m_TagString: Untagged
@@ -8283,6 +8316,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 364204802}
   m_CullTransparentMesh: 0
+--- !u!114 &364204807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364204802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  category: native
+  id: editor.options.background.G
+  arg: []
 --- !u!1 &366116554
 GameObject:
   m_ObjectHideFlags: 0
@@ -8912,6 +8960,7 @@ GameObject:
   - component: {fileID: 400854939}
   - component: {fileID: 400854941}
   - component: {fileID: 400854940}
+  - component: {fileID: 400854942}
   m_Layer: 5
   m_Name: Handle
   m_TagString: Untagged
@@ -8951,14 +9000,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6886792, g: 0.6886792, b: 0.6886792, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8975,6 +9024,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 400854938}
   m_CullTransparentMesh: 0
+--- !u!114 &400854942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 400854938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/playLoad
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &401254513
 GameObject:
   m_ObjectHideFlags: 0
@@ -9350,6 +9414,7 @@ GameObject:
   - component: {fileID: 421897121}
   - component: {fileID: 421897120}
   - component: {fileID: 421897119}
+  - component: {fileID: 421897122}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -9444,7 +9509,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 451eba4e9b8932144be1a9ee94ace17f, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9461,6 +9526,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 421897117}
   m_CullTransparentMesh: 0
+--- !u!114 &421897122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421897117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/downloadBg
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &423224411
 GameObject:
   m_ObjectHideFlags: 0
@@ -10096,6 +10176,7 @@ GameObject:
   - component: {fileID: 437961730}
   - component: {fileID: 437961732}
   - component: {fileID: 437961731}
+  - component: {fileID: 437961733}
   m_Layer: 5
   m_Name: Fill
   m_TagString: Untagged
@@ -10135,15 +10216,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3301887, g: 0.3301887, b: 0.3301887, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: bab8170c8c1c6d44ea1c6199ffc77bbf, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -10159,6 +10240,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 437961729}
   m_CullTransparentMesh: 0
+--- !u!114 &437961733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 437961729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: 
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &443652314
 GameObject:
   m_ObjectHideFlags: 0
@@ -10783,8 +10879,9 @@ GameObject:
   - component: {fileID: 478305840}
   - component: {fileID: 478305839}
   - component: {fileID: 478305838}
+  - component: {fileID: 478305842}
   m_Layer: 5
-  m_Name: InputField
+  m_Name: Hex Code
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10843,7 +10940,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -10902,14 +10999,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.2205882, g: 0.2205882, b: 0.2205882, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 10917, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10926,6 +11023,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 478305836}
   m_CullTransparentMesh: 0
+--- !u!114 &478305842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 478305836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/levelBackground/hexCode
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &479743095
 GameObject:
   m_ObjectHideFlags: 0
@@ -11115,8 +11227,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 22.5}
-  m_SizeDelta: {x: -30, y: -75}
+  m_AnchoredPosition: {x: -67.5, y: 22.5}
+  m_SizeDelta: {x: -165, y: -75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &481415276
 MonoBehaviour:
@@ -12702,10 +12814,10 @@ RectTransform:
   m_Father: {fileID: 896241232}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 175}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 249.5, y: -438.5}
+  m_SizeDelta: {x: 499, y: 175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &535726468
 MonoBehaviour:
@@ -12874,6 +12986,7 @@ GameObject:
   - component: {fileID: 539444284}
   - component: {fileID: 539444283}
   - component: {fileID: 539444282}
+  - component: {fileID: 539444285}
   m_Layer: 5
   m_Name: Choose
   m_TagString: Untagged
@@ -12919,7 +13032,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -12974,7 +13087,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 451eba4e9b8932144be1a9ee94ace17f, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12991,6 +13104,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 539444280}
   m_CullTransparentMesh: 0
+--- !u!114 &539444285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 539444280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/choose
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &544347650
 GameObject:
   m_ObjectHideFlags: 0
@@ -13147,7 +13275,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: EditorCommunityLevelsFilter
+  id: editor.options.music.search
   arg: []
 --- !u!222 &548163740
 CanvasRenderer:
@@ -14722,7 +14850,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: editorMenuOptions
+  id: editor.options.title
   arg: []
 --- !u!1 &622332147
 GameObject:
@@ -15160,7 +15288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/editor/options/gameplay
+  baseID: native/GUI/editor/options/playingRules
   TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!114 &640799038
@@ -16039,7 +16167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: EditorCommunityLevelsSortZToA
+  id: editor.options.music.sort.ZtoA
   arg: []
 --- !u!114 &667478549
 MonoBehaviour:
@@ -17893,7 +18021,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 816, y: -137.5}
+  m_AnchoredPosition: {x: 815.91675, y: -137.5}
   m_SizeDelta: {x: 1631.8335, y: 275}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &754767318
@@ -18035,7 +18163,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 273.41797, y: -75}
+  m_AnchoredPosition: {x: 273.41675, y: -75}
   m_SizeDelta: {x: 160, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &764210990
@@ -18111,6 +18239,7 @@ GameObject:
   - component: {fileID: 765428464}
   - component: {fileID: 765428463}
   - component: {fileID: 765428462}
+  - component: {fileID: 765428465}
   m_Layer: 5
   m_Name: LeftText
   m_TagString: Untagged
@@ -18199,6 +18328,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 765428460}
   m_CullTransparentMesh: 0
+--- !u!114 &765428465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765428460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  category: native
+  id: editor.options.background.R
+  arg: []
 --- !u!1 &771784161
 GameObject:
   m_ObjectHideFlags: 0
@@ -18246,6 +18390,7 @@ GameObject:
   - component: {fileID: 774416268}
   - component: {fileID: 774416270}
   - component: {fileID: 774416269}
+  - component: {fileID: 774416271}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -18285,7 +18430,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -18314,6 +18459,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 774416267}
   m_CullTransparentMesh: 0
+--- !u!114 &774416271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 774416267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  category: native
+  id: editor.options.music.details.choose
+  arg: []
 --- !u!1 &785808253
 GameObject:
   m_ObjectHideFlags: 0
@@ -18914,6 +19074,7 @@ GameObject:
   - component: {fileID: 815804306}
   - component: {fileID: 815804305}
   - component: {fileID: 815804304}
+  - component: {fileID: 815804307}
   m_Layer: 5
   m_Name: Z - A
   m_TagString: Untagged
@@ -18959,7 +19120,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -19031,6 +19192,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 815804302}
   m_CullTransparentMesh: 0
+--- !u!114 &815804307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815804302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/sort
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &824730731
 GameObject:
   m_ObjectHideFlags: 0
@@ -19089,7 +19265,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 6ff1673b66dc61d4898306d0e0247c7a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4f020ee0ff43fdd408036a3602fd303b, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -21813,6 +21989,7 @@ GameObject:
   - component: {fileID: 916461750}
   - component: {fileID: 916461749}
   - component: {fileID: 916461748}
+  - component: {fileID: 916461751}
   m_Layer: 5
   m_Name: LeftText
   m_TagString: Untagged
@@ -21901,6 +22078,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 916461746}
   m_CullTransparentMesh: 0
+--- !u!114 &916461751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916461746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  category: native
+  id: editor.options.background.B
+  arg: []
 --- !u!1 &921523296
 GameObject:
   m_ObjectHideFlags: 0
@@ -22819,7 +23011,7 @@ GameObject:
   - component: {fileID: 966169488}
   - component: {fileID: 966169489}
   m_Layer: 5
-  m_Name: Gameplay
+  m_Name: Playing Rules
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26375,7 +26567,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1138486826
 RectTransform:
   m_ObjectHideFlags: 0
@@ -26708,6 +26900,7 @@ GameObject:
   - component: {fileID: 1149734598}
   - component: {fileID: 1149734597}
   - component: {fileID: 1149734596}
+  - component: {fileID: 1149734599}
   m_Layer: 5
   m_Name: Template
   m_TagString: Untagged
@@ -26753,7 +26946,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -26790,7 +26983,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.3602941, g: 0.3602941, b: 0.3602941, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -26814,6 +27007,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1149734594}
   m_CullTransparentMesh: 0
+--- !u!114 &1149734599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1149734594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/levelBackground/choose
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1155064842
 GameObject:
   m_ObjectHideFlags: 0
@@ -27515,6 +27723,7 @@ GameObject:
   - component: {fileID: 1187155401}
   - component: {fileID: 1187155400}
   - component: {fileID: 1187155399}
+  - component: {fileID: 1187155402}
   m_Layer: 5
   m_Name: Exit
   m_TagString: Untagged
@@ -27559,7 +27768,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -27642,6 +27851,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1187155397}
   m_CullTransparentMesh: 0
+--- !u!114 &1187155402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1187155397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/exit
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1192801878
 GameObject:
   m_ObjectHideFlags: 0
@@ -28469,6 +28693,7 @@ GameObject:
   - component: {fileID: 1225235824}
   - component: {fileID: 1225235823}
   - component: {fileID: 1225235822}
+  - component: {fileID: 1225235825}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -28508,12 +28733,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.72794116, g: 0.72794116, b: 0.72794116, a: 1}
@@ -28596,6 +28821,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1225235820}
   m_CullTransparentMesh: 0
+--- !u!114 &1225235825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1225235820}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/exit
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1233304037
 GameObject:
   m_ObjectHideFlags: 0
@@ -29235,7 +29475,7 @@ GameObject:
   - component: {fileID: 1276257803}
   - component: {fileID: 1276257802}
   m_Layer: 5
-  m_Name: Gameplay
+  m_Name: Playing Rules
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29257,10 +29497,10 @@ RectTransform:
   m_Father: {fileID: 896241232}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 175}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 249.5, y: -263.5}
+  m_SizeDelta: {x: 499, y: 175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1276257802
 MonoBehaviour:
@@ -32116,6 +32356,7 @@ GameObject:
   - component: {fileID: 1414369821}
   - component: {fileID: 1414369820}
   - component: {fileID: 1414369819}
+  - component: {fileID: 1414369822}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -32227,6 +32468,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1414369817}
   m_CullTransparentMesh: 0
+--- !u!114 &1414369822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414369817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/playBg
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1414476020
 GameObject:
   m_ObjectHideFlags: 0
@@ -33388,6 +33644,7 @@ GameObject:
   - component: {fileID: 1467516386}
   - component: {fileID: 1467516385}
   - component: {fileID: 1467516387}
+  - component: {fileID: 1467516389}
   m_Layer: 5
   m_Name: Search
   m_TagString: Untagged
@@ -33435,7 +33692,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -33549,6 +33806,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1467516383}
   m_CullTransparentMesh: 0
+--- !u!114 &1467516389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1467516383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/searchBar
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1471496321
 GameObject:
   m_ObjectHideFlags: 0
@@ -34824,7 +35096,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 816, y: -75}
+  m_AnchoredPosition: {x: 815.91675, y: -75}
   m_SizeDelta: {x: 1631.8335, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1526829144
@@ -35225,6 +35497,7 @@ GameObject:
   - component: {fileID: 1551624711}
   - component: {fileID: 1551624710}
   - component: {fileID: 1551624709}
+  - component: {fileID: 1551624712}
   m_Layer: 5
   m_Name: A - Z
   m_TagString: Untagged
@@ -35270,7 +35543,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -35342,6 +35615,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1551624707}
   m_CullTransparentMesh: 0
+--- !u!114 &1551624712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551624707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/sort
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1552170207
 GameObject:
   m_ObjectHideFlags: 0
@@ -36056,10 +36344,10 @@ RectTransform:
   m_Father: {fileID: 896241232}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 175}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 249.5, y: -88.5}
+  m_SizeDelta: {x: 499, y: 175}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1588053036
 GameObject:
@@ -36266,6 +36554,7 @@ GameObject:
   - component: {fileID: 1595452768}
   - component: {fileID: 1595452770}
   - component: {fileID: 1595452769}
+  - component: {fileID: 1595452771}
   m_Layer: 5
   m_Name: Choosen
   m_TagString: Untagged
@@ -36329,6 +36618,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1595452767}
   m_CullTransparentMesh: 0
+--- !u!114 &1595452771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1595452767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/choosen
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1599042664
 GameObject:
   m_ObjectHideFlags: 0
@@ -36639,7 +36943,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/editor/options/respawn/position
+  baseID: native/GUI/editor/options/playingRules/position
   TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &1621138531
@@ -37856,6 +38160,7 @@ GameObject:
   - component: {fileID: 1673163975}
   - component: {fileID: 1673163974}
   - component: {fileID: 1673163973}
+  - component: {fileID: 1673163976}
   m_Layer: 5
   m_Name: Play Button
   m_TagString: Untagged
@@ -37900,7 +38205,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -37972,6 +38277,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1673163971}
   m_CullTransparentMesh: 0
+--- !u!114 &1673163976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1673163971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/play
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1674623785
 GameObject:
   m_ObjectHideFlags: 0
@@ -38499,6 +38819,7 @@ GameObject:
   - component: {fileID: 1695783982}
   - component: {fileID: 1695783984}
   - component: {fileID: 1695783983}
+  - component: {fileID: 1695783985}
   m_Layer: 5
   m_Name: Handle
   m_TagString: Untagged
@@ -38545,8 +38866,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 9ce4d486b94782045a9088ae9c205474, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -38562,6 +38883,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1695783981}
   m_CullTransparentMesh: 0
+--- !u!114 &1695783985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1695783981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/downloadState
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1701464416
 GameObject:
   m_ObjectHideFlags: 0
@@ -39005,7 +39341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: EditorCommunityLevelsSortAToZ
+  id: editor.options.music.sort.AtoZ
   arg: []
 --- !u!114 &1719275394
 MonoBehaviour:
@@ -39650,7 +39986,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -0.000015258789}
-  m_SizeDelta: {x: 0, y: 150}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1743023223
 MonoBehaviour:
@@ -40804,7 +41140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: editor.options.gameplay.title
+  id: editor.options.playingRules.title
   arg: []
 --- !u!114 &1794377605
 MonoBehaviour:
@@ -40839,7 +41175,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Gameplay
+  m_Text: Playing Rules
 --- !u!222 &1794377606
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -41860,7 +42196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: editorMenuOptionRespawnMode
+  id: editor.options.playingRules.respawnMode
   arg: []
 --- !u!114 &1844159768
 MonoBehaviour:
@@ -41916,8 +42252,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: 30}
-  m_SizeDelta: {x: -30, y: 40}
+  m_AnchoredPosition: {x: -67.5, y: 30}
+  m_SizeDelta: {x: -165, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1847259140
 MonoBehaviour:
@@ -44645,7 +44981,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/editor/options/respawn/start
+  baseID: native/GUI/editor/options/playingRules/start
   TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &1949586181
@@ -46242,7 +46578,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/editor/options/respawn/checkpoint
+  baseID: native/GUI/editor/options/playingRules/checkpoint
   TextConfiguration: 1
   Type: 00000000000000000000000000000000
 --- !u!1 &1992997846
@@ -46500,7 +46836,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 815.91797, y: -75}
+  m_AnchoredPosition: {x: 815.91675, y: -75}
   m_SizeDelta: {x: 875, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2010574892
@@ -47262,7 +47598,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2037758011
 RectTransform:
   m_ObjectHideFlags: 0
@@ -48986,6 +49322,7 @@ GameObject:
   - component: {fileID: 2126157180}
   - component: {fileID: 2126157179}
   - component: {fileID: 2126157178}
+  - component: {fileID: 2126157181}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -49030,7 +49367,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -49102,6 +49439,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2126157176}
   m_CullTransparentMesh: 0
+--- !u!114 &2126157181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2126157176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/options/music/searchBtn
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &2130432370
 GameObject:
   m_ObjectHideFlags: 0

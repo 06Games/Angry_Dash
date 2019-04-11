@@ -5586,6 +5586,7 @@ GameObject:
   - component: {fileID: 196453075}
   - component: {fileID: 196453074}
   - component: {fileID: 196453073}
+  - component: {fileID: 196453077}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -5642,12 +5643,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 2099335642}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.72794116, g: 0.72794116, b: 0.72794116, a: 1}
@@ -5730,6 +5731,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 196453071}
   m_CullTransparentMesh: 0
+--- !u!114 &196453077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196453071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/settingsMenu/exit
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &196469468
 GameObject:
   m_ObjectHideFlags: 0
@@ -31153,6 +31169,7 @@ GameObject:
   - component: {fileID: 1208507185}
   - component: {fileID: 1208507183}
   - component: {fileID: 1208507184}
+  - component: {fileID: 1208507188}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -31173,12 +31190,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.72794116, g: 0.72794116, b: 0.72794116, a: 1}
@@ -31297,6 +31314,21 @@ RectTransform:
   m_AnchoredPosition: {x: -75, y: 0}
   m_SizeDelta: {x: 90, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1208507188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208507182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/inventoryMenu/exit
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1210204840
 GameObject:
   m_ObjectHideFlags: 0
@@ -45900,6 +45932,7 @@ GameObject:
   - component: {fileID: 1803796204}
   - component: {fileID: 1803796203}
   - component: {fileID: 1803796202}
+  - component: {fileID: 1803796206}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -45956,12 +45989,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.72794116, g: 0.72794116, b: 0.72794116, a: 1}
@@ -46044,6 +46077,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1803796200}
   m_CullTransparentMesh: 0
+--- !u!114 &1803796206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1803796200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/profileMenu/exit
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1805168041
 GameObject:
   m_ObjectHideFlags: 0
@@ -53338,6 +53386,7 @@ GameObject:
   - component: {fileID: 2070902089}
   - component: {fileID: 2070902088}
   - component: {fileID: 2070902087}
+  - component: {fileID: 2070902091}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -53394,12 +53443,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 2099335642}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.72794116, g: 0.72794116, b: 0.72794116, a: 1}
@@ -53482,6 +53531,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2070902085}
   m_CullTransparentMesh: 0
+--- !u!114 &2070902091
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2070902085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/playMenu/exit
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &2072678796
 GameObject:
   m_ObjectHideFlags: 0
@@ -54522,6 +54586,7 @@ GameObject:
   - component: {fileID: 2100826117}
   - component: {fileID: 2100826116}
   - component: {fileID: 2100826115}
+  - component: {fileID: 2100826119}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -54578,12 +54643,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 4
+    m_Mode: 3
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 2099335642}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.72794116, g: 0.72794116, b: 0.72794116, a: 1}
@@ -54666,6 +54731,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2100826113}
   m_CullTransparentMesh: 0
+--- !u!114 &2100826119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100826113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editorMenu/exit
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &2109370090
 GameObject:
   m_ObjectHideFlags: 0

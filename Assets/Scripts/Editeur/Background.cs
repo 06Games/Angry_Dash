@@ -39,9 +39,7 @@ public class Background : MonoBehaviour
         {
             Transform trans = bgContent.GetChild(i);
             trans.GetChild(0).GetComponent<Image>().color = bgColor;
-
-            if (i - 1 == Selected) trans.GetComponent<Image>().color = new Color32(210, 210, 210, 255);
-            else trans.GetComponent<Image>().color = new Color32(92, 92, 92, 255);
+            trans.GetComponent<Button>().interactable = i - 1 != Selected;
         }
         if (Selected >= 0 & Selected < sp.Length)
         {

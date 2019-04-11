@@ -102,7 +102,7 @@ public class EditorMusicSelector : MonoBehaviour
             go.name = items[i].Name; //Changes the editor gameObject name (useful only for debugging)
 
             go.GetChild(0).GetComponent<Text>().text = items[i].Name; //Sets the music's name
-            go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsAuthor", "by [0]", items[i].Artist); //Sets the music's artist
+            go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "editor.options.music.artist", "<color=grey>by [0]</color>", items[i].Artist); //Sets the music's artist
             go.GetChild(2).gameObject.SetActive(Editor.level.music == items[i]);
             go.gameObject.SetActive(true);
         }
@@ -125,7 +125,7 @@ public class EditorMusicSelector : MonoBehaviour
     public void Select(int selected)
     {
         Transform infos = transform.GetChild(2);
-        infos.GetChild(0).GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "editor.options.music.title", "[0]\n<color=grey><size=50>by [1]</size></color>", items[selected].Name, items[selected].Artist);
+        infos.GetChild(0).GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "editor.options.music.details.infos", "[0]\n<color=grey><size=50>by [1]</size></color>", items[selected].Name, items[selected].Artist);
 
         WebClient c = new WebClient();
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
