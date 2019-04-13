@@ -83,7 +83,7 @@ namespace Tools
 
                     s2 = s;
                 }
-                catch {}
+                catch { }
 
                 return s2.Replace("\\'", "'")
                     .Replace("\\\"", "\"")
@@ -299,6 +299,12 @@ namespace Tools
     {
         public static Quaternion SetEuler(float x, float y, float z = 0) { return SetEuler(new Vector3(x, y, z)); }
         public static Quaternion SetEuler(Vector3 vector) { return new Quaternion { eulerAngles = vector }; }
+    }
+
+    public static class RectExtensions
+    {
+        public static void Set(this Rect output, Rect input) { output.Set(input.x, input.y, input.width, input.height); }
+        public static void Set(this Rect output, Vector2 offset, Vector2 size) { output.Set(offset.x, offset.y, size.x, size.y); }
     }
 
     public static class ColorExtensions

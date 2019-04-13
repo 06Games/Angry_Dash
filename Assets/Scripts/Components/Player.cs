@@ -90,11 +90,17 @@ public class Player : MonoBehaviour
             Inventory.xmlDefault = xml;
         }
 
+#if UNITY_ANDROID || UNITY_IOS
+        float size = 0.3F * Screen.height;
+#else
+        float size = 0.2F * Screen.height;
+#endif
+        JoyStick.GetComponent<RectTransform>().sizeDelta = new Vector2(size, size);
+        Rect rect = JoyStick.GetComponent<RectTransform>().rect;
+        joystickOffset = new Vector2((rect.width * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2,
+        (rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
 
         vitesse = 1;
-        joystickOffset = new Vector2((JoyStick.GetComponent<RectTransform>().rect.width * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2,
-            (JoyStick.GetComponent<RectTransform>().rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
-
         PositionInitiale = transform.position;
     }
 

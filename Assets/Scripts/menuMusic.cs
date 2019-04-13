@@ -53,7 +53,7 @@ namespace SoundAPI
 #if UNITY_EDITOR || UNITY_STANDALONE
                     if (FullyLoaded) //If it is necessary to wait for the end of the loading, the native method is more advantageous
                     {
-                        if(ReadProgressChanged != null) ReadProgressChanged.Invoke(null, new Tools.BetterEventArgs(0F));
+                        if (ReadProgressChanged != null) ReadProgressChanged.Invoke(null, new Tools.BetterEventArgs(0F));
                         if (id != null & url == null) url = new System.Uri("file:///" + filePath);
                         UnityEngine.Networking.UnityWebRequest www = UnityEngine.Networking.UnityWebRequestMultimedia.GetAudioClip(url, AudioType.OGGVORBIS);
                         yield return www.SendWebRequest();
