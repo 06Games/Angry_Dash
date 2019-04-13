@@ -61,7 +61,7 @@ namespace GooglePlayGames
             mImageLoading = false;
         }
 
-        #region IUserProfile implementation
+#region IUserProfile implementation
 
         public string userName
         {
@@ -110,7 +110,7 @@ namespace GooglePlayGames
             }
         }
 
-        #endregion
+#endregion
 
         public string AvatarURL
         {

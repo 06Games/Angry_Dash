@@ -30,9 +30,9 @@ namespace GooglePlayGames.OurUtils
         {
             get
             {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
                 return false;
-    #else
+#else
                 var up = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
                 var ca = up.GetStatic<AndroidJavaObject>("currentActivity");
                 var packageManager = ca.Call<AndroidJavaObject>("getPackageManager");
@@ -49,7 +49,7 @@ namespace GooglePlayGames.OurUtils
                 }
 
                 return launchIntent != null;
-    #endif
+#endif
             }
         }
   }

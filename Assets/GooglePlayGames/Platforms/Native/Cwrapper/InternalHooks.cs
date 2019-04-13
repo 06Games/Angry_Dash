@@ -28,11 +28,11 @@ namespace GooglePlayGames.Native.Cwrapper
                 HandleRef builder, string unity_version);
 
 
-        #if UNITY_ANDROID
+#if UNITY_ANDROID
         [DllImport(SymbolLocation.NativeSymbolLocation)]
         internal static extern IntPtr InternalHooks_GetApiClient(
                 HandleRef services);
-        #endif
+#endif
     }
 }
 #endif

@@ -55,7 +55,7 @@ namespace GooglePlayGames.OurUtils
         {
             if (debugLogEnabled)
             {
-                PlayGamesHelperObject.RunOnGameThread(()=>
+                PlayGamesHelperObject.RunOnGameThread(() =>
                   Debug.Log(ToLogMessage(string.Empty, "DEBUG", msg)));
             }
         }
@@ -64,7 +64,7 @@ namespace GooglePlayGames.OurUtils
         {
             if (warningLogEnabled)
             {
-                PlayGamesHelperObject.RunOnGameThread(()=>
+                PlayGamesHelperObject.RunOnGameThread(() =>
                   Debug.LogWarning(ToLogMessage("!!!", "WARNING", msg)));
             }
         }

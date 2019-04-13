@@ -16,7 +16,7 @@
 
 namespace GooglePlayGames.BasicApi.Multiplayer
 {
-// move inside the namespace so the namespace is declared if not using GPGS
+    // move inside the namespace so the namespace is declared if not using GPGS
 #if UNITY_ANDROID
   using System;
   using System.Collections.Generic;
@@ -218,5 +218,5 @@ namespace GooglePlayGames.BasicApi.Multiplayer
     /// <param name="invitationId">Invitation id to decline.</param>
     void DeclineInvitation(string invitationId);
   }
-    #endif
+#endif
 }

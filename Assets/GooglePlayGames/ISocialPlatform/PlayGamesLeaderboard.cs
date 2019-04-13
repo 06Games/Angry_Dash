@@ -41,7 +41,7 @@ namespace GooglePlayGames
             mId = id;
         }
 
-        #region ILeaderboard implementation
+#region ILeaderboard implementation
 
         public void SetUserFilter(string[] userIDs)
         {
@@ -147,7 +147,7 @@ namespace GooglePlayGames
             }
         }
 
-        #endregion
+#endregion
 
         internal bool SetFromData(LeaderboardScoreData data)
         {

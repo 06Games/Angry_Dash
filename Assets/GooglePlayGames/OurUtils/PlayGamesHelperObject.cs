@@ -88,7 +88,7 @@ namespace GooglePlayGames.OurUtils
         {
             if (instance != null)
             {
-                RunOnGameThread(()=>instance.StartCoroutine(action));
+                RunOnGameThread(() => instance.StartCoroutine(action));
             }
         }
 
@@ -111,7 +111,7 @@ namespace GooglePlayGames.OurUtils
             }
         }
 
-         public void Update()
+        public void Update()
         {
             if (sIsDummy || sQueueEmpty)
             {
