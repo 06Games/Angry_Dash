@@ -23,9 +23,9 @@ public class RessourcePackLoader : MonoBehaviour
             {
                 string baseID = ids[i].Replace("\r", "");
 
-                FileFormat.JSON.JSON json = new FileFormat.JSON.JSON("");
+                FileFormat.JSON json = new FileFormat.JSON("");
                 string jsonID = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/" + baseID + ".json";
-                if (File.Exists(jsonID)) json = new FileFormat.JSON.JSON(File.ReadAllText(jsonID));
+                if (File.Exists(jsonID)) json = new FileFormat.JSON(File.ReadAllText(jsonID));
                 Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.Sprite_API.Parse(baseID, json);
 
                 for (int f = 0; f < 4; f++)

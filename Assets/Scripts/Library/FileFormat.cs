@@ -6,35 +6,25 @@ using System.Linq;
 
 namespace FileFormat
 {
-    namespace JSON
+    public class JSON
     {
-        public class JSON
+        public Newtonsoft.Json.Linq.JObject jToken;
+        public JSON(string plainText)
         {
-            public Newtonsoft.Json.Linq.JObject jObject;
-            public JSON(string plainText)
+            if (!string.IsNullOrEmpty(plainText))
             {
-                if (!string.IsNullOrEmpty(plainText))
-                {
-                    try { jObject = Newtonsoft.Json.Linq.JObject.Parse(plainText); }
-                    catch (System.Exception e) { Debug.LogError("Error with:\n" + plainText + "\nError details:\n" + e.Message); }
-                }
+                try { jToken = Newtonsoft.Json.Linq.JObject.Parse(plainText); }
+                catch (System.Exception e) { Debug.LogError("Error with:\n" + plainText + "\nError details:\n" + e.Message); }
             }
-
-            public Category GetCategory(string token) { if (jObject == null) return new Category(null); else return new Category(jObject.SelectToken(token)); }
         }
+        public JSON(Newtonsoft.Json.Linq.JToken token) { jToken = (Newtonsoft.Json.Linq.JObject)token; }
 
-        public class Category
-        {
-            Newtonsoft.Json.Linq.JToken jToken;
-            public Category(Newtonsoft.Json.Linq.JToken token) { jToken = token; }
+        public JSON GetCategory(string token) { if (jToken == null) return new JSON(null); else return new JSON(jToken.SelectToken(token)); }
+        public void Delete() { if (jToken != null) jToken.Remove(); }
+        public bool ContainsValues { get { if (jToken == null) return false; else return jToken.HasValues; } }
 
-            public Category GetCategory(string token) { if (jToken == null) return new Category(null); else return new Category(jToken.SelectToken(token)); }
-            public void Delete() { if (jToken != null) jToken.Remove(); }
-            public bool ContainsValues { get { if (jToken == null) return false; else return jToken.HasValues; } }
-
-            public T Value<T>(string value) { return jToken.Value<T>(value); }
-            public bool ValueExist(string value) { if (jToken == null) return false; else return jToken.Value<string>(value) != null; }
-        }
+        public T Value<T>(string value) { return jToken.Value<T>(value); }
+        public bool ValueExist(string value) { if (jToken == null) return false; else return jToken.Value<string>(value) != null; }
     }
 
     namespace XML
