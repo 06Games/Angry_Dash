@@ -200,12 +200,20 @@ public class EditorMusicSelector : MonoBehaviour
     public void Download()
     {
         string filename = Application.persistentDataPath + "/Musics/" + items[currentFile].Artist + " - " + items[currentFile].Name;
-        string url = serverURL + "files/" + items[currentFile].Artist + " - " + items[currentFile].Name + ".ogg";
+        if (!System.IO.Directory.Exists(Application.persistentDataPath + "/Musics/"))
+            System.IO.Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
+        System.Uri url = new System.Uri(serverURL + "files/" + items[currentFile].Artist + " - " + items[currentFile].Name + ".ogg");
         WebClient client = new WebClient();
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         Transform downBtn = transform.GetChild(2).GetChild(2).GetChild(0);
-        client.DownloadProgressChanged += (sender, e) => downBtn.GetChild(0).GetComponent<Scrollbar>().size = e.ProgressPercentage / 100F;
-        client.DownloadFileCompleted += (sender, e) => downBtn.gameObject.SetActive(false);
-        client.DownloadFileAsync(new System.Uri(url), filename);
+        client.DownloadProgressChanged += (sender, e) =>
+            downBtn.GetChild(0).GetComponent<Scrollbar>().size = e.ProgressPercentage / 100F;
+        client.DownloadDataCompleted += (sender, e) =>
+        {
+            if (!e.Cancelled) downBtn.gameObject.SetActive(false);
+            else Logging.Log(e.Error.Message, LogType.Error, e.Error.StackTrace);
+        };
+        Logging.Log("Start downloading music from '" + url.AbsoluteUri + "'", LogType.Log);
+        client.DownloadDataAsync(url, filename);
     }
 }
