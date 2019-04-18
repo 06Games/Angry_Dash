@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -11,18 +8,18 @@ using UnityEngine.UI;
 
 public class DependenciesManager : MonoBehaviour
 {
-
     GameObject DownloadPanel;
     Slider slider;
 
     public Social _Social;
 
-    void Start() { }
-
     public void DownloadDefaultsRP()
     {
         DownloadPanel = transform.GetChild(1).gameObject;
         slider = DownloadPanel.transform.GetChild(1).GetComponent<Slider>();
+        slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.Get("native", "download.ressourcesPack.connection", "Connection to the server");
+        slider.transform.GetChild(4).gameObject.SetActive(false);
+        DownloadPanel.SetActive(true);
 
         if (InternetAPI.IsConnected())
         {
@@ -39,8 +36,6 @@ public class DependenciesManager : MonoBehaviour
             }
             string[] lines = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
 
-            DownloadPanel.SetActive(true);
-            slider.transform.GetChild(4).gameObject.SetActive(false);
 
             downloadFile(0, lines, URL, Application.persistentDataPath + "/Ressources/");
         }
@@ -48,7 +43,7 @@ public class DependenciesManager : MonoBehaviour
     }
 
     string[] downData = new string[4] { "", "", "", "" };
-    Stopwatch sw = new Stopwatch();
+    System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
     public void downloadFile(int actual, string[] lines, string url, string mainPath)
     {
         string version = lines[actual].Split(new string[] { "</version>" }, StringSplitOptions.None)[0].Replace("<version>", "");
@@ -84,7 +79,10 @@ public class DependenciesManager : MonoBehaviour
                 sw.Start();
                 wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                 wc.DownloadFileCompleted += wc_DownloadFileCompleted;
-                wc.DownloadFileAsync(new Uri(url + name), Application.temporaryCachePath + "/" + actual + ".zip");
+                string URL = name;
+                if (!Uri.IsWellFormedUriString(URL, UriKind.Absolute)) URL = url + name;
+                Debug.Log(URL);
+                wc.DownloadFileAsync(new Uri(URL), Application.temporaryCachePath + "/" + actual + ".zip");
             }
         }
         else
@@ -131,6 +129,7 @@ public class DependenciesManager : MonoBehaviour
         //Avancé (x Mo sur x Mo)
         double Actual = e.BytesReceived;
         double Total = e.TotalBytesToReceive;
+        if (Total < 0) Total = Actual;
         int Reduct = 0;
         for (int i = 0; NbChiffreEntier(Total) > 3 & i <= 4; i++)
         {
@@ -321,32 +320,15 @@ public class DependenciesManager : MonoBehaviour
     public static bool CheckVersionCompatibility(string version) { return CheckVersionCompatibility(version, Application.version); }
     public static bool CheckVersionCompatibility(string version, string app_version)
     {
-        string versionParameter = System.Text.RegularExpressions.Regex.Replace(version, "[0-9\\.]", "");
-        string[] versionNumberG = version.Replace(versionParameter.ToString(), "").Split(new string[] { "." }, StringSplitOptions.None);
-        string[] appVersionG = app_version.Split(new string[] { "." }, StringSplitOptions.None);
+        string[] versionNumberG = version.Split(new string[] { " - " }, StringSplitOptions.None);
+        if (versionNumberG.Length != 2) return false; //Version parameter is not correctly parsed, returns incompatible
+        Versioning firstVersionG = new Versioning(versionNumberG[0]);
+        Versioning appVersionG = new Versioning(app_version);
+        Versioning secondVersionG = new Versioning(versionNumberG[1]);
 
-        bool versionCompatibility = false;
-        for (int i = 0; (i < versionNumberG.Length | i < appVersionG.Length) & !versionCompatibility; i++)
-        {
-            float versionNumber = 0;
-            if (versionNumberG.Length > i) versionNumber = float.Parse(versionNumberG[i]);
-            float appVersion = 1;
-            if (appVersionG.Length > i) appVersion = float.Parse(appVersionG[i]);
-
-            bool wait = false;
-
-            if (versionParameter.Contains(">") & appVersion > versionNumber) versionCompatibility = true;
-            else if (versionParameter.Contains(">") & appVersion > versionNumber) wait = true;
-            if (versionParameter.Contains("=") & appVersion == versionNumber & (i >= versionNumberG.Length - 1 & i >= appVersionG.Length - 1)) versionCompatibility = true;
-            else if (versionParameter.Contains("=") & appVersion == versionNumber) wait = true;
-            if (versionParameter.Contains("<") & appVersion < versionNumber) versionCompatibility = true;
-            else if (versionParameter.Contains("<") & appVersion < versionNumber) wait = true;
-
-            if (wait) versionCompatibility = false;
-            else if (!versionCompatibility) { versionCompatibility = false; i = versionNumberG.Length; }
-        }
-
-        return versionCompatibility;
+        if (!appVersionG.CompareTo(firstVersionG, Versioning.SortConditions.NewerOrEqual)) return false; //The first version is newer
+        else if (appVersionG.CompareTo(secondVersionG, Versioning.SortConditions.OlderOrEqual)) return true; //The version of the application is between the 2 specified versions
+        else return false; //The second version is older
     }
 
     public static int NbChiffreEntier(double d) { return Math.Round(d, 0).ToString().Length; }
