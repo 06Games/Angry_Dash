@@ -1,19 +1,24 @@
 ﻿using UnityEngine;
+using Tools;
 
 [System.Serializable]
 public class Versioning
 {
     //For serialization
     public string number = ""; //Store serialized version number
-    public Versioning() { version = number.Split(new string[] { "." }, System.StringSplitOptions.None); } //Set the real var
+    public Versioning() { version = number.Split("."); } //Set the real var
 
     public static Versioning Actual { get { return new Versioning(Application.version); } }
     public enum Sort { Newer, Equal, Older, Error }
     public enum SortConditions { Newer, NewerOrEqual, Equal, OlderOrEqual, Older }
 
     string[] version;
-    public Versioning(float _version) { number = _version.ToString(); version = _version.ToString().Split(new string[] { "." }, System.StringSplitOptions.None); }
-    public Versioning(string _version) { number = _version; version = _version.Split(new string[] { "." }, System.StringSplitOptions.None); }
+    public Versioning(float _version) { number = _version.ToString(); version = _version.ToString().Split("."); }
+    public Versioning(string _version)
+    {
+        number = _version;
+        version = System.Text.RegularExpressions.Regex.Replace(_version, "[^0-9.]", "").Split(".");
+    }
 
     public override string ToString() { return string.Join(".", version); }
     public bool CompareTo(Versioning compared, SortConditions conditions)
@@ -33,9 +38,9 @@ public class Versioning
         for (int i = 0; (i < version.Length | i < compared.version.Length); i++)
         {
             float versionNumber = 0;
-            if (version.Length > i) versionNumber = float.Parse(version[i]);
+            if (version.Length > i) float.TryParse(version[i], out versionNumber);
             float comparedVersion = 0;
-            if (compared.version.Length > i) comparedVersion = float.Parse(compared.version[i]);
+            if (compared.version.Length > i) float.TryParse(compared.version[i], out comparedVersion);
 
             if (versionNumber > comparedVersion) return Sort.Newer;
             if (versionNumber == comparedVersion & (i >= version.Length - 1 & i >= compared.version.Length - 1)) return Sort.Equal;

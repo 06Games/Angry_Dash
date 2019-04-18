@@ -138,7 +138,7 @@ namespace Sprite_API
                     FileFormat.JSON category = json.GetCategory("textures");
 
                     string[] paramNames = new string[] { "basic", "hover", "pressed", "disabled" };
-                    if(data.path == null) data.path = new string[paramNames.Length];
+                    if (data.path == null) data.path = new string[paramNames.Length];
                     if (data.border == null) data.border = new Vector4[paramNames.Length];
                     if (data.type == null) data.type = new int[paramNames.Length];
                     for (int i = 0; i < paramNames.Length; i++)
@@ -189,7 +189,7 @@ namespace Sprite_API
                     //Color
                     Color32 textColor = new Color32(255, 255, 255, 255);
                     if (category.ValueExist("color")) HexColorField.HexToColor(category.Value<string>("color"), out textColor);
-                    if(data.textColor.Equals(new Color32(255, 255, 255, 255))) data.textColor = textColor;
+                    if (data.textColor.Equals(new Color32(255, 255, 255, 255))) data.textColor = textColor;
 
                     //Font Style
                     if (category.ValueExist("fontStyle") & data.textStyle == FontStyle.Normal)
@@ -225,7 +225,7 @@ namespace Sprite_API
                             else if (verticalValue == "Lower") vertical = 2;
                         }
 
-                        if(data.textAnchor == TextAnchor.MiddleLeft) data.textAnchor = (TextAnchor)((vertical * 3) + horizontal);
+                        if (data.textAnchor == TextAnchor.MiddleLeft) data.textAnchor = (TextAnchor)((vertical * 3) + horizontal);
                     }
                     else data.textAnchor = TextAnchor.MiddleLeft;
 

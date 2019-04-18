@@ -47,6 +47,9 @@ namespace Tools
         /// <param name="str"></param>
         public static T ParseTo<T>(this string str) { return (T)System.Convert.ChangeType(str, typeof(T)); }
 
+        public static string[] Split(this string s, params string[] delimiter) { return s.Split(delimiter, System.StringSplitOptions.None); }
+        public static string[] Split(this string s, System.StringSplitOptions options, params string[] delimiter) { return s.Split(delimiter, options); }
+
         public static byte[] ToByte(this string str) { return ToByte(str, Encoding.UTF8); }
         public static byte[] ToByte(this string str, Encoding encoding) { return encoding.GetBytes(str); }
 

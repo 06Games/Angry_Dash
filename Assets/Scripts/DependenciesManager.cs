@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
+using Tools;
 
 public class DependenciesManager : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class DependenciesManager : MonoBehaviour
                 wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); //continue game starting
                 return; //stop this function
             }
-            string[] lines = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
+            string[] lines = Result.Split("\n");
 
 
             downloadFile(0, lines, URL, Application.persistentDataPath + "/Ressources/");
@@ -46,9 +47,9 @@ public class DependenciesManager : MonoBehaviour
     System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
     public void downloadFile(int actual, string[] lines, string url, string mainPath)
     {
-        string version = lines[actual].Split(new string[] { "</version>" }, StringSplitOptions.None)[0].Replace("<version>", "");
-        string name = lines[actual].Split(new string[] { "<name>" }, StringSplitOptions.None)[1].Split(new string[] { "</name>" }, StringSplitOptions.None)[0];
-        int size = int.Parse(lines[actual].Split(new string[] { "<size>" }, StringSplitOptions.None)[1].Split(new string[] { "B</size>" }, StringSplitOptions.None)[0]);
+        string version = lines[actual].Split("</version>")[0].Replace("<version>", "");
+        string name = lines[actual].Split("<name>")[1].Split("</name>")[0];
+        int size = int.Parse(lines[actual].Split("<size>")[1].Split("B</size>")[0]);
 
         UnityThread.executeInUpdate(() =>
         {
@@ -157,7 +158,7 @@ public class DependenciesManager : MonoBehaviour
             DownloadInfo.text = speedText + " - " + downloaded + " - <color=grey>" + pourcent + "</color>";
 
             //Progression plus détaillée
-            string[] lines = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None);
+            string[] lines = downData[1].Split("\n");
             float baseValue = int.Parse(downData[0]) / lines.Length;
             float oneValue = 1 / (float)lines.Length;
             slider.value = baseValue + ((pourcentage / 100F) * oneValue);
@@ -182,7 +183,7 @@ public class DependenciesManager : MonoBehaviour
 
         UnityThread.executeInUpdate(() =>
         {
-            string[] s = downData[1].Split(new string[1] { "\n" }, StringSplitOptions.None);
+            string[] s = downData[1].Split("\n");
 
             bool c = false;
             if (sender == null) c = true;
@@ -200,7 +201,7 @@ public class DependenciesManager : MonoBehaviour
             {
                 if (sender != null)
                 {
-                    string[] pathTo = s[int.Parse(downData[0])].Split(new string[] { "<name>" }, StringSplitOptions.None)[1].Split(new string[] { "</name>" }, StringSplitOptions.None)[0].Split(new string[] { "/", "\\" }, StringSplitOptions.None);
+                    string[] pathTo = s[int.Parse(downData[0])].Split("<name>")[1].Split("</name>")[0].Split("/", "\\");
                     FileFormat.ZIP.Decompress(Application.temporaryCachePath + "/" + downData[0] + ".zip", downData[2] + pathTo[pathTo.Length - 1].Replace(".zip", "") + "/");
                 }
 
@@ -229,7 +230,7 @@ public class DependenciesManager : MonoBehaviour
                 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
                 string Result = "";
                 try { Result = client.DownloadString(URL).Replace("<BR />", "\n"); } catch { levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); return; }
-                lines = Result.Split(new string[1] { "\n" }, StringSplitOptions.None);
+                lines = Result.Split("\n");
             }
 
             UnityThread.executeInUpdate(() =>
@@ -240,9 +241,9 @@ public class DependenciesManager : MonoBehaviour
                 go.transform.GetChild(2).GetComponent<Text>().text = actual + "/" + lines.Length;
             });
 
-            string version = lines[actual].Split(new string[] { "</version>" }, StringSplitOptions.None)[0].Replace("<version>", "");
-            string name = lines[actual].Split(new string[] { "<name>" }, StringSplitOptions.None)[1].Split(new string[] { "</name>" }, StringSplitOptions.None)[0];
-            int size = int.Parse(lines[actual].Split(new string[] { "<size>" }, StringSplitOptions.None)[1].Split(new string[] { "B</size>" }, StringSplitOptions.None)[0]);
+            string version = lines[actual].Split("</version>")[0].Replace("<version>", "");
+            string name = lines[actual].Split("<name>")[1].Split("</name>")[0];
+            int size = int.Parse(lines[actual].Split("<size>")[1].Split("B</size>")[0]);
 
             string desktopPath = Application.persistentDataPath + "/Levels/Official Levels/" + name;
 
@@ -320,7 +321,7 @@ public class DependenciesManager : MonoBehaviour
     public static bool CheckVersionCompatibility(string version) { return CheckVersionCompatibility(version, Application.version); }
     public static bool CheckVersionCompatibility(string version, string app_version)
     {
-        string[] versionNumberG = version.Split(new string[] { " - " }, StringSplitOptions.None);
+        string[] versionNumberG = version.Split(" - ");
         if (versionNumberG.Length != 2) return false; //Version parameter is not correctly parsed, returns incompatible
         Versioning firstVersionG = new Versioning(versionNumberG[0]);
         Versioning appVersionG = new Versioning(app_version);
