@@ -156,8 +156,8 @@ PlayerSettings:
     iOS: com.fr06Games.AngryDash
   buildNumber:
     Standalone: 1
-    iOS: 33
-  AndroidBundleVersionCode: 33
+    iOS: 34
+  AndroidBundleVersionCode: 34
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
@@ -795,7 +795,7 @@ PlayerSettings:
     Collab: 0
     ErrorHub: 0
     Hub: 0
-    UNet: 0
+    UNet: 1
   luminIcon:
     m_Name: 
     m_ModelFolderPath: 
