@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,14 +22,18 @@ public class DownloadedMusicsManager : MonoBehaviour
 
         for (int i = 0; i < files.Length; i++)
         {
-            TagLib.Tag TL = TagLib.File.Create(files[i].FullName, mime, TagLib.ReadStyle.None).Tag;
-            Transform go = Instantiate(Template, scroll.content).transform;
+            try
+            {
+                TagLib.Tag TL = TagLib.File.Create(files[i].FullName, mime, TagLib.ReadStyle.None).Tag;
+                Transform go = Instantiate(Template, scroll.content).transform;
 
-            go.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "SettingsSoundDownloadedItem", "[0]\n<color=grey>by [1]</color>", TL.Title, TL.Performers[0]);
-            int button = i;
-            go.GetChild(1).GetChild(0).GetComponent<Button>().onClick.AddListener(() => Play(files[button].FullName));
-            go.GetChild(1).GetChild(1).GetComponent<Button>().onClick.AddListener(() => Delete(files[button].FullName));
-            go.gameObject.SetActive(true);
+                go.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "SettingsSoundDownloadedItem", "[0]\n<color=grey>by [1]</color>", TL.Title, TL.Performers[0]);
+                int button = i;
+                go.GetChild(1).GetChild(0).GetComponent<Button>().onClick.AddListener(() => Play(files[button].FullName));
+                go.GetChild(1).GetChild(1).GetComponent<Button>().onClick.AddListener(() => Delete(files[button].FullName));
+                go.gameObject.SetActive(true);
+            }
+            catch (System.Exception e){ Logging.Log(e); }
         }
     }
 
@@ -41,26 +43,23 @@ public class DownloadedMusicsManager : MonoBehaviour
     string curentlyPlaying = "";
     public void Play(string path)
     {
-        menuMusic mm = null;
-        if (GameObject.Find("Audio") != null) mm = GameObject.Find("Audio").GetComponent<menuMusic>();
-        else return;
+        if (GameObject.Find("Audio") == null) return;
 
+        menuMusic mm = GameObject.Find("Audio").GetComponent<menuMusic>();
         if (mm.PlayingMainMusic | curentlyPlaying != path) //Play
         {
             defaultMusicPos = mm.GetComponent<AudioSource>().time;
             mm.LoadUnpackagedMusic(path);
             curentlyPlaying = path;
         }
-        else //Stop
-            mm.StartDefault(defaultMusicPos);
+        else mm.StartDefault(defaultMusicPos); //Stop
     }
 
     private void OnDisable()
     {
-        menuMusic mm = null;
-        if (GameObject.Find("Audio") != null) mm = GameObject.Find("Audio").GetComponent<menuMusic>();
-        else return;
+        if (GameObject.Find("Audio") == null) return;
 
+        menuMusic mm = GameObject.Find("Audio").GetComponent<menuMusic>();
         if (!mm.PlayingMainMusic) mm.StartDefault(defaultMusicPos);
     }
 }
