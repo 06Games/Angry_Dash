@@ -141,6 +141,18 @@ namespace SoundAPI
             if (Readable != null & FullyLoaded) Readable.Invoke(null, new Tools.BetterEventArgs(clip));
             if (Complete != null) Complete.Invoke(null, new Tools.BetterEventArgs(clip));
         }
+
+        public bool Equals(Load other) { return this == other; }
+        public override bool Equals(object obj) { return this == obj as Load; }
+        public static bool operator ==(Load left, Load right)
+        {
+            if (left is null & right is null) return true;
+            else if (left is null | right is null) return false;
+            else if (left.id == right.id) return true;
+            else if (left.url == right.url) return true;
+            else return false;
+        }
+        public static bool operator !=(Load left, Load right) { return !(left == right); }
     }
 }
 

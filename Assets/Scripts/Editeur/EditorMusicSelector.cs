@@ -43,7 +43,7 @@ public class EditorMusicSelector : MonoBehaviour
     public void Sort(int sort) { Sort((SortMode)sort); }
     /// <summary> Displays musics with a specified sort </summary>
     /// <param name="sort">Sort type</param>
-    public void Sort(SortMode sort, bool reselect = true)
+    public void Sort(SortMode sort)
     {
         WebClient client = new WebClient();
         client.Encoding = System.Text.Encoding.UTF8;
@@ -138,6 +138,7 @@ public class EditorMusicSelector : MonoBehaviour
         infos.GetChild(2).GetChild(0).gameObject.SetActive(
             !System.IO.File.Exists(Application.persistentDataPath + "/Musics/" + items[selected].Artist + " - " + items[selected].Name)
         );
+        infos.GetChild(2).GetChild(1).GetChild(0).GetComponent<Button>().interactable = true;
         infos.GetChild(2).GetChild(1).GetChild(1).GetComponent<Slider>().value = 0;
         infos.GetChild(2).GetChild(1).GetChild(1).GetChild(0).GetComponent<Scrollbar>().size = 0;
         infos.GetChild(2).GetChild(2).gameObject.SetActive(Editor.level.music != items[selected]);
@@ -149,28 +150,41 @@ public class EditorMusicSelector : MonoBehaviour
     SoundAPI.Load load = null;
     public void PlayMusic()
     {
+        Transform playPanel = transform.GetChild(2).GetChild(2).GetChild(1);
         GameObject go = GameObject.Find("Audio");
         if (go != null)
         {
             if (!go.GetComponent<AudioSource>().isPlaying)
             {
                 string fileName = items[currentFile].Artist + " - " + items[currentFile].Name;
+                SoundAPI.Load newLoad = null;
                 if (System.IO.File.Exists(Application.persistentDataPath + "/Musics/" + fileName))
-                    load = new SoundAPI.Load(Application.persistentDataPath + "/Musics/" + fileName);
-                else load = new SoundAPI.Load(new System.Uri(serverURL + "files/" + fileName + ".ogg"));
+                    newLoad = new SoundAPI.Load(Application.persistentDataPath + "/Musics/" + fileName);
+                else newLoad = new SoundAPI.Load(new System.Uri(serverURL + "files/" + fileName + ".ogg"));
 
-                Slider state = transform.GetChild(2).GetChild(2).GetChild(1).GetChild(1).GetComponent<Slider>();
-                load.Readable += (sender, e) =>
+                AudioSource source = go.GetComponent<AudioSource>();
+                Slider state = playPanel.GetChild(1).GetComponent<Slider>();
+                if (load == newLoad)
                 {
-                    float timepos = 0;
-                    AudioSource source = go.GetComponent<AudioSource>();
-                    if (((AudioClip)e.UserState).name == source.clip.name) timepos = source.time;
-                    go.GetComponent<menuMusic>().LoadMusic((AudioClip)e.UserState, timepos);
+                    go.GetComponent<menuMusic>().Play();
                     StartCoroutine(PlayMusicState(source, state));
-                };
-                load.ReadProgressChanged += (sender, e) =>
-                     state.transform.GetChild(0).GetComponent<Scrollbar>().size = (float)e.UserState;
-                StartCoroutine(load.Start(false));
+                }
+                else
+                {
+                    load = newLoad;
+                    load.Readable += (sender, e) =>
+                    {
+                        playPanel.GetChild(0).GetComponent<Button>().interactable = true;
+                        float timepos = 0;
+                        if (((AudioClip)e.UserState).name == source.clip.name) timepos = source.time;
+                        go.GetComponent<menuMusic>().LoadMusic((AudioClip)e.UserState, timepos);
+                        StartCoroutine(PlayMusicState(source, state));
+                    };
+                    load.ReadProgressChanged += (sender, e) =>
+                         state.transform.GetChild(0).GetComponent<Scrollbar>().size = (float)e.UserState;
+                    playPanel.GetChild(0).GetComponent<Button>().interactable = false;
+                    StartCoroutine(load.Start(false));
+                }
             }
             else go.GetComponent<menuMusic>().Pause();
         }

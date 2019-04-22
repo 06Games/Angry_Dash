@@ -82,7 +82,6 @@ public class DependenciesManager : MonoBehaviour
                 wc.DownloadFileCompleted += wc_DownloadFileCompleted;
                 string URL = name;
                 if (!Uri.IsWellFormedUriString(URL, UriKind.Absolute)) URL = url + name;
-                Debug.Log(URL);
                 wc.DownloadFileAsync(new Uri(URL), Application.temporaryCachePath + "/" + actual + ".zip");
             }
         }
