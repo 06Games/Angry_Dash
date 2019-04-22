@@ -130,9 +130,13 @@ public class EditorMusicSelector : MonoBehaviour
         WebClient c = new WebClient();
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         string URL = serverURL + "licences/" + items[selected].Artist + " - " + items[selected].Name + ".txt";
-        URL = URL.Replace(" ", "%20");
+        URL = URL.RemoveSpecialCharacters().Replace(" ", "%20");
         try { items[selected].Licence = c.DownloadString(URL); }
-        catch (System.Exception e) { Debug.LogWarning(e.Message); items[selected].Licence = "Error"; }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("Error when loading: " + URL + "\n" + e.Message);
+            items[selected].Licence = "Error";
+        }
         infos.GetChild(1).GetComponent<Text>().text = items[selected].Licence;
 
         infos.GetChild(2).GetChild(0).gameObject.SetActive(
@@ -160,7 +164,7 @@ public class EditorMusicSelector : MonoBehaviour
                 SoundAPI.Load newLoad = null;
                 if (System.IO.File.Exists(Application.persistentDataPath + "/Musics/" + fileName))
                     newLoad = new SoundAPI.Load(Application.persistentDataPath + "/Musics/" + fileName);
-                else newLoad = new SoundAPI.Load(new System.Uri(serverURL + "files/" + fileName + ".ogg"));
+                else newLoad = new SoundAPI.Load(new System.Uri((serverURL + "files/" + fileName + ".ogg").RemoveSpecialCharacters()));
 
                 AudioSource source = go.GetComponent<AudioSource>();
                 Slider state = playPanel.GetChild(1).GetComponent<Slider>();
@@ -216,7 +220,8 @@ public class EditorMusicSelector : MonoBehaviour
         string filename = Application.persistentDataPath + "/Musics/" + items[currentFile].Artist + " - " + items[currentFile].Name;
         if (!System.IO.Directory.Exists(Application.persistentDataPath + "/Musics/"))
             System.IO.Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
-        System.Uri url = new System.Uri(serverURL + "files/" + items[currentFile].Artist + " - " + items[currentFile].Name + ".ogg");
+        string URL = serverURL + "files/" + items[currentFile].Artist + " - " + items[currentFile].Name + ".ogg";
+        System.Uri url = new System.Uri(URL.RemoveSpecialCharacters().Replace(" ", "%20"));
         WebClient client = new WebClient();
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         Transform downBtn = transform.GetChild(2).GetChild(2).GetChild(0);

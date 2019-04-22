@@ -153,6 +153,7 @@ namespace SoundAPI
             else return false;
         }
         public static bool operator !=(Load left, Load right) { return !(left == right); }
+        public override int GetHashCode() { return base.GetHashCode(); }
     }
 }
 
