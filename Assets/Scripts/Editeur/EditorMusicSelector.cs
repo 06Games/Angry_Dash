@@ -229,7 +229,7 @@ public class EditorMusicSelector : MonoBehaviour
                 System.IO.File.WriteAllBytes(filename, e.Result);
                 downBtn.gameObject.SetActive(false);
             }
-            else Logging.Log(e.Error.Message, LogType.Error, e.Error.StackTrace);
+            else Logging.Log(e.Error, LogType.Error);
         };
         Logging.Log("Start downloading music from '" + url.AbsoluteUri + "'", LogType.Log);
         client.DownloadDataAsync(url);

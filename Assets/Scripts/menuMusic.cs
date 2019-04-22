@@ -95,7 +95,7 @@ namespace SoundAPI
                                     id = url.AbsoluteUri;
                                     finish = true;
                                 }
-                                else Logging.Log(e.Error.Message, LogType.Error, e.Error.StackTrace);
+                                else Logging.Log(e.Error, LogType.Error);
                             };
                             Logging.Log("Start loading music from '" + url.AbsoluteUri + "'", LogType.Log);
                             client.DownloadDataAsync(url);

@@ -5,6 +5,7 @@ public static class Logging
 {
     public static Tools.BetterEventHandler NewMessage;
 
+    public static void Log(System.Exception e, LogType type = LogType.Exception) { Log(e.Message, type, e.StackTrace); }
     public static void Log(string logString, LogType type = LogType.Log, string stackTrace = null)
     {
         if (NewMessage != null) NewMessage.Invoke(type, new Tools.BetterEventArgs(logString));
