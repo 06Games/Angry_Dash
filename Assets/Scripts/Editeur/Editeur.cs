@@ -271,7 +271,7 @@ public class Editeur : MonoBehaviour
                 int Selected = GetBloc((int)pos.x, (int)pos.y);
 
                 if (Selected == -1 & !SelectCtrl) SelectedBlock = new int[0];
-                else if (Selected != -1 & SelectCtrl)
+                else if (Selected != -1 & SelectCtrl & Selected < level.blocks.Length)
                 {
                     float blockId = level.blocks[Selected].id;
                     float firstId = -1;
@@ -1010,6 +1010,7 @@ public class Editeur : MonoBehaviour
 
     public void PlayLevel()
     {
+        SaveLevel();
         string[] args = new string[] { "Editor", "File", file };
         string[] passThrough = new string[] { "Player", "Edit", file };
         GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player", args.Concat(passThrough).ToArray(), true);
