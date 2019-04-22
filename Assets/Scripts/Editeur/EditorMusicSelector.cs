@@ -224,10 +224,14 @@ public class EditorMusicSelector : MonoBehaviour
             downBtn.GetChild(0).GetComponent<Scrollbar>().size = e.ProgressPercentage / 100F;
         client.DownloadDataCompleted += (sender, e) =>
         {
-            if (!e.Cancelled) downBtn.gameObject.SetActive(false);
+            if (!e.Cancelled)
+            {
+                System.IO.File.WriteAllBytes(filename, e.Result);
+                downBtn.gameObject.SetActive(false);
+            }
             else Logging.Log(e.Error.Message, LogType.Error, e.Error.StackTrace);
         };
         Logging.Log("Start downloading music from '" + url.AbsoluteUri + "'", LogType.Log);
-        client.DownloadDataAsync(url, filename);
+        client.DownloadDataAsync(url);
     }
 }
