@@ -94,6 +94,17 @@ namespace Tools
             }
             else return s;
         }
+
+        public static string RemoveSpecialCharacters(this string s)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (char ch in s.Normalize(NormalizationForm.FormD))
+            {
+                if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch) != System.Globalization.UnicodeCategory.NonSpacingMark)
+                    sb.Append(ch);
+            }
+            return sb.ToString().Normalize(NormalizationForm.FormC);
+        }
     }
 
     public static class Texture2DExtensions
