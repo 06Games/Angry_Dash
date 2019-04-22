@@ -55,8 +55,11 @@ public class Base : MonoBehaviour
 
         string arguments = (openInsidesOfFolder ? "" : "-R ") + macPath;
         System.Diagnostics.Process.Start("open", arguments);
-#elif UNITY_ANDROID || UNITY_IOS
-        NativeShare.Share("", path);
+#elif UNITY_ANDROID
+        Application.OpenURL("file://" + path);
+#elif UNITY_IOS
+        Application.OpenURL("file://" + path);
+        //NativeShare.Share("", path);
 #endif
     }
 
