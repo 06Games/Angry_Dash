@@ -200,6 +200,7 @@ public class EditorPublishedLevels : MonoBehaviour
             {
                 infos.GetChild(3).GetChild(1).GetComponent<Text>().text = music[1] + "\n" + LangueAPI.Get("native", "EditorCommunityLevelsAuthor", "<color=grey>by [0]</color>", music[0]);
                 infos.GetChild(3).GetChild(2).gameObject.SetActive(!File.Exists(Application.persistentDataPath + "/Musics/" + items[selected].Music));
+                infos.GetChild(3).GetChild(3).gameObject.SetActive(false);
                 infos.GetChild(3).gameObject.SetActive(true);
             }
             else infos.GetChild(3).gameObject.SetActive(false);
