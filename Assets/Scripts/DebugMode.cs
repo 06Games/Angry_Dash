@@ -89,10 +89,13 @@ public class DebugMode : MonoBehaviour
         if (go != null)
         {
             Image text = go.GetComponent<Image>();
-            while (text.color.a > 0)
+            if (text != null)
             {
-                text.color = new Color(text.color.r, text.color.g, text.color.b, text.color.a - 0.05F);
-                yield return new WaitForEndOfFrame();
+                while (text.color.a > 0)
+                {
+                    text.color = new Color(text.color.r, text.color.g, text.color.b, text.color.a - 0.05F);
+                    yield return new WaitForEndOfFrame();
+                }
             }
             Destroy(go);
         }
