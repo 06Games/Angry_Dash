@@ -28,10 +28,10 @@ public class DependenciesManager : MonoBehaviour
             WebClient client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             string Result = "";
-            try { Result = client.DownloadString(URL).Replace("<BR />", "\n"); } //Try to access to the server
+            try { Result = client.DownloadString(URL + "?v=" + Application.version).Replace("<BR />", "\n"); } //Try to access to the server
             catch (Exception e)
             { //else
-                UnityEngine.Debug.LogError(e.Message); //log error
+                Debug.LogError(e.Message); //log error
                 wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); //continue game starting
                 return; //stop this function
             }
@@ -47,7 +47,6 @@ public class DependenciesManager : MonoBehaviour
     System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
     public void downloadFile(int actual, string[] lines, string url, string mainPath)
     {
-        string version = lines[actual].Split("</version>")[0].Replace("<version>", "");
         string name = lines[actual].Split("<name>")[1].Split("</name>")[0];
         int size = int.Parse(lines[actual].Split("<size>")[1].Split("B</size>")[0]);
 
@@ -59,18 +58,19 @@ public class DependenciesManager : MonoBehaviour
 
 
         bool down = false;
-        if (!CheckVersionCompatibility(version)) down = false;
-        else if (!Directory.Exists(Application.persistentDataPath + "/Ressources/default/")) down = true;
+        string rpName = Path.GetFileNameWithoutExtension(name);
+        if (!Directory.Exists(mainPath + rpName + "/")) down = true;
         else
         {
-            long dirSize = new DirectoryInfo(Application.persistentDataPath + "/Ressources/default/").GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
+            long dirSize = new DirectoryInfo(mainPath + rpName + "/").GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
             if (dirSize == size) down = false;
             else
             {
                 down = true;
-                Directory.Delete((Application.persistentDataPath + "/Ressources/default/"), true);
+                Directory.Delete(mainPath + rpName + "/", true);
             }
         }
+
         if (down)
         {
             if (!Directory.Exists(mainPath)) Directory.CreateDirectory(mainPath);
