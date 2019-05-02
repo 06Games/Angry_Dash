@@ -14,6 +14,7 @@ namespace Coffee.PackageManager
 {
 	public class UpmGitAddWindow : EditorWindow
 	{
+		bool _focused;
 		string _url = "";
 		string _repoUrl = "";
 		string _version = "(default)";
@@ -37,7 +38,7 @@ namespace Coffee.PackageManager
 			var menu = new GenericMenu ();
 			var currentRefName = _version;
 
-			void callback (object x) => onVersionChanged (x as string);
+			GenericMenu.MenuFunction2 callback = (x) => onVersionChanged(x as string);
 
 			// x.y(.z-sufix) only 
 			foreach (var t in _refs.Where (x => Regex.IsMatch (x, "^\\d+\\.\\d+.*$")).OrderByDescending (x => x))
@@ -68,7 +69,15 @@ namespace Coffee.PackageManager
 				using (var ccs = new EditorGUI.ChangeCheckScope ())
 				using (new EditorGUILayout.HorizontalScope ())
 				{
+					GUI.SetNextControlName ("Repogitory URL");
 					_url = EditorGUILayout.TextField ("Repogitory URL", _url);
+
+					if (!_focused)
+					{
+						EditorGUI.FocusTextInControl ("Repogitory URL");
+						_focused = true;
+					}
+
 					if (ccs.changed)
 					{
 						_repoUrl = PackageUtils.GetRepoUrl (_url);

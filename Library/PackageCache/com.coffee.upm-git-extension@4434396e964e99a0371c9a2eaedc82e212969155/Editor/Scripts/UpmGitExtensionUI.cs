@@ -167,9 +167,9 @@ namespace Coffee.PackageManager
 
 			// Add callbacks
 			_hostingIcon.clickable.clicked += () => Application.OpenURL (PackageUtils.GetRepoHttpUrl (_packageInfo));
-			_viewDocumentation.clickable.clicked += () => Application.OpenURL (PackageUtils.GetFileURL (_packageInfo, "README.md"));
-			_viewChangelog.clickable.clicked += () => Application.OpenURL (PackageUtils.GetFileURL (_packageInfo, "CHANGELOG.md"));
-			_viewLicense.clickable.clicked += () => Application.OpenURL (PackageUtils.GetFileURL (_packageInfo, "LICENSE.md"));
+			_viewDocumentation.clickable.clicked += () => MarkdownUtils.OpenInBrowser (PackageUtils.GetFilePath (_packageInfo, "README.*"));
+			_viewChangelog.clickable.clicked += () => MarkdownUtils.OpenInBrowser (PackageUtils.GetFilePath (_packageInfo, "CHANGELOG.*"));
+			_viewLicense.clickable.clicked += () => MarkdownUtils.OpenInBrowser (PackageUtils.GetFilePath (_packageInfo, "LICENSE.*"));
 
 			// Move element to documentationContainer
 			_detailControls = parent.parent.Q ("detailsControls") ?? parent.parent.parent.parent.Q ("packageToolBar");
@@ -276,7 +276,7 @@ namespace Coffee.PackageManager
 			menu.AddItem (new GUIContent ("Add package from disk..."), false, delegate
 			{
 				var path = EditorUtility.OpenFilePanelWithFilters ("Select package on disk", "", new [] { "package.json file", "json" });
-				if (!string.IsNullOrEmpty (path) && !(bool)piAddRemoveOperationInProgress.GetValue (null))
+				if (!string.IsNullOrEmpty (path) && !(bool)piAddRemoveOperationInProgress.GetValue (null, new object[0]))
 					miAddFromLocalDisk.Invoke (null, new object [] { path });
 			});
 			menu.AddItem (new GUIContent ("Add package from URL..."), false, delegate
