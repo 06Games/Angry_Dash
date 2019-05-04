@@ -14,6 +14,35 @@ public class DependenciesManager : MonoBehaviour
 
     public Social _Social;
 
+    BetterEventHandler complete;
+    void Start()
+    {
+        LoadingScreenControl LSC = FindObjectOfType<LoadingScreenControl>();
+        string[] args = LSC.GetArgs();
+        if (args == null) return;
+        if (args.Length >= 3)
+        {
+            if (args[0] == "Dependencies")
+            {
+                for (int i = 0; i < transform.parent.childCount; i++)
+                {
+                    GameObject child = transform.parent.GetChild(i).gameObject;
+                    if (child != gameObject) child.SetActive(false);
+                }
+
+                DownloadPanel = transform.GetChild(1).gameObject;
+                slider = DownloadPanel.transform.GetChild(1).GetComponent<Slider>();
+                slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.Get("native", "download.ressourcesPack.connection", "Connection to the server");
+                slider.transform.GetChild(4).gameObject.SetActive(false);
+                DownloadPanel.SetActive(true);
+
+                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/";
+                complete += (sender, e) => LSC.LoadScreen(args[1], false);
+                downloadFile(0, args[2].Split("\n"), URL, Application.persistentDataPath + "/Ressources/");
+            }
+        }
+    }
+
     public void DownloadDefaultsRP()
     {
         DownloadPanel = transform.GetChild(1).gameObject;
@@ -29,15 +58,15 @@ public class DependenciesManager : MonoBehaviour
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             string Result = "";
             try { Result = client.DownloadString(URL + "?v=" + Application.version).Replace("<BR />", "\n"); } //Try to access to the server
-            catch (Exception e)
-            { //else
+            catch (Exception e) //else
+            {
                 Debug.LogError(e.Message); //log error
                 wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); //continue game starting
                 return; //stop this function
             }
             string[] lines = Result.Split("\n");
 
-
+            complete += (sender, e) => downloadLevels();
             downloadFile(0, lines, URL, Application.persistentDataPath + "/Ressources/");
         }
         else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
@@ -48,7 +77,7 @@ public class DependenciesManager : MonoBehaviour
     public void downloadFile(int actual, string[] lines, string url, string mainPath)
     {
         string name = lines[actual].Split("<name>")[1].Split("</name>")[0];
-        int size = int.Parse(lines[actual].Split("<size>")[1].Split("B</size>")[0]);
+        int.TryParse(lines[actual].Split("<size>")[1].Split("B</size>")[0], out int size);
 
         UnityThread.executeInUpdate(() =>
         {
@@ -184,19 +213,18 @@ public class DependenciesManager : MonoBehaviour
         {
             string[] s = downData[1].Split("\n");
 
-            bool c = false;
-            if (sender == null) c = true;
-            else if (sender.ToString() != "pass") c = true;
+            if (sender == null) DownloadNotFinished();
+            else if (sender.ToString() != "pass") DownloadNotFinished();
             else
             {
                 UnityThread.executeInUpdate(() =>
                 {
-                    downloadLevels();
                     DownloadPanel.SetActive(false);
+                    complete.Invoke(null, null);
                 });
             }
 
-            if (c)
+            void DownloadNotFinished()
             {
                 if (sender != null)
                 {

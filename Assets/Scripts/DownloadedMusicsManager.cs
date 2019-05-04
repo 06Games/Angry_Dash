@@ -33,7 +33,7 @@ public class DownloadedMusicsManager : MonoBehaviour
                 go.GetChild(1).GetChild(1).GetComponent<Button>().onClick.AddListener(() => Delete(files[button].FullName));
                 go.gameObject.SetActive(true);
             }
-            catch (System.Exception e){ Logging.Log(e); }
+            catch (System.Exception e) { Logging.Log(e); }
         }
     }
 

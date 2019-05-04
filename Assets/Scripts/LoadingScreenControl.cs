@@ -18,8 +18,7 @@ public class LoadingScreenControl : MonoBehaviour
     public void LoadScreen(string Scene, string[] args, bool keep = false)
     {
         if (async != default) return;
-        if (GameObject.Find("Temp_var") != null)
-            Destroy(GameObject.Find("Temp_var"));
+        if (GameObject.Find("Temp_var") != null) Destroy(GameObject.Find("Temp_var"));
         if (args == null) args = new string[0];
         if (args.Length > 0)
         {
@@ -46,12 +45,7 @@ public class LoadingScreenControl : MonoBehaviour
     public string[] GetArgs()
     {
         if (GameObject.Find("Temp_var") == null) return null;
-        else
-        {
-            string[] args = GameObject.Find("Temp_var").GetComponent<Text>().text.Split(new string[] { "\\newParam" }, System.StringSplitOptions.None);
-            Destroy(GameObject.Find("Temp_var"));
-            return args;
-        }
+        else return GameObject.Find("Temp_var").GetComponent<Text>().text.Split(new string[] { "\\newParam" }, System.StringSplitOptions.None);
     }
 
     IEnumerator LoadingScreen(string scene, bool keep)
