@@ -49,6 +49,7 @@ native/GUI/editor/toolbox
 native/GUI/editor/toolboxMenu
 native/GUI/editor/layerInput
 native/GUI/editor/layerArrow
+native/GUI/editor/grid
 native/GUI/editor/gridOff
 native/GUI/editor/gridOn
 native/GUI/editor/play

@@ -24594,7 +24594,6 @@ MonoBehaviour:
   - {fileID: 398817256}
   zoomIndicator: {fileID: 2099274943}
   ZoomSensitive: 20
-  GrilleSp: {fileID: 21300000, guid: 580b1b6ce726b9f48bdc5751cc5f7229, type: 3}
   bloqueEchap: 0
   CameraMouvementSpeed: 10
 --- !u!114 &1051093180
@@ -31637,6 +31636,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1364356445}
   - component: {fileID: 1364356446}
+  - component: {fileID: 1364356447}
   m_Layer: 5
   m_Name: Grid
   m_TagString: Untagged
@@ -31706,6 +31706,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1364356447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1364356444}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/editor/grid
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1366116166
 GameObject:
   m_ObjectHideFlags: 0

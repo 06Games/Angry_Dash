@@ -33,8 +33,6 @@ public class Editeur : MonoBehaviour
     public Scrollbar zoomIndicator;
     public int ZoomSensitive = 20;
 
-    public Sprite GrilleSp;
-
     [HideInInspector] public bool bloqueEchap;
 
 #if UNITY_STANDALONE || UNITY_EDITOR
@@ -546,8 +544,9 @@ public class Editeur : MonoBehaviour
 
         if (needRespawn)
         {
+            _Grille.GetComponent<UImage_Reader>().Load();
             _Grille.GetComponent<SpriteRenderer>().enabled = true;
-            _Grille.localScale = new Vector2(100, 100) / GrilleSp.Size() * 50; //One grid block size
+            _Grille.localScale = new Vector2(100, 100) / _Grille.GetComponent<UImage_Reader>().FrameSize * 50; //One grid block size
 
             //Grid Size
             _Grille.GetComponent<SpriteRenderer>().size = GetWorldPosition(Display.Screen.Resolution, false,
