@@ -487,6 +487,15 @@ public class Editeur : MonoBehaviour
 #endif
     }
 
+    public void DeselectAll() {
+        foreach (int i in SelectedBlock)
+        {
+            Transform obj = transform.GetChild(1).Find("Objet n° " + i);
+            if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
+        }
+        SelectedBlock = new int[0];
+    }
+
     void Zoom(int Z = 0)
     {
         if (Z == 0)

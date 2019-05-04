@@ -12,7 +12,7 @@ public class EditMenus
 public class Edit : MonoBehaviour
 {
     public Editeur editeur;
-    public GameObject MultiSelectBtn;
+    public GameObject MobileUtilities;
     public EditMenus[] menus;
 
     public void EnterToEdit()
@@ -21,9 +21,9 @@ public class Edit : MonoBehaviour
         try { transform.GetChild(GetComponent<MenuManager>().array).GetComponent<MenuManager>().Array(0); } catch { EnterToEdit(); return; }
 
 #if UNITY_STANDALONE || UNITY_EDITOR
-        MultiSelectBtn.SetActive(false);
+        MobileUtilities.SetActive(false);
 #else
-        MultiSelectBtn.SetActive(true);
+        MobileUtilities.SetActive(true);
 #endif
     }
 
