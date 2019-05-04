@@ -14084,6 +14084,7 @@ GameObject:
   - component: {fileID: 537974742}
   - component: {fileID: 537974741}
   - component: {fileID: 537974740}
+  - component: {fileID: 537974743}
   m_Layer: 5
   m_Name: Download
   m_TagString: Untagged
@@ -14108,7 +14109,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -100, y: 0}
-  m_SizeDelta: {x: 80, y: 80}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &537974740
 MonoBehaviour:
@@ -14189,6 +14190,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 537974738}
   m_CullTransparentMesh: 0
+--- !u!114 &537974743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 537974738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/settingsMenu/ressourcePacks/download
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &538270729
 GameObject:
   m_ObjectHideFlags: 0
@@ -25903,6 +25919,7 @@ GameObject:
   - component: {fileID: 958223290}
   - component: {fileID: 958223292}
   - component: {fileID: 958223291}
+  - component: {fileID: 958223293}
   m_Layer: 5
   m_Name: Selected
   m_TagString: Untagged
@@ -25927,7 +25944,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -100, y: 0}
-  m_SizeDelta: {x: 80, y: 80}
+  m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &958223291
 MonoBehaviour:
@@ -25966,6 +25983,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 958223289}
   m_CullTransparentMesh: 0
+--- !u!114 &958223293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958223289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/settingsMenu/ressourcePacks/selected
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &958943680
 GameObject:
   m_ObjectHideFlags: 0

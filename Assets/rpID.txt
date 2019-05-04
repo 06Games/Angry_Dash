@@ -25,10 +25,12 @@ native/GUI/settingsMenu/sound/delete
 native/GUI/settingsMenu/video
 native/GUI/settingsMenu/editor
 native/GUI/settingsMenu/ressourcePacks
-native/GUI/settingsMenu/ressourcePacks/defaultBackground
 native/GUI/settingsMenu/ressourcePacks/button
-native/GUI/settingsMenu/ressourcePacks/officialBackground
 native/GUI/settingsMenu/ressourcePacks/actionButton
+native/GUI/settingsMenu/ressourcePacks/defaultBackground
+native/GUI/settingsMenu/ressourcePacks/officialBackground
+native/GUI/settingsMenu/ressourcePacks/selected
+native/GUI/settingsMenu/ressourcePacks/download
 native/GUI/settingsMenu/informations
 native/GUI/settingsMenu/informations/button
 native/GUI/inventoryMenu/background
