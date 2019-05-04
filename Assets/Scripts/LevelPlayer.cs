@@ -173,34 +173,24 @@ public class LevelPlayer : MonoBehaviour
             }
             else if (id == 0.2F) //Stop
             {
-                GameObject go = null;
-                try { go = Instantiate(TriggerPref[0], pos, rot, place); }
-                catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
+                GameObject go = Instantiate(TriggerPref[0], pos, rot, place);
                 go.name = "Objet n° " + num;
-                Texture2D tex = new Texture2D(1, 1);
-                if (go.GetComponent<SpriteRenderer>() != null) tex = go.GetComponent<SpriteRenderer>().sprite.texture;
-                go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
+                UImage_Reader reader = go.GetComponent<UImage_Reader>().Load();
+                go.transform.localScale = new Vector2(100, 100) / reader.FrameSize * 50;
             }
             else if (id == 0.3F) //Checkpoint
             {
-                GameObject go = null;
-                try { go = Instantiate(TriggerPref[1], pos, rot, place); }
-                catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
+                GameObject go = Instantiate(TriggerPref[1], pos, rot, place);
                 go.name = "Objet n° " + num;
-                Texture2D tex = new Texture2D(1, 1);
-                if (go.GetComponent<SpriteRenderer>() != null) tex = go.GetComponent<SpriteRenderer>().sprite.texture;
-                go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
+                UImage_Reader reader = go.GetComponent<UImage_Reader>().Load();
+                go.transform.localScale = new Vector2(100, 100) / reader.FrameSize * 50;
                 go.SetActive(GetComponent<MainCam>().Player.GetComponent<Player>().respawnMode == 1);
             }
             else if (id == 0.4F) //Move
             {
-                GameObject go = null;
-                try { go = Instantiate(TriggerPref[2], pos, rot, place); }
-                catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
+                GameObject go = Instantiate(TriggerPref[2], pos, rot, place);
                 go.name = "Objet n° " + num;
-                Texture2D tex = new Texture2D(100, 100);
-                if (go.GetComponent<SpriteRenderer>() != null) tex = go.GetComponent<SpriteRenderer>().sprite.texture;
-                go.transform.localScale = new Vector2(100F / tex.width * 50, 100F / tex.height * 50);
+                go.transform.localScale = new Vector2(50, 50);
 
                 MoveTrigger moveTrigger = go.GetComponent<MoveTrigger>();
                 int.TryParse(GetBlocStatus("AffectationType", num), out moveTrigger.AffectationType);
