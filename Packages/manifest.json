@@ -36,13 +36,13 @@
     "com.unity.modules.xr": "1.0.0"
   },
   "lock": {
-    "com.coffee.upm-git-extension": {
-      "hash": "4434396e964e99a0371c9a2eaedc82e212969155",
-      "revision": "0.8.2"
-    },
     "com.e7.notch-solution": {
       "hash": "5ce344a771045c0dae52205e7be49bdda79bbc96",
       "revision": "master"
+    },
+    "com.coffee.upm-git-extension": {
+      "hash": "4434396e964e99a0371c9a2eaedc82e212969155",
+      "revision": "0.8.2"
     }
   }
 }
