@@ -71,7 +71,7 @@ public class LevelPlayer : MonoBehaviour
             if (string.IsNullOrEmpty(_fromScene)) FromScene = "Home";
             else FromScene = _fromScene;
 
-            Infos lvl = Infos.Parse(Editeur.UpdateLevel(File.ReadAllText(file)));
+            Infos lvl = Infos.Parse(LevelUpdater.UpdateLevel(File.ReadAllText(file)));
             if (string.IsNullOrEmpty(lvl.name)) lvl.name = Path.GetFileNameWithoutExtension(file);
             PlayLevel(lvl);
         }
@@ -80,7 +80,7 @@ public class LevelPlayer : MonoBehaviour
 
     public void PlayLevel(LevelItem item)
     {
-        Infos lvl = Infos.Parse(Editeur.UpdateLevel(item.Data));
+        Infos lvl = Infos.Parse(LevelUpdater.UpdateLevel(item.Data));
         if (string.IsNullOrEmpty(lvl.name)) lvl.name = item.Name;
         PlayLevel(lvl);
     }
