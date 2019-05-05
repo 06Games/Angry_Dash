@@ -48,7 +48,7 @@ public class Mur : MonoBehaviour
             StartCoroutine(colid(0.1F));
         }
         else if (colider >= 2.1F & colider < 3) //No Collision + Boost
-            player.vitesse = (boostMultiplier / 10F) + 1;
+            player.levelSettings.distance += boostMultiplier;
         else if ((int)colider == 3) //Bounce
         {
             if (!player.Touched & collision != null)
@@ -58,7 +58,7 @@ public class Mur : MonoBehaviour
                 Vector2 reflect = Vector2.Reflect(playerPos, contact.normal);
                 player.transform.rotation = Quaternion.FromToRotation(Vector2.up, reflect);
 
-                if (colider >= 3.1F & boostMultiplier > 0) player.vitesse = boostMultiplier;
+                if (colider >= 3.1F & boostMultiplier > 0) player.levelSettings.distance += boostMultiplier;
                 player.Touched = true;
             }
         }
