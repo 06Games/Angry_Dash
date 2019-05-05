@@ -327,14 +327,20 @@ public class EditorLevelSelector : MonoBehaviour
         string lvl = File.ReadAllText(files[index].FullName); //Read the level file
         if (FileFormat.XML.Utils.IsValid(lvl)) // If the level is in XML, minimize it
             lvl = lvl.Replace("\n", "").Replace("\r", "").Replace("\t", "");
-        byte[] responseArray = client.UploadData(URL, lvl.ToByte());
-        string Result = System.Text.Encoding.ASCII.GetString(responseArray);
-
-        if (Result.Contains("Success")) PublishPanel.Array(2);
-        else
+        client.UploadDataCompleted += (sender, e) =>
         {
-            PublishPanel.Array(1);
-            PublishPanel.GO[1].transform.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "EditorEditPublishError", "<color=red>Error</color> : [0]", Result);
-        }
+            string Result = "";
+            if (e.Error != null) Result = e.Error.Message;
+            else Result = System.Text.Encoding.ASCII.GetString(e.Result);
+
+            if (Result.Contains("Success")) PublishPanel.Array(2);
+            else
+            {
+                PublishPanel.Array(1);
+                PublishPanel.GO[1].transform.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "EditorEditPublishError", "<color=red>Error</color> : [0]", Result);
+            }
+        };
+        client.UploadDataAsync(new System.Uri(URL.Replace(" ", "%20")), lvl.ToByte());
+        
     }
 }
