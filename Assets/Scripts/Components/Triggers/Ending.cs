@@ -1,5 +1,6 @@
 ﻿using Tools;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace RewardChecker
 {
@@ -97,13 +98,16 @@ public class Ending : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (GameObject.Find("Base").transform.GetChild(3).gameObject.activeInHierarchy) return;
+        Transform EndPanel = GameObject.Find("Base").transform.GetChild(4);
+        if (EndPanel == null) return;
+        else if (EndPanel.gameObject.activeInHierarchy) return;
         player = collision.gameObject.GetComponent<Player>();
         player.PeutAvancer = false;
 
-        GameObject.Find("Base").transform.GetChild(3).GetChild(2).GetChild(0).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online");
-        GameObject.Find("Base").transform.GetChild(3).GetChild(2).GetChild(1).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online");
-        GameObject.Find("Base").transform.GetChild(3).gameObject.SetActive(true);
+        EndPanel.GetChild(0).GetComponent<Text>().text = player.LP.level.name; //Sets the level name
+        EndPanel.GetChild(2).GetChild(0).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online");
+        EndPanel.GetChild(2).GetChild(1).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online");
+        EndPanel.gameObject.SetActive(true);
 
         FileFormat.XML.RootElement xml = Inventory.xmlDefault;
         LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
@@ -118,9 +122,7 @@ public class Ending : MonoBehaviour
             lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
         }
 
-        int money = 0;
-        int.TryParse(xml.GetItem("Money").Value, out money);
-
+        int.TryParse(xml.GetItem("Money").Value, out int money);
         if (lvlPlayer.FromScene == "Home/Play/Official Levels")
         {
             RewardChecker.Official reward = new RewardChecker.Official(lvlPlayer.level.name);
@@ -133,11 +135,10 @@ public class Ending : MonoBehaviour
             lvlItem.Value = gain.ToString();
             xml.GetItem("Money").Value = (money + gain - lastGain).ToString();
 
-            GameObject.Find("Base").transform.GetChild(3).GetChild(1).GetChild(1).gameObject.SetActive(true);
-            GameObject.Find("Base").transform.GetChild(3).GetChild(1).GetChild(1).GetChild(2).GetComponent<UnityEngine.UI.Text>().text =
-                LangueAPI.Get("native", "levelRewardQuantity", "x[0]", gain - lastGain);
+            EndPanel.GetChild(1).GetChild(1).gameObject.SetActive(true);
+            EndPanel.GetChild(1).GetChild(1).GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.finished.reward.quantity", "x[0]", gain - lastGain);
         }
-        else GameObject.Find("Base").transform.GetChild(3).GetChild(1).GetChild(1).gameObject.SetActive(false);
+        else EndPanel.GetChild(1).GetChild(1).gameObject.SetActive(false);
         Inventory.xmlDefault = xml;
     }
 }

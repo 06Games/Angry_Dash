@@ -59,6 +59,7 @@ public class Editeur : MonoBehaviour
             background = new Level.Background() { category = "native", id = 1, color = new Color32(75, 75, 75, 255) },
             music = null,
             player = new Level.Player() { respawnMode = 0 },
+            victoryConditions = new Level.VictoryConditions(),
             blocks = new Level.Block[] { }
         };
 
@@ -129,6 +130,8 @@ public class Editeur : MonoBehaviour
                 actualValue++;
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editor.loading.opening", "Opening Level"));
                 yield return new WaitForEndOfFrame();
+                if (level.player == null) level.player = new Level.Player();
+                if (level.victoryConditions == null) level.victoryConditions = new Level.VictoryConditions();
                 OpenCat(-1);
 
                 Discord.Presence(LangueAPI.Get("native", "discordEditor_title", "In the editor"), LangueAPI.Get("native", "discordEditor_subtitle", "Editing [0]", level.name), new DiscordClasses.Img("default"));

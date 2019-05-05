@@ -15,8 +15,9 @@ public class LevelPlayer : MonoBehaviour
     public string[] passThroughArgs;
     Camera cam;
 
+    public GameObject PlayerPrefab;
     public GameObject[] Prefabs;
-    public Transform SummonPlace;
+    [HideInInspector] public Transform SummonPlace;
 
     public Sprite[] ArrierePlanS;
     public Transform ArrierePlan;
@@ -33,7 +34,8 @@ public class LevelPlayer : MonoBehaviour
 
     private void Update()
     {
-        nbLancerTxt.text = LangueAPI.Get("native", "playerTurn", "[0] Turn", nbLancer);
+        if (nbLancer > level.victoryConditions.maxThrow & level.victoryConditions.maxThrow > 0) Lost();
+        else nbLancerTxt.text = LangueAPI.Get("native", "levelPlayer.throw", "[0] Throw", nbLancer);
     }
 
     private void Start()
@@ -87,7 +89,6 @@ public class LevelPlayer : MonoBehaviour
     public void PlayLevel(Infos item)
     {
         level = item;
-        Base.GetChild(3).GetChild(0).GetComponent<Text>().text = level.name; //Sets the level name
         Parse(); //Spawn blocks
         Discord.Presence(LangueAPI.Get("native", "discordPlaying_title", "Play a level"), "", new DiscordClasses.Img("default", LangueAPI.Get("native", "discordPlaying_caption", "Level : [0]", level.name)), null, -1, 0); //Sets the Discord Infos
     }
@@ -107,13 +108,14 @@ public class LevelPlayer : MonoBehaviour
 
         while (GetComponent<MainCam>().Player == null) { }
         if (level.player == null) level.player = new Level.Player();
+        if (level.victoryConditions == null) level.victoryConditions = new VictoryConditions();
         GetComponent<MainCam>().Player.GetComponent<Player>().levelSettings = level.player.DeepClone();
 
         Transform place = new GameObject("Items").transform;
         for (int i = 0; i < level.blocks.Length; i++) Instance(i, place);
         transform.GetChild(0).gameObject.SetActive(true);
 
-        Base.GetChild(3).gameObject.SetActive(false);
+        Base.GetChild(4).gameObject.SetActive(false);
 
 
         string music = "";
@@ -125,7 +127,7 @@ public class LevelPlayer : MonoBehaviour
             if (!string.IsNullOrEmpty(music)) GameObject.Find("Audio").GetComponent<menuMusic>().LoadUnpackagedMusic(music);
         }
 
-        Destroy(SummonPlace.gameObject);
+        if(SummonPlace != null) Destroy(SummonPlace.gameObject);
         SummonPlace = place;
 
 
@@ -303,16 +305,23 @@ public class LevelPlayer : MonoBehaviour
 
     public void Replay()
     {
-        Pause(false);
-        if (GameObject.Find("Player") != null) GameObject.Find("Player").GetComponent<Player>().PeutAvancer = true;
-        else if (GameObject.Find("Player(Clone)") != null) GameObject.Find("Player(Clone)").GetComponent<Player>().PeutAvancer = true;
+        Time.timeScale = 1;
+        GameObject player = GameObject.Find("Player");
+        if (player == null) player = GameObject.Find("Player(Clone)");
+        if (player != null) Destroy(player);
+        GetComponent<MainCam>().Player = Instantiate(PlayerPrefab);
         nbLancer = 0;
-        Base.GetChild(3).gameObject.SetActive(false);
 
         Transform trace = GameObject.Find("Traces").transform;
         for (int i = 0; i < trace.childCount; i++)
             Destroy(trace.GetChild(i).gameObject);
 
         PlayLevel(level);
+    }
+
+    void Lost()
+    {
+        Pause(true);
+        Base.GetChild(6).gameObject.SetActive(true);
     }
 }

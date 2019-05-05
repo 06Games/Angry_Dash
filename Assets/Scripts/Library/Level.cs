@@ -13,6 +13,7 @@ namespace Level
         public SongItem music;
         public Versioning version;
         public Player player;
+        public VictoryConditions victoryConditions;
 
         public Block[] blocks;
 
@@ -33,6 +34,7 @@ namespace Level
                 & music == other.music
                 & version == other.version
                 & player == other.player
+                & victoryConditions == other.victoryConditions
                 & Block.Equals(blocks, other.blocks))
                 return true;
             else return false;
@@ -56,6 +58,7 @@ namespace Level
             other.music = music;
             other.version = version;
             other.player = player;
+            other.victoryConditions = victoryConditions;
             other.blocks = new Block[blocks.Length];
             for (int i = 0; i < blocks.Length; i++) blocks[i].CopyTo(out other.blocks[i]);
         }
@@ -91,6 +94,31 @@ namespace Level
         public override int GetHashCode() { return base.GetHashCode(); }
     }
 
+
+    [System.Serializable]
+    public class VictoryConditions
+    {
+        public int maxThrow = 0; //Maximum number of throws
+
+        public override bool Equals(object obj) { return Equals(obj as VictoryConditions); }
+        public bool Equals(VictoryConditions other)
+        {
+            if (ReferenceEquals(other, null)) return false; //If parameter is null, return false.
+            if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
+            if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
+
+            return maxThrow == other.maxThrow;
+        }
+        public static bool operator ==(VictoryConditions left, VictoryConditions right)
+        {
+            if (left is null & right is null) return true;
+            else if (left is null | right is null) return false;
+            else return left.Equals(right);
+        }
+        public static bool operator !=(VictoryConditions left, VictoryConditions right) { return !(left == right); }
+        public override int GetHashCode() { return base.GetHashCode(); }
+    }
+
     [System.Serializable]
     public class Player
     {
@@ -104,7 +132,7 @@ namespace Level
             if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
             if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
 
-            return respawnMode == other.respawnMode;
+            return respawnMode == other.respawnMode & distance == other.distance;
         }
         public static bool operator ==(Player left, Player right)
         {
