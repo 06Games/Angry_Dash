@@ -7,8 +7,8 @@ public class CheckPoint : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         player = collision.gameObject.GetComponent<Player>();
-        if (player.respawnMode == 1) player.PositionInitiale = transform.position;
-        if (player.respawnMode == 1) GetComponent<SpriteRenderer>().color = new Color32(255, 130, 0, 255);
+        if (player.levelSettings.respawnMode == 1) player.PositionInitiale = transform.position;
+        if (player.levelSettings.respawnMode == 1) GetComponent<SpriteRenderer>().color = new Color32(255, 130, 0, 255);
     }
 
     private void Update()

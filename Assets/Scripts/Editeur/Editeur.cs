@@ -58,7 +58,7 @@ public class Editeur : MonoBehaviour
             version = Versioning.Actual,
             background = new Level.Background() { category = "native", id = 1, color = new Color32(75, 75, 75, 255) },
             music = null,
-            respawnMode = 0,
+            player = new Level.Player() { respawnMode = 0 },
             blocks = new Level.Block[] { }
         };
 

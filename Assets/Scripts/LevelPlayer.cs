@@ -106,7 +106,8 @@ public class LevelPlayer : MonoBehaviour
         ArrierePlan.GetComponent<CanvasScaler>().matchWidthOrHeight = match;
 
         while (GetComponent<MainCam>().Player == null) { }
-        GetComponent<MainCam>().Player.GetComponent<Player>().respawnMode = level.respawnMode;
+        if (level.player == null) level.player = new Level.Player();
+        GetComponent<MainCam>().Player.GetComponent<Player>().levelSettings = level.player.DeepClone();
 
         Transform place = new GameObject("Items").transform;
         for (int i = 0; i < level.blocks.Length; i++) Instance(i, place);
@@ -184,7 +185,7 @@ public class LevelPlayer : MonoBehaviour
                 go.name = "Objet n° " + num;
                 UImage_Reader reader = go.GetComponent<UImage_Reader>().Load();
                 go.transform.localScale = new Vector2(100, 100) / reader.FrameSize * 50;
-                go.SetActive(GetComponent<MainCam>().Player.GetComponent<Player>().respawnMode == 1);
+                go.SetActive(GetComponent<MainCam>().Player.GetComponent<Player>().levelSettings.respawnMode == 1);
             }
             else if (id == 0.4F) //Move
             {

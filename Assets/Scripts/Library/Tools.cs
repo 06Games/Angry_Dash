@@ -350,6 +350,22 @@ namespace Tools
         }
     }
 
+    public static class TExtensions
+    {
+        public static T DeepClone<T>(this T obj)
+        {
+            if (obj == null) return default;
+            using (var ms = new System.IO.MemoryStream())
+            {
+                var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                formatter.Serialize(ms, obj);
+                ms.Position = 0;
+
+                return (T)formatter.Deserialize(ms);
+            }
+        }
+    }
+
     public static class EnumerableExtensions
     {
         public static int CompareNatural(string strA, string strB)

@@ -12,7 +12,7 @@ namespace Level
         public Background background;
         public SongItem music;
         public Versioning version;
-        public int respawnMode;
+        public Player player;
 
         public Block[] blocks;
 
@@ -32,7 +32,7 @@ namespace Level
                 & background == other.background
                 & music == other.music
                 & version == other.version
-                & respawnMode == other.respawnMode
+                & player == other.player
                 & Block.Equals(blocks, other.blocks))
                 return true;
             else return false;
@@ -55,7 +55,7 @@ namespace Level
             other.background = background;
             other.music = music;
             other.version = version;
-            other.respawnMode = respawnMode;
+            other.player = player;
             other.blocks = new Block[blocks.Length];
             for (int i = 0; i < blocks.Length; i++) blocks[i].CopyTo(out other.blocks[i]);
         }
@@ -88,6 +88,31 @@ namespace Level
             else return left.Equals(right);
         }
         public static bool operator !=(Background left, Background right) { return !(left == right); }
+        public override int GetHashCode() { return base.GetHashCode(); }
+    }
+
+    [System.Serializable]
+    public class Player
+    {
+        public int respawnMode = 0; //Action to be taken in case of death
+        public float distance = 5; //Maximum distance traveled by the player in a throw
+
+        public override bool Equals(object obj) { return Equals(obj as Player); }
+        public bool Equals(Player other)
+        {
+            if (ReferenceEquals(other, null)) return false; //If parameter is null, return false.
+            if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
+            if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
+
+            return respawnMode == other.respawnMode;
+        }
+        public static bool operator ==(Player left, Player right)
+        {
+            if (left is null & right is null) return true;
+            else if (left is null | right is null) return false;
+            else return left.Equals(right);
+        }
+        public static bool operator !=(Player left, Player right) { return !(left == right); }
         public override int GetHashCode() { return base.GetHashCode(); }
     }
 
@@ -298,6 +323,7 @@ namespace Level
                     }
                     Infos updated = new Infos();
                     updated.name = Name;
+                    updated.player = new Player();
                     updated.blocks = new Block[0];
 
                     bool blockArea = false;
@@ -324,7 +350,7 @@ namespace Level
                             if (data.Length >= 2) updated.music = new SongItem() { Artist = data[0], Name = data[1] };
                         }
                         else if (line.Contains("author = ")) updated.author = line.Replace("author = ", "").Replace("\r", "");
-                        else if (line.Contains("respawnMode = ")) int.TryParse(line.Replace("respawnMode = ", "").Replace("\r", ""), out updated.respawnMode);
+                        else if (line.Contains("respawnMode = ")) int.TryParse(line.Replace("respawnMode = ", "").Replace("\r", ""), out updated.player.respawnMode);
                         else if (line.Contains("Blocks {")) blockArea = true;
                         else if (blockArea)
                         {

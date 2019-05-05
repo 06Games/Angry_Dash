@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using Tools;
 
 public class Behavior : MonoBehaviour
 {
@@ -14,56 +13,35 @@ public class Behavior : MonoBehaviour
     {
         if (editor.SelectedBlock.Length == 0) { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
 
-        Toggle Boost = transform.GetChild(1).GetComponent<Toggle>();
-        InputField t = Boost.transform.GetChild(2).GetComponent<InputField>();
+        InputField Boost = transform.GetChild(1).GetChild(0).GetComponent<InputField>();
 
         if (SB != editor.SelectedBlock)
         {
             if (editor.SelectedBlock.Length > 0)
             {
                 SB = editor.SelectedBlock;
-                float id = 0;
-                float.TryParse(editor.GetBlocStatus("Behavior", SB[0]), out id);
+                float.TryParse(editor.GetBlocStatus("Behavior", SB[0]), out float id);
                 transform.GetChild(0).GetChild((int)id).GetComponent<Toggle>().isOn = true;
 
-                Boost.isOn = id != (int)id;
-                if (Boost.isOn)
-                    t.text = id.ToString().Split(new string[1] { "." }, System.StringSplitOptions.None)[1];
-                else t.text = "";
+                string[] ID = id.ToString().Split(".");
+                if (ID.Length == 2) Boost.text = ID[1];
+                else Boost.text = "0";
             }
             else { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
         }
 
         string col = GetComponent<ToggleGroup>().ActiveToggles().FirstOrDefault().name;
-
-        if (col == "2" | col == "3")
-        {
-            Boost.interactable = true;
-            t.interactable = true;
-        }
-        else
-        {
-            Boost.interactable = false;
-            t.interactable = false;
-        }
+        if (col == "2" | col == "3") Boost.interactable = true;
+        else Boost.interactable = false;
 
         int b = -1;
-        try
+        if (int.TryParse(Boost.text, out b))
         {
-
-            b = int.Parse(t.text);
-
-            if (b.ToString() != t.text)
-                t.text = b.ToString();
+            if (b.ToString() != Boost.text) Boost.text = b.ToString();
         }
-        catch
-        {
-            if (!string.IsNullOrEmpty(t.text) & b == 1)
-                t.text = "";
-        }
+        else if (!string.IsNullOrEmpty(Boost.text)) Boost.text = "0";
 
-        if (Boost.isOn & b != -1)
-            col = col + "." + b;
+        if (b != -1) col = col + "." + b;
         editor.ChangBlocStatus("Behavior", col, SB);
 
     }

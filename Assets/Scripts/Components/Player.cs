@@ -15,21 +15,18 @@ public class Player : MonoBehaviour
     public GameObject JoyStick; //The joystick
     Vector2 joystickOffset; //The joystick's offset on screen
     public Vector3 Sensibility; //Min et max de l'aléatoire + Sensibilité actuelle (distance en nombre blocs)
-    int x; //pos x du joystick
-    int y; //pos y du joystick
-
-    //Point d'arrivé
-    Vector2 Ar = new Vector2(); //Pt d'arrivé actuel
+    Vector2 joystickPos; //pos du joystick
 
     //Avancer
     public bool PeutAvancer = false; //Pas de mur
     public Vector2 PositionInitiale; //Dernier point d'arrivé valide
     public bool Touched = false; //Le joueur est-il déjà géré par un bloc
+    bool Moving = false;
 
     //Paramètres
     int selectedTrace = 0; //Trace Type
     public float vitesse = 1; //Multiplicateur de la vitesse du joueur
-    public int respawnMode = 0; //Action à effectuer en cas de mort
+    public Level.Player levelSettings; //Autres paramètres défini par le niveau
 
 
     void Start()
@@ -108,41 +105,30 @@ public class Player : MonoBehaviour
     {
         JoyStick.GetComponent<RectTransform>().position = (Vector2)LP.GetComponent<Camera>().WorldToScreenPoint(transform.position) - joystickOffset;
         Sensibility.z = Random.Range(Sensibility.x, Sensibility.y);
-        int xa = (int)(CnInputManager.GetAxis("Horizontal") * 50 * Sensibility.z); //x actuel
-        int ya = (int)(CnInputManager.GetAxis("Vertical") * 50 * Sensibility.z); //y actuel
+        Vector2 newJoystickPos = new Vector2(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
+        JoyStick.SetActive(!Moving);
 
-        bool t = false;
-        if (x != 0 | y != 0)
-            t = true;
-
-        if (Ar == new Vector2())
-            JoyStick.SetActive(true);
-        else JoyStick.SetActive(false);
-
-
-        if (xa == 0 & ya == 0 & t & Ar == new Vector2() & PeutAvancer) //si le joueur a laché le joystick
+        if (newJoystickPos == new Vector2(0, 0) & joystickPos != new Vector2(0, 0) & !Moving & PeutAvancer) //si le joueur a laché le joystick
         {
             LP.nbLancer = LP.nbLancer + 1;
-            Vector3 pos = new Vector3(transform.position.x - x, transform.position.y - y, 0);
-            Ar = pos;
-
-            if (respawnMode == 0) PositionInitiale = transform.position;
-            StartCoroutine(Navigate());
+            if (levelSettings.respawnMode == 0) PositionInitiale = transform.position;
+            StartCoroutine(Navigate(joystickPos * new Vector2(-1, 1)));
         }
 
-        x = xa; //x d'avant
-        y = ya; //y d'avant
+        joystickPos = newJoystickPos;
     }
 
-    public IEnumerator Navigate()
+    public IEnumerator Navigate(Vector2 joystickPos)
     {
+        Moving = true;
+
         //Rotation du Player
-        float adjacent = Ar.x - transform.position.x;
-        float oppose = Ar.y - transform.position.y;
+        float adjacent = joystickPos.x;
+        float oppose = joystickPos.y;
         float hypothenuse = Mathf.Sqrt(Mathf.Pow(adjacent, 2) + Mathf.Pow(oppose, 2));
         float cos = adjacent / hypothenuse;
         double z = (Mathf.Acos(cos) * 180) / Mathf.PI;
-        if (transform.position.y < Ar.y) z = z - 90;
+        if (transform.position.y < transform.position.y - joystickPos.y) z -= 90;
         else z = z * -1 - 90;
         Quaternion rot = new Quaternion();
         rot.eulerAngles = new Vector3(0, 0, (float)z);
@@ -151,7 +137,6 @@ public class Player : MonoBehaviour
         System.TimeSpan MoveTime = System.TimeSpan.FromSeconds(0.75F / vitesse);
         System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
         Vector2 InitialPos = transform.position;
-        float Mouvement = Mathf.Sqrt(Mathf.Pow(Ar.x - InitialPos.x, 2) + Mathf.Pow(Ar.y - InitialPos.y, 2));
 
         Transform traceObj = CreateTrace();
         Vector2 endPos = InitialPos;
@@ -161,6 +146,8 @@ public class Player : MonoBehaviour
         stopwatch.Start();
         while ((stopwatch.Elapsed < MoveTime | LastFrame) & PeutAvancer)
         {
+            Vector2 mouvement = levelSettings.distance * 50F * joystickPos;
+            float Mouvement = Mathf.Sqrt(Mathf.Pow(mouvement.x, 2) + Mathf.Pow(mouvement.y, 2));
             if (vitesse <= 0)
             {
                 stopwatch.Stop();
@@ -209,8 +196,9 @@ public class Player : MonoBehaviour
         TraceEnd(traceObj, endPos);
 
         stopwatch.Stop();
-        Ar = new Vector2();
+        levelSettings = LP.level.player.DeepClone();
         vitesse = 1;
+        Moving = false;
     }
 
     Transform CreateTrace()
