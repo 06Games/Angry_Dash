@@ -96,14 +96,14 @@ public class Editeur : MonoBehaviour
             else
             {
                 actualValue++;
-                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingVersionCheck", "Checking the level version"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editor.loading.versionCheck", "Checking the level version"));
                 yield return new WaitForEndOfFrame();
                 string updated = Level.LevelUpdater.UpdateLevel(fileText, file);
                 level = Level.Infos.Parse(updated);
                 if (updated != fileText) File.WriteAllText(file, updated); //The level was updated, save changes
 
                 actualValue++;
-                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingBlocks", "Placing Blocks"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editor.loading.blocks", "Placing Blocks"));
                 yield return new WaitForEndOfFrame();
 
                 float each = (int)(level.blocks.Length * 0.25F);
@@ -112,7 +112,7 @@ public class Editeur : MonoBehaviour
                 {
                     if (each > 0 & (int)(i / each) == i / each)
                     {
-                        LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingBlocksStatus", "Placing Blocks : [0]/[1]", i, level.blocks.Length));
+                        LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editor.loading.blocksStatus", "Placing Blocks : [0]/[1]", i, level.blocks.Length));
                         yield return new WaitForEndOfFrame();
                     }
                     Instance(i);
@@ -121,13 +121,13 @@ public class Editeur : MonoBehaviour
 
 
                 actualValue++;
-                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingBackgrounds", "Caching Backgrounds"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editor.loading.backgrounds", "Caching Backgrounds"));
                 yield return new WaitForEndOfFrame();
                 backgroundManager.ActualiseFond(this); //Caching Backgrounds
 
 
                 actualValue++;
-                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editorExploreLoadingOpen", "Opening Level"));
+                LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editor.loading.opening", "Opening Level"));
                 yield return new WaitForEndOfFrame();
                 OpenCat(-1);
 
@@ -213,7 +213,7 @@ public class Editeur : MonoBehaviour
         }
 
         transform.GetChild(0).GetChild(6).gameObject.SetActive(ConfigAPI.GetBool("editor.showCoordinates"));
-        transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).GetComponent<InputField>().text = LangueAPI.Get("native", "editorLayerAll", "All");
+        transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).GetComponent<InputField>().text = LangueAPI.Get("native", "editor.layer.all", "All");
     }
 
     void Update()
@@ -579,7 +579,7 @@ public class Editeur : MonoBehaviour
         {
             l = l + operation;
             if (l > -2) input.text = l.ToString();
-            else input.text = LangueAPI.Get("native", "editorLayerAll", "All");
+            else input.text = LangueAPI.Get("native", "editor.layer.all", "All");
             ChangeDisplayedLayer(input);
         }
         else if (operation > 0)
@@ -590,7 +590,7 @@ public class Editeur : MonoBehaviour
     }
     public void ChangeDisplayedLayer(InputField input)
     {
-        if (!int.TryParse(input.text, out int l) | l < -2) input.text = LangueAPI.Get("native", "editorLayerAll", "All");
+        if (!int.TryParse(input.text, out int l) | l < -2) input.text = LangueAPI.Get("native", "editor.layer.all", "All");
         else if (l > 999) input.text = "999";
         ChangeDisplayedLayer(input.text);
     }

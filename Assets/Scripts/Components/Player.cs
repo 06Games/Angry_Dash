@@ -112,6 +112,7 @@ public class Player : MonoBehaviour
         {
             LP.nbLancer = LP.nbLancer + 1;
             if (levelSettings.respawnMode == 0) PositionInitiale = transform.position;
+            levelSettings = LP.level.player.DeepClone();
             StartCoroutine(Navigate(joystickPos * new Vector2(-1, 1)));
         }
 

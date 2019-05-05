@@ -13,7 +13,7 @@ public class Editor_StartTrigger : MonoBehaviour
     {
         get
         {
-            return LangueAPI.Get("native", "editorMenuEditPlayerInfinity", "All");
+            return LangueAPI.Get("native", "editor.edit.genericEvent.player.infinity", "All");
         }
     }
 
