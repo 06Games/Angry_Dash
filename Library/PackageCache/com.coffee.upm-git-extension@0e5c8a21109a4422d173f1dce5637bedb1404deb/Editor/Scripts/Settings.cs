@@ -23,14 +23,6 @@ namespace Coffee.PackageManager
 						.Select(x=>AssetDatabase.LoadAssetAtPath<Settings> (x))
 						.FirstOrDefault ();
 				}
-				if (s_EmptyHostData == null)
-				{
-					s_EmptyHostData = new HostData ()
-					{
-						LogoDark = EditorGUIUtility.FindTexture ("buildsettings.web.small"),
-						LogoLight = EditorGUIUtility.FindTexture ("d_buildsettings.web.small"),
-					};
-				}
 				return s_Instance;
 			}
 		}
@@ -39,9 +31,12 @@ namespace Coffee.PackageManager
 
 		public static HostData GetHostData (string packageId)
 		{
-			return Instance
-				? Instance.m_HostData.FirstOrDefault (x => packageId.Contains (x.Domain)) ?? s_EmptyHostData
-				: s_EmptyHostData;
+			return Instance.m_HostData.FirstOrDefault (x => packageId.Contains (x.Domain))
+				?? new HostData ()
+				{
+					LogoDark = EditorGUIUtility.FindTexture ("buildsettings.web.small"),
+					LogoLight = EditorGUIUtility.FindTexture ("d_buildsettings.web.small"),
+				};
 		}
 	}
 

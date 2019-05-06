@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.coffee.upm-git-extension": "https://github.com/mob-sakai/UpmGitExtension.git#0.8.2",
+    "com.coffee.upm-git-extension": "https://github.com/mob-sakai/UpmGitExtension.git#0.7.0",
     "com.e7.notch-solution": "https://github.com/5argon/NotchSolution.git#master",
     "com.unity.package-manager-ui": "2.0.7",
     "com.unity.textmeshpro": "1.3.0",
@@ -41,8 +41,8 @@
       "revision": "master"
     },
     "com.coffee.upm-git-extension": {
-      "hash": "4434396e964e99a0371c9a2eaedc82e212969155",
-      "revision": "0.8.2"
+      "hash": "0e5c8a21109a4422d173f1dce5637bedb1404deb",
+      "revision": "0.7.0"
     }
   }
 }
