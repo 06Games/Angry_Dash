@@ -3868,7 +3868,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: SettingsInformationsCreditsTextures
+  id: settings.informations.credits.textures
   arg: []
 --- !u!114 &134150540
 MonoBehaviour:
@@ -4260,7 +4260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: SettingsInformationsCreditsTests
+  id: settings.informations.credits.tests
   arg: []
 --- !u!114 &140518954
 MonoBehaviour:
@@ -9863,7 +9863,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: SettingsInformationsCreditsLayout
+  id: settings.informations.credits.layout
   arg: []
 --- !u!114 &383047754
 MonoBehaviour:
@@ -12147,7 +12147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: SettingsInformationsDeleteLogs
+  id: settings.informations.deleteLogs
   arg: []
 --- !u!1 &478158509
 GameObject:
@@ -18332,7 +18332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: SettingsInformationsCreditsScripts
+  id: settings.informations.credits.scripts
   arg: []
 --- !u!114 &695505347
 MonoBehaviour:
@@ -28130,7 +28130,7 @@ GameObject:
   - component: {fileID: 1045482761}
   - component: {fileID: 1045482762}
   m_Layer: 5
-  m_Name: Web Site
+  m_Name: Website
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -28474,7 +28474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: SettingsInformationsCreditsConcept
+  id: settings.informations.credits.concept
   arg: []
 --- !u!114 &1057611841
 MonoBehaviour:
@@ -34426,7 +34426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: SettingsInformationsDeleteLogs
+  id: settings.informations.privacyPolicy
   arg: []
 --- !u!114 &1266567223
 MonoBehaviour:
@@ -46808,7 +46808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: SettingsInformationsWebsite
+  id: settings.informations.website
   arg: []
 --- !u!114 &1803192476
 MonoBehaviour:
@@ -52038,7 +52038,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: SettingsInformationsCreditsMusics
+  id: settings.informations.credits.musics
   arg: []
 --- !u!114 &1991558138
 MonoBehaviour:
