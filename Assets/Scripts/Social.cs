@@ -1,10 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-using GooglePlayGames;
-using GooglePlayGames.BasicApi;
-using UnityEngine.SocialPlatforms;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class Social : MonoBehaviour
@@ -15,17 +9,17 @@ public class Social : MonoBehaviour
 
     public void NewStart()
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
+/*#if UNITY_ANDROID && !UNITY_EDITOR
         Auth();
-#elif !UNITY_EDITOR
+#elif !UNITY_EDITOR*/
         LSC.LoadScreen(scene);
-#else
+/*#else
         transform.GetChild(0).gameObject.SetActive(true);
         transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "googleServiceAuthenticating", "Authenticating...");
         transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
         if (EditorContinue)
             LSC.LoadScreen(scene);
-#endif
+#endif*/
     }
 
 #if UNITY_ANDROID
@@ -33,7 +27,7 @@ public class Social : MonoBehaviour
 #endif
     public void Auth()
     {
-#if UNITY_ANDROID
+#if FALSE //UNITY_ANDROID
         if (InternetAPI.IsConnected())
         {
             transform.GetChild(0).gameObject.SetActive(true);
