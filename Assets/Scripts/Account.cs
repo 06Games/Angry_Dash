@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using Tools;
+using FileFormat.XML;
 
 public class Account : MonoBehaviour
 {
@@ -11,12 +12,10 @@ public class Account : MonoBehaviour
     {
         get
         {
-#if UNITY_EDITOR || UNITY_STANDALONE
-            return Application.persistentDataPath + "/../06Games Launcher/account.account";
-#elif UNITY_ANDROID
-            return Application.persistentDataPath + "/../com.fr_06Games.Launcher/account.account";
-#elif UNITY_IOS
-            return Application.persistentDataPath + "/account.account";
+#if UNITY_IOS && !UNITY_EDITOR
+            return Application.persistentDataPath + "/account.xml";
+#else
+            return Application.persistentDataPath + "/../account.xml";
 #endif
         }
     }
@@ -28,9 +27,9 @@ public class Account : MonoBehaviour
 #if UNITY_EDITOR
         get
         {
-            string[] details = File.ReadAllLines(accountFile);
-            if (details.Length >= 2) return Security.Encrypting.Decrypt(details[1], passwordKey);
-            else return "";
+            RootElement root = new RootElement(null);
+            try { root = new XML(File.ReadAllText(accountFile)).RootElement; } catch { }
+            return Security.Encrypting.Decrypt(root.GetItem("password").Value, passwordKey);
         }
         set { }
 #else
@@ -73,9 +72,12 @@ public class Account : MonoBehaviour
 
                 if (success)
                 {
+                    RootElement RE = new XML().CreateRootElement("account");
+                    RE.CreateItem("username").Value = username;
+                    RE.CreateItem("password").Value = Security.Encrypting.Encrypt(password, passwordKey);
                     FileInfo accountF = new FileInfo(accountFile);
                     if (!accountF.Directory.Exists) Directory.CreateDirectory(accountF.DirectoryName);
-                    File.WriteAllLines(accountF.FullName, new string[] { username, Security.Encrypting.Encrypt(password, passwordKey) });
+                    File.WriteAllText(accountF.FullName, RE.xmlFile.ToString(false));
                 }
                 else transform.GetChild(0).GetChild(3).GetComponent<Button>().interactable = true;
             });
@@ -87,18 +89,15 @@ public class Account : MonoBehaviour
         {
             if (File.Exists(accountFile))
             {
-                string[] details = File.ReadAllLines(accountFile);
-                if (details.Length >= 2)
-                {
-                    string username = details[0];
-                    string password = null;
-                    try { password = Security.Encrypting.Decrypt(details[1], passwordKey); }
-                    catch { NoConnectionInformation(); return; }
+                RootElement root = new RootElement(null);
+                try { root = new XML(File.ReadAllText(accountFile)).RootElement; } catch { }
+                string username = root.GetItem("username").Value;
+                string password = null;
+                try { password = Security.Encrypting.Decrypt(root.GetItem("password").Value, passwordKey); }
+                catch { NoConnectionInformation(); return; }
 
-                    bool success = Connect(username, password, (sender, e) => complete.Invoke(sender, e));
-                    if (!success) NoConnectionInformation();
-                }
-                else NoConnectionInformation();
+                bool success = Connect(username, password, (sender, e) => complete.Invoke(sender, e));
+                if (!success) NoConnectionInformation();
             }
             else NoConnectionInformation();
         }
@@ -106,7 +105,7 @@ public class Account : MonoBehaviour
 
     public static void Disconnect()
     {
-        File.WriteAllLines(accountFile, new string[] { });
+        File.WriteAllText(accountFile, "");
         FindObjectOfType<LoadingScreenControl>().LoadScreen("Start",
             new string[] { "Account", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name });
     }

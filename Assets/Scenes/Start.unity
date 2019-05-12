@@ -9673,7 +9673,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scene: Home
-  returnScene: 1
+  returnScene: 0
   OnEchap:
     m_PersistentCalls:
       m_Calls: []

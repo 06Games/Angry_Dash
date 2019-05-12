@@ -80,10 +80,17 @@ namespace FileFormat
                 xmlDoc = new System.Xml.XmlDocument();
                 if (!string.IsNullOrEmpty(plainText)) xmlDoc.LoadXml(plainText);
             }
-            public override string ToString()
+            public override string ToString() { return ToString(true); }
+            public string ToString(bool minimised)
             {
+                var settings = new System.Xml.XmlWriterSettings
+                {
+                    NewLineHandling = System.Xml.NewLineHandling.Entitize,
+                    Encoding = Encoding.UTF8,
+                    Indent = !minimised
+                };
                 using (var stringWriter = new StringWriter())
-                using (var xmlTextWriter = System.Xml.XmlWriter.Create(stringWriter))
+                using (var xmlTextWriter = System.Xml.XmlWriter.Create(stringWriter, settings))
                 {
                     xmlDoc.WriteTo(xmlTextWriter);
                     xmlTextWriter.Flush();
@@ -144,12 +151,14 @@ namespace FileFormat
             public System.Xml.XmlNode node;
             public Item GetItem(string key)
             {
+                if (node == null) return new Item(null);
                 System.Xml.XmlNode xmlNode = node.SelectSingleNode(key);
                 if (xmlNode == null) return new Item(null);
                 else return new Item(xmlNode);
             }
             public Item[] GetItems(string key)
             {
+                if (node == null) return null;
                 System.Xml.XmlNodeList list = node.SelectNodes(key);
                 Item[] items = new Item[list.Count];
                 for (int i = 0; i < items.Length; i++)
