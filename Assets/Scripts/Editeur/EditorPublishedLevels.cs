@@ -333,7 +333,7 @@ public class EditorPublishedLevels : MonoBehaviour
             Select(currentFile);
             panel.gameObject.SetActive(false);
         }
-        else Debug.LogError("Connection error: " + result);
+        else Debug.LogError("Connection error: " + result.Replace("<BR />", "\n"));
 
     }
 }

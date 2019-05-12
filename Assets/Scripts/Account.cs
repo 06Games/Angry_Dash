@@ -151,7 +151,7 @@ public class Account : MonoBehaviour
             else if (Result == "Bad URL") errorId = "AccountErrorInternal";
 
             if (!string.IsNullOrEmpty(errorId))
-                transform.GetChild(0).GetChild(5).GetComponent<Text>().text = LangueAPI.Get("native", errorId, Result);
+                transform.GetChild(0).GetChild(5).GetComponent<Text>().text = LangueAPI.Get("native", errorId, "[0]", Result);
             else transform.GetChild(0).GetChild(5).GetComponent<Text>().text =
                     LangueAPI.Get("native", "AccountErrorUnkown", "[0]", Result);
         }
