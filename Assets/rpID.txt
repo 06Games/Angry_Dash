@@ -3,12 +3,14 @@ native/GUI/mainMenu/background
 native/GUI/mainMenu/button
 native/GUI/mainMenu/profile
 native/GUI/playMenu/background
+native/GUI/playMenu/button
 native/GUI/playMenu/exit
 native/GUI/playMenu/OfficialServers
 native/GUI/playMenu/history
 native/GUI/playMenu/officialLevels
 native/GUI/playMenu/communityServers
 native/GUI/editorMenu/background
+native/GUI/editorMenu/button
 native/GUI/editorMenu/exit
 native/GUI/editorMenu/edit
 native/GUI/editorMenu/communityLevels
@@ -16,6 +18,7 @@ native/GUI/editorMenu/communityLevels/starAssigned
 native/GUI/editorMenu/communityLevels/starUnassigned
 native/GUI/editorMenu/communityLevels/writeComment
 native/GUI/settingsMenu/background
+native/GUI/settingsMenu/button
 native/GUI/settingsMenu/exit
 native/GUI/settingsMenu/languages
 native/GUI/settingsMenu/languages/button
@@ -34,10 +37,12 @@ native/GUI/settingsMenu/ressourcePacks/download
 native/GUI/settingsMenu/informations
 native/GUI/settingsMenu/informations/button
 native/GUI/inventoryMenu/background
+native/GUI/inventoryMenu/button
 native/GUI/inventoryMenu/exit
 native/GUI/inventoryMenu/players
 native/GUI/inventoryMenu/traces
 native/GUI/profileMenu/background
+native/GUI/profileMenu/button
 native/GUI/profileMenu/exit
 native/GUI/profileMenu/myLevels
 native/GUI/profileMenu/myLevels/delete
@@ -75,6 +80,7 @@ native/GUI/editor/events/0.2
 native/GUI/editor/events/0.3
 native/GUI/editor/events/0.4
 native/GUI/editor/options/background
+native/GUI/editor/options/button
 native/GUI/editor/options/exit
 native/GUI/editor/options/levelBackground
 native/GUI/editor/options/playingRules
