@@ -118,10 +118,13 @@ public class Account : MonoBehaviour
 
         string Result = "";
         try { Result = client.DownloadString(url); }
-        catch
+        catch (Exception e)
         {
 #if UNITY_EDITOR
             Result = "Connection succesful !<br><br>Unity<br>UnityAccount<br>01/01/2000<br><b>Jeux :</b><dd>";
+            Debug.LogError(url + "\n" + e);
+#else
+            Result = e.Message;
 #endif
         }
 
