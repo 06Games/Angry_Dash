@@ -156,8 +156,8 @@ PlayerSettings:
     iOS: com.fr06Games.AngryDash
   buildNumber:
     Standalone: 1
-    iOS: 37
-  AndroidBundleVersionCode: 37
+    iOS: 38
+  AndroidBundleVersionCode: 38
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
