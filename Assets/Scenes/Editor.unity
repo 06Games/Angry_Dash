@@ -26706,7 +26706,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: 
+  baseID: native/BLOCKS/2.0
   TextConfiguration: 0
   Type: 00000000000000000000000000000000
 --- !u!1 &1119714026
@@ -38939,7 +38939,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: 
+  baseID: native/BLOCKS/3.0
   TextConfiguration: 0
   Type: 00000000000000000000000000000000
 --- !u!1 &1649562831
@@ -50112,7 +50112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: 
+  baseID: native/BLOCKS/1.0
   TextConfiguration: 0
   Type: 00000000000000000000000000000000
 --- !u!1 &2092715706
