@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **The situation**
-Where: [for example. `In the main menu, play sub menu]
+Where: [for example. `In the main menu, play sub menu`]
 On which type of device (if applicable): [for example. `Mobile`]
 
 ** The idea **
