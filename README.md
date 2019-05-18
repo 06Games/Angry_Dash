@@ -1,4 +1,4 @@
-[![Download](https://img.shields.io/github/downloads-pre/06Games/Angry_Dash/latest/total.svg?longCache=true&style=for-the-badge&colorB=808080&colorA=696969)](https://github.com/06Games/Angry_Dash/releases/latest)
+[![Download](https://img.shields.io/github/downloads-pre/06Games/Angry_Dash/latest/total.svg?label=Téléchargement&longCache=true&style=for-the-badge&colorB=808080&colorA=696969)](https://github.com/06Games/Angry_Dash/releases/latest)
 
 ## Introduction
 Le Gameplay d'Angry Dash est simple, on doit tirer pour traverser une « map » contenant des murs, pièges et effets.
