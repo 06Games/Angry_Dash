@@ -29853,8 +29853,9 @@ GameObject:
   - component: {fileID: 1118275299}
   - component: {fileID: 1118275298}
   - component: {fileID: 1118275301}
+  - component: {fileID: 1118275302}
   m_Layer: 5
-  m_Name: Shop
+  m_Name: Inventory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29897,7 +29898,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 2065246928}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.54901963, g: 0.54901963, b: 0.54901963, a: 1}
@@ -29997,6 +29998,21 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: Base+OnCompleteEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
+--- !u!114 &1118275302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1118275296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/mainMenu/inventory
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &1123241332
 GameObject:
   m_ObjectHideFlags: 0
@@ -54427,7 +54443,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseID: native/GUI/mainMenu/profile
-  TextConfiguration: 1
+  TextConfiguration: 0
   Type: 00000000000000000000000000000000
 --- !u!114 &2065246928
 MonoBehaviour:

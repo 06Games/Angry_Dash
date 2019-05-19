@@ -164,3 +164,4 @@ native/TRACES/-1_Success
 native/TRACES/-1_SuccessEnd
 native/TRACES/-1_Missed
 native/TRACES/-1_MissedEnd
+native/GUI/mainMenu/inventory
