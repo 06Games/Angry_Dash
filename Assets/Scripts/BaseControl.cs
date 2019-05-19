@@ -65,9 +65,13 @@ public class BaseControl : MonoBehaviour
         for (int i = 0; i < gos.Length; i++)
             gos[i].GetComponent<Button>().onClick.AddListener(() =>
             {
-                SoundAPI.Load load = new SoundAPI.Load("native/click");
-                load.Readable += (sender, e) => GetComponent<AudioSource>().PlayOneShot((AudioClip)e.UserState);
-                StartCoroutine(load.Start());
+                if (GetComponent<AudioSource>().clip == null)
+                {
+                    SoundAPI.Load load = new SoundAPI.Load("native/click");
+                    load.Complete += (sender, e) => { GetComponent<AudioSource>().clip = (AudioClip)e.UserState; GetComponent<AudioSource>().Play(); };
+                    StartCoroutine(load.Start());
+                }
+                else GetComponent<AudioSource>().Play();
             });
 
         eventSystem = GameObject.Find("EventSystem").GetComponent<UnityEngine.EventSystems.EventSystem>();
