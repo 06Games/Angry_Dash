@@ -20,12 +20,12 @@ public class MoveTrigger : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (!Used | MultiUsage)
-            StartCoroutine(Move());
+        if (!Used) StartCoroutine(Move());
     }
 
     IEnumerator Move()
     {
+        Used = true;
         GameObject[] go = null;
         if (AffectationType == 0)
         {
@@ -203,7 +203,7 @@ public class MoveTrigger : MonoBehaviour
             Destroy(tempParent);
         }
 
-        Used = true;
+        if (MultiUsage) Used = false;
         if (Reset[0] & AffectationType == 1) GameObject.Find("Main Camera").GetComponent<MainCam>().OnPlayer = true;
         if (Reset[1] & AffectationType == 1) GameObject.Find("Main Camera").transform.rotation = new Quaternion();
     }
