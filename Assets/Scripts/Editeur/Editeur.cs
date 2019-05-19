@@ -600,7 +600,6 @@ public class Editeur : MonoBehaviour
     public void ChangeDisplayedLayer(string layer)
     {
         Transform trans = transform.GetChild(0).GetChild(2).GetChild(3);
-        InputField input = trans.GetChild(1).GetComponent<InputField>();
 
         if (!int.TryParse(layer, out int l) | l < -2) l = -2;
         else if (l > 999) l = 999;
