@@ -36475,7 +36475,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native/TRACES/
-  fileSuffix: _Success
+  fileSuffix: /Success
   selected: 0
   items: []
 --- !u!222 &1364703557

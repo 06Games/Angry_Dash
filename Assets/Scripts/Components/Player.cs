@@ -207,18 +207,18 @@ public class Player : MonoBehaviour
         Transform traceObj = new GameObject("Trace Obj").transform;
         traceObj.parent = Trace;
         traceObj.gameObject.AddComponent<SpriteRenderer>().sortingOrder = 32766;
-        traceObj.gameObject.AddComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "_Moving").Load();
+        traceObj.gameObject.AddComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Moving").Load();
         return traceObj;
     }
     void TraceEnd(Transform traceObj, Vector2 endPos)
     {
-        string endPointID = "native/TRACES/" + selectedTrace + "_SuccessEnd";
+        string endPointID = "native/TRACES/" + selectedTrace + "/SuccessEnd";
         if ((Vector2)transform.position == PositionInitiale)
         {
-            traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "_Missed").Load();
-            endPointID = "native/TRACES/" + selectedTrace + "_MissedEnd";
+            traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Missed").Load();
+            endPointID = "native/TRACES/" + selectedTrace + "/MissedEnd";
         }
-        else traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "_Success").Load();
+        else traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Success").Load();
         GameObject endPoint = new GameObject("Trace End Point");
         endPoint.transform.parent = Trace;
         endPoint.transform.localScale = new Vector2(50 / 64F * 50F, 50 / 64F * 50F);
