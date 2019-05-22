@@ -225,5 +225,34 @@ public class Player : MonoBehaviour
         endPoint.transform.position = endPos;
         endPoint.AddComponent<SpriteRenderer>().sortingOrder = 32766;
         endPoint.AddComponent<UImage_Reader>().baseID = endPointID;
+        StartCoroutine(TraceDespawn(traceObj.GetComponent<SpriteRenderer>(), endPoint.GetComponent<SpriteRenderer>()));
+    }
+
+    IEnumerator TraceDespawn(SpriteRenderer traceObj, SpriteRenderer endPoint)
+    {
+        int actualStage = LP.nbLancer + 5;
+        yield return new WaitWhile(() => LP.nbLancer < actualStage);
+
+        Color obj = traceObj.color;
+        Color end = endPoint.color;
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
+        while(stopwatch.Elapsed.TotalMilliseconds < 2000)
+        {
+            float a = (2000 - (int)stopwatch.Elapsed.TotalMilliseconds) / 2000F;
+            Apply(a);
+            yield return new WaitForEndOfFrame();
+        }
+        Apply(0);
+        stopwatch.Stop();
+
+        void Apply(float a)
+        {
+            if (obj.a > a) obj.a = a;
+            if (end.a > a) end.a = a;
+
+            traceObj.color = obj;
+            endPoint.color = end;
+        }
     }
 }
