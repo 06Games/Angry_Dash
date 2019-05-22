@@ -50,6 +50,15 @@ namespace Tools
         public static string[] Split(this string s, params string[] delimiter) { return s.Split(delimiter, System.StringSplitOptions.None); }
         public static string[] Split(this string s, System.StringSplitOptions options, params string[] delimiter) { return s.Split(delimiter, options); }
 
+        public static string TrimEnd(this string s, params string[] trimStrings)
+        {
+            foreach (string str in trimStrings)
+            {
+                if (s.EndsWith(str)) return s.Remove(s.Length - str.Length, str.Length);
+            }
+            return s;
+        }
+
         public static byte[] ToByte(this string str) { return ToByte(str, Encoding.UTF8); }
         public static byte[] ToByte(this string str, Encoding encoding) { return encoding.GetBytes(str); }
 

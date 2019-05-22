@@ -34,6 +34,7 @@ native/GUI/settingsMenu/ressourcePacks/defaultBackground
 native/GUI/settingsMenu/ressourcePacks/officialBackground
 native/GUI/settingsMenu/ressourcePacks/selected
 native/GUI/settingsMenu/ressourcePacks/download
+native/GUI/settingsMenu/ressourcePacks/update
 native/GUI/settingsMenu/informations
 native/GUI/settingsMenu/informations/button
 native/GUI/inventoryMenu/background

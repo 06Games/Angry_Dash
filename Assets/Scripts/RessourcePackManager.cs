@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Tools;
 using UnityEngine;
 using UnityEngine.UI;
@@ -49,6 +50,16 @@ public class RessourcePackManager : MonoBehaviour
                 go.GetChild(3).GetComponent<Button>().onClick.AddListener(() => Download(param));
                 string RP = Application.persistentDataPath + "/Ressources/" + Path.GetFileNameWithoutExtension(RPs[i]);
                 go.GetChild(3).gameObject.SetActive(!Directory.Exists(RP));
+
+                if (Directory.Exists(RP))
+                {
+                    go.GetChild(4).GetComponent<Button>().onClick.AddListener(() => Download(param));
+                    long dirSize = new DirectoryInfo(RP).GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
+                    if (!long.TryParse(rpResult[i].Split("<size>")[1].Replace("\n", "").Replace("\r", "").TrimEnd("B</size>"), out long rpSize))
+                        go.GetChild(4).gameObject.SetActive(false);
+                    else go.GetChild(4).gameObject.SetActive(dirSize != rpSize);
+                }
+                else go.GetChild(4).gameObject.SetActive(false);
             }
 
             string name = "";
