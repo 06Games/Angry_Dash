@@ -89,16 +89,7 @@ public class DependenciesManager : MonoBehaviour
         bool down = false;
         string rpName = Path.GetFileNameWithoutExtension(name);
         if (!Directory.Exists(mainPath + rpName + "/")) down = true;
-        else
-        {
-            long dirSize = new DirectoryInfo(mainPath + rpName + "/").GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
-            if (dirSize == size) down = false;
-            else
-            {
-                down = true;
-                Directory.Delete(mainPath + rpName + "/", true);
-            }
-        }
+        else down = new DirectoryInfo(mainPath + rpName + "/").GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length) != size;
 
         if (down)
         {
@@ -229,7 +220,9 @@ public class DependenciesManager : MonoBehaviour
                 if (sender != null)
                 {
                     string[] pathTo = s[int.Parse(downData[0])].Split("<name>")[1].Split("</name>")[0].Split("/", "\\");
-                    FileFormat.ZIP.Decompress(Application.temporaryCachePath + "/" + downData[0] + ".zip", downData[2] + pathTo[pathTo.Length - 1].Replace(".zip", "") + "/");
+                    string path = downData[2] + pathTo[pathTo.Length - 1].Replace(".zip", "") + "/";
+                    Directory.Delete(path, true);
+                    FileFormat.ZIP.Decompress(Application.temporaryCachePath + "/" + downData[0] + ".zip", path);
                 }
 
                 try
