@@ -22,31 +22,25 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     [HideInInspector]
     public int[] Type = new int[4];
 
-    public Vector2 FrameSize { get { return new Vector2(data[0].Frames[0].texture.width, data[0].Frames[0].texture.height); } }
+    public Vector2 FrameSize
+    {
+        get
+        {
+            if (data[0] is null) return default;
+            else if (data[0].Frames is null) return default;
+            else return new Vector2(data[0].Frames[0].texture.width, data[0].Frames[0].texture.height);
+        }
+    }
 
     void Start() { if (!string.IsNullOrEmpty(baseID)) Load(); }
-    public UImage_Reader Load(Sprite_API.Sprite_API_Data spriteData, string id = null) { return Load(new Sprite_API.Sprite_API_Data[] { spriteData }, id); }
-    public UImage_Reader Load(Sprite_API.Sprite_API_Data[] spriteData, string id = null)
-    {
-        data = spriteData;
-        baseID = id;
-
-        if (id != null)
-        {
-            Sprite_API.JSON_PARSE_DATA data = Sprite_API.Sprite_API.Parse(baseID);
-
-            ApplyJson(data);
-        }
-        else StartAnimating(0);
-        return this;
-    }
+    public UImage_Reader Load(Sprite_API.Sprite_API_Data spriteData) { data = new Sprite_API.Sprite_API_Data[] { spriteData }; return this; }
+    public UImage_Reader Load(Sprite_API.Sprite_API_Data[] spriteData) { data = spriteData; return this; }
     public UImage_Reader Load()
     {
         Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.Sprite_API.Parse(baseID);
 
         data = new Sprite_API.Sprite_API_Data[4];
-        for (int i = 0; i < data.Length; i++)
-            data[i] = Sprite_API.Sprite_API.GetSprites(jsonData.path[i], jsonData.border[i]);
+        for (int i = 0; i < data.Length; i++) data[i] = Sprite_API.Sprite_API.GetSprites(jsonData.path[i], jsonData.border[i]);
 
         ApplyJson(jsonData);
         return this;
@@ -64,7 +58,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     }
 
 
-    void ApplyJson(Sprite_API.JSON_PARSE_DATA data)
+    public UImage_Reader ApplyJson(Sprite_API.JSON_PARSE_DATA data)
     {
         //Textures
         if (GetComponent<Selectable>() != null)
@@ -92,6 +86,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         }
 
         StartAnimating(0);
+        return this;
     }
 
     void OnEnable() { StartAnimating(0); }

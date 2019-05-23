@@ -1,5 +1,6 @@
 ﻿using FileFormat;
 using System.Collections;
+using System.Linq;
 using System.Net;
 using Tools;
 using UnityEngine;
@@ -131,8 +132,11 @@ public class Inventory : MonoBehaviour
             xmlItem = xml.GetItem("SelectedItems").CreateItem("item");
             xmlItem.CreateAttribute("category", category);
         }
-        selected = xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).value<int>();
-        if (!Owned(items[selected].name))
+
+        string xmlSelected = xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).value<string>();
+        selected = System.Array.IndexOf(items, items.SingleOrDefault(item => item.name == xmlSelected));
+        if (selected < 0 | selected > items.Length) selected = 0;
+        else if (!Owned(items[selected].name))
         {
             xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value = "0";
             selected = 0;
@@ -143,7 +147,24 @@ public class Inventory : MonoBehaviour
             bool owned = Owned(items[i].name);
 
             Transform go = Instantiate(content.GetChild(0).gameObject, content).transform;
-            go.GetChild(0).GetComponent<UImage_Reader>().baseID = category + items[i].name + fileSuffix;
+
+
+            Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.Sprite_API.Parse(category + items[i].name + fileSuffix);
+            Sprite_API.Sprite_API_Data[] data = new Sprite_API.Sprite_API_Data[4];
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(System.IO.File.ReadAllBytes(jsonData.path[0]));
+            tex = Texture2DExtensions.PremultiplyAlpha(tex);
+            tex.Apply();
+            data[0] = new Sprite_API.Sprite_API_Data()
+            {
+                Frames = new Sprite[] { Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f), 100, 0, SpriteMeshType.FullRect, jsonData.border[0]) },
+                Delay = new float[] { 1 },
+                Repeat = 1
+            }; //Basic is default png image
+            data[1] = Sprite_API.Sprite_API.GetSprites(jsonData.path[0], jsonData.border[0]); //Basic replace hover
+            jsonData.type[1] = jsonData.type[0];
+            go.GetChild(0).GetComponent<UImage_Reader>().Load(data).ApplyJson(jsonData).StopAnimating(0, false);
+
             go.GetComponent<Button>().interactable = i != selected;
             int button = i;
             go.GetComponent<Button>().onClick.AddListener(() =>
@@ -190,7 +211,7 @@ public class Inventory : MonoBehaviour
         int money = int.Parse(xml.GetItem("Money").Value);
         if (items[index].price <= money)
         {
-            xml.GetItem("OwnedItems").CreateItem("item").CreateAttribute("name", index.ToString());
+            xml.GetItem("OwnedItems").CreateItem("item").CreateAttribute("name", items[index].name);
             xml.GetItem("Money").Value = (money - items[index].price).ToString();
             Reload();
         }
@@ -202,7 +223,7 @@ public class Inventory : MonoBehaviour
     public void Select(int index)
     {
         selected = index;
-        xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value = selected.ToString();
+        xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value = items[index].name;
         Reload();
         xmlDefault = xml;
     }

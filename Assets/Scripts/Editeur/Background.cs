@@ -98,7 +98,7 @@ public class Background : MonoBehaviour
             if (sp != null)
             {
                 go.GetChild(i).GetComponent<UImage_Reader>().Type[0] = jsonData[selected].type[0];
-                go.GetChild(i).GetComponent<UImage_Reader>().Load(sp[selected], null);
+                go.GetChild(i).GetComponent<UImage_Reader>().Load(sp[selected]);
             }
             else go.GetChild(i).GetComponent<UImage_Reader>().SetID("native/BACKGROUNDS/" + selected).Load();
         }

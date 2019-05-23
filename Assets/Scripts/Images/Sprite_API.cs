@@ -11,19 +11,12 @@ namespace Sprite_API
     [System.Serializable]
     public class Sprite_API_Data
     {
-        /// <summary>
-        /// Array of all the frames of the annimation
-        /// (If the ressource is only a sprite, the sprite will be returned at the index 0)
-        /// </summary>
-        public Sprite[] Frames;
-        /// <summary>
-        /// Delay before each frame
-        /// </summary>
-        public float[] Delay;
-        /// <summary>
-        /// Number of repetitions of the animation (0 being infinity)
-        /// </summary>
-        public uint Repeat;
+        /// <summary> Array of all the frames of the annimation (If the ressource is only a sprite, the sprite will be returned at the index 0) </summary>
+        public Sprite[] Frames = new Sprite[0];
+        /// <summary> Delay before each frame </summary>
+        public float[] Delay = new float[0];
+        /// <summary> Number of repetitions of the animation (0 being infinity) </summary>
+        public uint Repeat = 0;
 
         public Sprite_API_Data()
         {
@@ -37,6 +30,23 @@ namespace Sprite_API
             Delay = delay;
             Repeat = repeat;
         }
+        public override bool Equals(object obj) { return Equals(obj as Sprite_API_Data); }
+        public bool Equals(Sprite_API_Data other)
+        {
+            if (ReferenceEquals(other, null)) return false; //If parameter is null, return false.
+            if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
+            if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
+
+            return Frames == other.Frames & Delay == other.Delay & Repeat == other.Repeat;
+        }
+        public static bool operator ==(Sprite_API_Data left, Sprite_API_Data right)
+        {
+            if (left is null & right is null) return true;
+            else if (left is null | right is null) return false;
+            else return left.Equals(right);
+        }
+        public static bool operator !=(Sprite_API_Data left, Sprite_API_Data right) { return !(left == right); }
+        public override int GetHashCode() { return base.GetHashCode(); }
     }
 
     [System.Serializable]
@@ -246,13 +256,13 @@ namespace Sprite_API
         /// <param name="filePath">Path to the file</param>
         /// <param name="border">Border of the Sprites</param>
         /// <returns></returns>
-        public static Sprite_API_Data GetSprites(string filePath, Vector4 border = new Vector4())
+        public static Sprite_API_Data GetSprites(string filePath, Vector4 border = new Vector4(), bool forcePNG = false)
         {
-            Load(filePath, border);
+            Load(filePath, border, forcePNG);
             return new CacheManager.Cache("Ressources/textures").Get<Sprite_API_Data>(filePath);
         }
 
-        public static void Load(string filePath, Vector4 border = new Vector4())
+        public static void Load(string filePath, Vector4 border = new Vector4(), bool forcePNG = false)
         {
             CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures");
             if (cache.ValueExist(filePath)) return;
@@ -264,7 +274,7 @@ namespace Sprite_API
                 float[] Delay = new float[apng.Frames.Length];
                 Sprite[] Frames = new Sprite[apng.Frames.Length];
 
-                if (apng.IsSimplePNG | !ConfigAPI.GetBool("video.APNG")) //PNG
+                if (apng.IsSimplePNG | !ConfigAPI.GetBool("video.APNG") | forcePNG) //PNG
                 {
                     Frames = new Sprite[1];
                     Delay = new float[1] { 0 };
@@ -322,7 +332,7 @@ namespace Sprite_API
                 border = Border;
                 index = i;
                 buffer = CreateTransparent(png.IHDRChunk.Width, png.IHDRChunk.Height);
-                dispose = apng.DefaultImage.fcTLChunk.DisposeOp;
+                if (apng.DefaultImageIsAnimated) dispose = apng.DefaultImage.fcTLChunk.DisposeOp;
                 errors = new string[0];
             }
         }
