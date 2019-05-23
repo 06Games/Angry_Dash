@@ -51,7 +51,7 @@ public class EditorMovements : MonoBehaviour
 
     public void Layer(int mvt)
     {
-        foreach(int i in Editor.SelectedBlock)
+        foreach (int i in Editor.SelectedBlock)
         {
             GameObject go = GameObject.Find("Objet n° " + i);
             if (go != null)

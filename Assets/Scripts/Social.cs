@@ -9,17 +9,17 @@ public class Social : MonoBehaviour
 
     public void NewStart()
     {
-/*#if UNITY_ANDROID && !UNITY_EDITOR
-        Auth();
-#elif !UNITY_EDITOR*/
+        /*#if UNITY_ANDROID && !UNITY_EDITOR
+                Auth();
+        #elif !UNITY_EDITOR*/
         LSC.LoadScreen(scene);
-/*#else
-        transform.GetChild(0).gameObject.SetActive(true);
-        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "googleServiceAuthenticating", "Authenticating...");
-        transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
-        if (EditorContinue)
-            LSC.LoadScreen(scene);
-#endif*/
+        /*#else
+                transform.GetChild(0).gameObject.SetActive(true);
+                transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "googleServiceAuthenticating", "Authenticating...");
+                transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
+                if (EditorContinue)
+                    LSC.LoadScreen(scene);
+        #endif*/
     }
 
 #if UNITY_ANDROID

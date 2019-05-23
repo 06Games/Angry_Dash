@@ -490,7 +490,8 @@ public class Editeur : MonoBehaviour
 #endif
     }
 
-    public void DeselectAll() {
+    public void DeselectAll()
+    {
         foreach (int i in SelectedBlock)
         {
             Transform obj = transform.GetChild(1).Find("Objet n° " + i);

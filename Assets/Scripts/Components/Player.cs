@@ -237,7 +237,7 @@ public class Player : MonoBehaviour
         Color end = endPoint.color;
         System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
         stopwatch.Start();
-        while(stopwatch.Elapsed.TotalMilliseconds < 2000)
+        while (stopwatch.Elapsed.TotalMilliseconds < 2000)
         {
             float a = (2000 - (int)stopwatch.Elapsed.TotalMilliseconds) / 2000F;
             Apply(a);

@@ -127,7 +127,7 @@ public class LevelPlayer : MonoBehaviour
             if (!string.IsNullOrEmpty(music)) GameObject.Find("Audio").GetComponent<menuMusic>().LoadUnpackagedMusic(music);
         }
 
-        if(SummonPlace != null) Destroy(SummonPlace.gameObject);
+        if (SummonPlace != null) Destroy(SummonPlace.gameObject);
         SummonPlace = place;
 
 
