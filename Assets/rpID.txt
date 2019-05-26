@@ -9,6 +9,8 @@ native/GUI/playMenu/exit
 native/GUI/playMenu/OfficialServers
 native/GUI/playMenu/history
 native/GUI/playMenu/officialLevels
+native/GUI/playMenu/officialLevels/button
+native/GUI/playMenu/officialLevels/illustration
 native/GUI/playMenu/communityServers
 native/GUI/editorMenu/background
 native/GUI/editorMenu/button
