@@ -23,13 +23,17 @@ public class RessourcePackManager : MonoBehaviour
         if (category == 0) RPs = Directory.GetDirectories(Application.persistentDataPath + "/Ressources/");
         else if (category == 1)
         {
-            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/?required=False&v=" + Application.version;
-            System.Net.WebClient client = new System.Net.WebClient();
-            System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            rpResult = client.DownloadString(URL).Split(System.StringSplitOptions.RemoveEmptyEntries, "<BR />");
-            RPs = new string[rpResult.Length];
-            for (int i = 0; i < rpResult.Length; i++)
-                RPs[i] = rpResult[i].Remove(0, "<name>".Length).Split("</name>")[0].Replace("\n", "").Replace("\r", "");
+            if (InternetAPI.IsConnected())
+            {
+                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/?required=False&v=" + Application.version;
+                System.Net.WebClient client = new System.Net.WebClient();
+                System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                rpResult = client.DownloadString(URL).Split(System.StringSplitOptions.RemoveEmptyEntries, "<BR />");
+            }
+            else rpResult = new string[0];
+                RPs = new string[rpResult.Length];
+                for (int i = 0; i < rpResult.Length; i++)
+                    RPs[i] = rpResult[i].Remove(0, "<name>".Length).Split("</name>")[0].Replace("\n", "").Replace("\r", "");
         }
 
         Transform Content = transform.GetChild(1).GetChild(0).GetChild(0);

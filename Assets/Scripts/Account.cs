@@ -101,6 +101,7 @@ public class Account : MonoBehaviour
             }
             else NoConnectionInformation();
         }
+        else complete.Invoke(null, null);
     }
 
     public static void Disconnect()

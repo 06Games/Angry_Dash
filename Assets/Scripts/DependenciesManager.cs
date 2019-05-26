@@ -51,6 +51,7 @@ public class DependenciesManager : MonoBehaviour
         slider.transform.GetChild(4).gameObject.SetActive(false);
         DownloadPanel.SetActive(true);
 
+        complete += (sender, e) => downloadLevels();
         if (InternetAPI.IsConnected())
         {
             string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/";
@@ -66,7 +67,6 @@ public class DependenciesManager : MonoBehaviour
             }
             string[] lines = Result.Split("\n");
 
-            complete += (sender, e) => downloadLevels();
             downloadFile(0, lines, URL, Application.persistentDataPath + "/Ressources/");
         }
         else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
@@ -296,7 +296,6 @@ public class DependenciesManager : MonoBehaviour
 
     private void levels_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
     {
-
         if (e.Cancelled)
         {
             print("The download has been cancelled");

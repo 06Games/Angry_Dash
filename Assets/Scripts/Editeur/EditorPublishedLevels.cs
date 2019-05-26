@@ -47,62 +47,71 @@ public class EditorPublishedLevels : MonoBehaviour
     /// <param name="sort">Sort type</param>
     public void Sort(SortMode sort, bool reselect = true)
     {
-        WebClient client = new WebClient();
-        client.Encoding = System.Text.Encoding.UTF8;
-        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string Result = client.DownloadString(serverURL + "index.php?key=" + keywords); //Searches level containing the keywords
-        string[] files = new string[0];
-        if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, System.StringSplitOptions.None);
-
-        //Sorts the files
-        if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
-        else if (sort == SortMode.zToA) files = files.OrderByDescending(f => f.ToString()).ToArray();
-        sortMode = sort;
-
-        //Disables the selected sorting button
-        for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
-            transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = (int)sort != i;
-
-        //Removes the displayed levels
-        Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
-        for (int i = 1; i < ListContent.childCount; i++)
-            Destroy(ListContent.GetChild(i).gameObject);
-
-        //Get Infos
-        items = new LevelItem[files.Length];
-        for (int i = 0; i < files.Length; i++)
+        if (InternetAPI.IsConnected())
         {
-            string[] file = new string[1] { files[i] };
-            if (files[i].Contains(" ; "))
-                file = files[i].Split(new string[1] { " ; " }, System.StringSplitOptions.None);
-
-            items[i] = new LevelItem();
-            for (int l = 0; l < file.Length; l++)
+            WebClient client = new WebClient();
+            client.Encoding = System.Text.Encoding.UTF8;
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            client.DownloadStringCompleted += (sender, e) =>
             {
-                string[] line = file[l].Split(new string[1] { " = " }, System.StringSplitOptions.None);
-                if (line[0] == "level")
-                    items[i].Name = file[l].Replace("level = ", "");
-                else if (line[0] == "author")
-                    items[i].Author = file[l].Replace("author = ", "");
-                else if (line[0] == "description")
-                    items[i].Description = file[l].Replace("description = ", "");
-                else if (line[0] == "music")
-                    items[i].Music = file[l].Replace("music = ", "");
-            }
-        }
+                if (e.Error != null) { Logging.Log(e.Error); return; }
+                string Result = e.Result;
 
-        //Deplays the levels
-        ListContent.GetChild(0).gameObject.SetActive(false);
-        for (int i = 0; i < items.Length; i++)
-        {
-            Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
-            int button = i;
-            go.GetComponent<Button>().onClick.AddListener(() => Select(button)); //Sets the script to excute on click
-            go.name = items[i].Name; //Changes the editor gameObject name (useful only for debugging)
+                string[] files = new string[0];
+                if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, System.StringSplitOptions.None);
 
-            go.GetChild(0).GetComponent<Text>().text = items[i].Name; //Sets the level's name
-            go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsAuthor", "by [0]", items[i].Author); //Sets the level's author
-            go.gameObject.SetActive(true);
+            //Sorts the files
+            if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
+                else if (sort == SortMode.zToA) files = files.OrderByDescending(f => f.ToString()).ToArray();
+                sortMode = sort;
+
+            //Disables the selected sorting button
+            for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
+                    transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = (int)sort != i;
+
+            //Removes the displayed levels
+            Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
+                for (int i = 1; i < ListContent.childCount; i++)
+                    Destroy(ListContent.GetChild(i).gameObject);
+
+            //Get Infos
+            items = new LevelItem[files.Length];
+                for (int i = 0; i < files.Length; i++)
+                {
+                    string[] file = new string[1] { files[i] };
+                    if (files[i].Contains(" ; "))
+                        file = files[i].Split(new string[1] { " ; " }, System.StringSplitOptions.None);
+
+                    items[i] = new LevelItem();
+                    for (int l = 0; l < file.Length; l++)
+                    {
+                        string[] line = file[l].Split(new string[1] { " = " }, System.StringSplitOptions.None);
+                        if (line[0] == "level")
+                            items[i].Name = file[l].Replace("level = ", "");
+                        else if (line[0] == "author")
+                            items[i].Author = file[l].Replace("author = ", "");
+                        else if (line[0] == "description")
+                            items[i].Description = file[l].Replace("description = ", "");
+                        else if (line[0] == "music")
+                            items[i].Music = file[l].Replace("music = ", "");
+                    }
+                }
+
+            //Deplays the levels
+            ListContent.GetChild(0).gameObject.SetActive(false);
+                for (int i = 0; i < items.Length; i++)
+                {
+                    Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
+                int button = i;
+                    go.GetComponent<Button>().onClick.AddListener(() => Select(button)); //Sets the script to excute on click
+                go.name = items[i].Name; //Changes the editor gameObject name (useful only for debugging)
+
+                go.GetChild(0).GetComponent<Text>().text = items[i].Name; //Sets the level's name
+                go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsAuthor", "by [0]", items[i].Author); //Sets the level's author
+                go.gameObject.SetActive(true);
+                }
+            };
+            client.DownloadStringAsync(new System.Uri(serverURL + "index.php?key=" + keywords)); //Searches level containing the keywords
         }
     }
 

@@ -42,67 +42,76 @@ public class ProfileLevels : MonoBehaviour
     /// <param name="sort">Sort type</param>
     public void Sort(SortMode sort, bool reselect = true)
     {
-        WebClient client = new WebClient();
-        client.Encoding = System.Text.Encoding.UTF8;
-        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string Result = client.DownloadString(serverURL + "index.php?key=" + Account.Username + "/"); //Searches user's levels
-        string[] files = new string[0];
-        if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, System.StringSplitOptions.None);
-
-        //Sorts the files
-        if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
-        else if (sort == SortMode.zToA) files = files.OrderByDescending(f => f.ToString()).ToArray();
-        sortMode = sort;
-
-        //Disables the selected sorting button
-        for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
-            transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = (int)sort != i;
-
-        //Removes the displayed levels
-        Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
-        for (int i = 1; i < ListContent.childCount; i++)
-            Destroy(ListContent.GetChild(i).gameObject);
-
-        //Get Infos
-        items = new string[files.Length];
-        for (int i = 0; i < files.Length; i++)
+        if (InternetAPI.IsConnected())
         {
-            string[] file = new string[1] { files[i] };
-            if (files[i].Contains(" ; "))
-                file = files[i].Split(new string[1] { " ; " }, System.StringSplitOptions.None);
-
-            bool Continue = true;
-            for (int l = 0; l < file.Length & Continue; l++)
+            WebClient client = new WebClient();
+            client.Encoding = System.Text.Encoding.UTF8;
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            client.DownloadStringCompleted += (sender, e) =>
             {
-                string[] line = file[l].Split(new string[1] { " = " }, System.StringSplitOptions.None);
-                if (line[0] == "level")
+                if (e.Error != null) { Logging.Log(e.Error); return; }
+                string Result = e.Result;
+
+                string[] files = new string[0];
+                if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, System.StringSplitOptions.None);
+
+            //Sorts the files
+            if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
+                else if (sort == SortMode.zToA) files = files.OrderByDescending(f => f.ToString()).ToArray();
+                sortMode = sort;
+
+            //Disables the selected sorting button
+            for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
+                    transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = (int)sort != i;
+
+            //Removes the displayed levels
+            Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
+                for (int i = 1; i < ListContent.childCount; i++)
+                    Destroy(ListContent.GetChild(i).gameObject);
+
+            //Get Infos
+            items = new string[files.Length];
+                for (int i = 0; i < files.Length; i++)
                 {
-                    items[i] = file[l].Replace("level = ", "");
-                    Continue = false;
+                    string[] file = new string[1] { files[i] };
+                    if (files[i].Contains(" ; "))
+                        file = files[i].Split(new string[1] { " ; " }, System.StringSplitOptions.None);
+
+                    bool Continue = true;
+                    for (int l = 0; l < file.Length & Continue; l++)
+                    {
+                        string[] line = file[l].Split(new string[1] { " = " }, System.StringSplitOptions.None);
+                        if (line[0] == "level")
+                        {
+                            items[i] = file[l].Replace("level = ", "");
+                            Continue = false;
+                        }
+                    }
                 }
-            }
-        }
 
-        //Deplays the levels
-        ListContent.GetChild(0).gameObject.SetActive(false);
-        for (int i = 0; i < items.Length; i++)
-        {
-            Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates an item
-            go.name = items[i]; //Changes the editor gameObject name (useful only for debugging)
+            //Deplays the levels
+            ListContent.GetChild(0).gameObject.SetActive(false);
+                for (int i = 0; i < items.Length; i++)
+                {
+                    Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates an item
+                go.name = items[i]; //Changes the editor gameObject name (useful only for debugging)
 
-            int button = i;
-            go.GetChild(0).GetComponent<Text>().text = items[i]; //Sets the level's name
-            go.GetChild(1).GetComponent<Button>().onClick.AddListener(() =>
-            {
-                Transform panel = transform.GetChild(2);
-                panel.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "ProfileMyLevelsDeleteWarning", "Are you sure you want to delete [0] ?", items[button]);
-                panel.GetChild(1).GetComponent<Button>().onClick.AddListener(() => { Delete(button); panel.gameObject.SetActive(false); });
-                panel.gameObject.SetActive(true);
-            });
-            if (File.Exists(savePath + "/" + items[i] + ".level")) go.GetChild(2).GetComponent<Button>().interactable = false;
-            else go.GetChild(2).GetComponent<Button>().onClick.AddListener(() => Download(button));
-            go.GetChild(3).GetComponent<Button>().onClick.AddListener(() => Collaborate(button));
-            go.gameObject.SetActive(true);
+                int button = i;
+                    go.GetChild(0).GetComponent<Text>().text = items[i]; //Sets the level's name
+                go.GetChild(1).GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        Transform panel = transform.GetChild(2);
+                        panel.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "ProfileMyLevelsDeleteWarning", "Are you sure you want to delete [0] ?", items[button]);
+                        panel.GetChild(1).GetComponent<Button>().onClick.AddListener(() => { Delete(button); panel.gameObject.SetActive(false); });
+                        panel.gameObject.SetActive(true);
+                    });
+                    if (File.Exists(savePath + "/" + items[i] + ".level")) go.GetChild(2).GetComponent<Button>().interactable = false;
+                    else go.GetChild(2).GetComponent<Button>().onClick.AddListener(() => Download(button));
+                    go.GetChild(3).GetComponent<Button>().onClick.AddListener(() => Collaborate(button));
+                    go.gameObject.SetActive(true);
+                }
+            };
+            client.DownloadStringAsync(new System.Uri(serverURL + "index.php?key=" + Account.Username + "/")); //Searches user's levels
         }
     }
 

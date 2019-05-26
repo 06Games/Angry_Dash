@@ -45,66 +45,75 @@ public class EditorMusicSelector : MonoBehaviour
     /// <param name="sort">Sort type</param>
     public void Sort(SortMode sort)
     {
-        WebClient client = new WebClient();
-        client.Encoding = System.Text.Encoding.UTF8;
-        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string Result = client.DownloadString(serverURL + "index.php?key=" + keywords); //Searches music containing the keywords
-        string[] files = new string[0];
-        if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, System.StringSplitOptions.RemoveEmptyEntries);
-
-        //Sorts the files
-        if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
-        else if (sort == SortMode.zToA) files = files.OrderByDescending(f => f.ToString()).ToArray();
-        sortMode = sort;
-
-        //Disables the selected sorting button
-        for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
-            transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = (int)sort != i;
-
-        //Removes the displayed musics
-        Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
-        for (int i = 1; i < ListContent.childCount; i++) Destroy(ListContent.GetChild(i).gameObject);
-
-        //Get Infos
-        items = new SongItem[files.Length];
-        for (int i = 0; i < files.Length; i++)
+        if (InternetAPI.IsConnected())
         {
-            string[] file = files[i].Split(new string[1] { " ; " }, System.StringSplitOptions.None);
-            if (file.Length == 3)
+            WebClient client = new WebClient();
+            client.Encoding = System.Text.Encoding.UTF8;
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            client.DownloadStringCompleted += (sender, e) =>
             {
-                items[i] = new SongItem()
+                if (e.Error != null) { Logging.Log(e.Error); return; }
+                string Result = e.Result;
+
+                string[] files = new string[0];
+                if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, System.StringSplitOptions.RemoveEmptyEntries);
+
+                //Sorts the files
+                if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
+                else if (sort == SortMode.zToA) files = files.OrderByDescending(f => f.ToString()).ToArray();
+                sortMode = sort;
+
+                //Disables the selected sorting button
+                for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
+                    transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = (int)sort != i;
+
+                //Removes the displayed musics
+                Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
+                for (int i = 1; i < ListContent.childCount; i++) Destroy(ListContent.GetChild(i).gameObject);
+
+                //Get Infos
+                items = new SongItem[files.Length];
+                for (int i = 0; i < files.Length; i++)
                 {
-                    URL = file[0],
-                    Artist = file[1].HtmlDecode(),
-                    Name = file[2].HtmlDecode()
-                };
-            }
-            else items[i] = new SongItem();
-        }
-        if (items.Length == 0)
-        {
-            string[] sFiles = System.IO.Directory.GetFiles(Application.persistentDataPath + "/Musics/");
-            items = new SongItem[sFiles.Length];
-            for (int i = 0; i < sFiles.Length; i++)
-            {
-                TagLib.Tag TL = TagLib.File.Create(sFiles[i], "application/ogg", TagLib.ReadStyle.None).Tag;
-                items[i] = new SongItem() { URL = sFiles[i], Artist = TL.Performers[0], Name = TL.Title, Licence = "" };
-            }
-        }
+                    string[] file = files[i].Split(new string[1] { " ; " }, System.StringSplitOptions.None);
+                    if (file.Length == 3)
+                    {
+                        items[i] = new SongItem()
+                        {
+                            URL = file[0],
+                            Artist = file[1].HtmlDecode(),
+                            Name = file[2].HtmlDecode()
+                        };
+                    }
+                    else items[i] = new SongItem();
+                }
+                if (items.Length == 0)
+                {
+                    string[] sFiles = System.IO.Directory.GetFiles(Application.persistentDataPath + "/Musics/");
+                    items = new SongItem[sFiles.Length];
+                    for (int i = 0; i < sFiles.Length; i++)
+                    {
+                        TagLib.Tag TL = TagLib.File.Create(sFiles[i], "application/ogg", TagLib.ReadStyle.None).Tag;
+                        items[i] = new SongItem() { URL = sFiles[i], Artist = TL.Performers[0], Name = TL.Title, Licence = "" };
+                    }
+                }
 
-        //Deplays the musics
-        ListContent.GetChild(0).gameObject.SetActive(false);
-        for (int i = 0; i < items.Length; i++)
-        {
-            Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
-            int button = i;
-            go.GetComponent<Button>().onClick.AddListener(() => Select(button)); //Sets the script to excute on click
-            go.name = items[i].Name; //Changes the editor gameObject name (useful only for debugging)
+                //Deplays the musics
+                ListContent.GetChild(0).gameObject.SetActive(false);
+                for (int i = 0; i < items.Length; i++)
+                {
+                    Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
+                    int button = i;
+                    go.GetComponent<Button>().onClick.AddListener(() => Select(button)); //Sets the script to excute on click
+                    go.name = items[i].Name; //Changes the editor gameObject name (useful only for debugging)
 
-            go.GetChild(0).GetComponent<Text>().text = items[i].Name; //Sets the music's name
-            go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "editor.options.music.artist", "<color=grey>by [0]</color>", items[i].Artist); //Sets the music's artist
-            go.GetChild(2).gameObject.SetActive(Editor.level.music == items[i]);
-            go.gameObject.SetActive(true);
+                    go.GetChild(0).GetComponent<Text>().text = items[i].Name; //Sets the music's name
+                    go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "editor.options.music.artist", "<color=grey>by [0]</color>", items[i].Artist); //Sets the music's artist
+                    go.GetChild(2).gameObject.SetActive(Editor.level.music == items[i]);
+                    go.gameObject.SetActive(true);
+                }
+            };
+            client.DownloadString(serverURL + "index.php?key=" + keywords); //Searches music containing the keywords
         }
     }
 
