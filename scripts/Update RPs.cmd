@@ -1,4 +1,4 @@
-set Git=C:\Users\evan\Documents\GitHub\Angry-Dash
+set Git=%userprofile%\Documents\GitHub\Angry-Dash
 set AD=%APPDATA%\..\LocalLow\06Games\Angry Dash\Ressources
 
 echo O | del "%AD%\default"
