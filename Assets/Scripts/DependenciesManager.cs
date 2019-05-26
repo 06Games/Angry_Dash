@@ -231,7 +231,7 @@ public class DependenciesManager : MonoBehaviour
                 {
                     string[] pathTo = s[int.Parse(downData[0])].Split("<name>")[1].Split("</name>")[0].Split("/", "\\");
                     string path = downData[2] + pathTo[pathTo.Length - 1].Replace(".zip", "") + "/";
-                    Directory.Delete(path, true);
+                    if(Directory.Exists(path)) Directory.Delete(path, true);
                     FileFormat.ZIP.Decompress(Application.temporaryCachePath + "/" + downData[0] + ".zip", path);
                 }
 
