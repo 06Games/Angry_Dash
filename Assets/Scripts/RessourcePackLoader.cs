@@ -32,7 +32,7 @@ public class RessourcePackLoader : MonoBehaviour
                     Sprite_API.Sprite_API.Load(jsonData.path[f], jsonData.border[f]);
 
                 yield return new WaitForEndOfFrame();
-                Status.text = i + "/" + (ids.Length - 1);
+                Status.text = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", i, ids.Length - 1);
             }
         }
 
