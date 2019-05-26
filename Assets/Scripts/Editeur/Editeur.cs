@@ -922,76 +922,80 @@ public class Editeur : MonoBehaviour
 
     public void DeleteSelectedBloc(bool fromUpdateScript)
     {
+        SelectedBlock = SelectedBlock.OrderBy(i => i).ToArray();
         for (int v = 0; v < SelectedBlock.Length; v++)
         {
             if (SelectedBlock[v] != -1)
             {
-                int SB = SelectedBlock[v];
+                int SB = SelectedBlock[v] - v;
                 SelectedBlock[v] = -1;
 
-                Transform obj = transform.GetChild(1).Find("Objet n° " + SB);
-                if (obj != null)
+                Transform obj = transform.GetChild(1);
+                if (obj.childCount > SB + 2 + v)
+                {
+                    obj = obj.GetChild(SB + 2 + v);
                     Destroy(obj.gameObject);
 
-                Level.Block[] NewComponent = new Level.Block[level.blocks.Length - 1];
-                for (int i = 0; i < NewComponent.Length; i++)
-                {
-                    if (i < SB)
+                    Level.Block[] NewComponent = new Level.Block[level.blocks.Length - 1];
+                    for (int i = 0; i < NewComponent.Length; i++)
                     {
-                        string[] Blocks = GetBlocStatus("Blocks", i).Split(new string[] { "," }, System.StringSplitOptions.None);
-                        if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
-                        if (Blocks.Length > 0)
+                        if (i < SB)
                         {
-                            for (int bloc = 0; bloc < Blocks.Length; bloc++)
+                            string[] Blocks = GetBlocStatus("Blocks", i).Split(new string[] { "," }, System.StringSplitOptions.None);
+                            if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
+                            if (Blocks.Length > 0)
                             {
-                                List<string> list = new List<string>(Blocks);
-                                if (int.Parse(Blocks[bloc]) == SB) list.RemoveAt(bloc);
-                                else if (int.Parse(Blocks[bloc]) > SB) list[bloc] = (int.Parse(list[bloc]) - 1).ToString();
-                                Blocks = list.ToArray();
+                                for (int bloc = 0; bloc < Blocks.Length; bloc++)
+                                {
+                                    List<string> list = new List<string>(Blocks);
+                                    if (int.Parse(Blocks[bloc]) == SB) list.RemoveAt(bloc);
+                                    else if (int.Parse(Blocks[bloc]) > SB) list[bloc] = (int.Parse(list[bloc]) - 1).ToString();
+                                    Blocks = list.ToArray();
+                                }
+                                string blocks = "Null";
+                                if (Blocks.Length > 0) blocks = Blocks[0];
+                                for (int b = 1; b < Blocks.Length; b++)
+                                    blocks = blocks + "," + Blocks[b];
+                                ChangBlocStatus("Blocks", blocks, new int[] { i });
                             }
-                            string blocks = "Null";
-                            if (Blocks.Length > 0) blocks = Blocks[0];
-                            for (int b = 1; b < Blocks.Length; b++)
-                                blocks = blocks + "," + Blocks[b];
-                            ChangBlocStatus("Blocks", blocks, new int[] { i });
-                        }
 
-                        NewComponent[i] = level.blocks[i];
-                    }
-                    else
-                    {
-                        string[] Blocks = GetBlocStatus("Blocks", i + 1).Split(new string[] { "," }, System.StringSplitOptions.None);
-                        if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
-                        if (Blocks.Length > 0)
+                            NewComponent[i] = level.blocks[i];
+                        }
+                        else
                         {
-                            for (int bloc = 0; bloc < Blocks.Length; bloc++)
+                            string[] Blocks = GetBlocStatus("Blocks", i + 1).Split(new string[] { "," }, System.StringSplitOptions.None);
+                            if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
+                            if (Blocks.Length > 0)
                             {
-                                List<string> list = new List<string>(Blocks);
-                                if (int.Parse(Blocks[bloc]) == SB) list.RemoveAt(bloc);
-                                else if (int.Parse(Blocks[bloc]) > SB) list[bloc] = (int.Parse(list[bloc]) - 1).ToString();
-                                Blocks = list.ToArray();
+                                for (int bloc = 0; bloc < Blocks.Length; bloc++)
+                                {
+                                    List<string> list = new List<string>(Blocks);
+                                    if (int.Parse(Blocks[bloc]) == SB) list.RemoveAt(bloc);
+                                    else if (int.Parse(Blocks[bloc]) > SB) list[bloc] = (int.Parse(list[bloc]) - 1).ToString();
+                                    Blocks = list.ToArray();
+                                }
+                                string blocks = "Null";
+                                if (Blocks.Length > 0) blocks = Blocks[0];
+                                for (int b = 1; b < Blocks.Length; b++)
+                                    blocks = blocks + "," + Blocks[b];
+                                ChangBlocStatus("Blocks", blocks, new int[] { i + 1 });
                             }
-                            string blocks = "Null";
-                            if (Blocks.Length > 0) blocks = Blocks[0];
-                            for (int b = 1; b < Blocks.Length; b++)
-                                blocks = blocks + "," + Blocks[b];
-                            ChangBlocStatus("Blocks", blocks, new int[] { i + 1 });
+
+                            Transform objet = transform.GetChild(1).Find("Objet n° " + (i + 1));
+                            if (objet != null)
+                                objet.name = "Objet n° " + i;
+
+                            NewComponent[i] = level.blocks[i + 1];
                         }
-
-                        Transform objet = transform.GetChild(1).Find("Objet n° " + (i + 1));
-                        if (objet != null)
-                            objet.name = "Objet n° " + i;
-
-                        NewComponent[i] = level.blocks[i + 1];
                     }
+                    level.blocks = NewComponent;
+                    SelectedBlock[v] = -1;
                 }
-                level.blocks = NewComponent;
-                SelectedBlock[v] = -1;
-            }
-            else if (!fromUpdateScript)
-            {
-                NoBlocSelectedPanel.SetActive(true);
-                StartCoroutine(WaitForDesableNoBlocSelectedPanel(2F));
+                else if (!fromUpdateScript)
+                {
+                    NoBlocSelectedPanel.SetActive(true);
+                    StartCoroutine(WaitForDesableNoBlocSelectedPanel(2F));
+                }
             }
         }
     }
