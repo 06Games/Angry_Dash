@@ -113,7 +113,7 @@ public class EditorMusicSelector : MonoBehaviour
                     go.gameObject.SetActive(true);
                 }
             };
-            client.DownloadString(serverURL + "index.php?key=" + keywords); //Searches music containing the keywords
+            client.DownloadStringAsync(new System.Uri(serverURL + "index.php?key=" + keywords)); //Searches music containing the keywords
         }
     }
 
