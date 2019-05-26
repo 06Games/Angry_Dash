@@ -121,7 +121,7 @@ public class Inventory : MonoBehaviour
     /// <summary> Display all items </summary>
     public void Reload()
     {
-        transform.GetChild(0).GetChild(1).GetComponent<Text>().text = xml.GetItem("Money").Value;
+        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = xml.GetItem("Money").Value;
         Transform content = transform.GetChild(1).GetComponent<ScrollRect>().content;
         for (int i = 1; i < content.childCount; i++)
             Destroy(content.GetChild(i).gameObject);
