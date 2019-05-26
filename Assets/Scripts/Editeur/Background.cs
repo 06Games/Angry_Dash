@@ -95,12 +95,9 @@ public class Background : MonoBehaviour
         for (int i = 0; i < go.childCount; i++)
         {
             go.GetChild(i).GetComponent<Image>().color = Editor.level.background.color;
-            if (sp != null)
-            {
-                go.GetChild(i).GetComponent<UImage_Reader>().Type[0] = jsonData[selected].type[0];
-                go.GetChild(i).GetComponent<UImage_Reader>().Load(sp[selected]);
-            }
-            else go.GetChild(i).GetComponent<UImage_Reader>().SetID("native/BACKGROUNDS/" + selected).Load();
+            UImage_Reader reader = go.GetChild(i).GetComponent<UImage_Reader>().SetID("native/BACKGROUNDS/" + selected);
+            if (sp != null) reader.Load(sp[selected]).ApplyJson(jsonData[selected]);
+            else go.GetChild(i).GetComponent<UImage_Reader>().Load();
         }
         Vector2 size = default;
         if (sp != null) size = sp[selected].Frames[0].Size();
