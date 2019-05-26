@@ -62,12 +62,22 @@ public class DependenciesManager : MonoBehaviour
             catch (Exception e) //else
             {
                 Debug.LogError(e.Message); //log error
-                wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); //continue game starting
+                if (!Directory.Exists(Application.persistentDataPath + "/Ressources/default/"))
+                {
+                    transform.GetChild(0).gameObject.SetActive(true);
+                    DownloadPanel.SetActive(false);
+                }
+                else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); //continue game starting
                 return; //stop this function
             }
             string[] lines = Result.Split("\n");
 
             downloadFile(0, lines, URL, Application.persistentDataPath + "/Ressources/");
+        }
+        else if (!Directory.Exists(Application.persistentDataPath + "/Ressources/default/"))
+        {
+            transform.GetChild(0).gameObject.SetActive(true);
+            DownloadPanel.SetActive(false);
         }
         else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
     }
