@@ -142,6 +142,7 @@ public class Editeur : MonoBehaviour
                 if (GameObject.Find("Audio") != null) GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
 
                 saveMethode = (SaveMethode)ConfigAPI.GetInt("editor.autoSave");
+                if (ConfigAPI.GetBool("editor.hideToolbox")) Toolbox.transform.parent.position *= new Vector2(1, -1);
             }
         }
     }
@@ -257,7 +258,14 @@ public class Editeur : MonoBehaviour
 
         if (SelectBlocking & !bloqueSelect)
         {
-            if (Input.mousePosition.y > Screen.height / 4)
+            bool isHoverGUI = false;
+            foreach (Transform go in transform.GetChild(0))
+            {
+                if (go.GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
+            }
+            if (transform.GetChild(0).GetChild(2).GetChild(3).GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
+
+            if (!isHoverGUI)
             {
                 Vector2 pos = GetWorldPosition(Input.mousePosition);
 
@@ -311,7 +319,14 @@ public class Editeur : MonoBehaviour
 #else
             bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
 #endif
-            if (Input.mousePosition.y > Screen.height / 4)
+            bool isHoverGUI = false;
+            foreach (Transform go in transform.GetChild(0))
+            {
+                if (go.GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
+            }
+            if (transform.GetChild(0).GetChild(2).GetChild(3).GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
+
+            if (!isHoverGUI)
             {
                 Vector2 pos = GetWorldPosition(Input.mousePosition);
                 int Selected = GetBloc((int)pos.x, (int)pos.y);
@@ -336,7 +351,7 @@ public class Editeur : MonoBehaviour
         });
 #endif
         bool editPanel = Toolbox.array == 2 | Toolbox.array == 5;
-        if(NoBlocSelectedPanel.activeInHierarchy & editPanel & SelectedBlock.Length > 0) Toolbox.GO[2].GetComponent<Edit>().EnterToEdit();
+        if (NoBlocSelectedPanel.activeInHierarchy & editPanel & SelectedBlock.Length > 0) Toolbox.GO[2].GetComponent<Edit>().EnterToEdit();
         NoBlocSelectedPanel.SetActive(editPanel & SelectedBlock.Length == 0);
         if (SelectedBlock.Length > 0)
         {
@@ -425,6 +440,54 @@ public class Editeur : MonoBehaviour
         }
         else touchLastPosition = new Vector2(-50000, -50000);
 #endif
+
+        if (ConfigAPI.GetBool("editor.hideToolbox"))
+        {
+            Transform toolbox = Toolbox.transform.parent;
+            float toolboxY = toolbox.GetComponent<RectTransform>().sizeDelta.y * transform.GetChild(0).GetComponent<Canvas>().scaleFactor;
+#if UNITY_STANDALONE || UNITY_EDITOR
+            if (toolbox.position.y < 0) //The toolbox is hidden
+            {
+                if (Input.mousePosition.y <= 25) //The mouse is on the bottom of the screen
+                    StartCoroutine(HideToolbox(toolbox, toolboxY, false));
+            }
+            else //The toolbox is displayed
+            {
+                if (Input.mousePosition.y > toolboxY) //The mouse isn't on the toolbox
+                    StartCoroutine(HideToolbox(toolbox, toolboxY, true));
+            }
+#endif
+        }
+    }
+
+    IEnumerator HideToolbox(Transform toolbox, float Y, bool hide)
+    {
+        Vector2 oldPos = toolbox.position;
+        yield return new WaitForEndOfFrame();
+        if (oldPos == (Vector2)toolbox.position)
+        {
+            float pos = hide ? Y * -0.5F : Y * 0.5F;
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            bool LastFrame = true;
+            System.TimeSpan totalTime = System.TimeSpan.FromMilliseconds(250);
+            while (sw.Elapsed < totalTime | LastFrame)
+            {
+                float Time = sw.ElapsedMilliseconds;
+                if (sw.Elapsed >= totalTime)
+                {
+                    LastFrame = false;
+                    Time = (long)totalTime.TotalMilliseconds;
+                }
+                float totalDist = pos < 0 ? pos * -2 : pos * 2;
+                float doneDist = hide ? (toolbox.position.y - totalDist / 2F) * -1 : toolbox.position.y + totalDist / 2F;
+                float wantedDist = totalDist / (float)totalTime.TotalMilliseconds * Time;
+                float mvt = wantedDist - doneDist;
+                toolbox.position += hide ? new Vector3(0, -mvt) : new Vector3(0, mvt);
+                yield return new WaitForEndOfFrame();
+            }
+            sw.Stop();
+        }
     }
 
     public enum SaveMethode
@@ -684,12 +747,13 @@ public class Editeur : MonoBehaviour
         }
         else
         {
-            for (int i = 0; i < Toolbox.GO[1].transform.childCount; i++)
+            Transform content = Toolbox.GO[1].GetComponent<ScrollRect>().content;
+            for (int i = 0; i < content.childCount; i++)
             {
                 int v = (int)(newblockid - 10000F);
                 if (i + 1 == v & AddBlocking)
-                    Toolbox.GO[1].transform.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/buttonSelected").Load();
-                else Toolbox.GO[1].transform.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/button").Load();
+                    content.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/buttonSelected").Load();
+                else content.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/button").Load();
             }
         }
     }
