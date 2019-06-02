@@ -31,9 +31,9 @@ public class RessourcePackManager : MonoBehaviour
                 rpResult = client.DownloadString(URL).Split(System.StringSplitOptions.RemoveEmptyEntries, "<BR />");
             }
             else rpResult = new string[0];
-                RPs = new string[rpResult.Length];
-                for (int i = 0; i < rpResult.Length; i++)
-                    RPs[i] = rpResult[i].Remove(0, "<name>".Length).Split("</name>")[0].Replace("\n", "").Replace("\r", "");
+            RPs = new string[rpResult.Length];
+            for (int i = 0; i < rpResult.Length; i++)
+                RPs[i] = rpResult[i].Remove(0, "<name>".Length).Split("</name>")[0].Replace("\n", "").Replace("\r", "");
         }
 
         Transform Content = transform.GetChild(1).GetChild(0).GetChild(0);

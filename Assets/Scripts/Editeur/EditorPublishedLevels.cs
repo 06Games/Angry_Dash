@@ -60,22 +60,22 @@ public class EditorPublishedLevels : MonoBehaviour
                 string[] files = new string[0];
                 if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, System.StringSplitOptions.None);
 
-            //Sorts the files
-            if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
+                //Sorts the files
+                if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
                 else if (sort == SortMode.zToA) files = files.OrderByDescending(f => f.ToString()).ToArray();
                 sortMode = sort;
 
-            //Disables the selected sorting button
-            for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
+                //Disables the selected sorting button
+                for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
                     transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = (int)sort != i;
 
-            //Removes the displayed levels
-            Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
+                //Removes the displayed levels
+                Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
                 for (int i = 1; i < ListContent.childCount; i++)
                     Destroy(ListContent.GetChild(i).gameObject);
 
-            //Get Infos
-            items = new LevelItem[files.Length];
+                //Get Infos
+                items = new LevelItem[files.Length];
                 for (int i = 0; i < files.Length; i++)
                 {
                     string[] file = new string[1] { files[i] };
@@ -97,18 +97,18 @@ public class EditorPublishedLevels : MonoBehaviour
                     }
                 }
 
-            //Deplays the levels
-            ListContent.GetChild(0).gameObject.SetActive(false);
+                //Deplays the levels
+                ListContent.GetChild(0).gameObject.SetActive(false);
                 for (int i = 0; i < items.Length; i++)
                 {
                     Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
-                int button = i;
+                    int button = i;
                     go.GetComponent<Button>().onClick.AddListener(() => Select(button)); //Sets the script to excute on click
-                go.name = items[i].Name; //Changes the editor gameObject name (useful only for debugging)
+                    go.name = items[i].Name; //Changes the editor gameObject name (useful only for debugging)
 
-                go.GetChild(0).GetComponent<Text>().text = items[i].Name; //Sets the level's name
-                go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsAuthor", "by [0]", items[i].Author); //Sets the level's author
-                go.gameObject.SetActive(true);
+                    go.GetChild(0).GetComponent<Text>().text = items[i].Name; //Sets the level's name
+                    go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsAuthor", "by [0]", items[i].Author); //Sets the level's author
+                    go.gameObject.SetActive(true);
                 }
             };
             client.DownloadStringAsync(new System.Uri(serverURL + "index.php?key=" + keywords)); //Searches level containing the keywords

@@ -55,22 +55,22 @@ public class ProfileLevels : MonoBehaviour
                 string[] files = new string[0];
                 if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, System.StringSplitOptions.None);
 
-            //Sorts the files
-            if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
+                //Sorts the files
+                if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
                 else if (sort == SortMode.zToA) files = files.OrderByDescending(f => f.ToString()).ToArray();
                 sortMode = sort;
 
-            //Disables the selected sorting button
-            for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
+                //Disables the selected sorting button
+                for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
                     transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = (int)sort != i;
 
-            //Removes the displayed levels
-            Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
+                //Removes the displayed levels
+                Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
                 for (int i = 1; i < ListContent.childCount; i++)
                     Destroy(ListContent.GetChild(i).gameObject);
 
-            //Get Infos
-            items = new string[files.Length];
+                //Get Infos
+                items = new string[files.Length];
                 for (int i = 0; i < files.Length; i++)
                 {
                     string[] file = new string[1] { files[i] };
@@ -89,22 +89,22 @@ public class ProfileLevels : MonoBehaviour
                     }
                 }
 
-            //Deplays the levels
-            ListContent.GetChild(0).gameObject.SetActive(false);
+                //Deplays the levels
+                ListContent.GetChild(0).gameObject.SetActive(false);
                 for (int i = 0; i < items.Length; i++)
                 {
                     Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates an item
-                go.name = items[i]; //Changes the editor gameObject name (useful only for debugging)
+                    go.name = items[i]; //Changes the editor gameObject name (useful only for debugging)
 
-                int button = i;
+                    int button = i;
                     go.GetChild(0).GetComponent<Text>().text = items[i]; //Sets the level's name
-                go.GetChild(1).GetComponent<Button>().onClick.AddListener(() =>
-                    {
-                        Transform panel = transform.GetChild(2);
-                        panel.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "ProfileMyLevelsDeleteWarning", "Are you sure you want to delete [0] ?", items[button]);
-                        panel.GetChild(1).GetComponent<Button>().onClick.AddListener(() => { Delete(button); panel.gameObject.SetActive(false); });
-                        panel.gameObject.SetActive(true);
-                    });
+                    go.GetChild(1).GetComponent<Button>().onClick.AddListener(() =>
+                        {
+                            Transform panel = transform.GetChild(2);
+                            panel.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "ProfileMyLevelsDeleteWarning", "Are you sure you want to delete [0] ?", items[button]);
+                            panel.GetChild(1).GetComponent<Button>().onClick.AddListener(() => { Delete(button); panel.gameObject.SetActive(false); });
+                            panel.gameObject.SetActive(true);
+                        });
                     if (File.Exists(savePath + "/" + items[i] + ".level")) go.GetChild(2).GetComponent<Button>().interactable = false;
                     else go.GetChild(2).GetComponent<Button>().onClick.AddListener(() => Download(button));
                     go.GetChild(3).GetComponent<Button>().onClick.AddListener(() => Collaborate(button));
