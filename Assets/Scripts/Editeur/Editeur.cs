@@ -28,7 +28,7 @@ public class Editeur : MonoBehaviour
     bool SelectMode = false;
     public int[] SelectedBlock;
     public GameObject NoBlocSelectedPanel;
-    public GameObject[] Contenu;
+    public MenuManager Toolbox;
 
     public Scrollbar zoomIndicator;
     public int ZoomSensitive = 20;
@@ -335,8 +335,9 @@ public class Editeur : MonoBehaviour
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         });
 #endif
-        if (NoBlocSelectedPanel.activeInHierarchy & !(!Contenu[3].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock.Length == 0)) Contenu[2].GetComponent<Edit>().EnterToEdit();
-        NoBlocSelectedPanel.SetActive(!Contenu[3].activeInHierarchy & !Contenu[1].activeInHierarchy & !Contenu[4].activeInHierarchy & SelectedBlock.Length == 0);
+        bool editPanel = Toolbox.array == 2 | Toolbox.array == 5;
+        if(NoBlocSelectedPanel.activeInHierarchy & editPanel & SelectedBlock.Length > 0) Toolbox.GO[2].GetComponent<Edit>().EnterToEdit();
+        NoBlocSelectedPanel.SetActive(editPanel & SelectedBlock.Length == 0);
         if (SelectedBlock.Length > 0)
         {
             for (int i = 0; i < SelectedBlock.Length; i++)
@@ -672,7 +673,7 @@ public class Editeur : MonoBehaviour
         BulleDeveloppementCat.SetActive(false);
         if (id <= 10000)
         {
-            Transform Content = Contenu[3].GetComponent<ScrollRect>().content;
+            Transform Content = Toolbox.GO[3].GetComponent<ScrollRect>().content;
             for (int i = 0; i < Content.childCount; i++)
             {
                 if (i + 1 == (int)newblockid & AddBlocking)
@@ -683,12 +684,12 @@ public class Editeur : MonoBehaviour
         }
         else
         {
-            for (int i = 0; i < Contenu[1].transform.childCount; i++)
+            for (int i = 0; i < Toolbox.GO[1].transform.childCount; i++)
             {
                 int v = (int)(newblockid - 10000F);
                 if (i + 1 == v & AddBlocking)
-                    Contenu[1].transform.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/buttonSelected").Load();
-                else Contenu[1].transform.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/button").Load();
+                    Toolbox.GO[1].transform.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/buttonSelected").Load();
+                else Toolbox.GO[1].transform.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/button").Load();
             }
         }
     }
@@ -702,7 +703,7 @@ public class Editeur : MonoBehaviour
         }
         else if (id >= 0)
         {
-            Vector2 pos = Contenu[3].GetComponent<ScrollRect>().content.GetChild(id - 1).localPosition;
+            Vector2 pos = Toolbox.GO[3].GetComponent<ScrollRect>().content.GetChild(id - 1).localPosition;
 
             BulleDeveloppementCat.GetComponent<UImage_Reader>().Load();
             Vector2 sizeObject = new Vector2(100, 80);
@@ -745,8 +746,8 @@ public class Editeur : MonoBehaviour
                 BulleDeveloppementCat.GetComponent<RectTransform>().sizeDelta = (sizeObject / sizeRelative) * new Vector2(length, 1);
                 pos.x = pos.x + (sizeObject.x * (length - 1) / 2F);
 
-                Contenu[3].GetComponent<Button>().onClick.RemoveAllListeners();
-                Contenu[3].GetComponent<Button>().onClick.AddListener(() =>
+                Toolbox.GO[3].GetComponent<Button>().onClick.RemoveAllListeners();
+                Toolbox.GO[3].GetComponent<Button>().onClick.AddListener(() =>
                 {
                     for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++)
                         Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
@@ -781,7 +782,7 @@ public class Editeur : MonoBehaviour
                 Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
             BulleDeveloppementCat.SetActive(false);
 
-            Transform Content = Contenu[3].GetComponent<ScrollRect>().content;
+            Transform Content = Toolbox.GO[3].GetComponent<ScrollRect>().content;
             for (int i = 1; i < Content.childCount - 2; i++)
                 Content.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").Load();
         }

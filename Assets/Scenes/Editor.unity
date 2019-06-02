@@ -25390,12 +25390,7 @@ MonoBehaviour:
   bloqueSelect: 0
   SelectedBlock: 
   NoBlocSelectedPanel: {fileID: 2100197336}
-  Contenu:
-  - {fileID: 0}
-  - {fileID: 1040981136}
-  - {fileID: 1216783475}
-  - {fileID: 1423233137}
-  - {fileID: 398817256}
+  Toolbox: {fileID: 606843292}
   zoomIndicator: {fileID: 2099274943}
   ZoomSensitive: 20
   bloqueEchap: 0
