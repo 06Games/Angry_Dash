@@ -349,10 +349,8 @@ public class Editeur : MonoBehaviour
 
 #if UNITY_STANDALONE || UNITY_EDITOR
         bool Ctrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
-        if (Input.GetAxis("Mouse ScrollWheel") > 0 & Ctrl)
-            Zoom();
-        else if (Input.GetAxis("Mouse ScrollWheel") < 0 & Ctrl)
-            Dezoom();
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 & Ctrl) Zoom();
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0 & Ctrl) Dezoom();
 #elif UNITY_ANDROID || UNITY_IOS
         // If there are two touches on the device...
         if (Input.touchCount == 2)
@@ -444,6 +442,7 @@ public class Editeur : MonoBehaviour
 #endif
     }
 
+    /// <summary> Is the mouse hover GUI ? </summary>
     public bool IsHoverGUI()
     {
         foreach (Transform go in transform.GetChild(0))
@@ -457,6 +456,7 @@ public class Editeur : MonoBehaviour
         return false;
     }
 
+    /// <summary> Switch on/off the Toolbox </summary>
     public void HideOrShowToolbox()
     {
         Transform toolbox = Toolbox.transform.parent;
@@ -466,6 +466,10 @@ public class Editeur : MonoBehaviour
         Toolbox.transform.parent.GetChild(4).GetComponent<UImage_Reader>().SetID(hide ? "native/GUI/editor/toolboxShow" : "native/GUI/editor/toolboxHide").Load();
     }
 
+    /// <summary> Toolbox hide/show animation </summary>
+    /// <param name="toolbox">The toolbox transform</param>
+    /// <param name="Y">The height of the toolbox</param>
+    /// <param name="hide">Should the toolbox to be hidden ?</param>
     IEnumerator HideToolbox(Transform toolbox, float Y, bool hide)
     {
         Vector2 oldPos = toolbox.position;
@@ -496,6 +500,7 @@ public class Editeur : MonoBehaviour
         }
     }
 
+    /// <summary> The periode of time between each save </summary>
     public enum SaveMethode
     {
         Everytime,
@@ -504,12 +509,14 @@ public class Editeur : MonoBehaviour
         EveryFiveMinutes
     }
     private SaveMethode _saveMethode;
+    /// <summary> The periode of time between each save </summary>
     public SaveMethode saveMethode
     {
         get { return _saveMethode; }
         set { _saveMethode = value; if (!AutoSaveLevelEnabled) StartCoroutine(AutoSaveLevel()); }
     }
     bool AutoSaveLevelEnabled = false;
+    /// <summary> Save the level each time the periode is done </summary>
     IEnumerator AutoSaveLevel()
     {
         AutoSaveLevelEnabled = true;
@@ -517,8 +524,7 @@ public class Editeur : MonoBehaviour
         if (_saveMethode == SaveMethode.Everytime) yield return new WaitForFixedUpdate();
         else if (_saveMethode == SaveMethode.EveryChange)
         {
-            Level.Infos oldComponent = new Level.Infos();
-            level.CopyTo(out oldComponent);
+            level.CopyTo(out Level.Infos oldComponent);
             while (level.Equals(oldComponent))
                 yield return new WaitForEndOfFrame();
         }
@@ -530,6 +536,7 @@ public class Editeur : MonoBehaviour
         AutoSaveLevelEnabled = false;
         StartCoroutine(AutoSaveLevel());
     }
+    /// <summary> Save the Level </summary>
     public void SaveLevel()
     {
         Logging.Log("Start saving...", LogType.Log);
@@ -538,7 +545,14 @@ public class Editeur : MonoBehaviour
         Logging.Log("Saving completed !", LogType.Log);
     }
 
+    /// <summary> Get the position (in block number) in the world of a position on the screen </summary>
+    /// <param name="pos">The position on the screen</param>
+    /// <param name="round">The position should be rounded to the nearest block?</param>
     public Vector2 GetWorldPosition(Vector2 pos, bool round = true) { return GetWorldPosition(pos, round, cam.transform.position); }
+    /// <summary> Get the position (in block number) in the world of a position on the screen </summary>
+    /// <param name="pos">The position on the screen</param>
+    /// <param name="round">The position should be rounded to the nearest block?</param>
+    /// <param name="camPos">The position of the camera in the world</param>
     public Vector2 GetWorldPosition(Vector2 pos, bool round, Vector2 camPos)
     {
         float zoom = cam.orthographicSize / Screen.height * 2;
@@ -551,6 +565,8 @@ public class Editeur : MonoBehaviour
         else return new Vector2(x, y);
     }
 
+    /// <summary> Switch on/off the Multiselection (only for Mobile)</summary>
+    /// <param name="btn">The button</param>
     public void ChangeMultiSelect(Image btn)
     {
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
@@ -560,6 +576,7 @@ public class Editeur : MonoBehaviour
 #endif
     }
 
+    /// <summary> Deselect all selected blocks </summary>
     public void DeselectAll()
     {
         foreach (int i in SelectedBlock)
@@ -570,26 +587,27 @@ public class Editeur : MonoBehaviour
         SelectedBlock = new int[0];
     }
 
+    /// <summary> Zoom in </summary>
+    /// <param name="Z">the sensibility</param>
     void Zoom(int Z = 0)
     {
-        if (Z == 0)
-            Z = ZoomSensitive;
+        if (Z == 0) Z = ZoomSensitive;
 
-        if (cam.orthographicSize > 240)
-            cam.orthographicSize = cam.orthographicSize - Z;
+        if (cam.orthographicSize > 240) cam.orthographicSize = cam.orthographicSize - Z;
         StartCoroutine(ZoomIndicator());
         Grille(true);
     }
+    /// <summary> Zoom out </summary>
+    /// <param name="Z">the sensibility</param>
     void Dezoom(int Z = 0)
     {
-        if (Z == 0)
-            Z = ZoomSensitive;
+        if (Z == 0) Z = ZoomSensitive;
 
-        if (cam.orthographicSize < 1200)
-            cam.orthographicSize = cam.orthographicSize + Z;
+        if (cam.orthographicSize < 1200) cam.orthographicSize = cam.orthographicSize + Z;
         StartCoroutine(ZoomIndicator());
         Grille(true);
     }
+    /// <summary> Show the Zoom Indicator during 1s </summary>
     IEnumerator ZoomIndicator()
     {
         zoomIndicator.gameObject.SetActive(true);
@@ -601,11 +619,16 @@ public class Editeur : MonoBehaviour
             zoomIndicator.gameObject.SetActive(false);
     }
 
+    /// <summary> Switch on/off the Grid </summary>
+    /// <param name="Img">The button's image component</param>
     public void GrilleOnOff(UImage_Reader Img)
     {
         Transform _Grille = transform.GetChild(1).GetChild(1);
         GrilleOnOff(!_Grille.GetComponent<SpriteRenderer>().enabled, Img);
     }
+    /// <summary> Switch on/off the Grid </summary>
+    /// <param name="on">Switch on ?</param>
+    /// <param name="Img">The button's image component</param>
     void GrilleOnOff(bool on, UImage_Reader Img)
     {
         ConfigAPI.SetBool("editor.Grid", on);
@@ -620,6 +643,9 @@ public class Editeur : MonoBehaviour
             Grille(false, true);
         }
     }
+    /// <summary> Manage the Grid </summary>
+    /// <param name="needRespawn">The Grid needs to be respawn ?</param>
+    /// <param name="del"></param>
     void Grille(bool needRespawn, bool del = false)
     {
         if (!ConfigAPI.GetBool("editor.Grid") & needRespawn) return; //Can't create a grid if the user doesn't want it ...
@@ -646,6 +672,8 @@ public class Editeur : MonoBehaviour
         }
     }
 
+    /// <summary> Add a number to the number of the selected layer </summary>
+    /// <param name="operation">The number to add</param>
     public void ChangeDisplayedLayer(int operation)
     {
         InputField input = transform.GetChild(0).GetChild(2).GetChild(3).GetChild(1).GetComponent<InputField>();
@@ -662,12 +690,16 @@ public class Editeur : MonoBehaviour
             ChangeDisplayedLayer(input);
         }
     }
+    /// <summary> Selects the layer whose number has been entered </summary>
+    /// <param name="input">The input field</param>
     public void ChangeDisplayedLayer(InputField input)
     {
         if (!int.TryParse(input.text, out int l) | l < -2) input.text = LangueAPI.Get("native", "editor.layer.all", "All");
         else if (l > 999) input.text = "999";
         ChangeDisplayedLayer(input.text);
     }
+    /// <summary> Selects the layer entered </summary>
+    /// <param name="layer">The layer</param>
     public void ChangeDisplayedLayer(string layer)
     {
         Transform trans = transform.GetChild(0).GetChild(2).GetChild(3);
