@@ -142,7 +142,11 @@ public class Editeur : MonoBehaviour
                 if (GameObject.Find("Audio") != null) GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
 
                 saveMethode = (SaveMethode)ConfigAPI.GetInt("editor.autoSave");
-                if (ConfigAPI.GetBool("editor.hideToolbox")) Toolbox.transform.parent.position *= new Vector2(1, -1);
+                if (ConfigAPI.GetBool("editor.hideToolbox"))
+                {
+                    Toolbox.transform.parent.position *= new Vector2(1, -1);
+                    Toolbox.transform.parent.GetChild(4).gameObject.SetActive(SystemInfo.deviceType != DeviceType.Desktop);
+                }
             }
         }
     }
@@ -236,14 +240,7 @@ public class Editeur : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.Mouse0) & !SelectMode)
             {
-                bool isHoverGUI = false;
-                foreach (Transform go in transform.GetChild(0))
-                {
-                    if (go.GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
-                }
-                if (transform.GetChild(0).GetChild(2).GetChild(3).GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
-
-                if (!isHoverGUI)
+                if (!IsHoverGUI())
                 {
                     Vector2 pos = GetWorldPosition(Input.mousePosition);
 
@@ -258,14 +255,7 @@ public class Editeur : MonoBehaviour
 
         if (SelectBlocking & !bloqueSelect)
         {
-            bool isHoverGUI = false;
-            foreach (Transform go in transform.GetChild(0))
-            {
-                if (go.GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
-            }
-            if (transform.GetChild(0).GetChild(2).GetChild(3).GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
-
-            if (!isHoverGUI)
+            if (!IsHoverGUI())
             {
                 Vector2 pos = GetWorldPosition(Input.mousePosition);
 
@@ -319,14 +309,8 @@ public class Editeur : MonoBehaviour
 #else
             bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
 #endif
-            bool isHoverGUI = false;
-            foreach (Transform go in transform.GetChild(0))
-            {
-                if (go.GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
-            }
-            if (transform.GetChild(0).GetChild(2).GetChild(3).GetComponent<RectTransform>().IsHover(Input.mousePosition)) isHoverGUI = true;
 
-            if (!isHoverGUI)
+            if (!IsHoverGUI())
             {
                 Vector2 pos = GetWorldPosition(Input.mousePosition);
                 int Selected = GetBloc((int)pos.x, (int)pos.y);
@@ -441,11 +425,11 @@ public class Editeur : MonoBehaviour
         else touchLastPosition = new Vector2(-50000, -50000);
 #endif
 
+#if UNITY_STANDALONE || UNITY_EDITOR
         if (ConfigAPI.GetBool("editor.hideToolbox"))
         {
             Transform toolbox = Toolbox.transform.parent;
             float toolboxY = toolbox.GetComponent<RectTransform>().sizeDelta.y * transform.GetChild(0).GetComponent<Canvas>().scaleFactor;
-#if UNITY_STANDALONE || UNITY_EDITOR
             if (toolbox.position.y < 0) //The toolbox is hidden
             {
                 if (Input.mousePosition.y <= 25) //The mouse is on the bottom of the screen
@@ -456,8 +440,30 @@ public class Editeur : MonoBehaviour
                 if (Input.mousePosition.y > toolboxY) //The mouse isn't on the toolbox
                     StartCoroutine(HideToolbox(toolbox, toolboxY, true));
             }
-#endif
         }
+#endif
+    }
+
+    public bool IsHoverGUI()
+    {
+        foreach (Transform go in transform.GetChild(0))
+        {
+            if (go.GetComponent<RectTransform>().IsHover(Input.mousePosition) & go.gameObject.activeInHierarchy) return true;
+        }
+        foreach (Transform go in transform.GetChild(0).GetChild(2))
+        {
+            if (go.GetComponent<RectTransform>().IsHover(Input.mousePosition) & go.gameObject.activeInHierarchy) return true;
+        }
+        return false;
+    }
+
+    public void HideOrShowToolbox()
+    {
+        Transform toolbox = Toolbox.transform.parent;
+        float toolboxY = toolbox.GetComponent<RectTransform>().sizeDelta.y * transform.GetChild(0).GetComponent<Canvas>().scaleFactor;
+        bool hide = toolbox.position.y >= 0;
+        StartCoroutine(HideToolbox(toolbox, toolboxY, hide));
+        Toolbox.transform.parent.GetChild(4).GetComponent<UImage_Reader>().SetID(hide ? "native/GUI/editor/toolboxShow" : "native/GUI/editor/toolboxHide").Load();
     }
 
     IEnumerator HideToolbox(Transform toolbox, float Y, bool hide)

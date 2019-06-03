@@ -77,6 +77,8 @@ native/GUI/profileMenu/myAccount
 native/GUI/levelLauncher/pause
 native/GUI/editor/toolbox
 native/GUI/editor/toolboxMenu
+native/GUI/editor/toolboxShow
+native/GUI/editor/toolboxHide
 native/GUI/editor/layerInput
 native/GUI/editor/layerArrow
 native/GUI/editor/grid
