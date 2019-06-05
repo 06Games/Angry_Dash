@@ -101,8 +101,8 @@ GameObject:
   - component: {fileID: 3628922541564842559}
   - component: {fileID: 6355717430888263320}
   - component: {fileID: 3861215302257327251}
-  - component: {fileID: 7775037968361035300}
   - component: {fileID: 7888787240651490799}
+  - component: {fileID: 3394745558835808979}
   m_Layer: 0
   m_Name: Notification
   m_TagString: Untagged
@@ -129,7 +129,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 50}
-  m_SizeDelta: {x: 0, y: 100}
+  m_SizeDelta: {x: 500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6355717430888263320
 CanvasRenderer:
@@ -168,20 +168,6 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &7775037968361035300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2445957323348224943}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
-  m_VerticalFit: 0
 --- !u!114 &7888787240651490799
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,6 +180,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b71705fe677b3124e93ac2d9a5883f3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3394745558835808979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2445957323348224943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseID: native/GUI/other/internetNotification/panel
+  TextConfiguration: 0
+  Type: 00000000000000000000000000000000
 --- !u!1 &3692236558001618604
 GameObject:
   m_ObjectHideFlags: 0

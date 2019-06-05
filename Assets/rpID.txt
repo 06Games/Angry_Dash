@@ -137,6 +137,7 @@ native/GUI/editor/movements/rotateLeft
 native/GUI/editor/movements/rotateRight
 native/GUI/editor/movements/backward
 native/GUI/editor/movements/forward
+native/GUI/other/internetNotification/panel
 native/GUI/other/internetNotification/connected
 native/GUI/other/internetNotification/disconnected
 native/BACKGROUNDS/0
