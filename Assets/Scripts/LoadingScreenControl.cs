@@ -13,6 +13,13 @@ public class LoadingScreenControl : MonoBehaviour
     public static bool CanChange { get; set; } = true;
     public static event Tools.BetterEventHandler OnSceneChange;
 
+    public static LoadingScreenControl GetLSC()
+    {
+        var LSC = FindObjectOfType<LoadingScreenControl>();
+        if (LSC == null) throw new System.NullReferenceException("No Loading Screen");
+        else return LSC;
+    }
+
     public void LoadScreen(string Scene, bool keep = false) { LoadScreen(Scene, null, keep); }
 
     public void LoadScreen(string Scene, string[] args, bool keep = false)

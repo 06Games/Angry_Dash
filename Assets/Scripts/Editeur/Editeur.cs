@@ -192,7 +192,7 @@ public class Editeur : MonoBehaviour
         zoomIndicator.gameObject.SetActive(false);
         BulleDeveloppementCat.SetActive(false);
 
-        string[] args = cam.GetComponent<BaseControl>().LSC.GetArgs();
+        string[] args = LoadingScreenControl.GetLSC().GetArgs();
         if (args != null)
         {
             if (args.Length > 2)

@@ -46,7 +46,7 @@ public class LevelPlayer : MonoBehaviour
 
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
         {
-            string[] args = GetComponent<BaseControl>().LSC.GetArgs();
+            string[] args = LoadingScreenControl.GetLSC().GetArgs();
             if (args != null)
             {
                 if (args.Length > 2)
@@ -295,7 +295,7 @@ public class LevelPlayer : MonoBehaviour
                 args = passThroughArgs;
                 GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
             }
-            GetComponent<BaseControl>().LSC.LoadScreen(scene, args);
+            LoadingScreenControl.GetLSC().LoadScreen(scene, args);
         }
         else
         {
