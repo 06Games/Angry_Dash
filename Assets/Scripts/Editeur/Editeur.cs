@@ -383,18 +383,13 @@ public class Editeur : MonoBehaviour
         int MoveY = 0;
 
         int Speed = CameraMouvementSpeed;
-        if (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift))
-            Speed = CameraMouvementSpeed * 2;
+        if (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift)) Speed = CameraMouvementSpeed * 2;
 
-        if (Input.GetKey(KeyCode.RightArrow))
-            MoveX = 1;
-        else if (Input.GetKey(KeyCode.LeftArrow))
-            MoveX = -1;
+        if (Input.GetKey(KeyCode.RightArrow)) MoveX = 1;
+        else if (Input.GetKey(KeyCode.LeftArrow)) MoveX = -1;
 
-        if (Input.GetKey(KeyCode.UpArrow))
-            MoveY = 1;
-        else if (Input.GetKey(KeyCode.DownArrow))
-            MoveY = -1;
+        if (Input.GetKey(KeyCode.UpArrow)) MoveY = 1;
+        else if (Input.GetKey(KeyCode.DownArrow)) MoveY = -1;
 
         Deplacer(MoveX * Speed, MoveY * Speed);
 #elif UNITY_ANDROID || UNITY_IOS
@@ -723,6 +718,10 @@ public class Editeur : MonoBehaviour
     }
 
     #region GestionBloc
+    /// <summary> Create a block </summary>
+    /// <param name="x">X position</param>
+    /// <param name="y">Y position</param>
+    /// <param name="_Color">Color of the block</param>
     void CreateBloc(int x, int y, Color32 _Color)
     {
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
@@ -756,6 +755,9 @@ public class Editeur : MonoBehaviour
         }
 #endif
     }
+
+    /// <summary>Selects a block</summary>
+    /// <param name="_id">ID of the block</param>
     public void AddBlock(string _id)
     {
         float id = float.Parse(_id);
@@ -795,6 +797,9 @@ public class Editeur : MonoBehaviour
             }
         }
     }
+
+    /// <summary>Opens a selection bubble for the category</summary>
+    /// <param name="id">The id of the category</param>
     public void OpenCat(int id)
     {
         if (id == (int)newblockid)
@@ -890,6 +895,9 @@ public class Editeur : MonoBehaviour
         }
     }
 
+    /// <summary>Instanciate a block</summary>
+    /// <param name="num">The index of the block</param>
+    /// <param name="keep">Just refresh the block or respawn it ?</param>
     public void Instance(int num, bool keep = false)
     {
         float id = level.blocks[num].id;
@@ -936,6 +944,9 @@ public class Editeur : MonoBehaviour
             SR.sortingOrder = (int)level.blocks[num].position.z;
         }
     }
+
+    /// <summary>The coordinates of a block</summary>
+    /// <param name="num">The index of the block</param>
     public Vector3 GetObjectPos(int num)
     {
         Vector2 pos = level.blocks[num].position * 50 + new Vector3(25, 25, 0);
@@ -943,10 +954,12 @@ public class Editeur : MonoBehaviour
     }
     #endregion
 
-    public void SelectBloc()
-    {
-        SelectBlocking = true;
-    }
+    public void SelectBloc() { SelectBlocking = true; }
+
+    /// <summary>Seach a block at the coordinates</summary>
+    /// <param name="x">X position</param>
+    /// <param name="y">Y position</param>
+    /// <returns>The index of the block (-1 if null)</returns>
     public int GetBloc(int x, int y)
     {
         for (int i = 0; i < level.blocks.Length; i++)
@@ -958,17 +971,12 @@ public class Editeur : MonoBehaviour
         return -1;
     }
 
-    /// <summary>
-    /// Chang Block Parameter
-    /// </summary>
+    /// <summary>Change Block Parameter</summary>
     /// <param name="StatusID">Parameter ID</param>
     /// <param name="_component">Parameter Value</param>
     /// <param name="Bloc">Blocks conserned</param>
-    public void ChangBlocStatus(string StatusID, string _component, int[] Bloc)
-    { ChangBlocStatus(new string[] { StatusID }, new string[] { _component }, Bloc); }
-    /// <summary>
-    /// Chang Blocks Parameter
-    /// </summary>
+    public void ChangBlocStatus(string StatusID, string _component, int[] Bloc) { ChangBlocStatus(new string[] { StatusID }, new string[] { _component }, Bloc); }
+    /// <summary>Change Blocks Parameter</summary>
     /// <param name="StatusID">Parameters IDs</param>
     /// <param name="_component">Parameters Values</param>
     /// <param name="Bloc">Blocks conserned</param>
@@ -1000,9 +1008,7 @@ public class Editeur : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// Get Block Parameter
-    /// </summary>
+    /// <summary>Get Block Parameter</summary>
     /// <param name="StatusID">Parameter ID</param>
     /// <param name="Bloc">Block conserned</param>
     /// <returns></returns>
@@ -1023,6 +1029,8 @@ public class Editeur : MonoBehaviour
         else return "";
     }
 
+    /// <summary>Delete the selected block</summary>
+    /// <param name="fromUpdateScript">Shouldn't activate the GUI ?</param>
     public void DeleteSelectedBloc(bool fromUpdateScript)
     {
         SelectedBlock = SelectedBlock.OrderBy(i => i).ToArray();
@@ -1108,6 +1116,9 @@ public class Editeur : MonoBehaviour
         NoBlocSelectedPanel.SetActive(false);
     }
 
+    /// <summary>Move the camera</summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
     public void Deplacer(float x, float y)
     {
         if (x != 0 | y != 0)
@@ -1115,17 +1126,15 @@ public class Editeur : MonoBehaviour
             float CamX = cam.transform.position.x;
             float CamY = cam.transform.position.y;
 
-            if (x < 0) CamX = cam.transform.position.x + x;
-            else if (x > 0) CamX = cam.transform.position.x + x;
-
-            if (y < 0) CamY = cam.transform.position.y + y;
-            else if (y > 0) CamY = cam.transform.position.y + y;
+            if (x != 0) CamX = cam.transform.position.x + x;
+            if (y != 0) CamY = cam.transform.position.y + y;
 
             cam.transform.position = new Vector3(CamX, CamY, -10);
             Grille(false);
         }
     }
 
+    /// <summary>Play the level</summary>
     public void PlayLevel()
     {
         SaveLevel();
@@ -1134,6 +1143,7 @@ public class Editeur : MonoBehaviour
         GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player", args.Concat(passThrough).ToArray(), true);
     }
 
+    //Inspector only
     public void SelectModeChang(bool enable) { SelectMode = enable; }
     public void BloqueActions(bool on) { bloqueSelect = on; }
     public void OnEchap() { if (!string.IsNullOrEmpty(file) & !bloqueEchap) { ExitEdit(); cam.GetComponent<BaseControl>().returnScene = true; } }
