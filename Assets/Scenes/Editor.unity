@@ -14259,7 +14259,7 @@ PrefabInstance:
     - target: {fileID: 224606903381878006, guid: e09bd60866c1db1449e7dcab4d010fb3,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224606903381878006, guid: e09bd60866c1db1449e7dcab4d010fb3,
         type: 3}
@@ -51906,7 +51906,7 @@ PrefabInstance:
     - target: {fileID: 9160703775651151899, guid: c1976bf1c424ae6418ca61a17ba1b58b,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9160703775651151899, guid: c1976bf1c424ae6418ca61a17ba1b58b,
         type: 3}
@@ -51952,6 +51952,16 @@ PrefabInstance:
         type: 3}
       propertyPath: OnEchap.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8254708441080739064, guid: c1976bf1c424ae6418ca61a17ba1b58b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3628922541564842559, guid: c1976bf1c424ae6418ca61a17ba1b58b,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1976bf1c424ae6418ca61a17ba1b58b, type: 3}
