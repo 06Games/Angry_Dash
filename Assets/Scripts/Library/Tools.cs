@@ -114,6 +114,16 @@ namespace Tools
             }
             return sb.ToString().Normalize(NormalizationForm.FormC);
         }
+
+        /// <summary>Returns the input string with the first character converted to uppercase</summary>
+        public static string FirstLetterToUpperCase(this string s)
+        {
+            if (string.IsNullOrEmpty(s)) return string.Empty;
+
+            char[] a = s.ToCharArray();
+            a[0] = char.ToUpper(a[0]);
+            return new string(a);
+        }
     }
 
     public static class Texture2DExtensions
@@ -256,19 +266,47 @@ namespace Tools
             transform.localScale = new Vector3(globalScale.x / transform.lossyScale.x, globalScale.y / transform.lossyScale.y, globalScale.z / transform.lossyScale.z);
         }
 
+        public static Transform FindParent(this Transform transform, string n) {
+            Transform parent = transform.parent;
+            while(parent != null)
+            {
+                if (parent.name == n) return parent;
+                else parent = parent.parent;
+            }
+            return null;
+        }
+    }
+    public static class RectTransformExtensions
+    {
         public static bool IsHover(this RectTransform transform, Vector2 hoverObj)
         {
             Vector2 localMousePosition = transform.InverseTransformPoint(hoverObj);
             return transform.rect.Contains(localMousePosition);
         }
+
+        public static void SetRect(this RectTransform transform, Rect rect)
+        {
+            bool flipX = transform.anchorMax.x == 1 & transform.anchorMin.x == 1;
+            bool flipY = transform.anchorMax.y == 1 & transform.anchorMin.y == 1;
+            transform.anchoredPosition = (rect.position + (rect.size / 2F)) * new Vector2(flipX ? -1 : 1, flipY ? -1 : 1);
+            transform.sizeDelta = rect.size;
+        }
+
+        public static void SetStretchSize(this RectTransform transform, Rect rect)
+        {
+            transform.anchorMin = new Vector2(0, 0);
+            transform.anchorMax = new Vector2(1, 1);
+            transform.offsetMin = rect.position;
+            rect.size = transform.parent.GetComponent<RectTransform>().rect.size - rect.size - rect.position;
+            transform.offsetMax = rect.size * -1;
+        }
     }
 
-    public static class Vector2Extensions
+public static class Vector2Extensions
     {
         public static Vector2 Parse(string s)
         {
-            Vector2 vector = new Vector2();
-            if (TryParse(s, out vector)) return vector;
+            if (TryParse(s, out Vector2 vector)) return vector;
             else throw new System.FormatException("The string entered wasn't in a correct format ! : {s}");
         }
         public static bool TryParse(string s, out Vector2 vector)
@@ -328,6 +366,16 @@ namespace Tools
     {
         public static void Set(this Rect output, Rect input) { output.Set(input.x, input.y, input.width, input.height); }
         public static void Set(this Rect output, Vector2 offset, Vector2 size) { output.Set(offset.x, offset.y, size.x, size.y); }
+
+        public static Rect Multiply(this Rect rect, float multiplier)
+        {
+            return new Rect(
+                rect.x * multiplier,
+                rect.y * multiplier,
+                rect.width * multiplier,
+                rect.height * multiplier
+            );
+        }
     }
 
     public static class ColorExtensions

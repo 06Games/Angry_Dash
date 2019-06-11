@@ -30,4 +30,16 @@ public class MenuManager : MonoBehaviour
         transform.GetChild(0).gameObject.SetActive(false);
     }
     public void Array(int a) { array = a; }
+
+    public GameObject selectedObject
+    {
+        get { return GO[array]; }
+        set
+        {
+            for (int i = 0; i < GO.Length; i++)
+            {
+                if (GO[i] == value) { array = i; i = GO.Length; }
+            }
+        }
+    }
 }

@@ -18,7 +18,7 @@ public class Editeur : MonoBehaviour
     public Level.Infos level;
 
     bool AddBlocking;
-    float newblockid;
+    float newblockid = -1;
     [HideInInspector] public int selectedLayer = -2;
     public GameObject Prefab;
     public GameObject BulleDeveloppementCat;
@@ -248,7 +248,7 @@ public class Editeur : MonoBehaviour
                     if (id > 10000)
                         id = (newblockid - 10000F) / 10F;
 
-                    CreateBloc((int)pos.x, (int)pos.y, new Color32(190, 190, 190, 255));
+                    CreateBlock((int)pos.x, (int)pos.y, new Color32(190, 190, 190, 255));
                 }
             }
         }
@@ -722,20 +722,21 @@ public class Editeur : MonoBehaviour
     /// <param name="x">X position</param>
     /// <param name="y">Y position</param>
     /// <param name="_Color">Color of the block</param>
-    void CreateBloc(int x, int y, Color32 _Color)
+    void CreateBlock(int x, int y, Color32 _Color)
     {
 #if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         if (Input.touchCount == 1)
         {
 #endif
-        if (newblockid <= 0) return;
+        if (newblockid < 0) return;
         int l = selectedLayer;
         if (l == -2) l = 0;
         Vector3 a = new Vector3(x, y, l);
 
         float _id = newblockid;
         Level.Block.Type _type = Level.Block.Type.Block;
-        if (newblockid > 10000) { _id = (newblockid - 10000F) / 10F; _type = Level.Block.Type.Event; }
+        if (newblockid > 10000) { _id = (newblockid - 10000F) / 10F; _type = Level.Block.Type.Event; } //Compatibility Mode
+        else if (newblockid == 0) _type = Level.Block.Type.Event;
 
         Level.Block newBlock = new Level.Block
         {
@@ -758,43 +759,23 @@ public class Editeur : MonoBehaviour
 
     /// <summary>Selects a block</summary>
     /// <param name="_id">ID of the block</param>
-    public void AddBlock(string _id)
+    public void SelectBlock(Level.Block.Type type, string blockID = "")
     {
-        float id = float.Parse(_id);
-
-        if (id != newblockid)
-        {
-            newblockid = id;
-            AddBlocking = true;
-        }
-        else if (id > 10000)
-        {
-            newblockid = -1;
-            AddBlocking = false;
-        }
-
         BulleDeveloppementCat.SetActive(false);
-        if (id <= 10000)
+        Transform Content = Toolbox.GO[3].GetComponent<ScrollRect>().content;
+
+        if (type == Level.Block.Type.Event) newblockid = 0;
+        else if (type == Level.Block.Type.Block)
         {
-            Transform Content = Toolbox.GO[3].GetComponent<ScrollRect>().content;
-            for (int i = 0; i < Content.childCount; i++)
-            {
-                if (i + 1 == (int)newblockid & AddBlocking)
-                    Content.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/buttonSelected").Load();
-                else Content.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").Load();
-                if (i + 1 == (int)newblockid) Content.GetChild(i).GetChild(0).GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + newblockid.ToString("0.0####")).Load();
-            }
+            if (!float.TryParse(blockID, out newblockid)) Debug.LogError("Unkown id: " + blockID);
+            Content.GetChild((int)newblockid).GetChild(0).GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + newblockid.ToString("0.0####")).Load();
         }
-        else
+
+        AddBlocking = true;
+        for (int i = 0; i < Content.childCount; i++)
         {
-            Transform content = Toolbox.GO[1].GetComponent<ScrollRect>().content;
-            for (int i = 0; i < content.childCount; i++)
-            {
-                int v = (int)(newblockid - 10000F);
-                if (i + 1 == v & AddBlocking)
-                    content.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/buttonSelected").Load();
-                else content.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/events/button").Load();
-            }
+            string id = i == (int)newblockid & AddBlocking ? "native/GUI/editor/build/buttonSelected" : "native/GUI/editor/build/button";
+            Content.GetChild(i).GetComponent<UImage_Reader>().SetID(id).Load();
         }
     }
 
@@ -802,96 +783,100 @@ public class Editeur : MonoBehaviour
     /// <param name="id">The id of the category</param>
     public void OpenCat(int id)
     {
-        if (id == (int)newblockid)
+        if (id == (int)newblockid) //Deselect
         {
             newblockid = -1;
             AddBlocking = false;
-            AddBlock(newblockid.ToString());
+            if(id >= 0) Toolbox.GO[3].GetComponent<ScrollRect>().content.GetChild(id).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").Load();
         }
-        else if (id >= 0)
+        else if (id < 1) SelectBlock(Level.Block.Type.Event); //Select the event
+        else //It's a block
         {
-            Vector2 pos = Toolbox.GO[3].GetComponent<ScrollRect>().content.GetChild(id - 1).localPosition;
+            string path = Application.persistentDataPath + "/Ressources/default/textures/"; //The path to the default RP
+            string[] files = new string[0];
 
-            BulleDeveloppementCat.GetComponent<UImage_Reader>().Load();
-            Vector2 sizeObject = new Vector2(100, 80);
-            Vector2 sizeImage = BulleDeveloppementCat.GetComponent<Image>().sprite.Size();
-
-            Vector2 sizeRelative = sizeObject / sizeImage;
-            if (sizeRelative.x < sizeRelative.y) sizeRelative.y = sizeRelative.x;
-            else if (sizeRelative.x > sizeRelative.y) sizeRelative.x = sizeRelative.y;
-
-            BulleDeveloppementCat.transform.localScale = sizeRelative;
-            BulleDeveloppementCat.GetComponent<RectTransform>().sizeDelta = sizeObject / sizeRelative;
-
-            Vector4 border = BulleDeveloppementCat.GetComponent<Image>().sprite.border;
-            BulleDeveloppementCat.GetComponent<HorizontalLayoutGroup>().padding =
-                new RectOffset((int)border.z, (int)border.z, (int)border.w, (int)border.y);
-
-            pos.x = pos.x + 20;
-            BulleDeveloppementCat.transform.GetChild(0).localScale = new Vector2(1, 1) / sizeRelative;
-            if (id / 2F != id / 2)
+            string[] rootIDs = new string[] { "native/BLOCKS/" }; //Where to look for blocks ?
+            foreach (string rootID in rootIDs)
             {
-                pos.y = pos.y - 80;
-                BulleDeveloppementCat.transform.rotation = QuaternionExtensions.SetEuler(0, 0, 0);
-                BulleDeveloppementCat.transform.GetChild(0).localPosition = new Vector3(0, -8.75F, 0);
-            }
-            else
-            {
-                pos.y = pos.y + 80;
-                BulleDeveloppementCat.transform.rotation = QuaternionExtensions.SetEuler(180, 0, 0);
-                BulleDeveloppementCat.transform.GetChild(0).localPosition = new Vector3(0, 8.75F, 0);
-            }
-
-            if (!BulleDeveloppementCat.activeInHierarchy)
-            {
-                for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++)
-                    Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
-                BulleDeveloppementCat.transform.GetChild(0).gameObject.SetActive(false);
-
-                string path = Application.persistentDataPath + "/Ressources/default/textures/native/BLOCKS/";
-                int length = Directory.GetFiles(path, id + ".*", SearchOption.AllDirectories).Length;
-                BulleDeveloppementCat.GetComponent<RectTransform>().sizeDelta = (sizeObject / sizeRelative) * new Vector2(length, 1);
-                pos.x = pos.x + (sizeObject.x * (length - 1) / 2F);
-
-                Toolbox.GO[3].GetComponent<Button>().onClick.RemoveAllListeners();
-                Toolbox.GO[3].GetComponent<Button>().onClick.AddListener(() =>
+                string[] result = Directory.GetFiles(path + rootID, id + "*", SearchOption.AllDirectories);
+                for (int i = 0; i < result.Length; i++)
                 {
-                    for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++)
-                        Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
-                    BulleDeveloppementCat.SetActive(false);
-                });
-
-                for (int i = 0; i < length; i++)
-                {
-                    GameObject newRef = Instantiate(BulleDeveloppementCat.transform.GetChild(0).gameObject, BulleDeveloppementCat.transform);
-                    newRef.SetActive(true);
-                    newRef.name = i.ToString();
-                    newRef.transform.localPosition = new Vector3(i * 80, 0, 0);
-                    newRef.transform.rotation = QuaternionExtensions.SetEuler(BulleDeveloppementCat.transform.rotation.eulerAngles.x, 0, 0);
-                    newRef.transform.GetComponent<Button>().onClick.AddListener(() => AddBlock(id.ToString() + "." + newRef.name));
-
-                    newRef.transform.GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id + "." + i).Load();
+                    result[i] = result[i].Substring(path.Length); //Remove the path part
+                    int index = result[i].IndexOf(" ");
+                    if (index > 0) result[i] = result[i].Substring(0, index);
                 }
-                BulleDeveloppementCat.SetActive(true);
-                BulleDeveloppementCat.GetComponent<RectTransform>().anchoredPosition = pos;
+                files = files.Union(result).ToArray();
             }
-            else
+
+            if (files.Length == 1) SelectBlock(Level.Block.Type.Block, Path.GetFileNameWithoutExtension(files[0])); //Select the block
+            else if (files.Length > 1) //Show the bubble
             {
-                for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++)
-                    Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
+                Vector2 pos = Toolbox.GO[3].GetComponent<ScrollRect>().content.GetChild(id).localPosition;
 
-                BulleDeveloppementCat.SetActive(false);
+                BulleDeveloppementCat.GetComponent<UImage_Reader>().Load();
+                Vector2 sizeObject = new Vector2(100, 80);
+                Vector2 sizeImage = BulleDeveloppementCat.GetComponent<Image>().sprite.Size();
+
+                Vector2 sizeRelative = sizeObject / sizeImage;
+                if (sizeRelative.x < sizeRelative.y) sizeRelative.y = sizeRelative.x;
+                else if (sizeRelative.x > sizeRelative.y) sizeRelative.x = sizeRelative.y;
+
+                BulleDeveloppementCat.transform.localScale = sizeRelative;
+                BulleDeveloppementCat.GetComponent<RectTransform>().sizeDelta = sizeObject / sizeRelative;
+
+                Vector4 border = BulleDeveloppementCat.GetComponent<Image>().sprite.border;
+                BulleDeveloppementCat.GetComponent<HorizontalLayoutGroup>().padding = new RectOffset((int)border.z, (int)border.z, (int)border.w, (int)border.y);
+
+                pos.x = pos.x + 20;
+                BulleDeveloppementCat.transform.GetChild(0).localScale = new Vector2(1, 1) / sizeRelative;
+                if (id / 2F == id / 2)
+                {
+                    pos.y = pos.y - 80;
+                    BulleDeveloppementCat.transform.rotation = QuaternionExtensions.SetEuler(0, 0, 0);
+                    BulleDeveloppementCat.transform.GetChild(0).localPosition = new Vector3(0, -8.75F, 0);
+                }
+                else
+                {
+                    pos.y = pos.y + 80;
+                    BulleDeveloppementCat.transform.rotation = QuaternionExtensions.SetEuler(180, 0, 0);
+                    BulleDeveloppementCat.transform.GetChild(0).localPosition = new Vector3(0, 8.75F, 0);
+                }
+
+                if (!BulleDeveloppementCat.activeInHierarchy)
+                {
+                    for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++) Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
+                    BulleDeveloppementCat.transform.GetChild(0).gameObject.SetActive(false);
+
+                    BulleDeveloppementCat.GetComponent<RectTransform>().sizeDelta = (sizeObject / sizeRelative) * new Vector2(files.Length, 1);
+                    pos.x = pos.x + (sizeObject.x * (files.Length - 1) / 2F);
+
+                    Toolbox.GO[3].GetComponent<Button>().onClick.RemoveAllListeners();
+                    Toolbox.GO[3].GetComponent<Button>().onClick.AddListener(() =>
+                    {
+                        for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++) Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
+                        BulleDeveloppementCat.SetActive(false);
+                    });
+
+                    for (int i = 0; i < files.Length; i++)
+                    {
+                        GameObject newRef = Instantiate(BulleDeveloppementCat.transform.GetChild(0).gameObject, BulleDeveloppementCat.transform);
+                        newRef.SetActive(true);
+                        newRef.name = Path.GetFileNameWithoutExtension(files[i]);
+                        newRef.transform.localPosition = new Vector3(i * 80, 0, 0);
+                        newRef.transform.rotation = QuaternionExtensions.SetEuler(BulleDeveloppementCat.transform.rotation.eulerAngles.x, 0, 0);
+                        newRef.transform.GetComponent<Button>().onClick.AddListener(() => SelectBlock(Level.Block.Type.Block, newRef.name));
+
+                        newRef.transform.GetComponent<UImage_Reader>().SetID(files[i]).Load();
+                    }
+                    BulleDeveloppementCat.SetActive(true);
+                    BulleDeveloppementCat.GetComponent<RectTransform>().anchoredPosition = pos;
+                }
+                else
+                {
+                    for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++) Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
+                    BulleDeveloppementCat.SetActive(false);
+                }
             }
-        }
-        else
-        {
-            for (int i = 1; i < BulleDeveloppementCat.transform.childCount; i++)
-                Destroy(BulleDeveloppementCat.transform.GetChild(i).gameObject);
-            BulleDeveloppementCat.SetActive(false);
-
-            Transform Content = Toolbox.GO[3].GetComponent<ScrollRect>().content;
-            for (int i = 1; i < Content.childCount - 2; i++)
-                Content.GetChild(i).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").Load();
         }
     }
 
@@ -917,7 +902,7 @@ public class Editeur : MonoBehaviour
         }
         if (b | keep)
         {
-            GameObject go = null;
+            GameObject go;
             if (keep)
             {
                 go = GameObject.Find("Objet n° " + num);
@@ -929,7 +914,8 @@ public class Editeur : MonoBehaviour
             go.name = "Objet n° " + num;
 
             UImage_Reader UImage = go.GetComponent<UImage_Reader>();
-            if (id < 1) UImage.SetID(level.blocks[num].category + "/GUI/editor/events/" + id.ToString("0.0####")).Load();
+            if (id == 0) UImage.SetID(level.blocks[num].category + "/GUI/editor/build/event").Load();
+            else if (id < 1) UImage.SetID(level.blocks[num].category + "/GUI/editor/events/" + id.ToString("0.0####")).Load();
             else UImage.SetID(level.blocks[num].category + "/BLOCKS/" + id.ToString("0.0####")).Load();
 
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();

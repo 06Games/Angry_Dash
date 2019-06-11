@@ -18,7 +18,7 @@ public class Edit : MonoBehaviour
     public void EnterToEdit()
     {
         editeur.NoBlocSelectedPanel.SetActive(editeur.SelectedBlock.Length == 0);
-        try { transform.GetChild(GetComponent<MenuManager>().array).GetComponent<MenuManager>().Array(0); } catch { EnterToEdit(); return; }
+        try { GetComponent<MenuManager>().selectedObject.GetComponent<MenuManager>().Array(0); } catch { EnterToEdit(); return; }
 
 #if UNITY_STANDALONE || UNITY_EDITOR
         MobileUtilities.SetActive(false);
@@ -32,7 +32,7 @@ public class Edit : MonoBehaviour
         if (editeur.SelectedBlock.Length > 0)
         {
             float blocID = -1;
-            try { blocID = float.Parse(editeur.GetBlocStatus("ID", editeur.SelectedBlock[0])); } catch { }
+            if(editeur.SelectedBlock[0] < editeur.level.blocks.Length) blocID = editeur.level.blocks[editeur.SelectedBlock[0]].id;
 
             bool find = false;
             for (int i = 0; i < menus.Length & !find; i++)
