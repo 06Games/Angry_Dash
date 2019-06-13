@@ -28,36 +28,27 @@ namespace Editor.Event
 
             string[] ids = new string[] {
                 "collision", //trigger
-                "color", //action
+                //"color", //action
                 "if", "else" //condition
             };
             foreach (string id in ids)
             {
-                Object config = Resources.Load($"Events/{id}");
+                GameObject config = Resources.Load<GameObject>($"Events/{id}");
                 if (config != null)
                 {
-                    EventInfos eventInfos = FileFormat.XML.Utils.XMLtoClass<EventInfos>(config.ToString());
-                    eventInfos.id = id;
+                    GameObject Slot = Instantiate(elements.GetChild(0).gameObject, elements);
+                    EditorEventItem Item = Instantiate(config, Slot.transform).GetComponent<EditorEventItem>();
 
-                    GameObject go = Instantiate(elements.GetChild(0).gameObject, elements);
-                    go.name = id;
-                    go.GetComponent<UImage_Reader>().SetID($"native/GUI/editor/edit/event/{eventInfos.type}Background").Load();
-                    float multiplier = 400F / eventInfos.referenceSize.x;
-                    if (multiplier == 0 | float.IsNaN(multiplier)) multiplier = 0.5F;
-                    go.GetComponent<GridLayoutGroup>().cellSize =
-                        go.GetComponent<RectTransform>().sizeDelta =
-                        go.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta =
-                        eventInfos.referenceSize * multiplier;
-
-                    EditorEventItem eventItem = go.transform.GetChild(0).GetComponent<EditorEventItem>();
-                    eventItem.infos = eventInfos;
-                    eventItem.GetComponent<UImage_Reader>().SetID($"native/GUI/editor/edit/event/{eventInfos.type}Background").Load();
-                    eventItem.Initialize();
-
-                    go.SetActive(true);
+                    Slot.name = Item.id = id;
+                    Slot.GetComponent<GridLayoutGroup>().cellSize =
+                        Slot.GetComponent<RectTransform>().sizeDelta =
+                        Item.referenceSize =
+                        Item.GetComponent<RectTransform>().sizeDelta;
+                    Slot.GetComponent<UImage_Reader>().baseID = Item.GetComponent<UImage_Reader>().baseID;
+                    Slot.SetActive(true);
                 }
 #if UNITY_EDITOR
-                else Debug.LogWarning($"<b>{id}</b> has no config file");
+                else Debug.LogWarning($"<b>{id}</b> has no prefab");
 #endif
             }
         }

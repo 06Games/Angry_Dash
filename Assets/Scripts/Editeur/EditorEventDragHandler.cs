@@ -23,6 +23,7 @@ namespace Editor.Event {
         //When the user grab the item
         public void OnBeginDrag(PointerEventData eventData)
         {
+            startParent = transform.parent;
             itemBeingDragged = GetComponent<EditorEventItem>();
             GetComponent<CanvasGroup>().blocksRaycasts = false;
         }
@@ -36,21 +37,30 @@ namespace Editor.Event {
             itemBeingDragged = null;
             GetComponent<CanvasGroup>().blocksRaycasts = true;
 
-            if (visualPanel.GetChild(2).GetComponent<RectTransform>().IsHover(transform.position))
+            if (startParent.IsChildOf(visualPanel.GetChild(1)))
             {
-                if(!transform.parent.GetComponent<RectTransform>().IsHover(transform.position)) transform.SetParent(visualPanel.GetChild(2));
-                Instantiate(startParent.GetChild(0).gameObject, startParent).SetActive(true);
-            }
-            else
-            {
-                Instantiate(startParent.GetChild(0).gameObject, startParent).SetActive(true);
-                if (startParent.childCount > 2 & transform.parent != startParent) Destroy(gameObject);
-            }
+                if (visualPanel.GetChild(2).GetComponent<RectTransform>().IsHover((RectTransform)transform))
+                {
+                    if (!transform.parent.GetComponent<RectTransform>().IsHover(transform.position)) transform.SetParent(visualPanel.GetChild(2));
+                    Instantiate(startParent.GetChild(0).gameObject, startParent).SetActive(true);
+                }
+                else
+                {
+                    Instantiate(startParent.GetChild(0).gameObject, startParent).SetActive(true);
+                    if (startParent.childCount > 2 & transform.parent != startParent) Destroy(gameObject);
+                }
 
-            if (startParent.childCount > 2)
+                if (startParent.childCount > 2)
+                {
+                    for (int i = 2; i < startParent.childCount; i++)
+                        Destroy(startParent.GetChild(2).gameObject);
+                }
+            }
+            else if (!visualPanel.GetChild(2).GetComponent<RectTransform>().IsHover(transform.position)) Destroy(gameObject);
+            else if (startParent == transform.parent & !RectTransformExtensions.IsHover((RectTransform)startParent, transform.position))
             {
-                for (int i = 2; i < startParent.childCount; i++)
-                    Destroy(startParent.GetChild(2).gameObject);
+                transform.SetParent(visualPanel.GetChild(2));
+                startParent.GetComponentInParent<EditorEventItem>().UpdateSize();
             }
         }
     }

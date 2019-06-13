@@ -280,8 +280,35 @@ namespace Tools
     {
         public static bool IsHover(this RectTransform transform, Vector2 hoverObj)
         {
-            Vector2 localMousePosition = transform.InverseTransformPoint(hoverObj);
-            return transform.rect.Contains(localMousePosition);
+            Vector2 localPosition = transform.InverseTransformPoint(hoverObj);
+            return transform.rect.Contains(localPosition);
+        }
+        public static bool IsHover(this RectTransform transform, RectTransform hoverTransform)
+        {
+            Rect container = transform.GetWorldRect();
+            Rect other = hoverTransform.GetWorldRect();
+            return container.Overlaps(other);
+        }
+
+        /// <summary>Converts RectTransform.rect's local coordinates to world space</summary>
+        /// <returns>The world rect.</returns>
+        /// <param name="rt">RectangleTransform we want to convert to world coordinates.</param>
+        static public Rect GetWorldRect(this RectTransform rt) { return GetWorldRect(rt, Vector2.one); }
+        /// <summary>Converts RectTransform.rect's local coordinates to world space</summary>
+        /// <returns>The world rect.</returns>
+        /// <param name="rt">RectangleTransform we want to convert to world coordinates.</param>
+        /// <param name="scale">Optional scale pulled from the CanvasScaler. Default to using Vector2.one.</param>
+        static public Rect GetWorldRect(this RectTransform rt, Vector2 scale)
+        {
+            // Convert the rectangle to world corners and grab the top left
+            Vector3[] corners = new Vector3[4];
+            rt.GetWorldCorners(corners);
+            Vector3 topLeft = corners[0];
+
+            // Rescale the size appropriately based on the current Canvas scale
+            Vector2 scaledSize = new Vector2(scale.x * rt.rect.size.x, scale.y * rt.rect.size.y);
+
+            return new Rect(topLeft, scaledSize);
         }
 
         public static void SetRect(this RectTransform transform, Rect rect)

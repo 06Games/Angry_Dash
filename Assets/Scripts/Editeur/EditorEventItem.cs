@@ -7,25 +7,22 @@ using UnityEngine.UI;
 namespace Editor.Event
 {
     [System.Serializable]
-    public class EventAccepted
+    public class EventField
     {
-        public EventInfos.Type type;
-        public Rect position;
-    }
-
-    [System.Serializable]
-    public class EventText
-    {
-        public string category;
+        public EditorEventItem.Type accepted;
         public string id;
-        public string dontExists;
-
-        public Rect position;
-        public TextAnchor anchor;
+        public RectTransform transform;
+        [HideInInspector] public Vector2 referenceSize;
     }
 
     [System.Serializable]
-    public class EventInfos
+    public class EventParameter
+    {
+        public string id;
+        public RectTransform transform;
+    }
+
+    public class EditorEventItem : MonoBehaviour
     {
         public enum Type
         {
@@ -35,38 +32,21 @@ namespace Editor.Event
             logicalOperator
         }
         public Type type;
-        public string id;
-        public Vector2 referenceSize;
-        public EventAccepted[] accepted;
+        [HideInInspector] public string id;
+        [HideInInspector] public Vector2 referenceSize;
 
-        public EventText[] text;
-    }
+        public EventField[] fields;
+        Vector2 initialFieldSize = Vector2.zero;
+        public EventParameter[] parameters;
 
-    public class EditorEventItem : MonoBehaviour
-    {
-        public EventInfos infos;
-
-        Vector2 element { get { return (Vector2)transform.position - (GetComponent<RectTransform>().sizeDelta / 2); } }
-        float multiplier { get { return 400F / infos.referenceSize.x; } }
-
-        public void Initialize()
+        void Start()
         {
-            foreach (EventText text in infos.text)
+            foreach (EventField field in fields)
             {
-                Rect textRect = text.position.Multiply(multiplier);
-                GameObject go = Instantiate(transform.GetChild(0).GetChild(0).gameObject, transform.GetChild(0));
-                go.GetComponent<RectTransform>().SetRect(textRect);
-                go.GetComponent<Text>().text = LangueAPI.Get(text.category, text.id, text.dontExists);
-                go.GetComponent<Text>().alignment = text.anchor;
-                go.SetActive(true);
-            }
-            foreach(EventAccepted accepted in infos.accepted)
-            {
-                GameObject go = Instantiate(transform.GetChild(1).GetChild(0).gameObject, transform.GetChild(1));
-                go.GetComponent<RectTransform>().SetStretchSize(accepted.position.Multiply(multiplier));
-                go.name = $"{accepted.type} Field";
-                go.GetComponent<UImage_Reader>().SetID($"native/GUI/editor/edit/event/{infos.type}Field").Load();
-                go.SetActive(true);
+                LayoutElement layout = field.transform.parent.GetComponent<LayoutElement>();
+                field.referenceSize = new Vector2(layout.preferredWidth, layout.preferredHeight);
+                if (field.referenceSize.x > initialFieldSize.x) initialFieldSize.x = field.referenceSize.x;
+                initialFieldSize.y += field.referenceSize.y;
             }
         }
 
@@ -77,43 +57,59 @@ namespace Editor.Event
             EditorEventItem item = EditorEventDragHandler.itemBeingDragged;
             if (item == null) return;
             else if (item.gameObject == gameObject) return;
-            foreach (EventAccepted accepted in infos.accepted)
+            else if (transform.IsChildOf(item.transform)) return;
+            else if (!GetComponent<RectTransform>().IsHover((RectTransform)item.transform)) return;
+
+            foreach (EventField field in fields)
             {
-                if (accepted.type == item.infos.type | (accepted.type == EventInfos.Type.action & item.infos.type == EventInfos.Type.conditional))
+                if (field.accepted == item.type | (field.accepted == Type.action & item.type == Type.conditional))
                 {
-                    Rect acceptedRect = accepted.position.Multiply(multiplier);
-                    Rect rect = new Rect(acceptedRect.x + element.x, acceptedRect.y + element.y, acceptedRect.width, acceptedRect.height);
-                    if (rect.Contains(item.transform.position))
+                    if (field.transform.IsHover(item.transform.position))
                     {
-                        RectTransform parent = (RectTransform)transform.GetChild(1).Find($"{accepted.type} Field");
-                        item.transform.SetParent(parent);
-                        LayoutRebuilder.ForceRebuildLayoutImmediate(parent);
-                        GetComponent<RectTransform>().sizeDelta = itemSize(parent, accepted);
-                    }
-                    else if (item.transform.IsChildOf(transform))
-                    {
-                        RectTransform parent = (RectTransform)transform.GetChild(1).Find($"{accepted.type} Field");
-                        item.transform.SetParent(item.GetComponent<EditorEventDragHandler>().visualPanel.GetChild(2));
-                        if (parent.childCount > 0)
-                        {
-                            GetComponent<RectTransform>().sizeDelta = itemSize(parent, accepted);
-                            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
-                        }
-                        else GetComponent<RectTransform>().sizeDelta = infos.referenceSize * multiplier;
+                        item.transform.SetParent(field.transform);
+                        UpdateSize();
                     }
                 }
             }
         }
 
-        Vector2 itemSize(RectTransform field, EventAccepted accepted)
+        public void UpdateSize()
         {
-            Vector2 size = Vector2.zero;
-            foreach (RectTransform rectTransform in field)
+            Vector2 totalSize = Vector2.zero;
+            foreach (EventField field in fields)
             {
-                if (rectTransform.sizeDelta.x > size.x) size.x = rectTransform.sizeDelta.x;
-                size.y += rectTransform.sizeDelta.y;
+                Vector2 size = Vector2.zero;
+                RectTransform fieldParent = (RectTransform)field.transform.parent;
+                if (field.transform.childCount > 0)
+                {
+                    foreach (RectTransform rectTransform in fieldParent)
+                    {
+                        if (rectTransform == field.transform)
+                        {
+                            foreach (RectTransform fieldTransform in field.transform)
+                            {
+                                if (fieldTransform.sizeDelta.x > size.x) size.x = fieldTransform.sizeDelta.x;
+                                size.y += fieldTransform.sizeDelta.y;
+                            }
+                        }
+                        else
+                        {
+                            if (rectTransform.sizeDelta.x > size.x) size.x = rectTransform.sizeDelta.x;
+                            size.y += rectTransform.sizeDelta.y;
+                        }
+                    }
+
+                }
+                else size = field.referenceSize;
+
+                if (size.x > totalSize.x) totalSize.x = size.x;
+                totalSize.y += size.y;
+                fieldParent.sizeDelta = size;
             }
-            return infos.referenceSize * multiplier - accepted.position.size * multiplier + size;
+
+            GetComponent<RectTransform>().sizeDelta = referenceSize - initialFieldSize + totalSize;
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
+            foreach (EventField field in fields) LayoutRebuilder.ForceRebuildLayoutImmediate(field.transform);
         }
     }
 }
