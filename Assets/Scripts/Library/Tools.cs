@@ -266,9 +266,10 @@ namespace Tools
             transform.localScale = new Vector3(globalScale.x / transform.lossyScale.x, globalScale.y / transform.lossyScale.y, globalScale.z / transform.lossyScale.z);
         }
 
-        public static Transform FindParent(this Transform transform, string n) {
+        public static Transform FindParent(this Transform transform, string n)
+        {
             Transform parent = transform.parent;
-            while(parent != null)
+            while (parent != null)
             {
                 if (parent.name == n) return parent;
                 else parent = parent.parent;
@@ -329,7 +330,7 @@ namespace Tools
         }
     }
 
-public static class Vector2Extensions
+    public static class Vector2Extensions
     {
         public static Vector2 Parse(string s)
         {

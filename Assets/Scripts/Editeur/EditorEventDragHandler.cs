@@ -2,7 +2,8 @@
 using UnityEngine.EventSystems;
 using Tools;
 
-namespace Editor.Event {
+namespace Editor.Event
+{
     public class EditorEventDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         public static EditorEventItem itemBeingDragged;
@@ -14,7 +15,8 @@ namespace Editor.Event {
             if (startParent == null) startParent = transform.parent;
             if (visualPanel == null) visualPanel = transform.FindParent("Visual");
 
-            if (startParent.childCount == 1) {
+            if (startParent.childCount == 1)
+            {
                 gameObject.SetActive(false);
                 Instantiate(startParent.GetChild(0).gameObject, startParent).SetActive(true);
             }

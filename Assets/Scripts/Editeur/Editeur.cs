@@ -787,7 +787,7 @@ public class Editeur : MonoBehaviour
         {
             newblockid = -1;
             AddBlocking = false;
-            if(id >= 0) Toolbox.GO[3].GetComponent<ScrollRect>().content.GetChild(id).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").Load();
+            if (id >= 0) Toolbox.GO[3].GetComponent<ScrollRect>().content.GetChild(id).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").Load();
         }
         else if (id < 1) SelectBlock(Level.Block.Type.Event); //Select the event
         else //It's a block

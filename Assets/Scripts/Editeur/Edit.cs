@@ -32,7 +32,7 @@ public class Edit : MonoBehaviour
         if (editeur.SelectedBlock.Length > 0)
         {
             float blocID = -1;
-            if(editeur.SelectedBlock[0] < editeur.level.blocks.Length) blocID = editeur.level.blocks[editeur.SelectedBlock[0]].id;
+            if (editeur.SelectedBlock[0] < editeur.level.blocks.Length) blocID = editeur.level.blocks[editeur.SelectedBlock[0]].id;
 
             bool find = false;
             for (int i = 0; i < menus.Length & !find; i++)
