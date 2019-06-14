@@ -106,7 +106,7 @@ namespace Tools
 
         public static string RemoveSpecialCharacters(this string s)
         {
-            StringBuilder sb = new StringBuilder();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
             foreach (char ch in s.Normalize(NormalizationForm.FormD))
             {
                 if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch) != System.Globalization.UnicodeCategory.NonSpacingMark)
@@ -124,6 +124,37 @@ namespace Tools
             a[0] = char.ToUpper(a[0]);
             return new string(a);
         }
+    }
+
+    public static class StringBuilderExtensions
+    {
+        public static StringBuilder SetPrefix(this System.Text.StringBuilder builder, string prefix) { return new StringBuilder(builder, prefix); }
+    }
+
+    public class StringBuilder
+    {
+        private readonly string _prefix;
+        private readonly System.Text.StringBuilder _builder;
+
+        public bool appendEmptyStrings { get; set; } = false;
+
+        public StringBuilder() { _prefix = ""; _builder = new System.Text.StringBuilder(); }
+        public StringBuilder(string prefix) { _prefix = prefix; _builder = new System.Text.StringBuilder(); }
+        public StringBuilder(System.Text.StringBuilder builder, string prefix) { _prefix = prefix; _builder = builder; }
+
+        public StringBuilder AppendLine(string line)
+        {
+            string[] lines = line.Split(System.Environment.NewLine);
+            foreach (string l in lines)
+            {
+                if (!string.IsNullOrEmpty(l) | appendEmptyStrings) _builder.Append(_prefix).AppendLine(l);
+            }
+            return this;
+        }
+
+        public StringBuilder Merge(System.Text.StringBuilder stringBuilder) { AppendLine(stringBuilder.ToString()); return this; }
+        public StringBuilder Merge(StringBuilder stringBuilder) { AppendLine(stringBuilder.ToString()); return this; }
+        public override string ToString() { return _builder.ToString(); }
     }
 
     public static class Texture2DExtensions
@@ -700,7 +731,7 @@ namespace Tools
 
                 if (l_sameCounter == 0) return p_fullDestinationPath; // There is no relative link.
 
-                StringBuilder l_builder = new StringBuilder();
+                System.Text.StringBuilder l_builder = new System.Text.StringBuilder();
                 for (int i = l_sameCounter; i < l_startPathParts.Length; i++) l_builder.Append("../");
 
                 for (int i = l_sameCounter; i < l_destinationPathParts.Length; i++) l_builder.Append(l_destinationPathParts[i] + "/");

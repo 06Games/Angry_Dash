@@ -1,6 +1,4 @@
-﻿using Editor.Event;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +10,7 @@ namespace Editor.Event
         public enum ProgType { visual, textual }
         public ProgType type = ProgType.visual;
 
-        void OnDisable() { editor.bloqueSelect = false; }
+        void OnDisable() { VisualSave(); editor.bloqueSelect = false; }
         void OnEnable()
         {
             editor.bloqueSelect = true;
@@ -51,6 +49,56 @@ namespace Editor.Event
                 else Debug.LogWarning($"<b>{id}</b> has no prefab");
 #endif
             }
+        }
+
+        public void VisualSave()
+        {
+            string script = $"// Auto-generated script from the visual programming panel\n\n{VisualToScript(transform.GetChild(0).GetChild(2))}";
+            editor.ChangBlocStatus("Script", script, editor.SelectedBlock);
+        }
+        private string VisualToScript(Transform field, string prefix = "")
+        {
+            StringBuilder script = new StringBuilder(prefix) { appendEmptyStrings = false };
+            foreach (Transform go in field)
+            {
+                EditorEventItem item = go.GetComponent<EditorEventItem>();
+                if (item.type == EditorEventItem.Type.trigger)
+                {
+                    script.AppendLine($"void {item.id}()");
+                    script.AppendLine("{");
+                    foreach (EventField childField in item.fields)
+                    {
+                        if (childField.transform.childCount > 0) script.AppendLine(VisualToScript(childField.transform, $"{prefix}\t"));
+                    }
+                    script.AppendLine("}");
+                }
+                else if (item.type == EditorEventItem.Type.action) script.AppendLine($"{item.id}()");
+                else if (item.type == EditorEventItem.Type.conditional)
+                {
+                    string condition = "";
+                    StringBuilder actions = new StringBuilder() { appendEmptyStrings = false };
+                    foreach (EventField childField in item.fields)
+                    {
+                        if (childField.accepted == EditorEventItem.Type.logicalOperator)
+                        {
+                            if (!string.IsNullOrEmpty(condition)) condition += ", ";
+                            condition += VisualToScript(childField.transform);
+                        }
+                        else
+                        {
+                            if (childField.id != "then") actions.AppendLine(childField.id);
+                            actions.AppendLine("{");
+                            if (childField.transform.childCount > 0) actions.AppendLine(VisualToScript(childField.transform, $"\t"));
+                            actions.AppendLine("}");
+                        }
+                    }
+                    script.AppendLine($"if({condition})");
+                    script.Merge(actions);
+                }
+                else if (item.type == EditorEventItem.Type.logicalOperator)
+                    throw new System.NotImplementedException("Logical operators are not supported for the moment");
+            }
+            return script.ToString();
         }
     }
 }
