@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/editor/edit/event/triggerBackground
+  baseID: native/GUI/editor/edit/event/visual/triggerBackground
   TextConfiguration: 0
   Type: 00000000000000000000000000000000
 --- !u!114 &7120860348086401701
@@ -438,6 +438,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/editor/edit/event/triggerField
+  baseID: native/GUI/editor/edit/event/visual/triggerField
   TextConfiguration: 0
   Type: 00000000000000000000000000000000

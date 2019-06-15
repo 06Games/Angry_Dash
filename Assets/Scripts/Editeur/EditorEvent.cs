@@ -10,19 +10,22 @@ namespace Editor.Event
         public enum ProgType { visual, textual }
         public ProgType type = ProgType.visual;
 
-        void OnDisable() { VisualSave(); editor.bloqueSelect = false; }
-        void OnEnable()
+        public void ChangeType(int argument) { ChangeType((ProgType)argument); }
+        public void ChangeType(ProgType newType)
         {
-            editor.bloqueSelect = true;
+            type = newType;
 
             if (type == ProgType.visual) VisualInitialization();
-            else Debug.LogError("Unsupported");
+            else Debug.LogError("Textual programmation is unsupported for the moment");
         }
+
+        void OnDisable() { VisualSave(); editor.bloqueSelect = false; }
+        void OnEnable() { editor.bloqueSelect = true; ChangeType(type); }
 
         void VisualInitialization()
         {
-            Transform visual = transform.GetChild(0);
-            Transform elements = visual.GetChild(1);
+            Transform visual = transform.GetChild(1);
+            Transform elements = visual.GetChild(0).GetComponent<ScrollRect>().content;
 
             string[] ids = new string[] {
                 "collision", //trigger
@@ -34,16 +37,19 @@ namespace Editor.Event
                 GameObject config = Resources.Load<GameObject>($"Events/{id}");
                 if (config != null)
                 {
-                    GameObject Slot = Instantiate(elements.GetChild(0).gameObject, elements);
-                    EditorEventItem Item = Instantiate(config, Slot.transform).GetComponent<EditorEventItem>();
+                    if (elements.Find(id) == null)
+                    {
+                        GameObject Slot = Instantiate(elements.GetChild(0).gameObject, elements);
+                        EditorEventItem Item = Instantiate(config, Slot.transform).GetComponent<EditorEventItem>();
 
-                    Slot.name = Item.id = id;
-                    Slot.GetComponent<GridLayoutGroup>().cellSize =
-                        Slot.GetComponent<RectTransform>().sizeDelta =
-                        Item.referenceSize =
-                        Item.GetComponent<RectTransform>().sizeDelta;
-                    Slot.GetComponent<UImage_Reader>().baseID = Item.GetComponent<UImage_Reader>().baseID;
-                    Slot.SetActive(true);
+                        Slot.name = Item.id = id;
+                        Slot.GetComponent<GridLayoutGroup>().cellSize =
+                            Slot.GetComponent<RectTransform>().sizeDelta =
+                            Item.referenceSize =
+                            Item.GetComponent<RectTransform>().sizeDelta;
+                        Slot.GetComponent<UImage_Reader>().baseID = Item.GetComponent<UImage_Reader>().baseID;
+                        Slot.SetActive(true);
+                    }
                 }
 #if UNITY_EDITOR
                 else Debug.LogWarning($"<b>{id}</b> has no prefab");
@@ -53,7 +59,7 @@ namespace Editor.Event
 
         public void VisualSave()
         {
-            string script = $"// Auto-generated script from the visual programming panel\n\n{VisualToScript(transform.GetChild(0).GetChild(2))}";
+            string script = $"// Auto-generated script from the visual programming panel\n\n{VisualToScript(transform.GetChild(1).GetChild(1))}";
             editor.ChangBlocStatus("Script", script, editor.SelectedBlock);
         }
         private string VisualToScript(Transform field, string prefix = "")

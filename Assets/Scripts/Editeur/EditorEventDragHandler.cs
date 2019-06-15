@@ -39,11 +39,11 @@ namespace Editor.Event
             itemBeingDragged = null;
             GetComponent<CanvasGroup>().blocksRaycasts = true;
 
-            if (startParent.IsChildOf(visualPanel.GetChild(1)))
+            if (startParent.IsChildOf(visualPanel.GetChild(0).GetComponent<UnityEngine.UI.ScrollRect>().content))
             {
-                if (visualPanel.GetChild(2).GetComponent<RectTransform>().IsHover((RectTransform)transform))
+                if (visualPanel.GetChild(1).GetComponent<RectTransform>().IsHover((RectTransform)transform))
                 {
-                    if (!transform.parent.GetComponent<RectTransform>().IsHover(transform.position)) transform.SetParent(visualPanel.GetChild(2));
+                    if (!transform.parent.GetComponent<RectTransform>().IsHover(transform.position)) transform.SetParent(visualPanel.GetChild(1));
                     Instantiate(startParent.GetChild(0).gameObject, startParent).SetActive(true);
                 }
                 else
@@ -58,10 +58,10 @@ namespace Editor.Event
                         Destroy(startParent.GetChild(2).gameObject);
                 }
             }
-            else if (!visualPanel.GetChild(2).GetComponent<RectTransform>().IsHover(transform.position)) Destroy(gameObject);
+            else if (!visualPanel.GetChild(1).GetComponent<RectTransform>().IsHover(transform.position)) Destroy(gameObject);
             else if (startParent == transform.parent & !RectTransformExtensions.IsHover((RectTransform)startParent, transform.position))
             {
-                transform.SetParent(visualPanel.GetChild(2));
+                transform.SetParent(visualPanel.GetChild(1));
                 startParent.GetComponentInParent<EditorEventItem>().UpdateSize();
             }
         }
