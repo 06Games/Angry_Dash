@@ -142,6 +142,7 @@ namespace Tools
         public StringBuilder(string prefix) { _prefix = prefix; _builder = new System.Text.StringBuilder(); }
         public StringBuilder(System.Text.StringBuilder builder, string prefix) { _prefix = prefix; _builder = builder; }
 
+        public StringBuilder Append(string line) { _builder.Append(_prefix).Append(line); return this; }
         public StringBuilder AppendLine(string line)
         {
             string[] lines = line.Split(System.Environment.NewLine);

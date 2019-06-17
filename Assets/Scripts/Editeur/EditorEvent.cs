@@ -19,9 +19,14 @@ namespace Editor.Event
             else Debug.LogError("Textual programmation is unsupported for the moment");
         }
 
-        void OnDisable() { VisualSave(); editor.bloqueSelect = false; }
         void OnEnable() { editor.bloqueSelect = true; ChangeType(type); }
+        void OnDisable()
+        {
+            if (type == ProgType.visual) VisualSave();
+            editor.bloqueSelect = false;
+        }
 
+        #region Visual
         void VisualInitialization()
         {
             Transform visual = transform.GetChild(1);
@@ -106,5 +111,9 @@ namespace Editor.Event
             }
             return script.ToString();
         }
+        #endregion
+
+        #region Textual
+        #endregion
     }
 }
