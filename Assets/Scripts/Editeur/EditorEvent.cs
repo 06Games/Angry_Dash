@@ -21,10 +21,15 @@ namespace Editor.Event
         }
 
         void OnEnable() { editor.bloqueSelect = true; ChangeType(type); }
-        void OnDisable()
+        public void Exit()
         {
-            if (type == ProgType.visual) VisualSave();
+            if (type == ProgType.visual)
+            {
+                VisualSave();
+                foreach (Transform child in transform.GetChild(1).GetChild(1)) Destroy(child.gameObject);
+            }
             editor.bloqueSelect = false;
+            gameObject.SetActive(false);
         }
 
         #region Visual
