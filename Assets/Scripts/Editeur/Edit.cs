@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
 public class EditMenus
 {
-    public float[] BlockID;
+    public Level.Block.Type Type;
     public int Object;
 }
 
@@ -18,7 +17,12 @@ public class Edit : MonoBehaviour
     public void EnterToEdit()
     {
         editeur.NoBlocSelectedPanel.SetActive(editeur.SelectedBlock.Length == 0);
-        try { GetComponent<MenuManager>().selectedObject.GetComponent<MenuManager>().Array(0); } catch { EnterToEdit(); return; }
+        try
+        {
+            GameObject selected = GetComponent<MenuManager>().selectedObject;
+            if(selected != null) selected.GetComponent<MenuManager>().Array(0);
+        }
+        catch (System.Exception e) { Debug.LogError(e); return; }
 
 #if UNITY_STANDALONE || UNITY_EDITOR
         MobileUtilities.SetActive(false);
@@ -31,23 +35,18 @@ public class Edit : MonoBehaviour
     {
         if (editeur.SelectedBlock.Length > 0)
         {
-            float blocID = -1;
-            if (editeur.SelectedBlock[0] < editeur.level.blocks.Length) blocID = editeur.level.blocks[editeur.SelectedBlock[0]].id;
+            Level.Block block = new Level.Block();
+            if (editeur.SelectedBlock[0] < editeur.level.blocks.Length) block = editeur.level.blocks[editeur.SelectedBlock[0]];
 
-            bool find = false;
-            for (int i = 0; i < menus.Length & !find; i++)
-            {
-                for (int b = 0; b < menus[i].BlockID.Length & !find; b++)
-                {
-                    float bID = menus[i].BlockID[b];
-                    if ((bID < 0 & bID * -1 <= blocID) | (bID == blocID & bID >= 0))
-                    {
-                        GetComponent<MenuManager>().Array(menus[i].Object);
-                        find = true;
-                    }
-                }
-            }
-            if (!find) GetComponent<MenuManager>().Array(0);
+            EditMenus menu = menus.Where(f => f.Type == block.type).FirstOrDefault();
+            if (menu != null) GetComponent<MenuManager>().Array(menu.Object);
+            else if (block.id == 0.4F) GetComponent<MenuManager>().Array(2); //Compatibility
+            else transform.parent.GetComponent<MenuManager>().Array(3);
+        }
+        else
+        {
+            GetComponent<MenuManager>().Array(999);
+            editeur.NoBlocSelectedPanel.SetActive(true);
         }
     }
 }

@@ -33,7 +33,7 @@ public class MenuManager : MonoBehaviour
 
     public GameObject selectedObject
     {
-        get { return GO[array]; }
+        get { if (array >= 0 & array < GO.Length) return GO[array]; else return null; }
         set
         {
             for (int i = 0; i < GO.Length; i++)

@@ -37,8 +37,15 @@ namespace Editor.Event
                 VisualSave();
                 foreach (Transform child in transform.GetChild(1).GetChild(1)) Destroy(child.gameObject);
             }
+
+            foreach(int id in editor.SelectedBlock)
+            {
+                Transform obj = transform.GetChild(1).Find("Objet n° " + id);
+                if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
+            }
+            editor.SelectedBlock = new int[0];
+
             editor.bloqueSelect = false;
-            gameObject.SetActive(false);
         }
 
         #region Visual
