@@ -143,6 +143,7 @@ namespace Tools
         public StringBuilder(System.Text.StringBuilder builder, string prefix) { _prefix = prefix; _builder = builder; }
 
         public StringBuilder Append(string line) { _builder.Append(_prefix).Append(line); return this; }
+        public StringBuilder AppendLine() { _builder.Append($"\n{_prefix}"); return this; }
         public StringBuilder AppendLine(string line) {
             if (!string.IsNullOrEmpty(line) | appendEmptyStrings) _builder.Append(_builder.Length > 0 ? "\n" : "").Append(_prefix).Append(line);
             return this;
@@ -155,6 +156,7 @@ namespace Tools
         public override string ToString() { return _builder.ToString(); }
 
         public int LineCount { get { return System.Text.RegularExpressions.Regex.Matches(_builder.ToString(), "\n").Count; } }
+        public int Length { get { return _builder.Length; } set { _builder.Length = value; } }
         public string this[int line] { get { return _builder.ToString().Split("\n")[line]; }}
     }
 

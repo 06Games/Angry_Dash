@@ -74,6 +74,8 @@ namespace Editor.Event
             StringBuilder script = new StringBuilder(prefix) { appendEmptyStrings = false };
             foreach (Transform go in field)
             {
+                if (script.Length > 0) script.AppendLine();
+
                 EditorEventItem item = go.GetComponent<EditorEventItem>();
                 if (item.type == EditorEventItem.Type.trigger)
                 {
