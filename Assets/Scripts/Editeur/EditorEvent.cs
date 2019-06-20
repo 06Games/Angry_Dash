@@ -14,9 +14,18 @@ namespace Editor.Event
         public void ChangeType(int argument) { ChangeType((ProgType)argument); }
         public void ChangeType(ProgType newType)
         {
-            type = newType;
+            //Save
+            if (type == ProgType.visual)
+            {
+                VisualSave();
+                foreach (Transform child in transform.GetChild(1).GetChild(1)) Destroy(child.gameObject);
+            }
+            else Debug.LogError("Textual programmation is unsupported for the moment");
 
-            if (type == ProgType.visual) VisualInitialization();
+            type = newType; //Set the new type
+
+            //Load
+            if (type == ProgType.visual) UnityThread.executeInUpdate(() => VisualInitialization());
             else Debug.LogError("Textual programmation is unsupported for the moment");
         }
 
