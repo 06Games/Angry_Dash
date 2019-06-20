@@ -268,6 +268,10 @@ public class Editeur : MonoBehaviour
                 int[] SelectedBlocks = SelectedBlock;
 
                 int Selected = GetBloc((int)pos.x, (int)pos.y);
+                if(Selected != -1)
+                {
+                    if (level.blocks[Selected].type == Level.Block.Type.Event) SelectCtrl = false;
+                }
 
                 if (Selected == -1 & !SelectCtrl) SelectedBlock = new int[0];
                 else if (Selected != -1 & SelectCtrl & Selected < level.blocks.Length)
