@@ -149,7 +149,7 @@ namespace Tools
             return this;
         }
         public StringBuilder AppendLines(string lines) { return AppendLines(lines.Split("\n")); }
-        public StringBuilder AppendLines(string[] lines) { foreach (string l in lines) AppendLine(l); return this; }
+        public StringBuilder AppendLines(string[] lines) { foreach (string line in lines) AppendLine(line); return this; }
 
         public StringBuilder Merge(System.Text.StringBuilder stringBuilder) { return AppendLines(stringBuilder.ToString()); }
         public StringBuilder Merge(StringBuilder stringBuilder) { return AppendLines(stringBuilder.ToString()); }

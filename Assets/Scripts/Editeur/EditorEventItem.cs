@@ -13,6 +13,10 @@ namespace Editor.Event
         public string id;
         public RectTransform transform;
         [HideInInspector] public Vector2 referenceSize;
+
+
+        public bool CanDrop(EditorEventItem.Type objectType)
+        { return accepted == objectType | (accepted == EditorEventItem.Type.action & objectType == EditorEventItem.Type.conditional); }
     }
 
     [System.Serializable]
@@ -62,7 +66,7 @@ namespace Editor.Event
 
             foreach (EventField field in fields)
             {
-                if (field.accepted == item.type | (field.accepted == Type.action & item.type == Type.conditional))
+                if (field.CanDrop(item.type))
                 {
                     if (field.transform.IsHover(item.transform.position))
                     {

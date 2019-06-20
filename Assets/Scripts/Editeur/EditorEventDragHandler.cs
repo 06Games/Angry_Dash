@@ -15,7 +15,7 @@ namespace Editor.Event
             if (startParent == null) startParent = transform.parent;
             if (visualPanel == null) visualPanel = transform.FindParent("Visual");
 
-            if (startParent.childCount == 1)
+            if (startParent.childCount == 1 & transform.IsChildOf(visualPanel.GetChild(0)))
             {
                 gameObject.SetActive(false);
                 Instantiate(startParent.GetChild(0).gameObject, startParent).SetActive(true);

@@ -1,4 +1,5 @@
-﻿using Tools;
+﻿using System.Linq;
+using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,6 +28,8 @@ namespace Editor.Event
         }
 
         #region Visual
+        System.Collections.Generic.Dictionary<string, EditorEventItem> visualPrefabs = new System.Collections.Generic.Dictionary<string, EditorEventItem>();
+
         void VisualInitialization()
         {
             Transform visual = transform.GetChild(1);
@@ -35,14 +38,14 @@ namespace Editor.Event
             string[] ids = new string[] {
                 "collision", //trigger
                 //"color", //action
-                "if", "else" //condition
+                "if" //condition
             };
             foreach (string id in ids)
             {
                 GameObject config = Resources.Load<GameObject>($"Events/{id}");
                 if (config != null)
                 {
-                    if (elements.Find(id) == null)
+                    if (!visualPrefabs.ContainsKey(id))
                     {
                         GameObject Slot = Instantiate(elements.GetChild(0).gameObject, elements);
                         EditorEventItem Item = Instantiate(config, Slot.transform).GetComponent<EditorEventItem>();
@@ -54,6 +57,8 @@ namespace Editor.Event
                             Item.GetComponent<RectTransform>().sizeDelta;
                         Slot.GetComponent<UImage_Reader>().baseID = Item.GetComponent<UImage_Reader>().baseID;
                         Slot.SetActive(true);
+
+                        visualPrefabs.Add(id, Item);
                     }
                 }
 #if UNITY_EDITOR
@@ -107,7 +112,7 @@ namespace Editor.Event
                             actions.AppendLine("}");
                         }
                     }
-                    script.AppendLine($"if({condition})");
+                    script.AppendLine($"if ({condition})");
                     script.Merge(actions);
                 }
                 else if (item.type == EditorEventItem.Type.logicalOperator)
@@ -118,7 +123,60 @@ namespace Editor.Event
 
         void VisualParse(string script)
         {
+            string[] lines = script.Split("\n");
+            Transform topParent = transform.GetChild(1).GetChild(1);
+            Transform parent = topParent;
 
+            Transform lastParent = null;
+            Transform lastObj = null;
+            string fieldID = null;
+            foreach (string line in lines)
+            {
+                if (line.Contains("void ")) //Trigger
+                    SpawnObj(line.Remove(line.LastIndexOf("(")).Remove(0, "void ".Length));
+                else if (line.Contains("{")) parent = lastObj;
+                else if (line.Contains("}"))
+                {
+                    EditorEventItem parentItem = parent.GetComponent<EditorEventItem>();
+                    UnityThread.executeInUpdate(() => parentItem.UpdateSize());
+                    lastParent = parent;
+                    parent = parent.parent != topParent ? parent.parent.parent.parent : parent.parent;
+                    fieldID = null;
+                }
+                else if (line.Contains("if (")) //Condition
+                {
+                    SpawnObj("if");
+                    fieldID = "then";
+                }
+                else if (line.Contains("else"))
+                { 
+                    parent = lastParent; //Restore the IF
+                    fieldID = "else";
+                }
+                else if (line.Contains("()")) //Action
+                    SpawnObj(line.Remove(line.LastIndexOf("(")));
+            }
+
+            GameObject SpawnObj(string id)
+            {
+                if (visualPrefabs.ContainsKey(id))
+                {
+                    EditorEventItem prefab = visualPrefabs[id];
+                    Transform objParent = parent;
+
+                    if (parent != topParent)
+                    {
+                        EditorEventItem parentItem = parent.GetComponent<EditorEventItem>();
+                        EventField field = parentItem.fields.Where(f => f.CanDrop(prefab.type) & (f.id == fieldID | fieldID == null)).FirstOrDefault();
+                        if (field != null) objParent = field.transform;
+                    }
+                    GameObject go = Instantiate(prefab.gameObject, objParent);
+                    go.SetActive(true);
+                    lastObj = go.transform;
+                    return go;
+                }
+                else return null;
+            }
         }
         #endregion
 
