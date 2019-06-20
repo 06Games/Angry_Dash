@@ -88,7 +88,7 @@ namespace Tools
                         {
                             string[] t = s.Split(new string[] { ";" }, System.StringSplitOptions.None);
                             string c = System.Text.RegularExpressions.Regex.Replace(s, "[^0-9]", "");
-                            newString = newString + code[i].Replace(code[i], System.Char.ConvertFromUtf32(int.Parse(c))) + t[2];
+                            newString = newString + code[i].Replace(code[i], char.ConvertFromUtf32(int.Parse(c))) + t[2];
                         }
                         s = newString;
                     }
@@ -143,19 +143,19 @@ namespace Tools
         public StringBuilder(System.Text.StringBuilder builder, string prefix) { _prefix = prefix; _builder = builder; }
 
         public StringBuilder Append(string line) { _builder.Append(_prefix).Append(line); return this; }
-        public StringBuilder AppendLine(string line)
-        {
-            string[] lines = line.Split(System.Environment.NewLine);
-            foreach (string l in lines)
-            {
-                if (!string.IsNullOrEmpty(l) | appendEmptyStrings) _builder.Append(_prefix).AppendLine(l);
-            }
+        public StringBuilder AppendLine(string line) {
+            if (!string.IsNullOrEmpty(line) | appendEmptyStrings) _builder.Append(_builder.Length > 0 ? "\n" : "").Append(_prefix).Append(line);
             return this;
         }
+        public StringBuilder AppendLines(string lines) { return AppendLines(lines.Split("\n")); }
+        public StringBuilder AppendLines(string[] lines) { foreach (string l in lines) AppendLine(l); return this; }
 
-        public StringBuilder Merge(System.Text.StringBuilder stringBuilder) { AppendLine(stringBuilder.ToString()); return this; }
-        public StringBuilder Merge(StringBuilder stringBuilder) { AppendLine(stringBuilder.ToString()); return this; }
+        public StringBuilder Merge(System.Text.StringBuilder stringBuilder) { return AppendLines(stringBuilder.ToString()); }
+        public StringBuilder Merge(StringBuilder stringBuilder) { return AppendLines(stringBuilder.ToString()); }
         public override string ToString() { return _builder.ToString(); }
+
+        public int LineCount { get { return System.Text.RegularExpressions.Regex.Matches(_builder.ToString(), "\n").Count; } }
+        public string this[int line] { get { return _builder.ToString().Split("\n")[line]; }}
     }
 
     public static class Texture2DExtensions

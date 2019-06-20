@@ -968,7 +968,9 @@ public class Editeur : MonoBehaviour
     /// <param name="Bloc">Blocks conserned</param>
     public void ChangBlocStatus(string[] StatusID, string[] _component, int[] Bloc)
     {
-        if (Bloc != null)
+        if (Bloc == null) return;
+        else if (Bloc.Length == 0) return;
+        else
         {
             for (int s = 0; s < StatusID.Length; s++)
             {
@@ -1000,7 +1002,7 @@ public class Editeur : MonoBehaviour
     /// <returns></returns>
     public string GetBlocStatus(string StatusID, int Bloc)
     {
-        if (file != "" & level.blocks.Length > Bloc)
+        if (file != "" & level.blocks.Length > Bloc & Bloc >= 0)
         {
             Level.Block block = level.blocks[Bloc];
 

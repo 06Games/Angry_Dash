@@ -60,6 +60,8 @@ namespace Editor.Event
                 else Debug.LogWarning($"<b>{id}</b> has no prefab");
 #endif
             }
+
+            if(editor.SelectedBlock.Length == 1) VisualParse(editor.GetBlocStatus("Script", editor.SelectedBlock[0]));
         }
 
         public void VisualSave()
@@ -79,7 +81,7 @@ namespace Editor.Event
                     script.AppendLine("{");
                     foreach (EventField childField in item.fields)
                     {
-                        if (childField.transform.childCount > 0) script.AppendLine(VisualToScript(childField.transform, $"{prefix}\t"));
+                        if (childField.transform.childCount > 0) script.AppendLine(VisualToScript(childField.transform, "\t"));
                     }
                     script.AppendLine("}");
                 }
@@ -99,7 +101,7 @@ namespace Editor.Event
                         {
                             if (childField.id != "then") actions.AppendLine(childField.id);
                             actions.AppendLine("{");
-                            if (childField.transform.childCount > 0) actions.AppendLine(VisualToScript(childField.transform, $"\t"));
+                            if (childField.transform.childCount > 0) actions.AppendLine(VisualToScript(childField.transform, "\t"));
                             actions.AppendLine("}");
                         }
                     }
@@ -110,6 +112,11 @@ namespace Editor.Event
                     throw new System.NotImplementedException("Logical operators are not supported for the moment");
             }
             return script.ToString();
+        }
+
+        void VisualParse(string script)
+        {
+
         }
         #endregion
 
