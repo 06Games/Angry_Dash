@@ -11,20 +11,20 @@ public class Modding : MonoBehaviour
         foreach (string file in Directory.GetFiles(Application.persistentDataPath + "/Mods/", "*.cs")) LoadMod(file);
     }
 
-    public void LoadMod(string filePath)
+    public void LoadMod(string filePath) { LoadMod(File.ReadAllText(filePath), Path.GetFileName(filePath)); }
+    public void LoadMod(string code, string filename)
     {
-        CompilerResults result = LoadScript(filePath);
+        CompilerResults result = LoadScript(code);
         if (result.Errors.HasErrors)
         {
             StringBuilder errors = new StringBuilder();
-            string filename = Path.GetFileName(filePath);
             foreach (CompilerError err in result.Errors)
             {
-                errors.Append(string.Format("\r\n{0}({1},{2}): {3}: {4}",
+                errors.Append(string.Format("\n{0}({1},{2}): {3}: {4}",
                             filename, err.Line, err.Column,
                             err.ErrorNumber, err.ErrorText));
             }
-            string str = "Error loading script\r\n" + errors.ToString();
+            string str = "Error loading script\n" + errors.ToString();
             throw new System.ApplicationException(str);
         }
         else
@@ -33,10 +33,9 @@ public class Modding : MonoBehaviour
         }
     }
 
-    private CompilerResults LoadScript(string filepath)
+    private CompilerResults LoadScript(string code)
     {
-        string language = CodeDomProvider.GetLanguageFromExtension(Path.GetExtension(filepath));
-        CodeDomProvider codeDomProvider = CodeDomProvider.CreateProvider(language);
+        CodeDomProvider codeDomProvider = CodeDomProvider.CreateProvider("c#");
         CompilerParameters compilerParams = new CompilerParameters();
         compilerParams.GenerateExecutable = false;
         compilerParams.GenerateInMemory = true;
@@ -53,8 +52,7 @@ public class Modding : MonoBehaviour
         compilerParams.ReferencedAssemblies.Add($"{dllPath}UnityEngine.UI.dll");
         compilerParams.ReferencedAssemblies.Add($"{dllPath}Assembly-CSharp.dll");
 #endif
-
-        return codeDomProvider.CompileAssemblyFromFile(compilerParams, filepath);
+        return codeDomProvider.CompileAssemblyFromSource(compilerParams, code);
     }
 
     private void GetPlugins(System.Reflection.Assembly assembly)
@@ -68,7 +66,7 @@ public class Modding : MonoBehaviour
                 IScript iScript = (IScript)System.Activator.CreateInstance(type);
                 iScript.Start();
 
-                Debug.Log(string.Format("{0} ({1})\r\n", iScript.Name, iScript.Description));
+                Debug.Log(string.Format("{0} ({1})", iScript.Name, iScript.Description));
             }
         }
     }
