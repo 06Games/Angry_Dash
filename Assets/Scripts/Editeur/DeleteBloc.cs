@@ -9,11 +9,7 @@ public class DeleteBloc : MonoBehaviour
 
     void Update()
     {
-        if (editor.file != "")
-        {
-            editor.DeleteSelectedBloc(true);
-            editor.SelectModeChang(true);
-        }
+        if (editor.file != "") editor.DeleteSelectedBloc(true);
     }
 
     int oldMenu;
@@ -23,12 +19,14 @@ public class DeleteBloc : MonoBehaviour
         if (manager.array == 4)
         {
             manager.array = oldMenu;
+            editor.SelectModeChang(false);
             reader.SetID("native/GUI/editor/deleteOff").Load();
         }
         else
         {
             oldMenu = manager.array;
             manager.Array(4);
+            editor.SelectModeChang(true);
             reader.SetID("native/GUI/editor/deleteOn").Load();
         }
     }
