@@ -12,15 +12,18 @@ namespace Editor.Event
         public ProgType type = ProgType.visual;
 
         public void ChangeType(int argument) { ChangeType((ProgType)argument); }
-        public void ChangeType(ProgType newType)
+        public void ChangeType(ProgType newType, bool save = true)
         {
-            //Save
-            if (type == ProgType.visual)
+            if (save)
             {
-                VisualSave();
-                foreach (Transform child in transform.GetChild(1).GetChild(1)) Destroy(child.gameObject);
+                //Save
+                if (type == ProgType.visual)
+                {
+                    VisualSave();
+                    foreach (Transform child in transform.GetChild(1).GetChild(1)) Destroy(child.gameObject);
+                }
+                else if (type == ProgType.textual) TextualSave();
             }
-            else if (type == ProgType.textual) TextualSave();
 
             type = newType; //Set the new type
 
@@ -29,7 +32,7 @@ namespace Editor.Event
             else if (type == ProgType.textual) TextualInitialization();
         }
 
-        void OnEnable() { editor.bloqueSelect = true; ChangeType(type); }
+        void OnEnable() { editor.bloqueSelect = true; ChangeType(type, false); }
         public void Exit()
         {
             if (type == ProgType.visual)
