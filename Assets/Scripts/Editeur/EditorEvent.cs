@@ -203,12 +203,15 @@ namespace Editor.Event
                 else return null;
             }
 
-            Vector2 lastPos = new Vector2(25, -25);
-            foreach (RectTransform transform in topParent)
+            UnityThread.executeInUpdate(() =>
             {
-                transform.anchoredPosition = transform.sizeDelta * new Vector2(0.5F, -0.5F) + lastPos;
-                lastPos.x += transform.sizeDelta.x + 25;
-            }
+                Vector2 lastPos = new Vector2(25, -25);
+                foreach (RectTransform transform in topParent)
+                {
+                    transform.anchoredPosition = transform.rect.size * new Vector2(0.5F, -0.5F) + lastPos;
+                    lastPos.x += transform.rect.size.x + 25;
+                }
+            });
         }
         #endregion
 
