@@ -215,7 +215,7 @@ namespace Editor.Event
         #region Textual
         public void TextualSave()
         {
-            string script = transform.GetChild(2).GetChild(0).GetComponent<InputField>().text;
+            string script = transform.GetChild(2).GetChild(1).GetComponent<InputField>().text;
             editor.ChangBlocStatus("Script", script, editor.SelectedBlock); 
         }
 
@@ -223,7 +223,7 @@ namespace Editor.Event
         {
             string script = "";
             if (editor.SelectedBlock.Length == 1) script = editor.GetBlocStatus("Script", editor.SelectedBlock[0]);
-            transform.GetChild(2).GetChild(0).GetComponent<InputField>().text = script;
+            transform.GetChild(2).GetChild(1).GetComponent<InputField>().text = script;
         }
         #endregion
     }
