@@ -84,6 +84,8 @@ native/GUI/editor/layerArrow
 native/GUI/editor/grid
 native/GUI/editor/gridOff
 native/GUI/editor/gridOn
+native/GUI/editor/deleteOff
+native/GUI/editor/deleteOn
 native/GUI/editor/play
 native/GUI/editor/exit
 native/GUI/editor/zoom
