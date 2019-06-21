@@ -20,13 +20,13 @@ namespace Editor.Event
                 VisualSave();
                 foreach (Transform child in transform.GetChild(1).GetChild(1)) Destroy(child.gameObject);
             }
-            else Debug.LogError("Textual programmation is unsupported for the moment");
+            else if (type == ProgType.textual) TextualSave();
 
             type = newType; //Set the new type
 
             //Load
             if (type == ProgType.visual) UnityThread.executeInUpdate(() => VisualInitialization());
-            else Debug.LogError("Textual programmation is unsupported for the moment");
+            else if (type == ProgType.textual) TextualInitialization();
         }
 
         void OnEnable() { editor.bloqueSelect = true; ChangeType(type); }
@@ -37,10 +37,11 @@ namespace Editor.Event
                 VisualSave();
                 foreach (Transform child in transform.GetChild(1).GetChild(1)) Destroy(child.gameObject);
             }
+            else if (type == ProgType.textual) TextualSave();
 
-            foreach(int id in editor.SelectedBlock)
+            foreach (int id in editor.SelectedBlock)
             {
-                Transform obj = transform.GetChild(1).Find("Objet n° " + id);
+                Transform obj = editor.transform.GetChild(1).Find("Objet n° " + id);
                 if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
             }
             editor.SelectedBlock = new int[0];
@@ -198,10 +199,29 @@ namespace Editor.Event
                 }
                 else return null;
             }
+
+            Vector2 lastPos = new Vector2(25, -25);
+            foreach (RectTransform transform in topParent)
+            {
+                transform.anchoredPosition = transform.sizeDelta * new Vector2(0.5F, -0.5F) + lastPos;
+                lastPos.x += transform.sizeDelta.x + 25;
+            }
         }
         #endregion
 
         #region Textual
+        public void TextualSave()
+        {
+            string script = transform.GetChild(2).GetChild(0).GetComponent<InputField>().text;
+            editor.ChangBlocStatus("Script", script, editor.SelectedBlock); 
+        }
+
+        void TextualInitialization()
+        {
+            string script = "";
+            if (editor.SelectedBlock.Length == 1) script = editor.GetBlocStatus("Script", editor.SelectedBlock[0]);
+            transform.GetChild(2).GetChild(0).GetComponent<InputField>().text = script;
+        }
         #endregion
     }
 }
