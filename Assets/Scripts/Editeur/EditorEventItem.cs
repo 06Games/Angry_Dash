@@ -47,10 +47,14 @@ namespace Editor.Event
         {
             foreach (EventField field in fields)
             {
-                LayoutElement layout = field.transform.parent.GetComponent<LayoutElement>();
-                field.referenceSize = new Vector2(layout.preferredWidth, layout.preferredHeight);
-                if (field.referenceSize.x > initialFieldSize.x) initialFieldSize.x = field.referenceSize.x;
-                initialFieldSize.y += field.referenceSize.y;
+                if (field.transform == null) Debug.LogError($"[{id}] The field with id {field.id} is null");
+                else
+                {
+                    LayoutElement layout = field.transform.parent.GetComponent<LayoutElement>();
+                    field.referenceSize = new Vector2(layout.preferredWidth, layout.preferredHeight);
+                    if (field.referenceSize.x > initialFieldSize.x) initialFieldSize.x = field.referenceSize.x;
+                    initialFieldSize.y += field.referenceSize.y;
+                }
             }
         }
 
