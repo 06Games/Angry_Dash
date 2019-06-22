@@ -446,11 +446,11 @@ public class Editeur : MonoBehaviour
     {
         foreach (Transform go in transform.GetChild(0))
         {
-            if (go.GetComponent<RectTransform>().IsHover(Input.mousePosition) & go.gameObject.activeInHierarchy) return true;
+            if (go.GetComponent<RectTransform>().IsOver(Input.mousePosition) & go.gameObject.activeInHierarchy) return true;
         }
         foreach (Transform go in transform.GetChild(0).GetChild(2))
         {
-            if (go.GetComponent<RectTransform>().IsHover(Input.mousePosition) & go.gameObject.activeInHierarchy) return true;
+            if (go.GetComponent<RectTransform>().IsOver(Input.mousePosition) & go.gameObject.activeInHierarchy) return true;
         }
         return false;
     }

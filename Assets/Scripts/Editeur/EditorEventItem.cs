@@ -62,13 +62,13 @@ namespace Editor.Event
             if (item == null) return;
             else if (item.gameObject == gameObject) return;
             else if (transform.IsChildOf(item.transform)) return;
-            else if (!GetComponent<RectTransform>().IsHover((RectTransform)item.transform)) return;
+            else if (!GetComponent<RectTransform>().IsOver((RectTransform)item.transform)) return;
 
             foreach (EventField field in fields)
             {
                 if (field.CanDrop(item.type))
                 {
-                    if (field.transform.IsHover(item.transform.position))
+                    if (field.transform.IsOver(item.transform.position))
                     {
                         item.transform.SetParent(field.transform);
                         UpdateSize();

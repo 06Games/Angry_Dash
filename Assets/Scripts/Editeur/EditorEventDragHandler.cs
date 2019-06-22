@@ -41,9 +41,9 @@ namespace Editor.Event
 
             if (startParent.IsChildOf(visualPanel.GetChild(0).GetComponent<UnityEngine.UI.ScrollRect>().content))
             {
-                if (visualPanel.GetChild(1).GetComponent<RectTransform>().IsHover((RectTransform)transform))
+                if (visualPanel.GetChild(1).GetComponent<RectTransform>().IsOver((RectTransform)transform)) //The item is over the code panel
                 {
-                    if (!transform.parent.GetComponent<RectTransform>().IsHover(transform.position)) transform.SetParent(visualPanel.GetChild(1));
+                    if (!transform.parent.GetComponent<RectTransform>().IsOver(transform.position)) transform.SetParent(visualPanel.GetChild(1));
                     Instantiate(startParent.GetChild(0).gameObject, startParent).SetActive(true);
                 }
                 else

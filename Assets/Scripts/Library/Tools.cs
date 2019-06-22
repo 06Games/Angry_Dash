@@ -313,12 +313,12 @@ namespace Tools
     }
     public static class RectTransformExtensions
     {
-        public static bool IsHover(this RectTransform transform, Vector2 hoverObj)
+        public static bool IsOver(this RectTransform transform, Vector2 hoverObj)
         {
             Vector2 localPosition = transform.InverseTransformPoint(hoverObj);
             return transform.rect.Contains(localPosition);
         }
-        public static bool IsHover(this RectTransform transform, RectTransform hoverTransform)
+        public static bool IsOver(this RectTransform transform, RectTransform hoverTransform)
         {
             Rect container = transform.GetWorldRect();
             Rect other = hoverTransform.GetWorldRect();
