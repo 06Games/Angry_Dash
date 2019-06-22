@@ -39,7 +39,7 @@ namespace Editor.Event
             itemBeingDragged = null;
             GetComponent<CanvasGroup>().blocksRaycasts = true;
 
-            if (startParent.IsChildOf(visualPanel.GetChild(0).GetComponent<UnityEngine.UI.ScrollRect>().content))
+            if (startParent.IsChildOf(visualPanel.GetChild(0).GetComponent<UnityEngine.UI.ScrollRect>().content)) //The item has just been spawned
             {
                 if (visualPanel.GetChild(1).GetComponent<RectTransform>().IsOver((RectTransform)transform)) //The item is over the code panel
                 {
@@ -58,8 +58,16 @@ namespace Editor.Event
                         Destroy(startParent.GetChild(2).gameObject);
                 }
             }
-            else if (!visualPanel.GetChild(1).GetComponent<RectTransform>().IsHover(transform.position)) Destroy(gameObject);
-            else if (startParent == transform.parent & !RectTransformExtensions.IsHover((RectTransform)startParent, transform.position))
+            else if (!visualPanel.GetChild(1).GetComponent<RectTransform>().IsOver(transform.position)) //The item isn't hover the code panel
+            {
+                if (transform.parent.IsChildOf(visualPanel.GetChild(1)) & visualPanel.GetChild(1) != transform.parent) //The item was in the code
+                {
+                    transform.SetParent(visualPanel.GetChild(1)); //Remove the item from its parent
+                    startParent.GetComponentInParent<EditorEventItem>().UpdateSize(); //Refresh the parent
+                }
+                Destroy(gameObject); //Destroy the item
+            }
+            else if (startParent == transform.parent & !RectTransformExtensions.IsOver((RectTransform)startParent, transform.position)) //The item has exit its parent
             {
                 transform.SetParent(visualPanel.GetChild(1));
                 startParent.GetComponentInParent<EditorEventItem>().UpdateSize();
