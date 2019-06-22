@@ -62,7 +62,7 @@ namespace Editor.Event
 
             string[] ids = new string[] {
                 "collision", //trigger
-                //"color", //action
+                "teleport", //action
                 "if" //condition
             };
             foreach (string id in ids)
