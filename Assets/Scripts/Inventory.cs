@@ -149,7 +149,7 @@ public class Inventory : MonoBehaviour
             Transform go = Instantiate(content.GetChild(0).gameObject, content).transform;
 
 
-            Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.Sprite_API.Parse(category + items[i].name + fileSuffix);
+            Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.JSON_API.Parse(category + items[i].name + fileSuffix);
             Sprite_API.Sprite_API_Data[] data = new Sprite_API.Sprite_API_Data[4];
             Texture2D tex = new Texture2D(1, 1);
             tex.LoadImage(System.IO.File.ReadAllBytes(jsonData.path[0]));

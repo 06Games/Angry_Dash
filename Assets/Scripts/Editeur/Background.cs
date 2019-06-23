@@ -68,7 +68,7 @@ public class Background : MonoBehaviour
                 string bgName = Path.GetFileNameWithoutExtension(file.Name);
                 string baseID = "native/BACKGROUNDS/" + bgName.Remove(bgName.Length - 6);
 
-                Sprite_API.JSON_PARSE_DATA jData = Sprite_API.Sprite_API.Parse(baseID);
+                Sprite_API.JSON_PARSE_DATA jData = Sprite_API.JSON_API.Parse(baseID);
                 jsons.Add(jData);
                 sprites.Add(Sprite_API.Sprite_API.GetSprites(jData.path[0], jData.border[0]));
             }

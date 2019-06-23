@@ -37,7 +37,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public UImage_Reader Load(Sprite_API.Sprite_API_Data[] spriteData) { data = spriteData; return this; }
     public UImage_Reader Load()
     {
-        Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.Sprite_API.Parse(baseID);
+        Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.JSON_API.Parse(baseID);
 
         data = new Sprite_API.Sprite_API_Data[4];
         for (int i = 0; i < data.Length; i++) data[i] = Sprite_API.Sprite_API.GetSprites(jsonData.path[i], jsonData.border[i]);
@@ -47,7 +47,7 @@ public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     }
     public UImage_Reader SetPath(string id)
     {
-        Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.Sprite_API.Parse(id, null, true);
+        Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.JSON_API.Parse(id, null, true);
 
         data = new Sprite_API.Sprite_API_Data[4];
         for (int i = 0; i < data.Length; i++)
