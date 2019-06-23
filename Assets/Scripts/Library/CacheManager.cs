@@ -10,15 +10,21 @@ namespace CacheManager
         public Dictionary()
         { dictionary = new Dictionary<string, Cache>(); }
 
+        static Dictionary dic;
         public static Dictionary Static()
         {
-            if (GameObject.Find("Cache") != null)
-                return GameObject.Find("Cache").GetComponent<Dictionary>();
+            if (dic != null) return dic;
+            else if (GameObject.Find("Cache") != null)
+            {
+                dic = GameObject.Find("Cache").GetComponent<Dictionary>();
+                return dic;
+            }
             else
             {
                 GameObject cache = new GameObject("Cache");
                 DontDestroyOnLoad(cache);
-                return cache.AddComponent<Dictionary>();
+                dic = cache.AddComponent<Dictionary>();
+                return dic;
             }
         }
         public static bool Exist() { return GameObject.Find("Cache") != null; }
