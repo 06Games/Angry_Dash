@@ -2,8 +2,11 @@
   "dependencies": {
     "com.coffee.upm-git-extension": "https://github.com/mob-sakai/UpmGitExtension.git#0.7.0",
     "com.e7.notch-solution": "https://github.com/5argon/NotchSolution.git#master",
-    "com.unity.package-manager-ui": "2.0.7",
-    "com.unity.textmeshpro": "1.3.0",
+    "com.unity.multiplayer-hlapi": "1.0.2",
+    "com.unity.package-manager-ui": "2.1.2",
+    "com.unity.textmeshpro": "2.0.1",
+    "com.unity.timeline": "1.0.0",
+    "com.unity.xr.legacyinputhelpers": "2.0.2",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
     "com.unity.modules.assetbundle": "1.0.0",
@@ -36,10 +39,6 @@
     "com.unity.modules.xr": "1.0.0"
   },
   "lock": {
-    "com.e7.notch-solution": {
-      "hash": "5ce344a771045c0dae52205e7be49bdda79bbc96",
-      "revision": "master"
-    },
     "com.coffee.upm-git-extension": {
       "hash": "0e5c8a21109a4422d173f1dce5637bedb1404deb",
       "revision": "0.7.0"
