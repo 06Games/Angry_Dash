@@ -1,0 +1,15 @@
+{
+    "name": "com.e7.notch-solution",
+    "author": "Sirawat Pitaksarit / 5argon - Exceed7 Experiments",
+    "displayName": "Notch Solution",
+    "version": "1.6.0",
+    "unity": "2019.1",
+    "keywords": [
+        "UI",
+        "UGUI",
+        "Mobile",
+        "User Interface",
+        "Responsive"
+    ],
+    "description": "A set of components and tools to solve notched/cutout phones layout problems."
+}

@@ -42,6 +42,10 @@
     "com.coffee.upm-git-extension": {
       "hash": "0e5c8a21109a4422d173f1dce5637bedb1404deb",
       "revision": "0.7.0"
+    },
+    "com.e7.notch-solution": {
+      "hash": "15f332eaecceee58908c32f93984168f5ee04566",
+      "revision": "master"
     }
   }
 }
