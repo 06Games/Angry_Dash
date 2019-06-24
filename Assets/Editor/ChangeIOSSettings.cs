@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_IOS
+
+using UnityEngine;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using System.Collections;
@@ -30,3 +32,4 @@ public class ChangeIOSSettings
         }
     }
 }
+#endif
