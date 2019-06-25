@@ -14,7 +14,7 @@ namespace Crosstales.FB.EditorExt
         {
 #if UNITY_STANDALONE_WIN
 
-#if UNITY_2017 || UNITY_2018
+#if UNITY_2017 || UNITY_2018 || UNITY_2019
 
             string apiLevel = PlayerSettings.GetApiCompatibilityLevel(BuildTargetGroup.Standalone).ToString();
             
