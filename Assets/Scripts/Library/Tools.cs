@@ -169,6 +169,11 @@ namespace Tools
             texture.SetPixels(pixels);
             return texture;
         }
+        public static Unity.Collections.NativeArray<Color32> PremultiplyAlpha(this Unity.Collections.NativeArray<Color32> pixels)
+        {
+            for (int i = 0; i < pixels.Length; i++) pixels[i] = Premultiply(pixels[i]);
+            return pixels;
+        }
 
         private static Color32 Premultiply(Color color)
         {

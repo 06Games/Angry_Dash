@@ -76,17 +76,15 @@ namespace LibAPNG
             }
 
             // Write image data
-            using (var ms = new MemoryStream())
-            {
-                ms.WriteBytes(Signature);
-                ms.WriteBytes(ihdrChunk.RawData);
-                otherChunks.ForEach(o => ms.WriteBytes(o.RawData));
-                idatChunks.ForEach(i => ms.WriteBytes(i.RawData));
-                ms.WriteBytes(IENDChunk.RawData);
+            var ms = new MemoryStream();
+            ms.WriteBytes(Signature);
+            ms.WriteBytes(ihdrChunk.RawData);
+            otherChunks.ForEach(o => ms.WriteBytes(o.RawData));
+            idatChunks.ForEach(i => ms.WriteBytes(i.RawData));
+            ms.WriteBytes(IENDChunk.RawData);
 
-                ms.Position = 0;
-                return ms;
-            }
+            ms.Position = 0;
+            return ms;
         }
     }
 }
