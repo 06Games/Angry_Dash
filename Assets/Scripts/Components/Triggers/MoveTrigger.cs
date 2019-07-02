@@ -157,7 +157,7 @@ public class MoveTrigger : MonoBehaviour
                             else pos[m] = pos[m] + moveVector[m] * 50;
                         }
                         Objects[b].transform.position = pos;
-                        if (Objects[b].GetComponent<Mur>() != null) Objects[b].GetComponent<Mur>().Move = moveVector;
+                        if (Objects[b].GetComponent<AngryDash.Game.Mur>() != null) Objects[b].GetComponent<AngryDash.Game.Mur>().Move = moveVector;
 
                         Vector3 rotateVector = new Vector3();
                         if (Type == 0)

@@ -8,6 +8,7 @@ using System.Linq;
 using Tools;
 using UnityEngine;
 using UnityEngine.UI;
+using Player = AngryDash.Game.Player;
 
 public class LevelPlayer : MonoBehaviour
 {
@@ -166,8 +167,8 @@ public class LevelPlayer : MonoBehaviour
             go.GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id.ToString(".0####")).Load();
             go.transform.localScale = new Vector2(100F / SR.sprite.texture.width * 50, 100F / SR.sprite.texture.height * 50);
 
-            go.GetComponent<Mur>().colider = colid;
-            go.GetComponent<Mur>().blockID = id;
+            go.GetComponent<AngryDash.Game.Mur>().colider = colid;
+            go.GetComponent<AngryDash.Game.Mur>().blockID = id;
         }
         else //Trigger
         {

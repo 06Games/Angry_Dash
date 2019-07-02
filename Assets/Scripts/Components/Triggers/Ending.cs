@@ -95,14 +95,14 @@ namespace RewardChecker
 
 public class Ending : MonoBehaviour
 {
-    Player player;
+    AngryDash.Game.Player player;
 
     void OnTriggerEnter2D(Collider2D collision)
     {
         Transform EndPanel = GameObject.Find("Base").transform.GetChild(4);
         if (EndPanel == null) return;
         else if (EndPanel.gameObject.activeInHierarchy) return;
-        player = collision.gameObject.GetComponent<Player>();
+        player = collision.gameObject.GetComponent<AngryDash.Game.Player>();
         player.PeutAvancer = false;
 
         EndPanel.GetChild(0).GetComponent<Text>().text = player.LP.level.name; //Sets the level name

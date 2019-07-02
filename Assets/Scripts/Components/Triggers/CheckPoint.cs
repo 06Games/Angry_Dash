@@ -2,11 +2,11 @@
 
 public class CheckPoint : MonoBehaviour
 {
-    Player player;
+    AngryDash.Game.Player player;
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        player = collision.gameObject.GetComponent<Player>();
+        player = collision.gameObject.GetComponent<AngryDash.Game.Player>();
         if (player.levelSettings.respawnMode == 1) player.PositionInitiale = transform.position;
         if (player.levelSettings.respawnMode == 1) GetComponent<SpriteRenderer>().color = new Color32(255, 130, 0, 255);
     }
