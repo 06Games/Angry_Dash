@@ -1,4 +1,4 @@
-﻿namespace AngryDash.Extensibility
+﻿namespace AngryDash.Mod
 {
     public interface IScript
     {
