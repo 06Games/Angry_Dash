@@ -1,4 +1,5 @@
 ﻿using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.IO;
 using Tools;
 using UnityEngine;
@@ -34,7 +35,7 @@ namespace AngryDash.Mod
             }
         }
 
-        private CompilerResults LoadScript(string code)
+        public static CompilerResults LoadScript(string code)
         {
             CodeDomProvider codeDomProvider = CodeDomProvider.CreateProvider("c#");
             CompilerParameters compilerParams = new CompilerParameters();
@@ -56,20 +57,25 @@ namespace AngryDash.Mod
             return codeDomProvider.CompileAssemblyFromSource(compilerParams, code);
         }
 
-        private void GetPlugins(System.Reflection.Assembly assembly)
+        public static object[] GetPlugins(System.Reflection.Assembly assembly)
         {
+            List<object> objs = new List<object>();
             foreach (System.Type type in assembly.GetTypes())
             {
                 if (!type.IsClass || type.IsNotPublic) continue;
                 System.Type[] interfaces = type.GetInterfaces();
                 if (((System.Collections.Generic.IList<System.Type>)interfaces).Contains(typeof(IScript)))
                 {
-                    IScript iScript = (IScript)System.Activator.CreateInstance(type);
-                    iScript.Start();
+                    var obj = System.Activator.CreateInstance(type);
+                    objs.Add(obj);
 
+                    IScript iScript = (IScript)obj;
+                    iScript.Start();
                     Debug.Log(string.Format("{0} ({1})", iScript.Name, iScript.Description));
+
                 }
             }
+            return objs.ToArray();
         }
     }
 }
