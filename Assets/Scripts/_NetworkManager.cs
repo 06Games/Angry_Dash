@@ -153,7 +153,7 @@ public class _NetworkManager : NetworkBehaviour
     private void Update()
     {
         if (Items == null)
-            Items = GameObject.Find("Main Camera").GetComponent<LevelPlayer>().SummonPlace.gameObject;
+            Items = GameObject.Find("Main Camera").GetComponent<AngryDash.Game.LevelPlayer>().SummonPlace.gameObject;
 
         if (!mapRequested & NM.IsClientConnected())
         {
@@ -170,7 +170,7 @@ public class _NetworkManager : NetworkBehaviour
             GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
 
         MyMsgBase msg = netMsg.ReadMessage<MyMsgBase>();
-        GameObject.Find("Main Camera").GetComponent<LevelPlayer>().PlayLevel(new LevelItem() { Name = "Multiplayer", Data = msg.map });
+        GameObject.Find("Main Camera").GetComponent<AngryDash.Game.LevelPlayer>().PlayLevel(new LevelItem() { Name = "Multiplayer", Data = msg.map });
         Selection.SetActive(false);
     }
 }

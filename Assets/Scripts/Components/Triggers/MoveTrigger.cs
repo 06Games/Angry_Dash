@@ -45,8 +45,9 @@ public class MoveTrigger : MonoBehaviour
         {
             if (AffectationType == 0)
             {
-                try { affectedPos = GameObject.Find("Main Camera").GetComponent<LevelPlayer>().GetObjectPos(int.Parse(Blocks[0])); } catch { }
-                try { affectedRot = Editor_MoveTrigger.getVector3(GameObject.Find("Main Camera").GetComponent<LevelPlayer>().GetBlocStatus("Rotation", int.Parse(Blocks[0]))); } catch { }
+                AngryDash.Game.LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<AngryDash.Game.LevelPlayer>();
+                try { affectedPos = lvlPlayer.GetObjectPos(int.Parse(Blocks[0])); } catch { }
+                try { affectedRot = Editor_MoveTrigger.getVector3(lvlPlayer.GetBlocStatus("Rotation", int.Parse(Blocks[0]))); } catch { }
             }
             else if (AffectationType == 1)
             {

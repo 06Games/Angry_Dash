@@ -111,7 +111,7 @@ public class Ending : MonoBehaviour
         EndPanel.gameObject.SetActive(true);
 
         FileFormat.XML.RootElement xml = Inventory.xmlDefault;
-        LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
+        AngryDash.Game.LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<AngryDash.Game.LevelPlayer>();
         int gain = 0;
         int lastGain = 0;
         FileFormat.XML.Item lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
