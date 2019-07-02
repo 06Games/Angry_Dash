@@ -1,4 +1,5 @@
 ﻿using AngryDash.Image.Reader;
+using System.Collections.Generic;
 using System.Linq;
 using Tools;
 using UnityEngine;
@@ -54,19 +55,21 @@ namespace AngryDah.Editor.Event
         }
 
         #region Visual
-        System.Collections.Generic.Dictionary<string, EditorEventItem> visualPrefabs = new System.Collections.Generic.Dictionary<string, EditorEventItem>();
+        Dictionary<string, EditorEventItem> visualPrefabs = new Dictionary<string, EditorEventItem>();
+        readonly Dictionary<EditorEventItem.Type, string[]> ids = new Dictionary<EditorEventItem.Type, string[]>() {
+            { EditorEventItem.Type.trigger, new string[] { "collision" } },
+            { EditorEventItem.Type.action, new string[] { "teleport" } },
+            { EditorEventItem.Type.conditional, new string[] { "if" } }
+        };
 
         void VisualInitialization()
         {
             Transform visual = transform.GetChild(1);
             Transform elements = visual.GetChild(0).GetComponent<ScrollRect>().content;
 
-            string[] ids = new string[] {
-                "collision", //trigger
-                "teleport", //action
-                "if" //condition
-            };
-            foreach (string id in ids)
+            List<string> idList = new List<string>();
+            foreach (var keyPair in ids) idList.AddRange(keyPair.Value);
+            foreach (string id in idList)
             {
                 GameObject config = Resources.Load<GameObject>($"Events/{id}");
                 if (config != null)
@@ -92,12 +95,18 @@ namespace AngryDah.Editor.Event
 #endif
             }
 
-            if(editor.SelectedBlock.Length == 1) VisualParse(editor.GetBlocStatus("Script", editor.SelectedBlock[0]));
+            if (editor.SelectedBlock.Length == 1) VisualParse(editor.GetBlocStatus("Script", editor.SelectedBlock[0]));
         }
 
+        string[] triggerImplemented;
         public void VisualSave()
         {
+            triggerImplemented = new string[ids[EditorEventItem.Type.trigger].Length];
             string script = $"// Auto-generated script from the visual programming panel\n\n{VisualToScript(transform.GetChild(1).GetChild(1))}";
+            foreach (string id in ids[EditorEventItem.Type.trigger])
+            {
+                if (!triggerImplemented.Contains(id)) script += $"\nvoid {id}()\n{{\n}}";
+            }
             editor.ChangBlocStatus("Script", script, editor.SelectedBlock);
         }
         private string VisualToScript(Transform field, string prefix = "")
@@ -117,6 +126,7 @@ namespace AngryDah.Editor.Event
                         if (childField.transform.childCount > 0) script.AppendLine(VisualToScript(childField.transform, "\t"));
                     }
                     script.AppendLine("}");
+                    triggerImplemented.Append(item.id);
                 }
                 else if (item.type == EditorEventItem.Type.action) script.AppendLine($"{item.id}()");
                 else if (item.type == EditorEventItem.Type.conditional)

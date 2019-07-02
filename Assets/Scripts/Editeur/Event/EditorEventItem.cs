@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using AngryDash.Image.Reader;
+using System.Collections;
 using System.Collections.Generic;
 using Tools;
 using UnityEngine;
@@ -58,24 +59,41 @@ namespace AngryDah.Editor.Event
             }
         }
 
+        bool lastEnable = true;
         void Update()
         {
-            if (transform.FindParent("Elements") != null) return;
-
-            EditorEventItem item = EditorEventDragHandler.itemBeingDragged;
-            if (item == null) return;
-            else if (item.gameObject == gameObject) return;
-            else if (transform.IsChildOf(item.transform)) return;
-            else if (!GetComponent<RectTransform>().IsOver((RectTransform)item.transform)) return;
-
-            foreach (EventField field in fields)
+            var elements = transform.FindParent("Elements");
+            if (elements != null)
             {
-                if (field.CanDrop(item.type))
+                if (type == Type.trigger)
                 {
-                    if (field.transform.IsOver(item.transform.position))
+                    bool enable = elements.parent.GetChild(1).Find($"{id}(Clone)(Clone)") == null;
+                    if (enable != lastEnable)
                     {
-                        item.transform.SetParent(field.transform);
-                        UpdateSize();
+                        GetComponent<UImage_Reader>().StartAnimating(3, enable ? -1 : 1);
+                        foreach (UImage_Reader img in GetComponentsInChildren<UImage_Reader>()) img.StartAnimating(3, enable ? -1 : 1);
+                        GetComponent<EditorEventDragHandler>().enabled = enable;
+                    }
+                    lastEnable = enable;
+                }
+            }
+            else
+            {
+                EditorEventItem item = EditorEventDragHandler.itemBeingDragged;
+                if (item == null) return;
+                else if (item.gameObject == gameObject) return;
+                else if (transform.IsChildOf(item.transform)) return;
+                else if (!GetComponent<RectTransform>().IsOver((RectTransform)item.transform)) return;
+
+                foreach (EventField field in fields)
+                {
+                    if (field.CanDrop(item.type))
+                    {
+                        if (field.transform.IsOver(item.transform.position))
+                        {
+                            item.transform.SetParent(field.transform);
+                            UpdateSize();
+                        }
                     }
                 }
             }
