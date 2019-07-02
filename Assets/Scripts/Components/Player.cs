@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using Tools;
+using AngryDash.Image.Reader;
 
 public class Player : MonoBehaviour
 {

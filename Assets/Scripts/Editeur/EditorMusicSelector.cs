@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Level;
 using Tools;
 using System.Collections;
+using AngryDash.Language;
 
 public class EditorMusicSelector : MonoBehaviour
 {

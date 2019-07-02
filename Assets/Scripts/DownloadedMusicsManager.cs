@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using AngryDash.Language;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 

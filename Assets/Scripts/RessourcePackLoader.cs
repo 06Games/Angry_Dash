@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
+using AngryDash.Language;
 
 public class RessourcePackLoader : MonoBehaviour
 {

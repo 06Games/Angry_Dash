@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AngryDash.Language;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class EditorPlayingRules : MonoBehaviour

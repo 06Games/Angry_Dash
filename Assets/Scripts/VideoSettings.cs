@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AngryDash.Language;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 

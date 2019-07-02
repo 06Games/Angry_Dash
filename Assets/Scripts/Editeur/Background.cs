@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Tools;
+using AngryDash.Image.Reader;
 
 public class Background : MonoBehaviour
 {

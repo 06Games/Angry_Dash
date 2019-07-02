@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using AngryDash.Image.Reader;
+using System.IO;
 using System.Linq;
 using Tools;
 using UnityEngine;

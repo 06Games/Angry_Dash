@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DiscordClasses;
 using System;
+using AngryDash.Language;
 /*using DiscordRPC;
 using DiscordRPC.Logging;*/
 

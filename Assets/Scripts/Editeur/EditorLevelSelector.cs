@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Tools;
 using System.Net;
+using AngryDash.Language;
 
 /// <summary> Script managing the user-created level selection menu </summary>
 public class EditorLevelSelector : MonoBehaviour

@@ -6,6 +6,7 @@ using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
 using Tools;
+using AngryDash.Language;
 
 public class DependenciesManager : MonoBehaviour
 {

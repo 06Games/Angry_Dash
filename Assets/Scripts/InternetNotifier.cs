@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using AngryDash.Image.Reader;
+using AngryDash.Language;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 

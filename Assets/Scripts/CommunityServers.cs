@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using AngryDash.Language;
+using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 

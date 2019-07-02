@@ -5,6 +5,8 @@ using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
 using Tools;
+using AngryDash.Language;
+using AngryDash.Image.Reader;
 
 public class EditorPublishedLevels : MonoBehaviour
 {

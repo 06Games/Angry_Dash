@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System;
 using Tools;
 using FileFormat.XML;
+using AngryDash.Language;
 
 public class Account : MonoBehaviour
 {
