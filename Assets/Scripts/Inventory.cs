@@ -149,19 +149,19 @@ public class Inventory : MonoBehaviour
             Transform go = Instantiate(content.GetChild(0).gameObject, content).transform;
 
 
-            Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.JSON_API.Parse(category + items[i].name + fileSuffix);
-            Sprite_API.Sprite_API_Data[] data = new Sprite_API.Sprite_API_Data[4];
+            AngryDash.Image.JSON_PARSE_DATA jsonData = AngryDash.Image.JSON_API.Parse(category + items[i].name + fileSuffix);
+            AngryDash.Image.Sprite_API_Data[] data = new AngryDash.Image.Sprite_API_Data[4];
             Texture2D tex = new Texture2D(1, 1);
             tex.LoadImage(System.IO.File.ReadAllBytes(jsonData.path[0]));
             tex = Texture2DExtensions.PremultiplyAlpha(tex);
             tex.Apply();
-            data[0] = new Sprite_API.Sprite_API_Data()
+            data[0] = new AngryDash.Image.Sprite_API_Data()
             {
                 Frames = new Sprite[] { Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f), 100, 0, SpriteMeshType.FullRect, jsonData.border[0]) },
                 Delay = new float[] { 1 },
                 Repeat = 1
             }; //Basic is default png image
-            data[1] = Sprite_API.Sprite_API.GetSprites(jsonData.path[0], jsonData.border[0]); //Basic replace hover
+            data[1] = AngryDash.Image.Sprite_API.GetSprites(jsonData.path[0], jsonData.border[0]); //Basic replace hover
             jsonData.type[1] = jsonData.type[0];
             go.GetChild(0).GetComponent<UImage_Reader>().Load(data).ApplyJson(jsonData).StopAnimating(0, false);
 

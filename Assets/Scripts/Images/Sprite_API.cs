@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-namespace Sprite_API
+namespace AngryDash.Image
 {
     public class Sprite_API : MonoBehaviour
     {

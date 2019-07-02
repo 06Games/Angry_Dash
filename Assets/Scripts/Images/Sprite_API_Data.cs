@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Sprite_API
+namespace AngryDash.Image
 {
     /// <summary>
     /// Contains animation information

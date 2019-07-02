@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Sprite_API
+namespace AngryDash.Image
 {
     [System.Serializable]
     public class JSON_PARSE_DATA

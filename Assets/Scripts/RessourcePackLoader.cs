@@ -29,10 +29,10 @@ public class RessourcePackLoader : MonoBehaviour
                 FileFormat.JSON json = new FileFormat.JSON("");
                 string jsonID = path + baseID + ".json";
                 if (File.Exists(jsonID)) json = new FileFormat.JSON(File.ReadAllText(jsonID));
-                Sprite_API.JSON_PARSE_DATA jsonData = Sprite_API.JSON_API.Parse(baseID, json);
+                AngryDash.Image.JSON_PARSE_DATA jsonData = AngryDash.Image.JSON_API.Parse(baseID, json);
 
                 for (int f = 0; f < 4; f++)
-                    Sprite_API.Sprite_API.Load(jsonData.path[f], jsonData.border[f]);
+                    AngryDash.Image.Sprite_API.Load(jsonData.path[f], jsonData.border[f]);
 
                 yield return new WaitForEndOfFrame();
                 Status.text = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", i, ids.Length - 1);
