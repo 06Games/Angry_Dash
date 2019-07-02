@@ -15,9 +15,7 @@ namespace AngryDah.Editor.Event
         public RectTransform transform;
         [HideInInspector] public Vector2 referenceSize;
 
-
-        public bool CanDrop(Type objectType)
-        { return accepted == objectType | (accepted == Type.action & objectType == Type.conditional); }
+        public bool CanDrop(Type objectType) { return accepted == objectType | (accepted == Type.action & objectType == Type.conditional); }
     }
 
     [System.Serializable]
@@ -29,7 +27,7 @@ namespace AngryDah.Editor.Event
 
     public enum Type
     {
-        ///<summary> Events triggering action </summary>
+        ///<summary> Triggers actions when validating a defined event </summary>
         trigger,
         /// <summary> Do something in the level </summary>
         action,

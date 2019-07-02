@@ -89,9 +89,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4819370758646188}
   - component: {fileID: 61061381081675624}
-  - component: {fileID: 114009974287017206}
+  - component: {fileID: 8991833155803919319}
   m_Layer: 0
-  m_Name: 0.4 Move
+  m_Name: Event
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138,7 +138,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.2, y: 1.2}
   m_EdgeRadius: 0
---- !u!114 &114009974287017206
+--- !u!114 &8991833155803919319
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -147,16 +147,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1981134399792410}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab71db7d79e3d984588063c178b14a65, type: 3}
+  m_Script: {fileID: 11500000, guid: e25abeddfdfcf4f40a7b6ecc140e771e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AffectationType: 0
-  Blocks: []
-  Translation: {x: 0, y: 0}
-  TranslationFromPlayer: 0000
-  Type: 0
-  Speed: 0
-  MultiUsage: 0
-  Rotation: {x: 0, y: 0, z: 0}
-  Reset: 0000
-  GlobalRotation: 0
+  script: 

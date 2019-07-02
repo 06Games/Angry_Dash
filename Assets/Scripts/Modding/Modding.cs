@@ -59,6 +59,7 @@ namespace AngryDash.Mod
 
         public static object[] GetPlugins(System.Reflection.Assembly assembly)
         {
+            if (assembly == null) return null;
             List<object> objs = new List<object>();
             foreach (System.Type type in assembly.GetTypes())
             {
@@ -71,8 +72,8 @@ namespace AngryDash.Mod
 
                     IScript iScript = (IScript)obj;
                     iScript.Start();
-                    Debug.Log(string.Format("{0} ({1})", iScript.Name, iScript.Description));
 
+                    //Debug.Log(string.Format("{0} ({1})", iScript.Name, iScript.Description));
                 }
             }
             return objs.ToArray();

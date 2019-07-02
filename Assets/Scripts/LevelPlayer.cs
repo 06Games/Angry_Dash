@@ -167,9 +167,14 @@ namespace AngryDash.Game
                 go.GetComponent<Mur>().colider = colid;
                 go.GetComponent<Mur>().blockID = id;
             }
+            else if (id == 0) //Event
             {
+                GameObject go = Instantiate(EventPrefab, pos, rot, place);
                 go.name = "Objet n° " + num;
+                go.transform.localScale = new Vector2(50, 50);
+                go.GetComponent<Event.Event>().script = GetBlocStatus("Script", num);
             }
+            else //Compatibility Mode
             {
                 if (id == 0.1F) //Start
                 {
