@@ -56,10 +56,10 @@ namespace AngryDah.Editor.Event
 
         #region Visual
         Dictionary<string, EditorEventItem> visualPrefabs = new Dictionary<string, EditorEventItem>();
-        readonly Dictionary<EditorEventItem.Type, string[]> ids = new Dictionary<EditorEventItem.Type, string[]>() {
-            { EditorEventItem.Type.trigger, new string[] { "collision" } },
-            { EditorEventItem.Type.action, new string[] { "teleport" } },
-            { EditorEventItem.Type.conditional, new string[] { "if" } }
+        readonly Dictionary<Type, string[]> ids = new Dictionary<Type, string[]>() {
+            { Type.trigger, new string[] { "collision" } },
+            { Type.action, new string[] { "teleport" } },
+            { Type.conditional, new string[] { "if" } }
         };
 
         void VisualInitialization()
@@ -98,12 +98,12 @@ namespace AngryDah.Editor.Event
             if (editor.SelectedBlock.Length == 1) VisualParse(editor.GetBlocStatus("Script", editor.SelectedBlock[0]));
         }
 
-        string[] triggerImplemented;
+        HashSet<string> triggerImplemented;
         public void VisualSave()
         {
-            triggerImplemented = new string[ids[EditorEventItem.Type.trigger].Length];
+            triggerImplemented = new HashSet<string>();
             string script = $"// Auto-generated script from the visual programming panel\n\n{VisualToScript(transform.GetChild(1).GetChild(1))}";
-            foreach (string id in ids[EditorEventItem.Type.trigger])
+            foreach (string id in ids[Type.trigger])
             {
                 if (!triggerImplemented.Contains(id)) script += $"\nvoid {id}()\n{{\n}}";
             }
@@ -117,7 +117,7 @@ namespace AngryDah.Editor.Event
                 if (script.Length > 0) script.AppendLine();
 
                 EditorEventItem item = go.GetComponent<EditorEventItem>();
-                if (item.type == EditorEventItem.Type.trigger)
+                if (item.type == Type.trigger)
                 {
                     script.AppendLine($"void {item.id}()");
                     script.AppendLine("{");
@@ -126,16 +126,16 @@ namespace AngryDah.Editor.Event
                         if (childField.transform.childCount > 0) script.AppendLine(VisualToScript(childField.transform, "\t"));
                     }
                     script.AppendLine("}");
-                    triggerImplemented.Append(item.id);
+                    triggerImplemented.Add(item.id);
                 }
-                else if (item.type == EditorEventItem.Type.action) script.AppendLine($"{item.id}()");
-                else if (item.type == EditorEventItem.Type.conditional)
+                else if (item.type == Type.action) script.AppendLine($"{item.id}()");
+                else if (item.type == Type.conditional)
                 {
                     string condition = "";
                     StringBuilder actions = new StringBuilder() { appendEmptyStrings = false };
                     foreach (EventField childField in item.fields)
                     {
-                        if (childField.accepted == EditorEventItem.Type.logicalOperator)
+                        if (childField.accepted == Type.logicalOperator)
                         {
                             if (!string.IsNullOrEmpty(condition)) condition += ", ";
                             condition += VisualToScript(childField.transform);
@@ -151,7 +151,7 @@ namespace AngryDah.Editor.Event
                     script.AppendLine($"if ({condition})");
                     script.Merge(actions);
                 }
-                else if (item.type == EditorEventItem.Type.logicalOperator)
+                else if (item.type == Type.logicalOperator)
                     throw new System.NotImplementedException("Logical operators are not supported for the moment");
             }
             return script.ToString();
