@@ -32,4 +32,5 @@ namespace AngryDash.Game.Event
             foreach (Interface @interface in interfaces) @interface.collision();
         }
     }
-}
+}
+

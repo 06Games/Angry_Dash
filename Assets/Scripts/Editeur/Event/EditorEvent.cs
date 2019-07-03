@@ -105,7 +105,7 @@ namespace AngryDah.Editor.Event
             string script = $"// Auto-generated script from the visual programming panel\n\n{VisualToScript(transform.GetChild(1).GetChild(1))}";
             foreach (string id in ids[Type.trigger])
             {
-                if (!triggerImplemented.Contains(id)) script += $"\nvoid {id}()\n{{\n}}";
+                if (!triggerImplemented.Contains(id)) script += $"\npublic void {id}()\n{{\n}}";
             }
             editor.ChangBlocStatus("Script", script, editor.SelectedBlock);
         }
@@ -119,7 +119,7 @@ namespace AngryDah.Editor.Event
                 EditorEventItem item = go.GetComponent<EditorEventItem>();
                 if (item.type == Type.trigger)
                 {
-                    script.AppendLine($"void {item.id}()");
+                    script.AppendLine($"public void {item.id}()");
                     script.AppendLine("{");
                     foreach (EventField childField in item.fields)
                     {
