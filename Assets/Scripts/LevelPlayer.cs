@@ -1,10 +1,7 @@
 ﻿using AngryDash.Image.Reader;
 using AngryDash.Language;
 using Level;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Tools;
 using UnityEngine;
 using UnityEngine.UI;

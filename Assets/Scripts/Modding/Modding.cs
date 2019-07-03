@@ -38,10 +38,12 @@ namespace AngryDash.Mod
         public static CompilerResults LoadScript(string code)
         {
             CodeDomProvider codeDomProvider = CodeDomProvider.CreateProvider("c#");
-            CompilerParameters compilerParams = new CompilerParameters();
-            compilerParams.GenerateExecutable = false;
-            compilerParams.GenerateInMemory = true;
-            compilerParams.IncludeDebugInformation = false;
+            CompilerParameters compilerParams = new CompilerParameters()
+            {
+                GenerateExecutable = false,
+                GenerateInMemory = true,
+                IncludeDebugInformation = false
+            };
 
 #if UNITY_EDITOR
             string dllPath = Application.dataPath + "/../Library/";
@@ -65,7 +67,7 @@ namespace AngryDash.Mod
             {
                 if (!type.IsClass || type.IsNotPublic) continue;
                 System.Type[] interfaces = type.GetInterfaces();
-                if (((System.Collections.Generic.IList<System.Type>)interfaces).Contains(typeof(IScript)))
+                if (((IList<System.Type>)interfaces).Contains(typeof(IScript)))
                 {
                     var obj = System.Activator.CreateInstance(type);
                     objs.Add(obj);

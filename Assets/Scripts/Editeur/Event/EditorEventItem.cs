@@ -1,11 +1,9 @@
 ﻿using AngryDash.Image.Reader;
-using System.Collections;
-using System.Collections.Generic;
 using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AngryDah.Editor.Event
+namespace AngryDash.Editor.Event
 {
     [System.Serializable]
     public class EventField

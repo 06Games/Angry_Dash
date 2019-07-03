@@ -2,7 +2,7 @@
 using UnityEngine.EventSystems;
 using Tools;
 
-namespace AngryDah.Editor.Event
+namespace AngryDash.Editor.Event
 {
     public class EditorEventDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {

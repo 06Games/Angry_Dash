@@ -5,7 +5,7 @@ using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace AngryDah.Editor.Event
+namespace AngryDash.Editor.Event
 {
     public class EditorEvent : MonoBehaviour
     {

@@ -1,8 +1,7 @@
 ﻿namespace AngryDash.Game.Event
 {
-    public interface Interface: Mod.IScript, ICollision
-    {
-    }
+    // Implement all required interface
+    public interface Interface: Mod.IScript, ICollision {}
 
     public interface ICollision { void collision(); }
 }
