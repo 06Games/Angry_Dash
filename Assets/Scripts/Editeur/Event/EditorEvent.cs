@@ -169,8 +169,8 @@ namespace AngryDash.Editor.Event
             string fieldID = null;
             foreach (string line in lines)
             {
-                if (line.Contains("void ")) //Trigger
-                    SpawnObj(line.Remove(line.LastIndexOf("(")).Remove(0, "void ".Length));
+                if (line.Contains("public void ")) //Trigger
+                    SpawnObj(line.Remove(line.LastIndexOf("(")).Remove(0, "public void ".Length));
                 else if (line.Contains("{")) parent = lastObj;
                 else if (line.Contains("}"))
                 {
@@ -192,7 +192,7 @@ namespace AngryDash.Editor.Event
                 }
                 else if (line.Contains("()")) //Action
                     SpawnObj(line.Remove(line.LastIndexOf("(")));
-                else
+                else if(!line.Contains("//", "/*") & line != "")
                 {
                     ChangeType(ProgType.textual, false);
                     break;

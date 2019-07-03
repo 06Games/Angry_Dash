@@ -50,6 +50,12 @@ namespace Tools
         public static string[] Split(this string s, params string[] delimiter) { return s.Split(delimiter, System.StringSplitOptions.None); }
         public static string[] Split(this string s, System.StringSplitOptions options, params string[] delimiter) { return s.Split(delimiter, options); }
 
+        public static bool Contains(this string s, params string[] values) {
+            foreach(string value in values)
+                if(s.Contains(value)) return true;
+            return false;
+        }
+
         public static string TrimEnd(this string s, params string[] trimStrings)
         {
             foreach (string str in trimStrings)
