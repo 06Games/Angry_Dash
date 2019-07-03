@@ -28,6 +28,7 @@ namespace AngryDah.Editor.Event
             }
 
             type = newType; //Set the new type
+            GetComponent<MenuManager>().Array((int)type); //Change the menu
 
             //Load
             if (type == ProgType.visual) UnityThread.executeInUpdate(() => VisualInitialization());
@@ -191,6 +192,11 @@ namespace AngryDah.Editor.Event
                 }
                 else if (line.Contains("()")) //Action
                     SpawnObj(line.Remove(line.LastIndexOf("(")));
+                else
+                {
+                    ChangeType(ProgType.textual, false);
+                    break;
+                }
             }
 
             GameObject SpawnObj(string id)
