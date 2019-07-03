@@ -1134,6 +1134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   id: 
+  methodName: PlayerUtilities.Teleport
   referenceSize: {x: 0, y: 0}
   fields: []
   parameters:

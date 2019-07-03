@@ -157,6 +157,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
 --- !u!222 &405201206149915775
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -528,6 +530,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
 --- !u!222 &4726995413968492571
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -784,6 +788,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 2
   id: 
+  methodName: if
   referenceSize: {x: 0, y: 0}
   fields:
   - accepted: 3
@@ -822,6 +827,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
 --- !u!1 &7461979794980436668
 GameObject:
   m_ObjectHideFlags: 0
@@ -951,6 +958,8 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
   m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
 --- !u!222 &1532572814647548684
 CanvasRenderer:
   m_ObjectHideFlags: 0

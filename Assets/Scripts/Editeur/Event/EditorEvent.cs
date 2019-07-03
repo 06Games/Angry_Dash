@@ -120,7 +120,7 @@ namespace AngryDash.Editor.Event
                 EditorEventItem item = go.GetComponent<EditorEventItem>();
                 if (item.type == Type.trigger)
                 {
-                    script.AppendLine($"public void {item.id}()");
+                    script.AppendLine($"public void {item.methodName}()");
                     script.AppendLine("{");
                     foreach (EventField childField in item.fields)
                     {
@@ -133,7 +133,7 @@ namespace AngryDash.Editor.Event
                 {
                     List<string> actions = new List<string>();
                     foreach (EventParameter parameter in item.parameters) actions.Add(parameter.value.text);
-                    script.AppendLine($"{item.id}({string.Join(", ", actions)});");
+                    script.AppendLine($"{item.methodName}({string.Join(", ", actions)});");
                 }
                 else if (item.type == Type.conditional)
                 {
@@ -154,7 +154,7 @@ namespace AngryDash.Editor.Event
                             actions.AppendLine("}");
                         }
                     }
-                    script.AppendLine($"if ({condition})");
+                    script.AppendLine($"{item.methodName} ({condition})");
                     script.Merge(actions);
                 }
                 else if (item.type == Type.logicalOperator)
@@ -221,9 +221,19 @@ namespace AngryDash.Editor.Event
                 }
             }
 
-            GameObject SpawnObj(string id)
+            GameObject SpawnObj(string method)
             {
-                if (visualPrefabs.ContainsKey(id))
+                string id = "";
+                if (visualPrefabs.ContainsKey(method)) id = method;
+                else
+                {
+                    foreach (EditorEventItem prefab in visualPrefabs.Values)
+                    {
+                        if (prefab.methodName == method) { id = prefab.id; break; }
+                    }
+                }
+
+                if(!string.IsNullOrEmpty(id))
                 {
                     EditorEventItem prefab = visualPrefabs[id];
                     Transform objParent = parent;

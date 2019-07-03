@@ -40,6 +40,7 @@ namespace AngryDash.Editor.Event
     {
         public Type type;
         [HideInInspector] public string id;
+        public string methodName;
         [HideInInspector] public Vector2 referenceSize;
 
         public EventField[] fields;

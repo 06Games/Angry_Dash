@@ -29,8 +29,7 @@ namespace AngryDash.Game.Event
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            foreach (Interface @interface in interfaces) @interface.collision();
+            foreach (Interface @interface in interfaces) @interface.Collision();
         }
     }
 }
-
