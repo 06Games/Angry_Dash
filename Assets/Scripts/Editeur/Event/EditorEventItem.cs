@@ -20,6 +20,7 @@ namespace AngryDash.Editor.Event
     public class EventParameter
     {
         public string id;
+        public InputField value;
         public RectTransform transform;
     }
 
@@ -64,6 +65,7 @@ namespace AngryDash.Editor.Event
         void Update()
         {
             var elements = transform.FindParent("Elements");
+            foreach (EventParameter parameter in parameters) parameter.value.interactable = elements == null;
             if (elements != null)
             {
                 if (type == Type.trigger)

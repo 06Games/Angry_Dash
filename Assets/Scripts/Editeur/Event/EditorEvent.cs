@@ -129,7 +129,12 @@ namespace AngryDash.Editor.Event
                     script.AppendLine("}");
                     triggerImplemented.Add(item.id);
                 }
-                else if (item.type == Type.action) script.AppendLine($"{item.id}()");
+                else if (item.type == Type.action)
+                {
+                    List<string> actions = new List<string>();
+                    foreach (EventParameter parameter in item.parameters) actions.Add(parameter.value.text);
+                    script.AppendLine($"{item.id}({string.Join(", ", actions)});");
+                }
                 else if (item.type == Type.conditional)
                 {
                     string condition = "";
@@ -167,8 +172,10 @@ namespace AngryDash.Editor.Event
             Transform lastParent = null;
             Transform lastObj = null;
             string fieldID = null;
-            foreach (string line in lines)
+            foreach (string l in lines)
             {
+                string line = l.Replace("\t", "");
+
                 if (line.Contains("public void ")) //Trigger
                     SpawnObj(line.Remove(line.LastIndexOf("(")).Remove(0, "public void ".Length));
                 else if (line.Contains("{")) parent = lastObj;
@@ -186,13 +193,28 @@ namespace AngryDash.Editor.Event
                     fieldID = "then";
                 }
                 else if (line.Contains("else"))
-                { 
+                {
                     parent = lastParent; //Restore the IF
                     fieldID = "else";
                 }
-                else if (line.Contains("()")) //Action
-                    SpawnObj(line.Remove(line.LastIndexOf("(")));
-                else if(!line.Contains("//", "/*") & line != "")
+                else if (line.Contains("(") & line.Contains(")")) //Action
+                {
+                    int argIndex = line.LastIndexOf("(");
+                    var go = SpawnObj(line.Remove(argIndex));
+                    if (go != null)
+                    {
+                        EditorEventItem item = go.GetComponent<EditorEventItem>();
+                        argIndex += 1;
+                        string[] args = line.Substring(argIndex, line.LastIndexOf(")") - argIndex).Split(", ");
+                        for (int i = 0; i < args.Length & i < item.parameters.Length; i++) item.parameters[i].value.text = args[i];
+                    }
+                    else
+                    {
+                        ChangeType(ProgType.textual, false);
+                        break;
+                    }
+                }
+                else if (!line.Contains("//", "/*") & line != "")
                 {
                     ChangeType(ProgType.textual, false);
                     break;
@@ -217,7 +239,7 @@ namespace AngryDash.Editor.Event
                     lastObj = go.transform;
                     return go;
                 }
-                else return null;
+                else { Debug.Log(id); return null; }
             }
 
             UnityThread.executeInUpdate(() =>
