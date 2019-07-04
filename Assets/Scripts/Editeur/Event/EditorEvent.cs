@@ -118,47 +118,50 @@ namespace AngryDash.Editor.Event
                 if (script.Length > 0) script.AppendLine();
 
                 EditorEventItem item = go.GetComponent<EditorEventItem>();
-                if (item.type == Type.trigger)
+                if (field.name != "Programme" | item.type == Type.trigger)
                 {
-                    script.AppendLine($"public void {item.methodName}()");
-                    script.AppendLine("{");
-                    foreach (EventField childField in item.fields)
+                    if (item.type == Type.trigger)
                     {
-                        if (childField.transform.childCount > 0) script.AppendLine(VisualToScript(childField.transform, "\t"));
+                        script.AppendLine($"public void {item.methodName}()");
+                        script.AppendLine("{");
+                        foreach (EventField childField in item.fields)
+                        {
+                            if (childField.transform.childCount > 0) script.AppendLine(VisualToScript(childField.transform, "\t"));
+                        }
+                        script.AppendLine("}");
+                        triggerImplemented.Add(item.id);
                     }
-                    script.AppendLine("}");
-                    triggerImplemented.Add(item.id);
-                }
-                else if (item.type == Type.action)
-                {
-                    List<string> actions = new List<string>();
-                    foreach (EventParameter parameter in item.parameters) actions.Add(parameter.value.text);
-                    script.AppendLine($"{item.methodName}({string.Join(", ", actions)});");
-                }
-                else if (item.type == Type.conditional)
-                {
-                    string condition = "";
-                    StringBuilder actions = new StringBuilder() { appendEmptyStrings = false };
-                    foreach (EventField childField in item.fields)
+                    else if (item.type == Type.action)
                     {
-                        if (childField.accepted == Type.logicalOperator)
-                        {
-                            if (!string.IsNullOrEmpty(condition)) condition += ", ";
-                            condition += VisualToScript(childField.transform);
-                        }
-                        else
-                        {
-                            if (childField.id != "then") actions.AppendLine(childField.id);
-                            actions.AppendLine("{");
-                            if (childField.transform.childCount > 0) actions.AppendLine(VisualToScript(childField.transform, "\t"));
-                            actions.AppendLine("}");
-                        }
+                        List<string> actions = new List<string>();
+                        foreach (EventParameter parameter in item.parameters) actions.Add(parameter.value.text);
+                        script.AppendLine($"{item.methodName}({string.Join(", ", actions)});");
                     }
-                    script.AppendLine($"{item.methodName} ({condition})");
-                    script.Merge(actions);
+                    else if (item.type == Type.conditional)
+                    {
+                        string condition = "";
+                        StringBuilder actions = new StringBuilder() { appendEmptyStrings = false };
+                        foreach (EventField childField in item.fields)
+                        {
+                            if (childField.accepted == Type.logicalOperator)
+                            {
+                                if (!string.IsNullOrEmpty(condition)) condition += ", ";
+                                condition += VisualToScript(childField.transform);
+                            }
+                            else
+                            {
+                                if (childField.id != "then") actions.AppendLine(childField.id);
+                                actions.AppendLine("{");
+                                if (childField.transform.childCount > 0) actions.AppendLine(VisualToScript(childField.transform, "\t"));
+                                actions.AppendLine("}");
+                            }
+                        }
+                        script.AppendLine($"{item.methodName} ({condition})");
+                        script.Merge(actions);
+                    }
+                    else if (item.type == Type.logicalOperator)
+                        throw new System.NotImplementedException("Logical operators are not supported for the moment");
                 }
-                else if (item.type == Type.logicalOperator)
-                    throw new System.NotImplementedException("Logical operators are not supported for the moment");
             }
             return script.ToString();
         }
@@ -249,7 +252,7 @@ namespace AngryDash.Editor.Event
                     lastObj = go.transform;
                     return go;
                 }
-                else { Debug.Log(id); return null; }
+                else return null;
             }
 
             UnityThread.executeInUpdate(() =>
