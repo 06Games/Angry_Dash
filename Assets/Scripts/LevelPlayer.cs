@@ -108,10 +108,10 @@ namespace AngryDash.Game
             if (size.y < size.x) match = 0;
             ArrierePlan.GetComponent<CanvasScaler>().matchWidthOrHeight = match;
 
-            while (GetComponent<MainCam>().Player == null) { }
+            while (Player.userPlayer == null) { }
             if (level.player == null) level.player = new Level.Player();
             if (level.victoryConditions == null) level.victoryConditions = new VictoryConditions();
-            GetComponent<MainCam>().Player.GetComponent<Player>().levelSettings = level.player.DeepClone();
+            Player.userPlayer.levelSettings = level.player.DeepClone();
 
             Transform place = new GameObject("Items").transform;
             for (int i = 0; i < level.blocks.Length; i++) Instance(i, place);
@@ -134,7 +134,7 @@ namespace AngryDash.Game
 
 
             Time.timeScale = 1;
-            GetComponent<MainCam>().Player.GetComponent<Player>().PeutAvancer = true; //Le niveau est chargé, le joueur peut bouger
+            Player.userPlayer.PeutAvancer = true; //Le niveau est chargé, le joueur peut bouger
         }
 
         public void Instance(int num, Transform place)
@@ -175,8 +175,8 @@ namespace AngryDash.Game
             {
                 if (id == 0.1F) //Start
                 {
-                    GetComponent<MainCam>().Player.transform.position = pos;
-                    GetComponent<MainCam>().Player.GetComponent<Player>().PositionInitiale = pos;
+                    Player.userPlayer.transform.position = pos;
+                    Player.userPlayer.PositionInitiale = pos;
                 }
                 else if (id == 0.2F) //Stop
                 {
@@ -191,7 +191,7 @@ namespace AngryDash.Game
                     go.name = "Objet n° " + num;
                     UImage_Reader reader = go.GetComponent<UImage_Reader>().Load();
                     go.transform.localScale = new Vector2(100, 100) / reader.FrameSize * 50;
-                    go.SetActive(GetComponent<MainCam>().Player.GetComponent<Player>().levelSettings.respawnMode == 1);
+                    go.SetActive(Player.userPlayer.levelSettings.respawnMode == 1);
                 }
                 else if (id == 0.4F) //Move
                 {
@@ -267,7 +267,7 @@ namespace AngryDash.Game
             if (pause) Time.timeScale = 0;
             else Time.timeScale = 1;
 
-            Player player = GetComponent<MainCam>().Player.GetComponent<Player>();
+            Player player = Player.userPlayer;
             player.enabled = !pause;
             if (pause)
             {
@@ -313,7 +313,7 @@ namespace AngryDash.Game
             GameObject player = GameObject.Find("Player");
             if (player == null) player = GameObject.Find("Player(Clone)");
             if (player != null) Destroy(player);
-            GetComponent<MainCam>().Player = Instantiate(PlayerPrefab);
+            Player.userPlayer = Instantiate(PlayerPrefab).GetComponent<Player>();
             nbLancer = 0;
 
             Transform trace = GameObject.Find("Traces").transform;

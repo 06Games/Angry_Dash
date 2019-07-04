@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using System.Linq;
+using AngryDash.Game;
 
 public class MoveTrigger : MonoBehaviour
 {
@@ -51,7 +52,7 @@ public class MoveTrigger : MonoBehaviour
             }
             else if (AffectationType == 1)
             {
-                affectedPos = GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.position;
+                affectedPos = Player.userPlayer.transform.position;
                 affectedPos.z = -10;
                 affectedRot = new Vector3();
             }
@@ -98,7 +99,7 @@ public class MoveTrigger : MonoBehaviour
                 i--;
             }
         }
-        Vector2 InitialPlayerPos = GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.position;
+        Vector2 InitialPlayerPos = Player.userPlayer.transform.position;
 
 
         System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -152,7 +153,7 @@ public class MoveTrigger : MonoBehaviour
                             if (TranslationFromPlayer[m])
                             {
                                 float distanceObjectPlayer = InitialPos[b][m] - InitialPlayerPos[m];
-                                float playerPos = GameObject.Find("Main Camera").GetComponent<MainCam>().Player.transform.position[m];
+                                float playerPos = Player.userPlayer.transform.position[m];
                                 pos[m] = distanceObjectPlayer + playerPos + (Translation[m] * 50);
                             }
                             else pos[m] = pos[m] + moveVector[m] * 50;

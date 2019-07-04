@@ -117,7 +117,7 @@ public class DebugMode : MonoBehaviour
     {
         bool on = ConfigAPI.GetBool("debug.showCoordinates");
 
-        if (player == null & Coordinates) player = GameObject.Find("Main Camera").GetComponent<MainCam>().Player;
+        if (player == null & Coordinates) player = AngryDash.Game.Player.userPlayer.gameObject;
         if (Coordinates) text.gameObject.SetActive(true);
 
         Vector2 playerPos = new Vector2(25, 25);

@@ -9,6 +9,7 @@ namespace AngryDash.Game
 {
     public class Player : MonoBehaviour
     {
+        public static Player userPlayer;
 
         //Dépendances
         public LevelPlayer LP;
@@ -43,17 +44,17 @@ namespace AngryDash.Game
 
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online")
             {
-
 #pragma warning disable CS0618 // En attendant la nouvelle API
                 if (GetComponent<NetworkIdentity>().isLocalPlayer)
 #pragma warning restore CS0618 // En attendant la nouvelle API
                 {
-                    LP.GetComponent<MainCam>().Player = gameObject;
+                    userPlayer = this;
                     GetComponent<SpriteRenderer>().color = new Color32(255, 185, 0, 255);
                     GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
                 }
-                else GetComponent<Player>().enabled = false;
+                else enabled = false;
             }
+            else userPlayer = this;
 
             FileFormat.XML.RootElement xml = Inventory.xmlDefault;
 
