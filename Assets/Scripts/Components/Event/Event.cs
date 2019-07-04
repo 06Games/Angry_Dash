@@ -20,7 +20,6 @@ namespace AngryDash.Game.Event
                 "\n{" +
                 "\npublic string Name { get { return \"Event\"; } }" +
                 "\npublic string Description { get { return \"An event script\"; } }" +
-                "\npublic void Start() {}" +
                 $"\n{script}" +
                 "\n}";
 

@@ -36,7 +36,7 @@ namespace AngryDash.Game
 
         private void Update()
         {
-            if (nbLancer > level.victoryConditions.maxThrow & level.victoryConditions.maxThrow > 0) Lost();
+            if (nbLancer > level.victoryConditions.maxThrow & level.victoryConditions.maxThrow > 0) Lost(Base);
             else nbLancerTxt.text = LangueAPI.Get("native", "levelPlayer.throw", "[0] Throw", nbLancer);
         }
 
@@ -261,8 +261,8 @@ namespace AngryDash.Game
             else return "";
         }
 
-        float oldSpeed = 1;
-        public void Pause(bool pause)
+        static float oldSpeed = 1;
+        public static void Pause(bool pause)
         {
             if (pause) Time.timeScale = 0;
             else Time.timeScale = 1;
@@ -323,7 +323,7 @@ namespace AngryDash.Game
             PlayLevel(level);
         }
 
-        void Lost()
+        public static void Lost(Transform Base)
         {
             Pause(true);
             Base.GetChild(6).gameObject.SetActive(true);
