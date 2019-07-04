@@ -3,7 +3,7 @@ using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace RewardChecker
+namespace AngryDash.Game.RewardChecker
 {
     /// <summary> For Official Levels </summary>
     public class Official
@@ -95,14 +95,12 @@ namespace RewardChecker
 
 public class Ending : MonoBehaviour
 {
-    AngryDash.Game.Player player;
-
-    void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision) { EndGame(collision.GetComponent<AngryDash.Game.Player>()); }
+    public static void EndGame(AngryDash.Game.Player player)
     {
         Transform EndPanel = GameObject.Find("Base").transform.GetChild(4);
         if (EndPanel == null) return;
         else if (EndPanel.gameObject.activeInHierarchy) return;
-        player = collision.gameObject.GetComponent<AngryDash.Game.Player>();
         player.PeutAvancer = false;
 
         EndPanel.GetChild(0).GetComponent<Text>().text = player.LP.level.name; //Sets the level name
@@ -126,7 +124,7 @@ public class Ending : MonoBehaviour
         int.TryParse(xml.GetItem("Money").Value, out int money);
         if (lvlPlayer.FromScene == "Home/Play/Official Levels")
         {
-            RewardChecker.Official reward = new RewardChecker.Official(lvlPlayer.level.name);
+            AngryDash.Game.RewardChecker.Official reward = new AngryDash.Game.RewardChecker.Official(lvlPlayer.level.name);
             reward.turn = lvlPlayer.nbLancer;
             gain = reward.money;
         }
