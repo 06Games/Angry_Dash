@@ -11,7 +11,9 @@ namespace AngryDash.Game.Event
 
         void Start()
         {
-            string code = "using AngryDash.Game.Event;" +
+            string code =
+                "using AngryDash.Game.Event;" + 
+                "\nusing AngryDash.Game.Event.Action;" +
                 "\nusing UnityEngine;" +
                 "\n" +
                 "\npublic class Script : Interface" +
