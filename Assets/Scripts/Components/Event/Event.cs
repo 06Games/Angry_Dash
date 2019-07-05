@@ -11,6 +11,8 @@ namespace AngryDash.Game.Event
 
         void Start()
         {
+            if (string.IsNullOrEmpty(script)) return;
+
             List<string> variables = new List<string>();
             foreach (System.Type type in Tools.TypeExtensions.GetTypesInNamespace("AngryDash.Game.Event.Action"))
             {
