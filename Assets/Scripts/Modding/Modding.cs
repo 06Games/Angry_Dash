@@ -47,19 +47,23 @@ namespace AngryDash.Mod
 
 #if UNITY_EDITOR
             string dllPath = Application.dataPath + "/../Library/";
-            compilerParams.ReferencedAssemblies.Add($"{dllPath}ScriptAssemblies/Assembly-CSharp.dll");
-            compilerParams.ReferencedAssemblies.Add($"{dllPath}UnityAssemblies/UnityEngine.dll");
+            //compilerParams.ReferencedAssemblies.Add($"{dllPath}UnityAssemblies/UnityEngine.dll");
+            compilerParams.ReferencedAssemblies.Add($"{dllPath}PlayerDataCache/Win64/Data/Managed/UnityEngine.CoreModule.dll");
             compilerParams.ReferencedAssemblies.Add($"{dllPath}UnityAssemblies/UnityEngine.UI.dll");
+            compilerParams.ReferencedAssemblies.Add($"{dllPath}ScriptAssemblies/Assembly-CSharp.dll");
 #else
         string dllPath = Application.dataPath + "/Managed/";
-        compilerParams.ReferencedAssemblies.Add($"{dllPath}UnityEngine.dll");
+        //compilerParams.ReferencedAssemblies.Add($"{dllPath}UnityEngine.dll");
+        compilerParams.ReferencedAssemblies.Add($"{dllPath}UnityEngine.CoreModule.dll");
         compilerParams.ReferencedAssemblies.Add($"{dllPath}UnityEngine.UI.dll");
         compilerParams.ReferencedAssemblies.Add($"{dllPath}Assembly-CSharp.dll");
 #endif
-            return codeDomProvider.CompileAssemblyFromSource(compilerParams, code);
+            var Result = codeDomProvider.CompileAssemblyFromSource(compilerParams, code);
+            foreach (var Error in Result.Errors) Debug.LogError(Error);
+            return Result;
         }
 
-        public static object[] GetPlugins(System.Reflection.Assembly assembly)
+        public static object[] GetPlugins(System.Reflection.Assembly assembly, bool autoStart = true)
         {
             if (assembly == null) return null;
             List<object> objs = new List<object>();
@@ -73,7 +77,7 @@ namespace AngryDash.Mod
                     objs.Add(obj);
 
                     IScript iScript = (IScript)obj;
-                    iScript.Start();
+                    if(autoStart) iScript.Start();
 
                     //Debug.Log(string.Format("{0} ({1})", iScript.Name, iScript.Description));
                 }
