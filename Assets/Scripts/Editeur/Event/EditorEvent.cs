@@ -192,11 +192,20 @@ namespace AngryDash.Editor.Event
                 else if (line.Contains("{")) parent = lastObj;
                 else if (line.Contains("}"))
                 {
-                    EditorEventItem parentItem = parent.GetComponent<EditorEventItem>();
-                    UnityThread.executeInUpdate(() => parentItem.UpdateSize());
-                    lastParent = parent;
-                    parent = parent.parent != topParent ? parent.parent.parent.parent : parent.parent;
+                    if (lastObj == parent)
+                    {
+                        parent = parent.parent != topParent ? parent.parent.parent.parent : parent.parent;
+                        Destroy(lastObj.gameObject); //The parent is empty, so delete it
+                    }
+                    else
+                    {
+                        EditorEventItem parentItem = parent.GetComponent<EditorEventItem>();
+                        UnityThread.executeInUpdate(() => parentItem.UpdateSize());
+                        lastParent = parent;
+                        parent = parent.parent != topParent ? parent.parent.parent.parent : parent.parent;
+                    }
                     fieldID = null;
+
                 }
                 else if (line.Contains("if (")) //Condition
                 {
