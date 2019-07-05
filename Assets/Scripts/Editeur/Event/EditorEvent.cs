@@ -106,7 +106,7 @@ namespace AngryDash.Editor.Event
             string script = $"// Auto-generated script from the visual programming panel\n\n{VisualToScript(transform.GetChild(1).GetChild(1))}";
             foreach (string id in ids[Type.trigger])
             {
-                if (!triggerImplemented.Contains(id)) script += $"\npublic void {id}()\n{{\n}}";
+                if (!triggerImplemented.Contains(id)) script += $"\npublic void {visualPrefabs[id].methodName}()\n{{\n}}";
             }
             editor.ChangBlocStatus("Script", script, editor.SelectedBlock);
         }
