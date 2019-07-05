@@ -60,7 +60,7 @@ namespace AngryDash.Editor.Event
         readonly Dictionary<Type, string[]> ids = new Dictionary<Type, string[]>() {
             { Type.trigger, new string[] { "start", "collision" } },
             { Type.action, new string[] { "end", "lose", "checkpoint", "teleport" } },
-            { Type.conditional, new string[] { "if" } }
+            //{ Type.conditional, new string[] { "if" } }
         };
 
         void VisualInitialization()
