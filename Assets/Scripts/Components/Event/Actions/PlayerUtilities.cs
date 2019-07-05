@@ -2,11 +2,11 @@
 
 namespace AngryDash.Game.Event.Action
 {
-    public class PlayerUtilities
+    public class PlayerUtilities : MonoBehaviour
     {
-        static Vector2 Coordinate(double x, double y) { return new Vector2((float)x * 50F + 25, (float)y * 50F + 25); }
+        static Vector2 Coordinate(float x, float y) { return new Vector2(x * 50F + 25, y * 50F + 25); }
 
-        public static void Teleport(double x, double y) { Player.userPlayer.transform.position = Coordinate(x, y); }
-        public static void Checkpoint(double x, double y) { Player.userPlayer.PositionInitiale = Coordinate(x, y); }
+        public static void Teleport(float x, float y) { Player.userPlayer.transform.position = Coordinate(x, y); }
+        public static void Checkpoint(float x, float y) { Player.userPlayer.PositionInitiale = Coordinate(x, y); }
     }
 }

@@ -56,13 +56,30 @@ namespace Tools
             return false;
         }
 
-        public static string TrimEnd(this string s, params string[] trimStrings)
+        public static string Trim(this string target, string trimString) { return target.TrimStart(trimString).TrimEnd(trimString); }
+        public static string TrimStart(this string target, string trimString)
         {
-            foreach (string str in trimStrings)
+            if (string.IsNullOrEmpty(trimString)) return target;
+
+            string result = target;
+            while (result.StartsWith(trimString))
             {
-                if (s.EndsWith(str)) return s.Remove(s.Length - str.Length, str.Length);
+                result = result.Substring(trimString.Length);
             }
-            return s;
+
+            return result;
+        }
+        public static string TrimEnd(this string target, string trimString)
+        {
+            if (string.IsNullOrEmpty(trimString)) return target;
+
+            string result = target;
+            while (result.EndsWith(trimString))
+            {
+                result = result.Substring(0, result.Length - trimString.Length);
+            }
+
+            return result;
         }
 
         public static byte[] ToByte(this string str) { return ToByte(str, Encoding.UTF8); }
@@ -489,6 +506,8 @@ namespace Tools
                 return (T)formatter.Deserialize(ms);
             }
         }
+
+        public static bool In<T>(this T obj, params T[] args) { return args.Contains(obj); }
     }
 
     public static class EnumerableExtensions

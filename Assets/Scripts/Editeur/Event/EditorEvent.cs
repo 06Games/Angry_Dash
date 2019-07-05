@@ -134,7 +134,15 @@ namespace AngryDash.Editor.Event
                     else if (item.type == Type.action)
                     {
                         List<string> actions = new List<string>();
-                        foreach (EventParameter parameter in item.parameters) actions.Add(parameter.value.text);
+                        foreach (EventParameter parameter in item.parameters)
+                        {
+                            string actionPrefix = "";
+                            string actionSufix = "";
+                            if (parameter.value.contentType == InputField.ContentType.DecimalNumber) actionSufix = "F";
+                            else if (parameter.value.contentType.In(InputField.ContentType.IntegerNumber, InputField.ContentType.Pin)) actionPrefix = actionSufix = "";
+                            else actionPrefix = actionSufix = "\"";
+                            actions.Add(actionPrefix + parameter.value.text + actionSufix);
+                        }
                         script.AppendLine($"{item.methodName}({string.Join(", ", actions)});");
                     }
                     else if (item.type == Type.conditional)
@@ -209,7 +217,15 @@ namespace AngryDash.Editor.Event
                         EditorEventItem item = go.GetComponent<EditorEventItem>();
                         argIndex += 1;
                         string[] args = line.Substring(argIndex, line.LastIndexOf(")") - argIndex).Split(", ");
-                        for (int i = 0; i < args.Length & i < item.parameters.Length; i++) item.parameters[i].value.text = args[i];
+                        for (int i = 0; i < args.Length & i < item.parameters.Length; i++)
+                        {
+                            string actionPrefix = "";
+                            string actionSufix = "";
+                            if (item.parameters[i].value.contentType == InputField.ContentType.DecimalNumber) actionSufix = "F";
+                            else if (item.parameters[i].value.contentType.In(InputField.ContentType.IntegerNumber, InputField.ContentType.Pin)) actionPrefix = actionSufix = "";
+                            else actionPrefix = actionSufix = "\"";
+                            item.parameters[i].value.text = args[i].TrimStart(actionPrefix).TrimEnd(actionSufix);
+                        }
                     }
                     else
                     {

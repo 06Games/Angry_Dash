@@ -7517,7 +7517,8 @@ MonoBehaviour:
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 242089713}
-          m_ObjectArgumentAssemblyTypeName: UImage_Reader, Assembly-CSharp
+          m_ObjectArgumentAssemblyTypeName: AngryDash.Image.Reader.UImage_Reader,
+            Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -55186,11 +55187,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8254708441080739064, guid: c1976bf1c424ae6418ca61a17ba1b58b,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 9160703775651151898, guid: c1976bf1c424ae6418ca61a17ba1b58b,
         type: 3}
       propertyPath: OnEchap.m_PersistentCalls.m_Calls.Array.size
@@ -55220,6 +55216,11 @@ PrefabInstance:
         type: 3}
       propertyPath: OnEchap.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 8254708441080739064, guid: c1976bf1c424ae6418ca61a17ba1b58b,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3628922541564842559, guid: c1976bf1c424ae6418ca61a17ba1b58b,
         type: 3}
