@@ -11,6 +11,13 @@ namespace AngryDash.Game.Event
 
         void Start()
         {
+            List<string> variables = new List<string>();
+            foreach (System.Type type in Tools.TypeExtensions.GetTypesInNamespace("AngryDash.Game.Event.Action"))
+            {
+                if (GetComponent(type) == null) gameObject.AddComponent(type);
+                variables.Add($"{type.Name} _{type.Name} {{ get {{ return _Event.GetRef<{type.Name}>(); }} }}");
+            }
+
             string code =
                 "using AngryDash.Game.Event;" +
                 "\nusing AngryDash.Game.Event.Action;" +
@@ -18,6 +25,8 @@ namespace AngryDash.Game.Event
                 "\n" +
                 "\npublic class Script : Interface" +
                 "\n{" +
+                "\npublic AngryDash.Game.Event.Event _Event { get; set; }" + 
+                $"\n{string.Join("\n", variables)}\n" +
                 "\npublic string Name { get { return \"Event\"; } }" +
                 "\npublic string Description { get { return \"An event script\"; } }" +
                 $"\n{script}" +
@@ -33,9 +42,12 @@ namespace AngryDash.Game.Event
 
             foreach (Interface @interface in interfaces)
             {
+                @interface._Event = this;
                 @interface.Start();
             }
         }
+
+        public T GetRef<T>() { return GetComponent<T>(); }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {

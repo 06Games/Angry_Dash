@@ -183,6 +183,17 @@ namespace Tools
         public string this[int line] { get { return _builder.ToString().Split("\n")[line]; }}
     }
 
+    public static class TypeExtensions
+    {
+        public static System.Type[] GetTypesInNamespace(string nameSpace)
+        {
+            return
+              System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
+                      .Where(t => string.Equals(t.Namespace, nameSpace, System.StringComparison.Ordinal))
+                      .ToArray();
+        }
+    }
+
     public static class Texture2DExtensions
     {
         public static Texture2D PremultiplyAlpha(this Texture2D texture)
