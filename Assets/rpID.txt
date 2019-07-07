@@ -95,7 +95,11 @@ native/GUI/editor/selectedByTrigger
 native/GUI/editor/build/button
 native/GUI/editor/build/buttonSelected
 native/GUI/editor/build/bubble
-native/GUI/editor/build/event
+native/GUI/editor/build/events/0.0
+native/GUI/editor/build/events/0.1
+native/GUI/editor/build/events/0.2
+native/GUI/editor/build/events/0.3
+native/GUI/editor/build/events/0.4
 native/GUI/editor/edit/button
 native/GUI/editor/edit/blocks/behavior
 native/GUI/editor/edit/blocks/color
@@ -112,12 +116,6 @@ native/GUI/editor/edit/event/visual/conditionalBackground
 native/GUI/editor/edit/event/visual/conditionalField
 native/GUI/editor/edit/event/visual/logicalOperatorBackground
 native/GUI/editor/edit/event/visual/logicalOperatorField
-native/GUI/editor/events/button
-native/GUI/editor/events/buttonSelected
-native/GUI/editor/events/0.1
-native/GUI/editor/events/0.2
-native/GUI/editor/events/0.3
-native/GUI/editor/events/0.4
 native/GUI/editor/options/background
 native/GUI/editor/options/button
 native/GUI/editor/options/exit

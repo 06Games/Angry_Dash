@@ -770,12 +770,9 @@ public class Editeur : MonoBehaviour
         BulleDeveloppementCat.SetActive(false);
         Transform Content = Toolbox.GO[3].GetComponent<ScrollRect>().content;
 
-        if (type == Level.Block.Type.Event) newblockid = 0;
-        else if (type == Level.Block.Type.Block)
-        {
-            if (!float.TryParse(blockID, out newblockid)) Debug.LogError("Unkown id: " + blockID);
-            Content.GetChild((int)newblockid).GetChild(0).GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + newblockid.ToString("0.0####")).Load();
-        }
+        if (!float.TryParse(blockID, out newblockid)) Debug.LogError("Unkown id: " + blockID);
+        string rootID = type == Level.Block.Type.Event ? "native/GUI/editor/build/events/" : "native/BLOCKS/";
+        Content.GetChild((int)newblockid).GetChild(0).GetComponent<UImage_Reader>().SetID(rootID + newblockid.ToString("0.0####")).Load();
 
         AddBlocking = true;
         for (int i = 0; i < Content.childCount; i++)
@@ -795,14 +792,19 @@ public class Editeur : MonoBehaviour
             AddBlocking = false;
             if (id >= 0) Toolbox.GO[3].GetComponent<ScrollRect>().content.GetChild(id).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").Load();
         }
-        else if (id < 1) SelectBlock(Level.Block.Type.Event); //Select the event
-        else //It's a block
+        else //Select
         {
             string path = Application.persistentDataPath + "/Ressources/default/textures/"; //The path to the default RP
             string[] files = new string[0];
 
-            string[] rootIDs = new string[] { "native/BLOCKS/" }; //Where to look for blocks ?
-            foreach (string rootID in rootIDs)
+            //Where to look for blocks ?
+            Dictionary<Level.Block.Type, string[]> rootIDs = new Dictionary<Level.Block.Type, string[]>(){
+                { Level.Block.Type.Event, new string[] { "native/GUI/editor/build/events/" } },
+                { Level.Block.Type.Block, new string[] { "native/BLOCKS/" } }
+            };
+
+            Level.Block.Type blockType = id < 1 ? Level.Block.Type.Event : Level.Block.Type.Block;
+            foreach (string rootID in rootIDs[blockType])
             {
                 string[] result = Directory.GetFiles(path + rootID, id + "*", SearchOption.AllDirectories);
                 for (int i = 0; i < result.Length; i++)
@@ -870,7 +872,7 @@ public class Editeur : MonoBehaviour
                         newRef.name = Path.GetFileNameWithoutExtension(files[i]);
                         newRef.transform.localPosition = new Vector3(i * 80, 0, 0);
                         newRef.transform.rotation = QuaternionExtensions.SetEuler(BulleDeveloppementCat.transform.rotation.eulerAngles.x, 0, 0);
-                        newRef.transform.GetComponent<Button>().onClick.AddListener(() => SelectBlock(Level.Block.Type.Block, newRef.name));
+                        newRef.transform.GetComponent<Button>().onClick.AddListener(() => SelectBlock(blockType, newRef.name));
 
                         newRef.transform.GetComponent<UImage_Reader>().SetID(files[i]).Load();
                     }
@@ -920,9 +922,7 @@ public class Editeur : MonoBehaviour
             go.name = "Objet n° " + num;
 
             UImage_Reader UImage = go.GetComponent<UImage_Reader>();
-            if (id == 0) UImage.SetID(level.blocks[num].category + "/GUI/editor/build/event").Load();
-            else if (id < 1) UImage.SetID(level.blocks[num].category + "/GUI/editor/events/" + id.ToString("0.0####")).Load();
-            else UImage.SetID(level.blocks[num].category + "/BLOCKS/" + id.ToString("0.0####")).Load();
+            UImage.SetID(level.blocks[num].category + (id < 1 ? "/GUI/editor/build/events/" : "/BLOCKS/") + id.ToString("0.0####")).Load();
 
             SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
             go.transform.localScale = new Vector2(100, 100) / UImage.FrameSize * 50;
