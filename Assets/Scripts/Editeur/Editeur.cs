@@ -924,14 +924,16 @@ public class Editeur : MonoBehaviour
             UImage_Reader UImage = go.GetComponent<UImage_Reader>();
             UImage.SetID(level.blocks[num].category + (id < 1 ? "/GUI/editor/build/events/" : "/BLOCKS/") + id.ToString("0.0####")).Load();
 
-            SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
-            go.transform.localScale = new Vector2(100, 100) / UImage.FrameSize * 50;
+            Vector2 frameSize = UImage.FrameSize;
+            if (frameSize == Vector2.zero) frameSize = new Vector2(100, 100);
+            go.transform.localScale = new Vector2(100, 100) / frameSize * 50;
             for (int i = 0; i < go.transform.childCount; i++)
             {
                 Texture2D SelectedZoneSize = go.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite.texture;
-                go.transform.GetChild(i).localScale = new Vector2(UImage.FrameSize.x / SelectedZoneSize.width, UImage.FrameSize.y / SelectedZoneSize.height);
+                go.transform.GetChild(i).localScale = new Vector2(frameSize.x / SelectedZoneSize.width, frameSize.y / SelectedZoneSize.height);
             }
 
+            SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
             SR.color = ColorExtensions.ParseHex(GetBlocStatus("Color", num));
             SR.sortingOrder = (int)level.blocks[num].position.z;
         }
