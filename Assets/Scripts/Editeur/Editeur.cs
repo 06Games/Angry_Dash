@@ -816,7 +816,7 @@ public class Editeur : MonoBehaviour
                 files = files.Union(result).ToArray();
             }
 
-            if (files.Length == 1) SelectBlock(Level.Block.Type.Block, Path.GetFileNameWithoutExtension(files[0])); //Select the block
+            if (files.Length == 1) SelectBlock(blockType, Path.GetFileName(files[0])); //Select the block
             else if (files.Length > 1) //Show the bubble
             {
                 Vector2 pos = Toolbox.GO[3].GetComponent<ScrollRect>().content.GetChild(id).localPosition;
@@ -869,7 +869,7 @@ public class Editeur : MonoBehaviour
                     {
                         GameObject newRef = Instantiate(BulleDeveloppementCat.transform.GetChild(0).gameObject, BulleDeveloppementCat.transform);
                         newRef.SetActive(true);
-                        newRef.name = Path.GetFileNameWithoutExtension(files[i]);
+                        newRef.name = Path.GetFileName(files[i]);
                         newRef.transform.localPosition = new Vector3(i * 80, 0, 0);
                         newRef.transform.rotation = QuaternionExtensions.SetEuler(BulleDeveloppementCat.transform.rotation.eulerAngles.x, 0, 0);
                         newRef.transform.GetComponent<Button>().onClick.AddListener(() => SelectBlock(blockType, newRef.name));
