@@ -1101,12 +1101,12 @@ public class Editeur : MonoBehaviour
                 else if (!fromUpdateScript)
                 {
                     NoBlocSelectedPanel.SetActive(true);
-                    StartCoroutine(WaitForDesableNoBlocSelectedPanel(2F));
+                    StartCoroutine(WaitForDisableNoBlocSelectedPanel(2F));
                 }
             }
         }
     }
-    public IEnumerator WaitForDesableNoBlocSelectedPanel(float sec)
+    public IEnumerator WaitForDisableNoBlocSelectedPanel(float sec)
     {
         yield return new WaitForSeconds(sec);
         NoBlocSelectedPanel.SetActive(false);
