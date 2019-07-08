@@ -103,11 +103,11 @@ native/GUI/editor/build/events/0.4
 native/GUI/editor/edit/button
 native/GUI/editor/edit/blocks/behavior
 native/GUI/editor/edit/blocks/color
-native/GUI/editor/edit/blocks/group
-native/GUI/editor/edit/blocks/group/button
-native/GUI/editor/edit/blocks/group/selected
-native/GUI/editor/edit/blocks/group/selectedCommon
-native/GUI/editor/edit/blocks/group/selectedPanel
+native/GUI/editor/edit/blocks/groups
+native/GUI/editor/edit/blocks/groups/button
+native/GUI/editor/edit/blocks/groups/selected
+native/GUI/editor/edit/blocks/groups/selectedCommon
+native/GUI/editor/edit/blocks/groups/selectedPanel
 native/GUI/editor/edit/move/translation
 native/GUI/editor/edit/move/rotation
 native/GUI/editor/edit/move/targets

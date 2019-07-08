@@ -6514,7 +6514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/editor/edit/blocks/group
+  baseID: native/GUI/editor/edit/blocks/groups
   TextConfiguration: 0
   Type: 00000000000000000000000000000000
 --- !u!114 &211340230

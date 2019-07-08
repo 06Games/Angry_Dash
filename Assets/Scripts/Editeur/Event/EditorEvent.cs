@@ -59,7 +59,11 @@ namespace AngryDash.Editor.Event
         Dictionary<string, EditorEventItem> visualPrefabs = new Dictionary<string, EditorEventItem>();
         readonly Dictionary<Type, string[]> ids = new Dictionary<Type, string[]>() {
             { Type.trigger, new string[] { "start", "collision" } },
-            { Type.action, new string[] { "end", "lose", "checkpoint", "teleport", "changeTexture" } },
+            { Type.action, new string[] {
+                "end", "lose", "checkpoint", "teleport", //player
+                "changeTexture", //event
+                "color" //group
+            } },
             //{ Type.conditional, new string[] { "if" } }
         };
 
