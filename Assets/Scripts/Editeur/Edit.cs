@@ -39,9 +39,14 @@ public class Edit : MonoBehaviour
             if (editeur.SelectedBlock[0] < editeur.level.blocks.Length) block = editeur.level.blocks[editeur.SelectedBlock[0]];
 
             EditMenus menu = menus.Where(f => f.Type == block.type).FirstOrDefault();
-            if (menu != null) GetComponent<MenuManager>().Array(menu.Object);
-            else if (block.id == 0.4F) GetComponent<MenuManager>().Array(2); //Compatibility
-            else transform.parent.GetComponent<MenuManager>().Array(3);
+            if (block.id == 0.4F) GetComponent<MenuManager>().Array(2); //Compatibility
+            else if (block.id > 0 & block.id < 1) GetComponent<MenuManager>().Array(3);
+            else if (menu != null) GetComponent<MenuManager>().Array(menu.Object);
+            else
+            {
+                transform.parent.GetComponent<MenuManager>().Array(3);
+                editeur.SelectBlocking = false;
+            }
         }
         else
         {

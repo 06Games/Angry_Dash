@@ -6514,7 +6514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adda637c785f0b24c9ac90ecfa13f87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseID: native/GUI/editor/edit/blocks/groups
+  baseID: native/GUI/editor/edit/blocks/group
   TextConfiguration: 0
   Type: 00000000000000000000000000000000
 --- !u!114 &211340230
@@ -6537,7 +6537,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: af14aefb777746a45a30b586e5cdd1d7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: cca122f3d050b3847b2a29109bd2ee15, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
