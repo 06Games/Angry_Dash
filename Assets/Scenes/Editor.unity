@@ -4572,7 +4572,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.textual
   arg: []
 --- !u!114 &143001729
 MonoBehaviour:
@@ -13820,7 +13820,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 1254, y: -50}
+  m_AnchoredPosition: {x: 1254.1667, y: -50}
   m_SizeDelta: {x: 500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &499419976
@@ -18610,6 +18610,7 @@ GameObject:
   - component: {fileID: 668955311}
   - component: {fileID: 668955313}
   - component: {fileID: 668955312}
+  - component: {fileID: 668955314}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -18678,6 +18679,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 668955310}
   m_CullTransparentMesh: 0
+--- !u!114 &668955314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 668955310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  category: native
+  id: editor.edit.event.textual.save
+  arg: []
 --- !u!1 &675947992
 GameObject:
   m_ObjectHideFlags: 0
@@ -28419,7 +28435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: editor.event.title
+  id: editor.edit.event
   arg: []
 --- !u!114 &1076653444
 MonoBehaviour:
@@ -31273,7 +31289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual
   arg: []
 --- !u!114 &1160431295
 MonoBehaviour:
@@ -49732,7 +49748,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 729, y: -50}
+  m_AnchoredPosition: {x: 729.16675, y: -50}
   m_SizeDelta: {x: 500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1870124998

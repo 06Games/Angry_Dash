@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.collision
   arg: []
 --- !u!1 &7120860348086401708
 GameObject:

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5714897898175598049}
   - component: {fileID: 1145602677039138119}
   - component: {fileID: 2231094680490568688}
+  - component: {fileID: 8285354565877084975}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -79,6 +80,21 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Losing the game
+--- !u!114 &8285354565877084975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4807636078909596855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  category: native
+  id: editor.edit.event.visual.lose
+  arg: []
 --- !u!1 &7120860348086401708
 GameObject:
   m_ObjectHideFlags: 0

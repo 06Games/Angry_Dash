@@ -1,4 +1,4 @@
-﻿native/GUI/logo
+native/GUI/logo
 native/GUI/mainMenu/background
 native/GUI/mainMenu/button
 native/GUI/mainMenu/inventory

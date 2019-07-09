@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.if.else
   arg: []
 --- !u!1 &2040503124080601178
 GameObject:
@@ -304,7 +304,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.if
   arg: []
 --- !u!1 &5080693561301300656
 GameObject:
@@ -399,7 +399,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.if.then
   arg: []
 --- !u!1 &6387615468937283723
 GameObject:

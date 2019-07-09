@@ -239,7 +239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.color.b
   arg: []
 --- !u!1 &1244736443878527523
 GameObject:
@@ -719,7 +719,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.color.group
   arg: []
 --- !u!1 &2167679770465557267
 GameObject:
@@ -1398,6 +1398,7 @@ GameObject:
   - component: {fileID: 5714897898175598049}
   - component: {fileID: 1145602677039138119}
   - component: {fileID: 2231094680490568688}
+  - component: {fileID: 4823833156568977552}
   m_Layer: 5
   m_Name: Label
   m_TagString: Untagged
@@ -1466,6 +1467,21 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Color
+--- !u!114 &4823833156568977552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4807636078909596855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0a0468a2afa774419fad285150a8baf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  category: native
+  id: editor.edit.event.visual.color
+  arg: []
 --- !u!1 &5351004858427389524
 GameObject:
   m_ObjectHideFlags: 0
@@ -1835,7 +1851,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.color.g
   arg: []
 --- !u!1 &6067309855315949534
 GameObject:
@@ -1930,7 +1946,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.color.r
   arg: []
 --- !u!1 &6743817157107790791
 GameObject:
