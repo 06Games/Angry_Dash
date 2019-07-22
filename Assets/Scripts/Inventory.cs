@@ -116,8 +116,20 @@ public class Inventory : MonoBehaviour
             string Name = shopItem[i].Attribute("name");
             items[i] = new InvItem(Name, price);
         }
+        if (ItemsRoot != null)
+        {
+            FileFormat.XML.Item[] shopItem = ItemsRoot.GetItems("item");
+            items = new InvItem[shopItem.Length];
+            for (int i = 0; i < shopItem.Length; i++)
+            {
+                float price = 0;
+                float.TryParse(shopItem[i].Value, out price);
+                string Name = shopItem[i].Attribute("name");
+                items[i] = new InvItem(Name, price);
+            }
 
-        Reload();
+            Reload();
+        }
     }
 
     /// <summary> Display all items </summary>
