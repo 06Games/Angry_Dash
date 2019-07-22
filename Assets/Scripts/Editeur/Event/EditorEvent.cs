@@ -18,14 +18,10 @@ namespace AngryDash.Editor.Event
         {
             if (save)
             {
-                //Save
-                if (type == ProgType.visual)
-                {
-                    VisualSave();
-                    foreach (Transform child in transform.GetChild(1).GetChild(1)) Destroy(child.gameObject);
-                }
+                if (type == ProgType.visual) VisualSave();
                 else if (type == ProgType.textual) TextualSave();
             }
+            foreach (Transform child in transform.GetChild(1).GetChild(1)) Destroy(child.gameObject);
 
             type = newType; //Set the new type
             GetComponent<MenuManager>().Array((int)type); //Change the menu
