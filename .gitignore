@@ -5,7 +5,10 @@
 *.leu
 *.sln
 *.userprefs
-Library/
+/Library/*
+!/Library/PackageCache/
+/Library/PackageCache/com.unity.*
+/Library/PackageCache/nuget.*
 Logs/
 obj/
 Temp/

@@ -747,6 +747,14 @@ PlayerSettings:
     1: CT_FB;RHSD
     4: NO_GPGS;CT_FB
     7: CT_FB
+    13: CT_FB
+    14: CT_FB
+    19: CT_FB
+    21: CT_FB
+    25: CT_FB
+    26: CT_FB
+    27: CT_FB
+    28: CT_FB
   platformArchitecture: {}
   scriptingBackend:
     Android: 1
