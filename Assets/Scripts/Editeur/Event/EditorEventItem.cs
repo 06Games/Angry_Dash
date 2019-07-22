@@ -71,7 +71,7 @@ namespace AngryDash.Editor.Event
             {
                 if (type == Type.trigger)
                 {
-                    bool enable = elements.parent.GetChild(1).Find($"{id}(Clone)(Clone)") == null;
+                    bool enable = elements.parent.parent.GetChild(1).Find($"{id}(Clone)(Clone)") == null;
                     if (enable != lastEnable)
                     {
                         GetComponent<UImage_Reader>().StartAnimating(3, enable ? -1 : 1);

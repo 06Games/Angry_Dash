@@ -70,7 +70,7 @@ namespace AngryDash.Editor.Event
         void VisualInitialization()
         {
             Transform visual = transform.GetChild(1);
-            Transform elements = visual.GetChild(0).GetComponent<ScrollRect>().content;
+            Transform elements = visual.GetChild(0).GetChild(0).GetComponent<ScrollRect>().content;
 
             List<string> idList = new List<string>();
             foreach (var keyPair in ids) idList.AddRange(keyPair.Value);
