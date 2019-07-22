@@ -106,15 +106,23 @@ public class Inventory : MonoBehaviour
         }
 
         FileFormat.XML.RootElement root = new FileFormat.XML.XML(Result).RootElement;
-        FileFormat.XML.Item ItemsRoot = root.GetItemByAttribute("version", "v", Application.version);
-        FileFormat.XML.Item[] shopItem = ItemsRoot.GetItems("item");
-        items = new InvItem[shopItem.Length];
-        for (int i = 0; i < shopItem.Length; i++)
+        FileFormat.XML.Item ItemsRoot = null;
+        foreach(var item in root.GetItems("version"))
         {
-            float price = 0;
-            float.TryParse(shopItem[i].Value, out price);
-            string Name = shopItem[i].Attribute("name");
-            items[i] = new InvItem(Name, price);
+            string[] versions = item.Attribute("v").Split("-");
+            if (versions.Length == 2)
+            {
+                Versioning actual = Versioning.Actual;
+                Versioning old = new Versioning(versions[0]);
+                Versioning newer = new Versioning(versions[1]);
+
+                //Check if the game version is between the defined versions
+                if (old.CompareTo(actual, Versioning.SortConditions.OlderOrEqual) & newer.CompareTo(actual, Versioning.SortConditions.NewerOrEqual))
+                {
+                    ItemsRoot = item;
+                    break;
+                }
+            }
         }
         if (ItemsRoot != null)
         {
