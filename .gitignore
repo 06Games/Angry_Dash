@@ -1,0 +1,13 @@
+.gradle/
+.vs/
+.vscode/
+*.csproj
+*.leu
+*.sln
+*.userprefs
+Library/
+Logs/
+obj/
+Temp/
+put
+*.log

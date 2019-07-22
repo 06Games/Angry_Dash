@@ -1,5 +1,5 @@
 #define MyAppName "Angry Dash"
-#define MyAppVersion "0.3"
+#define MyAppVersion "0.3.1"
 #define MyAppPublisher "06Games"
 #define MyAppURL "https://06games.ddns.net/"
 #define MyAppExeName "Angry Dash.exe"
@@ -31,7 +31,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "C:\Users\evan\Documents\Unity\Compiller\Angry Dash\Windows\Windows_Angry Dash {#MyAppVersion} - pre{#MyDateTimeString}\Angry Dash.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\evan\Documents\Unity\Compiller\Angry Dash\Windows\Windows_Angry Dash {#MyAppVersion} - pre{#MyDateTimeString}\*"; Excludes: "Angry Dash_Data\StreamingAssets\FFmpegOut~\OSX,Angry Dash_Data\StreamingAssets\FFmpegOut~\Linux"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\evan\Documents\Unity\Compiller\Angry Dash\Windows\Windows_Angry Dash {#MyAppVersion} - pre{#MyDateTimeString}\*"; Excludes: "Angry Dash_BackUpThisFolder_ButDontShipItWithYourGame\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
