@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 #endif
 using System.IO;
-using Crosstales.FB;
 using System;
+using SFB;
 
 /// <summary>
 /// https://github.com/ChrisMaire/unity-native-sharing
@@ -173,17 +173,20 @@ public static class NativeShare
     {
         if (filePath.Length == 1)
         {
-            string path = FileBrowser.SaveFile(title, directory, fileName[0], filters);
+            string path = StandaloneFileBrowser.SaveFilePanel(title, directory, fileName[0], filters);
             if (!string.IsNullOrEmpty(path))
                 File.Copy(filePath[0], path);
         }
         else if (filePath.Length > 1)
         {
-            string path = FileBrowser.OpenSingleFolder(title, directory);
-            if (!string.IsNullOrEmpty(path))
+            var paths = StandaloneFileBrowser.OpenFolderPanel(title, directory, false);
+            if (paths.Length > 0)
             {
-                for (int i = 0; i < filePath.Length; i++)
-                    File.Copy(filePath[i], path + fileName[i]);
+                if (!string.IsNullOrEmpty(paths[0]))
+                {
+                    for (int i = 0; i < filePath.Length; i++)
+                        File.Copy(filePath[i], paths[0] + fileName[i]);
+                }
             }
         }
     }

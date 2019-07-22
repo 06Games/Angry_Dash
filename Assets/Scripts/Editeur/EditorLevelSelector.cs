@@ -293,7 +293,7 @@ public class EditorLevelSelector : MonoBehaviour
 #if UNITY_STANDALONE || UNITY_EDITOR
         NativeShare.SharePC(files[index].FullName, "", "", //Path
             Path.GetFileNameWithoutExtension(files[index].Name), //Default file name
-            new Crosstales.FB.ExtensionFilter[] { new Crosstales.FB.ExtensionFilter("level file", "level") } //Windows filter
+            new SFB.ExtensionFilter[] { new SFB.ExtensionFilter("level file", "level") } //Windows filter
         );
 #elif UNITY_ANDROID || UNITY_IOS
         NativeShare.Share(
