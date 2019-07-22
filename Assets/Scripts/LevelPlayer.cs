@@ -158,8 +158,8 @@ namespace AngryDash.Game
                 SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
                 SR.color = HexToColor(color);
                 SR.sortingOrder = (int)level.blocks[num].position.z;
-                go.GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id.ToString(".0####")).Load();
-                go.transform.localScale = new Vector2(100F / SR.sprite.texture.width * 50, 100F / SR.sprite.texture.height * 50);
+                UImage_Reader reader = go.GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id.ToString(".0####")).Load();
+                go.transform.localScale = new Vector2(100, 100) / reader.FrameSize * 50;
 
                 go.GetComponent<Mur>().colider = colid;
                 go.GetComponent<Mur>().blockID = id;
