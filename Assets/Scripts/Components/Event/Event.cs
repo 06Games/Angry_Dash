@@ -1,60 +1,46 @@
-﻿using UnityEngine;
-using AngryDash.Mod;
-using System.Collections.Generic;
+﻿using MoonSharp.Interpreter;
+using System.Reflection;
+using UnityEngine;
 
 namespace AngryDash.Game.Event
 {
     public class Event : MonoBehaviour
     {
         public string script;
-        List<Interface> interfaces = new List<Interface>();
+        Script interpreter;
 
         void Start()
         {
             if (string.IsNullOrEmpty(script)) return;
 
-            List<string> variables = new List<string>();
-            foreach (System.Type type in Tools.TypeExtensions.GetTypesInNamespace("AngryDash.Game.Event.Action"))
+            interpreter = new Script();
+            interpreter.Globals.Set("go", UserData.Create(transform, UserData.GetDescriptorForObject(transform)));
+
+            string Namespace = "AngryDash.Game.Event.Action";
+            foreach (System.Type type in Tools.TypeExtensions.GetTypesInNamespace(Namespace))
             {
-                if (GetComponent(type) == null) gameObject.AddComponent(type);
-                variables.Add($"{type.Name} _{type.Name} {{ get {{ return _Event.GetRef<{type.Name}>(); }} }}");
+                foreach (var methodInfo in type.GetMethods())
+                {
+                    string methodName = GetMethodNameRelativeTo(methodInfo, Namespace).Replace(".", "_"); //Replace the dots with underscores because the Lua interpreter does not understand the structure of the C#
+                    interpreter.Globals[methodName] = CallbackFunction.FromMethodInfo(interpreter, methodInfo);
+                }
+            }
+            //Returns the path to the method from the given namespace
+            string GetMethodNameRelativeTo(MethodInfo methodInfo, string parentNamespace)
+            {
+                string _namespace = methodInfo.DeclaringType.FullName;
+                if (_namespace.StartsWith(parentNamespace)) _namespace = _namespace.Remove(0, parentNamespace.Length + 1);
+                return _namespace + "." + methodInfo.Name;
             }
 
-            string code =
-                "using AngryDash.Game.Event;" +
-                "\nusing AngryDash.Game.Event.Action;" +
-                "\nusing UnityEngine;" +
-                "\n" +
-                "\npublic class Script : Interface" +
-                "\n{" +
-                "\npublic AngryDash.Game.Event.Event _Event { get; set; }" + 
-                $"\n{string.Join("\n", variables)}\n" +
-                "\npublic string Name { get { return \"Event\"; } }" +
-                "\npublic string Description { get { return \"An event script\"; } }" +
-                $"\n{script}" +
-                "\n}";
-
-            object[] mods = Modding.GetPlugins(Modding.LoadScript(code).CompiledAssembly, false);
-#if UNITY_EDITOR
-            if (mods == null) Debug.LogError($"The script is invalid:\n{code}");
-#else
-            if (mods == null) Debug.LogError($"The script is invalid:\n{script}");
-#endif
-            else foreach (object mod in mods) interfaces.Add((Interface)mod);
-
-            foreach (Interface @interface in interfaces)
-            {
-                @interface._Event = this;
-                @interface.Start();
-            }
+            interpreter.DoString(script);
+            interpreter.Call(interpreter.Globals["Start"]);
         }
-
-        public T GetRef<T>() { return GetComponent<T>(); }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.GetComponent<Player>() != Player.userPlayer) return;
-            foreach (Interface @interface in interfaces) @interface.Collision();
+            interpreter.Call(interpreter.Globals["Collision"]);
         }
     }
 }

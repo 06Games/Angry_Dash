@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace AngryDash.Game.Event.Action
 {
-    public class BlockUtilities : MonoBehaviour
+    public class BlockUtilities
     {
         static List<int> GetBlocks(int group)
         {
-            Level.Block[] Blocks = FindObjectOfType<LevelPlayer>().level.blocks;
+            Level.Block[] Blocks = Player.userPlayer.LP.level.blocks;
             List<int> blocks = new List<int>();
             for (int i = 0; i < Blocks.Length; i++)
             {

@@ -2222,7 +2222,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   id: 
-  methodName: BlockUtilities.Color
+  methodName: BlockUtilities_Color
   referenceSize: {x: 0, y: 0}
   fields: []
   parameters:

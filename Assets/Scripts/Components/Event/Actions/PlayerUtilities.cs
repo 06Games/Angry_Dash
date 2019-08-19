@@ -2,7 +2,7 @@
 
 namespace AngryDash.Game.Event.Action
 {
-    public class PlayerUtilities : MonoBehaviour
+    public class PlayerUtilities
     {
         static Vector2 Coordinate(float x, float y) { return new Vector2(x * 50F + 25, y * 50F + 25); }
 

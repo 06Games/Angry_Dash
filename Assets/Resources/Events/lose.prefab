@@ -230,7 +230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   id: 
-  methodName: GameUtilities.Lose
+  methodName: GameUtilities_Lose
   referenceSize: {x: 0, y: 0}
   fields: []
   parameters: []

@@ -103,11 +103,7 @@ namespace AngryDash.Editor.Event
         public void VisualSave()
         {
             triggerImplemented = new HashSet<string>();
-            string script = $"// Auto-generated script from the visual programming panel\n\n{VisualToScript(transform.GetChild(1).GetChild(1))}";
-            foreach (string id in ids[Type.trigger])
-            {
-                if (!triggerImplemented.Contains(id)) script += $"\npublic void {visualPrefabs[id].methodName}()\n{{\n}}";
-            }
+            string script = $"-- Auto-generated script from the visual programming panel\n\n{VisualToScript(transform.GetChild(1).GetChild(1))}";
             editor.ChangBlocStatus("Script", script, editor.SelectedBlock);
         }
         private string VisualToScript(Transform field, string prefix = "")
@@ -122,13 +118,12 @@ namespace AngryDash.Editor.Event
                 {
                     if (item.type == Type.trigger)
                     {
-                        script.AppendLine($"public void {item.methodName}()");
-                        script.AppendLine("{");
+                        script.AppendLine($"function {item.methodName}()");
                         foreach (EventField childField in item.fields)
                         {
                             if (childField.transform.childCount > 0) script.AppendLine(VisualToScript(childField.transform, "\t"));
                         }
-                        script.AppendLine("}");
+                        script.AppendLine("end");
                         triggerImplemented.Add(item.id);
                     }
                     else if (item.type == Type.action)
@@ -138,12 +133,11 @@ namespace AngryDash.Editor.Event
                         {
                             string actionPrefix = "";
                             string actionSufix = "";
-                            if (parameter.value.contentType == InputField.ContentType.DecimalNumber) actionSufix = "F";
-                            else if (parameter.value.contentType.In(InputField.ContentType.IntegerNumber, InputField.ContentType.Pin)) actionPrefix = actionSufix = "";
+                            if (parameter.value.contentType.In(InputField.ContentType.IntegerNumber, InputField.ContentType.DecimalNumber, InputField.ContentType.Pin, InputField.ContentType.Custom)) actionPrefix = actionSufix = "";
                             else actionPrefix = actionSufix = "\"";
                             actions.Add(actionPrefix + parameter.value.text + actionSufix);
                         }
-                        script.AppendLine($"{item.methodName}({string.Join(", ", actions)});");
+                        script.AppendLine($"{item.methodName}({string.Join(", ", actions)})");
                     }
                     else if (item.type == Type.conditional)
                     {
@@ -159,9 +153,9 @@ namespace AngryDash.Editor.Event
                             else
                             {
                                 if (childField.id != "then") actions.AppendLine(childField.id);
-                                actions.AppendLine("{");
+                                actions.AppendLine("then");
                                 if (childField.transform.childCount > 0) actions.AppendLine(VisualToScript(childField.transform, "\t"));
-                                actions.AppendLine("}");
+                                actions.AppendLine("end");
                             }
                         }
                         script.AppendLine($"{item.methodName} ({condition})");
@@ -187,10 +181,9 @@ namespace AngryDash.Editor.Event
             {
                 string line = l.Replace("\t", "");
 
-                if (line.Contains("public void ")) //Trigger
-                    SpawnObj(line.Remove(line.LastIndexOf("(")).Remove(0, "public void ".Length));
-                else if (line.Contains("{")) parent = lastObj;
-                else if (line.Contains("}"))
+                if (line.Contains("function ")) //Trigger
+                    parent = SpawnObj(line.Remove(line.LastIndexOf("(")).Remove(0, "function ".Length)).transform;
+                else if (line.Contains("end"))
                 {
                     if (lastObj == parent)
                     {
@@ -230,8 +223,7 @@ namespace AngryDash.Editor.Event
                         {
                             string actionPrefix = "";
                             string actionSufix = "";
-                            if (item.parameters[i].value.contentType == InputField.ContentType.DecimalNumber) actionSufix = "F";
-                            else if (item.parameters[i].value.contentType.In(InputField.ContentType.IntegerNumber, InputField.ContentType.Pin)) actionPrefix = actionSufix = "";
+                            if (item.parameters[i].value.contentType.In(InputField.ContentType.IntegerNumber, InputField.ContentType.DecimalNumber, InputField.ContentType.Pin, InputField.ContentType.Custom)) actionPrefix = actionSufix = "";
                             else actionPrefix = actionSufix = "\"";
                             item.parameters[i].value.text = args[i].TrimStart(actionPrefix).TrimEnd(actionSufix);
                         }
@@ -242,7 +234,7 @@ namespace AngryDash.Editor.Event
                         break;
                     }
                 }
-                else if (!line.Contains("//", "/*") & line != "")
+                else if (!line.Contains("--") & line != "")
                 {
                     ChangeType(ProgType.textual, false);
                     break;
