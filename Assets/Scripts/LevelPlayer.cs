@@ -91,11 +91,11 @@ namespace AngryDash.Game
         public void PlayLevel(Infos item)
         {
             level = item;
-            Parse(); //Spawn blocks
+            StartCoroutine(Parse()); //Spawn blocks
             Discord.Presence(LangueAPI.Get("native", "discordPlaying_title", "Play a level"), "", new DiscordClasses.Img("default", LangueAPI.Get("native", "discordPlaying_caption", "Level : [0]", level.name)), null, -1, 0); //Sets the Discord Infos
         }
 
-        void Parse()
+        System.Collections.IEnumerator Parse()
         {
             for (int i = 0; i < ArrierePlan.childCount; i++)
             {
@@ -108,7 +108,7 @@ namespace AngryDash.Game
             if (size.y < size.x) match = 0;
             ArrierePlan.GetComponent<CanvasScaler>().matchWidthOrHeight = match;
 
-            while (Player.userPlayer == null) { }
+            yield return new WaitWhile(() => Player.userPlayer == null);
             if (level.player == null) level.player = new Level.Player();
             if (level.victoryConditions == null) level.victoryConditions = new VictoryConditions();
             Player.userPlayer.levelSettings = level.player.DeepClone();
