@@ -171,10 +171,10 @@ public class EditorLevelSelector : MonoBehaviour
     IEnumerator InfosPanelAnimation(bool open)
     {
         //Infos panel
-        Transform infos = transform.GetChild(2);
-        Vector2 pos = new Vector2(infos.position.x, 137.5F);
+        RectTransform infos = (RectTransform)transform.GetChild(2);
+        Vector2 pos = new Vector2(0, 137.5F);
         if (open) infos.position = new Vector2(pos.x, pos.y * -1);
-        else infos.position = pos;
+        else infos.anchoredPosition = pos;
         infos.gameObject.SetActive(true);
 
         //List
@@ -190,7 +190,7 @@ public class EditorLevelSelector : MonoBehaviour
             //Infos panel
             if (open) newpos.y = newpos.y + (pos.y * 2 / Speed);
             else newpos.y = newpos.y - (pos.y * 2 / Speed);
-            infos.position = newpos;
+            infos.anchoredPosition = newpos;
 
             //List
             if (open) newListOffset.y = newListOffset.y + (ListOffset.y / Speed);
