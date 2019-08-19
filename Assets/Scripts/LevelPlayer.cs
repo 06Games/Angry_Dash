@@ -158,8 +158,9 @@ namespace AngryDash.Game
                 SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
                 SR.color = HexToColor(color);
                 SR.sortingOrder = (int)level.blocks[num].position.z;
-                UImage_Reader reader = go.GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id.ToString(".0####")).Load();
-                go.transform.localScale = new Vector2(100, 100) / reader.FrameSize * 50;
+                Vector2 size = go.GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id.ToString(".0####")).Load().FrameSize;
+                if (size != Vector2.zero) go.transform.localScale = new Vector2(100, 100) / size * 50;
+                else go.transform.localScale = new Vector2(50, 50);
 
                 go.GetComponent<Mur>().colider = colid;
                 go.GetComponent<Mur>().blockID = id;
@@ -182,15 +183,17 @@ namespace AngryDash.Game
                 {
                     GameObject go = Instantiate(TriggerPref[0], pos, rot, place);
                     go.name = "Objet n° " + num;
-                    UImage_Reader reader = go.GetComponent<UImage_Reader>().Load();
-                    go.transform.localScale = new Vector2(100, 100) / reader.FrameSize * 50;
+                    Vector2 size = go.GetComponent<UImage_Reader>().Load().FrameSize;
+                    if (size != Vector2.zero) go.transform.localScale = new Vector2(100, 100) / size * 50;
+                    else go.transform.localScale = new Vector2(50, 50);
                 }
                 else if (id == 0.3F) //Checkpoint
                 {
                     GameObject go = Instantiate(TriggerPref[1], pos, rot, place);
                     go.name = "Objet n° " + num;
-                    UImage_Reader reader = go.GetComponent<UImage_Reader>().Load();
-                    go.transform.localScale = new Vector2(100, 100) / reader.FrameSize * 50;
+                    Vector2 size = go.GetComponent<UImage_Reader>().Load().FrameSize;
+                    if (size != Vector2.zero) go.transform.localScale = new Vector2(100, 100) / size * 50;
+                    else go.transform.localScale = new Vector2(50, 50);
                     go.SetActive(Player.userPlayer.levelSettings.respawnMode == 1);
                 }
                 else if (id == 0.4F) //Move
