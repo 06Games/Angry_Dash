@@ -97,9 +97,12 @@ namespace AngryDash.Image.Reader
         public void OnPointerDown(PointerEventData pointerEventData) { if (lastInteractable) StartAnimating(2, 1); }
         public void OnPointerUp(PointerEventData pointerEventData) { if (lastInteractable) StartAnimating(2, -1); }
         bool lastInteractable = true;
+        public bool autoChange { get; set; } = true;
         void Update()
         {
             if (GetComponent<Selectable>() == null) return;
+            else if (!autoChange) { lastInteractable = false; return; }
+
             if (GetComponent<Selectable>().interactable != lastInteractable)
             {
                 if (GetComponent<Selectable>().interactable) StartAnimating(3, -1);

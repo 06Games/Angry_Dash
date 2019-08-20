@@ -146,24 +146,42 @@ public class EditorLevelSelector : MonoBehaviour
     /// <param name="selected">Index of the level</param>
     public void Select(int selected)
     {
-        Transform infos = transform.GetChild(2);
-        try { xmlRoot = new FileFormat.XML.XML(File.ReadAllText(files[selected].FullName)).RootElement; } catch { xmlRoot = null; }
+        if (currentFile == selected) //Close the panel
+        {
+            GameObject infos = transform.GetChild(2).gameObject;
+            if (infos.activeInHierarchy)
+            {
+                StartCoroutine(InfosPanelAnimation(false));
+                transform.GetChild(1).GetChild(0).GetChild(0).GetChild(currentFile + 1).GetComponent<AngryDash.Image.Reader.UImage_Reader>().autoChange = true;
+                currentFile = -1;
+            }
+        }
+        else
+        {
+            Transform infos = transform.GetChild(2);
+            try { xmlRoot = new FileFormat.XML.XML(File.ReadAllText(files[selected].FullName)).RootElement; } catch { xmlRoot = null; }
 
-        //Description
-        DescriptionEditMode(false);
-        string Desc = LangueAPI.Get("native", "EditorEditInfosDescriptionError", "<color=red>Can not read the description</color>");
-        if (xmlRoot != null) Desc = xmlRoot.GetItem("description").Value;
-        infos.GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text = Desc.Format();
+            //Description
+            DescriptionEditMode(false);
+            string Desc = LangueAPI.Get("native", "EditorEditInfosDescriptionError", "<color=red>Can not read the description</color>");
+            if (xmlRoot != null) Desc = xmlRoot.GetItem("description").Value;
+            infos.GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text = Desc.Format();
 
-        //If infos panel is inactive, display it !
-        if (!infos.gameObject.activeInHierarchy) StartCoroutine(InfosPanelAnimation(true));
+            //If infos panel is inactive, display it !
+            if (!infos.gameObject.activeInHierarchy) StartCoroutine(InfosPanelAnimation(true));
 
-        //Disables the selected level button
-        Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
-        for (int i = 1; i < ListContent.childCount; i++)
-            ListContent.GetChild(i).GetComponent<Button>().interactable = (i - 1) != selected;
+            //Disables the selected level button
+            Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
+            for (int i = 1; i < ListContent.childCount; i++)
+            {
+                //ListContent.GetChild(i).GetComponent<Button>().interactable = (i - 1) != selected;
+                var reader = ListContent.GetChild(i).GetComponent<AngryDash.Image.Reader.UImage_Reader>();
+                reader.autoChange = (i - 1) != selected;
+                reader.StartAnimating((i - 1) == selected ? 3: 0);
+            }
 
-        currentFile = selected; //Set the level as selected
+            currentFile = selected; //Set the level as selected
+        }
     }
 
     /// <summary> Starts the opening/closing animation of the info panel </summary>
