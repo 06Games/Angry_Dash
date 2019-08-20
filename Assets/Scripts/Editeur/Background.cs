@@ -57,7 +57,7 @@ public class Background : MonoBehaviour
     {
         if (sp == null)
         {
-#if UNITY_STANDALONE_WIN || UNITY_EDITOR
+#if UNITY_STANDALONE_WIN
             IEnumerable<CodeProject.FileData> files = CodeProject.FastDirectoryEnumerator.EnumerateFiles(Application.persistentDataPath + "/Ressources/default/textures/native/BACKGROUNDS/", "* basic.png", SearchOption.TopDirectoryOnly);
 #else
             IEnumerable<FileInfo> files = new DirectoryInfo(Application.persistentDataPath + "/Ressources/default/textures/native/BACKGROUNDS/").EnumerateFiles("* basic.png", SearchOption.TopDirectoryOnly);
