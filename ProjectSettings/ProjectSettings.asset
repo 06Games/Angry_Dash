@@ -169,7 +169,7 @@ PlayerSettings:
   buildNumber:
     Standalone: 1
     iPhone: 41
-  AndroidBundleVersionCode: 41
+  AndroidBundleVersionCode: 42
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
