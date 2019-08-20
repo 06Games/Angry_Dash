@@ -1,37 +1,37 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Rapport de bug
+about: Créer un rapport pour nous aider à améliorer le jeu
 title: ''
 labels: bug
 assignees: ''
 
 ---
 
-** Describe the bug **
-A clear and concise description of what the bug is.
+### Description du bug
+Une description claire et concise du bug.
 
-**Reproduce**
-Steps to reproduce the problem:
-1. Go to '...'
-2. Click on '....'
-3. Scroll to "...."
-4. See error
+### Reproduction du bug
+Étapes à suivre pour reproduire le problème:
+1. Aller dans '...'
+2. Cliquer sur '....'
+3. Faire défiler jusqu'à "...."
+4. Voir erreur
 
-**Expected behaviour**
-A clear and concise description of what you expected.
+### Comportement attendu
+Une description claire et concise de vos attentes.
 
-**Screenshot**
-If applicable, add screenshots to explain your problem.
+### Capture d'écran
+Si possible, ajoutez des captures d'écran pour aider à comprendre votre problème.
 
-** Newspapers **
-Please provide your log file here
+### Fichiers Journaux
+Veuillez fournir votre fichier journal (log) ici
 
-** My configuration **
-*** Office (please fill in the following information): ***
-- OS: [for example `Windows 10`]
-- Version: [for example `0.3`]
+### Ma configuration
+*** Ordinateur (veuillez compléter les informations suivantes): ***
+- OS: [par exemple: `Windows 10`]
+- Version: [par exemple: `0.3`]
 
-*** Smartphone (please fill in the following information): ***
-- Device: [for example `iPhone 6`]
-- OS: [for example `iOS 12`]
-- Version: [for example `0.3`]
+*** Smartphone (veuillez compléter les informations suivantes): ***
+- Appareil: [par exemple: `iPhone 6`]
+- OS: [par exemple: `iOS 12`]
+- Version: [par exemple: `0.3`]

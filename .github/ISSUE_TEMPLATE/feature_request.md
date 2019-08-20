@@ -1,15 +1,15 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: Demande de fonctionnalité
+about: Proposer une nouvelle fonctionnalité pour ce projet
 title: ''
 labels: feature
 assignees: ''
 
 ---
 
-**The situation**
-Where: [for example. `In the main menu, play sub menu`]
-On which type of device (if applicable): [for example. `Mobile`]
+### Mise en situation
+**Où:** [par exemple: `Dans le menu principal, sous-menu jouer`]
+**Sur quel type d'appareil (le cas échéant):** [par exemple: `Sur mobile`]
 
-** The idea **
-Type your feature here with as much detail as possible
+### L'amélioration
+Tapez ici votre idée de fonctionnalité avec autant de détails que possible
