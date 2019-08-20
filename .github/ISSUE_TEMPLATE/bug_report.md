@@ -27,11 +27,11 @@ Si possible, ajoutez des captures d'écran pour aider à comprendre votre probl�
 Veuillez fournir votre fichier journal (log) ici
 
 ### Ma configuration
-*** Ordinateur (veuillez compléter les informations suivantes): ***
-- OS: [par exemple: `Windows 10`]
-- Version: [par exemple: `0.3`]
+***Ordinateur (veuillez compléter les informations suivantes):***
+- **OS:** [par exemple: `Windows 10`]
+- **Version:** [par exemple: `0.3`]
 
-*** Smartphone (veuillez compléter les informations suivantes): ***
-- Appareil: [par exemple: `iPhone 6`]
-- OS: [par exemple: `iOS 12`]
-- Version: [par exemple: `0.3`]
+***Smartphone (veuillez compléter les informations suivantes):***
+- **Appareil:** [par exemple: `iPhone 6`]
+- **OS:** [par exemple: `iOS 12`]
+- **Version:** [par exemple: `0.3`]
