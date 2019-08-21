@@ -34,13 +34,13 @@ namespace AngryDash.Game.Event
             }
 
             interpreter.DoString(script);
-            interpreter.Call(interpreter.Globals["Start"]);
+            if (interpreter.Globals.Get("Start").IsNotNil()) interpreter.Call(interpreter.Globals["Start"]);
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
             if (collision.GetComponent<Player>() != Player.userPlayer) return;
-            interpreter.Call(interpreter.Globals["Collision"]);
+            if(interpreter.Globals.Get("Collision").IsNotNil()) interpreter.Call(interpreter.Globals["Collision"]);
         }
     }
 }
