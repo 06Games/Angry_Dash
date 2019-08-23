@@ -75,7 +75,7 @@ public class Editor_MoveTrigger : MonoBehaviour
         #region BlockSelection
         if (GetComponent<MenuManager>().array == 1 & AffectationType == 0)
         {
-            editor.bloqueSelect = true;
+            editor.canInteract = false;
 
             if (array != GetComponent<MenuManager>().array | AffectationType != affected)
             {
@@ -160,7 +160,7 @@ public class Editor_MoveTrigger : MonoBehaviour
                 }
             }
 
-            editor.bloqueSelect = false;
+            editor.canInteract = true;
         }
 
         array = GetComponent<MenuManager>().array;

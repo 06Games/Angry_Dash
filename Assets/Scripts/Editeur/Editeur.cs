@@ -19,16 +19,14 @@ public class Editeur : MonoBehaviour
     [HideInInspector] public string file;
     public Level.Infos level;
 
-    bool AddBlocking;
     float newblockid = -1;
     [HideInInspector] public int selectedLayer = -2;
     public GameObject Prefab;
     public GameObject BulleDeveloppementCat;
 
-    [HideInInspector] public bool SelectBlocking;
-    [HideInInspector] public bool bloqueSelect = false;
-    bool SelectMode = false;
-    public int[] SelectedBlock;
+    [HideInInspector] public bool canInteract = true; //Can the user place/select blocks?
+    bool SelectMode = false; //Is the user in a menu where he has to select blocks ?
+    public int[] SelectedBlock; //The selected blocks
     public GameObject NoBlocSelectedPanel;
     public MenuManager Toolbox;
 
@@ -228,7 +226,6 @@ public class Editeur : MonoBehaviour
 
     void Update()
     {
-        GetComponent<SurClique>().enabled = SelectMode;
 #if UNITY_EDITOR || UNITY_STANDALONE
         transform.GetChild(0).GetChild(6).GetComponent<Text>().text =
         GetWorldPosition(Input.mousePosition, false).ToString("0.0");
@@ -238,26 +235,18 @@ public class Editeur : MonoBehaviour
 #endif
 
         //Détection de la localisation lors de l'ajout d'un bloc
-        if (AddBlocking & !bloqueSelect)
+        if (newblockid >= 0 & !SelectMode & canInteract)
         {
-            if (Input.GetKey(KeyCode.Mouse0) & !SelectMode)
+            if (Input.GetKey(KeyCode.Mouse0) && !IsHoverGUI())
             {
-                if (!IsHoverGUI())
-                {
-                    Vector2 pos = GetWorldPosition(Input.mousePosition);
-
-                    float id = newblockid;
-                    if (id > 10000)
-                        id = (newblockid - 10000F) / 10F;
-
-                    CreateBlock((int)pos.x, (int)pos.y, new Color32(190, 190, 190, 255));
-                }
+                Vector2 pos = GetWorldPosition(Input.mousePosition);
+                CreateBlock((int)pos.x, (int)pos.y, new Color32(190, 190, 190, 255));
             }
         }
 
-        if (SelectBlocking & !bloqueSelect)
+        if (SelectMode & canInteract)
         {
-            if (!IsHoverGUI())
+            if (Input.GetKey(KeyCode.Mouse0) && !IsHoverGUI())
             {
                 Vector2 pos = GetWorldPosition(Input.mousePosition);
 
@@ -267,91 +256,71 @@ public class Editeur : MonoBehaviour
                 bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
 #endif
 
-                int[] SelectedBlocks = SelectedBlock;
+                int[] previouslySelected = SelectedBlock;
 
                 int Selected = GetBloc((int)pos.x, (int)pos.y);
-                if(Selected != -1)
+                if(Selected >= 0)
                 {
-                    if (level.blocks[Selected].type == Level.Block.Type.Event) SelectCtrl = false;
+                    if (level.blocks[Selected].id == 0) SelectCtrl = false;
+
+                    if (SelectCtrl)
+                    {
+                        float blockId = level.blocks[Selected].id;
+                        float firstId = -1;
+                        if (SelectedBlock.Length > 0) firstId = level.blocks[SelectedBlock[0]].id;
+
+                        bool sameFamily = false;
+                        if (blockId >= 1 & firstId >= 1) sameFamily = true;
+                        else if (blockId < 1 & blockId > 0 & blockId == firstId) sameFamily = true;
+                        else if (firstId == -1) sameFamily = true;
+
+                        if (sameFamily) SelectedBlock = SelectedBlock.Union(new int[] { Selected }).ToArray();
+                    }
+                    else SelectedBlock = new int[] { Selected };
                 }
+                else if(!SelectCtrl) SelectedBlock = new int[0];
 
-                if (Selected == -1 & !SelectCtrl) SelectedBlock = new int[0];
-                else if (Selected != -1 & SelectCtrl & Selected < level.blocks.Length)
+                //Removes the selection marker from deselected blocks
+                foreach (int block in previouslySelected.Except(SelectedBlock))
                 {
-                    float blockId = level.blocks[Selected].id;
-                    float firstId = -1;
-                    if (SelectedBlock.Length > 0) firstId = level.blocks[SelectedBlock[0]].id;
-
-                    bool pass = false;
-                    if (blockId >= 1 & firstId >= 1) pass = true;
-                    else if (blockId < 1 & blockId > 0 & blockId == firstId) pass = true;
-                    else if (firstId == -1) pass = true;
-
-                    if (pass) SelectedBlock = SelectedBlock.Union(new int[] { Selected }).ToArray();
-                }
-                else if (!SelectCtrl) SelectedBlock = new int[] { Selected };
-
-                for (int i = 0; i < SelectedBlocks.Length; i++)
-                {
-                    Transform obj = transform.GetChild(1).Find("Objet n° " + SelectedBlocks[i]);
+                    Transform obj = transform.GetChild(1).Find("Objet n° " + block);
                     if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
                 }
-
-                SelectBlocking = false;
-            }
-        }
-
-
-#if UNITY_STANDALONE || UNITY_EDITOR
-        if (Input.GetKey(KeyCode.Mouse1) & !bloqueSelect & SelectMode)
-        {
-#else
-        SimpleGesture.OnLongTap(() => {
-#endif
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-            if (!bloqueSelect & SelectMode)
-            {
-                bool SelectCtrl = MultiSelect;
-#else
-            bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
-#endif
-
-            if (!IsHoverGUI())
-            {
-                Vector2 pos = GetWorldPosition(Input.mousePosition);
-                int Selected = GetBloc((int)pos.x, (int)pos.y);
-                if (Selected != -1 & SelectCtrl)
+                //Adds the selection marker of the newly selected blocks
+                foreach (int block in SelectedBlock.Except(previouslySelected))
                 {
-                    List<int> list = new List<int>(SelectedBlock);
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        if (SelectedBlock[i] == Selected)
-                        {
-                            list.RemoveAt(i);
-                            Transform obj = transform.GetChild(1).Find("Objet n° " + SelectedBlock[i]);
-                            SelectedBlock = list.ToArray();
-                            if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
-                        }
-                    }
-                    SelectedBlock = list.ToArray();
+                    Transform obj = transform.GetChild(1).Find("Objet n° " + block);
+                    if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(true);
                 }
             }
-        }
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-        });
-#endif
-        bool editPanel = Toolbox.array == 2 | Toolbox.array == 5;
-        if (NoBlocSelectedPanel.activeInHierarchy & editPanel & SelectedBlock.Length > 0) Toolbox.GO[2].GetComponent<Edit>().EnterToEdit();
-        NoBlocSelectedPanel.SetActive(editPanel & SelectedBlock.Length == 0);
-        if (SelectedBlock.Length > 0)
-        {
-            for (int i = 0; i < SelectedBlock.Length; i++)
-            {
-                Transform obj = transform.GetChild(1).Find("Objet n° " + SelectedBlock[i]);
-                if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(true);
-            }
-        }
 
+#if UNITY_STANDALONE || UNITY_EDITOR
+            if (Input.GetKey(KeyCode.Mouse1))
+            {
+#else
+            SimpleGesture.OnLongTap(() => {
+#endif
+                if (!IsHoverGUI())
+                {
+                    Vector2 pos = GetWorldPosition(Input.mousePosition);
+                    int Selected = GetBloc((int)pos.x, (int)pos.y);
+                    if (Selected != -1)
+                    {
+                        List<int> list = new List<int>(SelectedBlock);
+                        list.Remove(Selected);
+                        SelectedBlock = list.ToArray();
+
+                        Transform obj = transform.GetChild(1).Find("Objet n° " + Selected);
+                        if (obj != null) obj.transform.GetChild(0).gameObject.SetActive(false);
+                    }
+                }
+#if UNITY_STANDALONE || UNITY_EDITOR
+            }
+#else
+            });
+#endif
+        }
+        NoBlocSelectedPanel.SetActive(SelectMode & SelectedBlock.Length == 0);
 
 #if UNITY_STANDALONE || UNITY_EDITOR
         bool Ctrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
@@ -774,10 +743,9 @@ public class Editeur : MonoBehaviour
         string rootID = type == Level.Block.Type.Event ? "native/GUI/editor/build/events/" : "native/BLOCKS/";
         Content.GetChild((int)newblockid).GetChild(0).GetComponent<UImage_Reader>().SetID(rootID + newblockid.ToString("0.0####")).Load();
 
-        AddBlocking = true;
         for (int i = 0; i < Content.childCount; i++)
         {
-            string id = i == (int)newblockid & AddBlocking ? "native/GUI/editor/build/buttonSelected" : "native/GUI/editor/build/button";
+            string id = i == (int)newblockid ? "native/GUI/editor/build/buttonSelected" : "native/GUI/editor/build/button";
             Content.GetChild(i).GetComponent<UImage_Reader>().SetID(id).Load();
         }
     }
@@ -789,7 +757,6 @@ public class Editeur : MonoBehaviour
         if (id == (int)newblockid) //Deselect
         {
             newblockid = -1;
-            AddBlocking = false;
             if (id >= 0) Toolbox.GO[3].GetComponent<ScrollRect>().content.GetChild(id).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").Load();
         }
         else //Select
@@ -947,8 +914,6 @@ public class Editeur : MonoBehaviour
         return new Vector3(pos.x, pos.y, level.blocks[num].position.z);
     }
     #endregion
-
-    public void SelectBloc() { SelectBlocking = true; }
 
     /// <summary>Seach a block at the coordinates</summary>
     /// <param name="x">X position</param>
@@ -1141,6 +1106,6 @@ public class Editeur : MonoBehaviour
 
     //Inspector only
     public void SelectModeChang(bool enable) { SelectMode = enable; }
-    public void BloqueActions(bool on) { bloqueSelect = on; }
+    public void BloqueActions(bool on) { canInteract = !on; }
     public void OnEchap() { if (!string.IsNullOrEmpty(file) & !bloqueEchap) { ExitEdit(); cam.GetComponent<BaseControl>().returnScene = true; } }
 }

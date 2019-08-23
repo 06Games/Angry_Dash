@@ -31,7 +31,7 @@ namespace AngryDash.Editor.Event
             else if (type == ProgType.textual) TextualInitialization();
         }
 
-        void OnEnable() { editor.bloqueSelect = true; ChangeType(type, false); }
+        void OnEnable() { editor.canInteract = false; ChangeType(type, false); }
         public void Exit()
         {
             if (type == ProgType.visual)
@@ -48,7 +48,7 @@ namespace AngryDash.Editor.Event
             }
             editor.SelectedBlock = new int[0];
 
-            editor.bloqueSelect = false;
+            editor.canInteract = true;
         }
 
         #region Visual

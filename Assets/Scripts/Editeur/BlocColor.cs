@@ -45,8 +45,7 @@ public class BlocColor : MonoBehaviour
             if (Bloc.Length == 0) { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
             CP.CurrentColor = ColorExtensions.ParseHex(editeur.GetBlocStatus("Color", Bloc[0]));
             cpExpend.CurrentColor = ColorExtensions.ParseHex(editeur.GetBlocStatus("Color", Bloc[0]));
-            editeur.SelectBlocking = false;
-            editeur.bloqueSelect = expend;
+            editeur.canInteract = !expend;
             editeur.SelectedBlock = Bloc;
 
             GameObject BG = cpExpend.transform.GetChild(0).GetChild(0).gameObject;
@@ -61,7 +60,7 @@ public class BlocColor : MonoBehaviour
         else
         {
             cpExpend.transform.parent.gameObject.SetActive(expend);
-            editeur.bloqueSelect = false;
+            editeur.canInteract = true;
         }
     }
 }
