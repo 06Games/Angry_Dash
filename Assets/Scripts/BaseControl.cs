@@ -72,12 +72,15 @@ public class BaseControl : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.F11) & !VideoSettings.mobile())
         {
-            if (!Display.Screen.fullScreen) Display.Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
-            else Display.Screen.SetResolution(1366, 768, false);
-            ConfigAPI.SetBool("video.fullScreen", Display.Screen.fullScreen);
-
             if (SceneManager.GetActiveScene().name == "Home")
-                FindObjectOfType<SettingsApplicator>().objects[0].GetComponent<VideoSettings>().FullScreen(Display.Screen.fullScreen);
+                FindObjectOfType<SettingsApplicator>().objects[0].GetComponent<VideoSettings>().FullScreen(!Display.Screen.fullScreen);
+            else
+            {
+                bool fullscreen = !Display.Screen.fullScreen;
+                if (fullscreen) Display.Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
+                else Display.Screen.SetResolution(1366, 768, false);
+                ConfigAPI.SetBool("video.fullScreen", fullscreen);
+            }
         }
     }
 

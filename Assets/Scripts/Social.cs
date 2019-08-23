@@ -22,12 +22,12 @@ public class Social : MonoBehaviour
         #endif*/
     }
 
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR
     bool mWaitingForAuth = false;
 #endif
     public void Auth()
     {
-#if FALSE //UNITY_ANDROID
+#if FALSE //UNITY_ANDROID && !UNITY_EDITOR
         if (InternetAPI.IsConnected())
         {
             transform.GetChild(0).gameObject.SetActive(true);
