@@ -171,7 +171,7 @@ namespace AngryDash.Game
                 GameObject go = Instantiate(EventPrefab, pos, rot, place);
                 go.name = "Objet n° " + num;
                 go.transform.localScale = new Vector2(50, 50);
-                go.GetComponent<Event.Event>().script = GetBlocStatus("Script", num);
+                go.GetComponent<Events.Event>().script = GetBlocStatus("Script", num);
             }
             else //Compatibility Mode
             {
@@ -203,7 +203,7 @@ namespace AngryDash.Game
                     go.name = "Objet n° " + num;
                     go.transform.localScale = new Vector2(50, 50);
 
-                    MoveTrigger moveTrigger = go.GetComponent<MoveTrigger>();
+                    Events.MoveTrigger moveTrigger = go.GetComponent<Events.MoveTrigger>();
                     int.TryParse(GetBlocStatus("AffectationType", num), out moveTrigger.AffectationType);
                     int.TryParse(GetBlocStatus("Group", num), out moveTrigger.Group);
                     try { moveTrigger.Translation = Editor_MoveTrigger.getVector2(GetBlocStatus("Translation", num)); } catch { }

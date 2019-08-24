@@ -2,7 +2,7 @@
 using System.Reflection;
 using UnityEngine;
 
-namespace AngryDash.Game.Event
+namespace AngryDash.Game.Events
 {
     public class Event : MonoBehaviour
     {
@@ -16,7 +16,7 @@ namespace AngryDash.Game.Event
             interpreter = new Script();
             interpreter.Globals.Set("go", UserData.Create(transform, UserData.GetDescriptorForObject(transform)));
 
-            string Namespace = "AngryDash.Game.Event.Action";
+            string Namespace = "AngryDash.Game.API";
             foreach (System.Type type in Tools.TypeExtensions.GetTypesInNamespace(Namespace))
             {
                 foreach (var methodInfo in type.GetMethods())

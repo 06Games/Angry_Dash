@@ -3,7 +3,7 @@ using System.Linq;
 using Tools;
 using UnityEngine;
 
-namespace AngryDash.Game.Event.Action
+namespace AngryDash.Game.API
 {
     public class BlockUtilities
     {

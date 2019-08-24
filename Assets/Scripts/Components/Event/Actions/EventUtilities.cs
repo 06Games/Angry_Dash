@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using UnityEngine;
 
-namespace AngryDash.Game.Event.Action
+namespace AngryDash.Game.API
 {
     public class EventUtilities
     {

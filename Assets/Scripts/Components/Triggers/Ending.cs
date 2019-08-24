@@ -93,51 +93,54 @@ namespace AngryDash.Game.RewardChecker
     }
 }
 
-public class Ending : MonoBehaviour
+namespace AngryDash.Game.Events
 {
-    private void OnTriggerEnter2D(Collider2D collision) { EndGame(collision.GetComponent<AngryDash.Game.Player>()); }
-    public static void EndGame(AngryDash.Game.Player player)
+    public class Ending : MonoBehaviour
     {
-        Transform EndPanel = GameObject.Find("Base").transform.GetChild(4);
-        if (EndPanel == null) return;
-        else if (EndPanel.gameObject.activeInHierarchy) return;
-        player.PeutAvancer = false;
-
-        EndPanel.GetChild(0).GetComponent<Text>().text = player.LP.level.name; //Sets the level name
-        EndPanel.GetChild(2).GetChild(0).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online");
-        EndPanel.GetChild(2).GetChild(1).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online");
-        EndPanel.gameObject.SetActive(true);
-
-        FileFormat.XML.RootElement xml = Inventory.xmlDefault;
-        AngryDash.Game.LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<AngryDash.Game.LevelPlayer>();
-        int gain = 0;
-        int lastGain = 0;
-        FileFormat.XML.Item lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
-        if (lvlItem != null)
-            int.TryParse(lvlItem.Value, out lastGain);
-        else
+        private void OnTriggerEnter2D(Collider2D collision) { EndGame(collision.GetComponent<AngryDash.Game.Player>()); }
+        public static void EndGame(AngryDash.Game.Player player)
         {
-            xml.GetItemByAttribute("PlayedLevels", "type", "Official").CreateItem("level").CreateAttribute("name", lvlPlayer.level.name);
-            lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
-        }
+            Transform EndPanel = GameObject.Find("Base").transform.GetChild(4);
+            if (EndPanel == null) return;
+            else if (EndPanel.gameObject.activeInHierarchy) return;
+            player.PeutAvancer = false;
 
-        int.TryParse(xml.GetItem("Money").Value, out int money);
-        if (lvlPlayer.FromScene == "Home/Play/Official Levels")
-        {
-            AngryDash.Game.RewardChecker.Official reward = new AngryDash.Game.RewardChecker.Official(lvlPlayer.level.name);
-            reward.turn = lvlPlayer.nbLancer;
-            gain = reward.money;
-        }
+            EndPanel.GetChild(0).GetComponent<Text>().text = player.LP.level.name; //Sets the level name
+            EndPanel.GetChild(2).GetChild(0).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online");
+            EndPanel.GetChild(2).GetChild(1).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online");
+            EndPanel.gameObject.SetActive(true);
 
-        if (gain > lastGain)
-        {
-            lvlItem.Value = gain.ToString();
-            xml.GetItem("Money").Value = (money + gain - lastGain).ToString();
+            FileFormat.XML.RootElement xml = Inventory.xmlDefault;
+            AngryDash.Game.LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<AngryDash.Game.LevelPlayer>();
+            int gain = 0;
+            int lastGain = 0;
+            FileFormat.XML.Item lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
+            if (lvlItem != null)
+                int.TryParse(lvlItem.Value, out lastGain);
+            else
+            {
+                xml.GetItemByAttribute("PlayedLevels", "type", "Official").CreateItem("level").CreateAttribute("name", lvlPlayer.level.name);
+                lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
+            }
 
-            EndPanel.GetChild(1).GetChild(1).gameObject.SetActive(true);
-            EndPanel.GetChild(1).GetChild(1).GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.finished.reward.quantity", "x[0]", gain - lastGain);
+            int.TryParse(xml.GetItem("Money").Value, out int money);
+            if (lvlPlayer.FromScene == "Home/Play/Official Levels")
+            {
+                AngryDash.Game.RewardChecker.Official reward = new AngryDash.Game.RewardChecker.Official(lvlPlayer.level.name);
+                reward.turn = lvlPlayer.nbLancer;
+                gain = reward.money;
+            }
+
+            if (gain > lastGain)
+            {
+                lvlItem.Value = gain.ToString();
+                xml.GetItem("Money").Value = (money + gain - lastGain).ToString();
+
+                EndPanel.GetChild(1).GetChild(1).gameObject.SetActive(true);
+                EndPanel.GetChild(1).GetChild(1).GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.finished.reward.quantity", "x[0]", gain - lastGain);
+            }
+            else EndPanel.GetChild(1).GetChild(1).gameObject.SetActive(false);
+            Inventory.xmlDefault = xml;
         }
-        else EndPanel.GetChild(1).GetChild(1).gameObject.SetActive(false);
-        Inventory.xmlDefault = xml;
     }
 }
