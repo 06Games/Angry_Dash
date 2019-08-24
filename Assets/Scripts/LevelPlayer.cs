@@ -205,9 +205,7 @@ namespace AngryDash.Game
 
                     MoveTrigger moveTrigger = go.GetComponent<MoveTrigger>();
                     int.TryParse(GetBlocStatus("AffectationType", num), out moveTrigger.AffectationType);
-                    string[] Blocks = GetBlocStatus("Blocks", num).Split(new string[] { "," }, System.StringSplitOptions.None);
-                    if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
-                    moveTrigger.Blocks = Blocks;
+                    int.TryParse(GetBlocStatus("Group", num), out moveTrigger.Group);
                     try { moveTrigger.Translation = Editor_MoveTrigger.getVector2(GetBlocStatus("Translation", num)); } catch { }
                     string translationFrom = GetBlocStatus("TranslationFrom", num);
                     try

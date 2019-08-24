@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Tools;
 
 namespace Level
 {
@@ -279,11 +281,8 @@ namespace Level
         /// <param name="fileLines">File content</param>
         public static string UpdateLevel(string fileLines, string path = "")
         {
-            if (FileFormat.XML.Utils.IsValid(fileLines)) //0.3 and upper
-            {
-                return fileLines;
-            }
-            else //0.2 - 0.2.2
+            string updatedFile = fileLines;
+            if (!FileFormat.XML.Utils.IsValid(fileLines)) //0.2 - 0.2.2
             {
                 string[] newFileLines = fileLines.Split(new string[] { "\n" }, System.StringSplitOptions.None);
                 int v = -1;
@@ -432,10 +431,39 @@ namespace Level
                         }
                     }
                     updated.version = new Versioning("0.3");
-                    return updated.ToString();
+                    updatedFile = updated.ToString();
                 }
-                else return string.Join("\n", newFileLines);
+                else updatedFile = string.Join("\n", newFileLines);
             }
+
+            { //XML based versions (0.3 - now)
+                Infos updated = Infos.Parse(updatedFile);
+                if (updated.version.CompareTo(new Versioning("0.4"), Versioning.SortConditions.Older)) //0.3 to 0.4
+                {
+                    List<Block> moves = updated.blocks.Where(b => b.id == 0.4F).ToList();
+                    for (int i = 0; i < moves.Count; i++)
+                    {
+                        string blocks = moves[i].parameter["Blocks"];
+                        if (!string.IsNullOrEmpty(blocks))
+                        {
+                            foreach (string block in blocks.Split(","))
+                            {
+                                if (int.TryParse(block, out int index))
+                                {
+                                    string Group = updated.blocks[index].parameter["Groups"];
+                                    Group = Group + (string.IsNullOrEmpty(Group) ? "": ", ") + i.ToString();
+                                    updated.blocks[index].parameter["Groups"] = Group;
+                                }
+                            }
+                            moves[i].parameter["Group"] = i.ToString();
+                            moves[i].parameter.Remove("Blocks");
+                        }
+                    }
+                }
+                updatedFile = updated.ToString();
+            }
+
+            return updatedFile;
         }
         #endregion
     }

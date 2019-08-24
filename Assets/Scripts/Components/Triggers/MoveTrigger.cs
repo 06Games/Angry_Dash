@@ -1,13 +1,14 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using AngryDash.Game;
+using System.Collections;
 using System.Linq;
-using AngryDash.Game;
+using UnityEngine;
 
 public class MoveTrigger : MonoBehaviour
 {
+    public string[] Blocks;
 
     public int AffectationType = 0;
-    public string[] Blocks;
+    public int Group;
     public Vector2 Translation = new Vector2(0, 0);
     public bool[] TranslationFromPlayer = new bool[2];
     public int Type = 0;
@@ -30,6 +31,7 @@ public class MoveTrigger : MonoBehaviour
         GameObject[] go = null;
         if (AffectationType == 0)
         {
+            Blocks = AngryDash.Game.Event.Action.BlockUtilities.GetBlocks(Group).Select(x => x.ToString()).ToArray();
             go = new GameObject[Blocks.Length];
             for (int b = 0; b < Blocks.Length; b++)
                 go[b] = GameObject.Find("Objet n° " + Blocks[b]);
@@ -46,7 +48,7 @@ public class MoveTrigger : MonoBehaviour
         {
             if (AffectationType == 0)
             {
-                AngryDash.Game.LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<AngryDash.Game.LevelPlayer>();
+                LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
                 try { affectedPos = lvlPlayer.GetObjectPos(int.Parse(Blocks[0])); } catch { }
                 try { affectedRot = Editor_MoveTrigger.getVector3(lvlPlayer.GetBlocStatus("Rotation", int.Parse(Blocks[0]))); } catch { }
             }

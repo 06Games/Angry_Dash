@@ -7,15 +7,15 @@ namespace AngryDash.Game.Event.Action
 {
     public class BlockUtilities
     {
-        static List<int> GetBlocks(int group)
+        public static List<int> GetBlocks(int group)
         {
             Level.Block[] Blocks = Player.userPlayer.LP.level.blocks;
             List<int> blocks = new List<int>();
             for (int i = 0; i < Blocks.Length; i++)
             {
-                if (Blocks[i].parameter.ContainsKey("Group"))
+                if (Blocks[i].parameter.ContainsKey("Groups"))
                 {
-                    if (Blocks[i].parameter["Group"].Split(", ").Contains(group.ToString())) blocks.Add(i);
+                    if (Blocks[i].parameter["Groups"].Split(", ").Contains(group.ToString())) blocks.Add(i);
                 }
             };
             return blocks;

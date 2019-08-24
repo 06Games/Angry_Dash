@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class Editor_MoveTrigger : MonoBehaviour
@@ -13,7 +10,7 @@ public class Editor_MoveTrigger : MonoBehaviour
     int affected;
 
     public int AffectationType = 0;
-    public string[] Blocks;
+    public int Group;
     public Vector2 Translation;
     public bool[] TranslationFromPlayer = new bool[2];
     public int Type;
@@ -39,8 +36,7 @@ public class Editor_MoveTrigger : MonoBehaviour
                 SB = editor.SelectedBlock;
 
                 try { AffectationType = int.Parse(editor.GetBlocStatus("AffectationType", SB[0])); } catch { }
-                Blocks = editor.GetBlocStatus("Blocks", SB[0]).Split(new string[] { "," }, System.StringSplitOptions.None);
-                if (string.IsNullOrEmpty(Blocks[0]) | Blocks[0] == "Null") Blocks = new string[0];
+                int.TryParse(editor.GetBlocStatus("Group", SB[0]), out Group);
 
                 try { Translation = getVector2(editor.GetBlocStatus("Translation", SB[0])); } catch { }
                 string translationFrom = editor.GetBlocStatus("TranslationFrom", SB[0]);
@@ -71,107 +67,13 @@ public class Editor_MoveTrigger : MonoBehaviour
             }
             else { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
         }
-
-        #region BlockSelection
-        if (GetComponent<MenuManager>().array == 1 & AffectationType == 0)
-        {
-            editor.canInteract = false;
-
-            if (array != GetComponent<MenuManager>().array | AffectationType != affected)
-            {
-                for (int i = 0; i < Blocks.Length; i++)
-                {
-                    Transform obj = editor.transform.GetChild(1).Find("Objet n° " + Blocks[i]);
-                    if (obj != null) obj.transform.GetChild(1).gameObject.SetActive(true);
-                }
-            }
-
-            if (Input.GetKey(KeyCode.Mouse0))
-            {
-                if (Input.mousePosition.y > Screen.height / 4)
-                {
-                    Vector2 pos = editor.GetWorldPosition(Input.mousePosition);
-                    int Selected = editor.GetBloc((int)pos.x, (int)pos.y);
-                    if (Selected != -1)
-                    {
-                        Blocks = Blocks.Union(new string[] { Selected.ToString() }).ToArray();
-
-                        string blocks = "Null";
-                        if (Blocks.Length > 0) blocks = Blocks[0];
-                        for (int i = 1; i < Blocks.Length; i++)
-                            blocks = blocks + "," + Blocks[i];
-                        editor.ChangBlocStatus("Blocks", blocks, SB);
-                    }
-
-                    for (int i = 0; i < Blocks.Length; i++)
-                    {
-                        Transform obj = editor.transform.GetChild(1).Find("Objet n° " + Blocks[i]);
-                        if (obj != null) obj.transform.GetChild(1).gameObject.SetActive(true);
-                    }
-                }
-            }
-
-
-#if UNITY_STANDALONE || UNITY_EDITOR
-            if (Input.GetKey(KeyCode.Mouse1))
-            {
-#else
-        SimpleGesture.OnLongTap(() => {
-#endif
-                if (Input.mousePosition.y > Screen.height / 4)
-                {
-                    Vector2 pos = editor.GetWorldPosition(Input.mousePosition);
-                    int Selected = editor.GetBloc((int)pos.x, (int)pos.y);
-                    if (Selected != -1)
-                    {
-                        List<string> list = new List<string>(Blocks);
-                        for (int i = 0; i < list.Count; i++)
-                        {
-                            if (int.Parse(Blocks[i]) == Selected)
-                            {
-                                list.RemoveAt(i);
-                                Transform obj = editor.transform.GetChild(1).Find("Objet n° " + Blocks[i]);
-                                Blocks = list.ToArray();
-                                if (obj != null) obj.transform.GetChild(1).gameObject.SetActive(false);
-                            }
-                        }
-                        Blocks = list.ToArray();
-
-                        string blocks = "Null";
-                        if (Blocks.Length > 0) blocks = Blocks[0];
-                        for (int i = 1; i < Blocks.Length; i++)
-                            blocks = blocks + "," + Blocks[i];
-                        editor.ChangBlocStatus("Blocks", blocks, SB);
-                    }
-                }
-            }
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-        );
-#endif
-        }
-        else
-        {
-            if (array == 1 & affected == 0)
-            {
-                for (int i = 0; i < editor.transform.GetChild(1).childCount; i++)
-                {
-                    Transform obj = editor.transform.GetChild(1).GetChild(i);
-                    if (obj.childCount > 1) obj.transform.GetChild(1).gameObject.SetActive(false);
-                }
-            }
-
-            editor.canInteract = true;
-        }
-
-        array = GetComponent<MenuManager>().array;
-        affected = AffectationType;
-        #endregion
     }
 
     void Actualise()
     {
         //Blocks
         ChangAffectationType(AffectationType);
+        transform.GetChild(1).GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text = Group.ToString();
 
         //Translation
         transform.GetChild(2).GetChild(1).GetChild(3).GetComponent<InputField>().text = Translation.x.ToString();
@@ -204,6 +106,15 @@ public class Editor_MoveTrigger : MonoBehaviour
             transform.GetChild(1).GetChild(0).GetChild(i).gameObject.SetActive(i == a);
         for (int i = 0; i < transform.GetChild(1).GetChild(1).childCount; i++)
             transform.GetChild(1).GetChild(1).GetChild(i).GetComponent<Button>().interactable = !(i == a);
+    }
+    public void GroupeChange(InputField field) {
+        if (!string.IsNullOrEmpty(field.text))
+        {
+            int.TryParse(field.text, out int groupe);
+            if (groupe < 0) groupe = 0;
+            Group = groupe;
+            editor.ChangBlocStatus("Group", Group.ToString(), SB);
+        }
     }
 
     public void RangeValueChanged(float ScrollID)

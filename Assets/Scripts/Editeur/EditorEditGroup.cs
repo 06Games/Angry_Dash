@@ -23,7 +23,7 @@ public class EditorEditGroup : MonoBehaviour
 
             for (int i = 0; i < SB.Length; i++) {
                 HashSet<int> blockGroups = new HashSet<int>();
-                foreach (string group in editor.GetBlocStatus("Group", SB[i]).Split(", "))
+                foreach (string group in editor.GetBlocStatus("Groups", SB[i]).Split(", "))
                 {
                     if (int.TryParse(group, out int g)) blockGroups.Add(g);
                 }
@@ -57,7 +57,7 @@ public class EditorEditGroup : MonoBehaviour
 
     void Save()
     {
-        for(int i = 0; i < SB.Length; i++) editor.ChangBlocStatus("Group", string.Join(", ", groupsPerBlock[i]), new int[] { SB[i] });
+        for(int i = 0; i < SB.Length; i++) editor.ChangBlocStatus("Groups", string.Join(", ", groupsPerBlock[i]), new int[] { SB[i] });
     }
 
     public void Add(InputField field)
