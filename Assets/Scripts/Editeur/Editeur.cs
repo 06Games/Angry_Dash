@@ -368,8 +368,8 @@ public class Editeur : MonoBehaviour
 
         Deplacer(MoveX * Speed, MoveY * Speed);
 #elif UNITY_ANDROID || UNITY_IOS
-        bool isSimple = !AddBlocking & (Input.touchCount == 1 | Input.touchCount == 2);
-        bool isAdvence = AddBlocking & (Input.touchCount == 2 | Input.touchCount == 3);
+        bool isSimple = newblockid < 0 & (Input.touchCount == 1 | Input.touchCount == 2);
+        bool isAdvence = newblockid >= 0 & (Input.touchCount == 2 | Input.touchCount == 3);
         if (isAdvence | isSimple)
         {
             Touch touchZero = Input.GetTouch(0);
