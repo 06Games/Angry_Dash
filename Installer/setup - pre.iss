@@ -1,5 +1,5 @@
 #define MyAppName "Angry Dash"
-#define MyAppVersion "0.3.1"
+#define MyAppVersion "0.4"
 #define MyAppPublisher "06Games"
 #define MyAppURL "https://06games.ddns.net/"
 #define MyAppExeName "Angry Dash.exe"
