@@ -163,6 +163,23 @@ namespace AngryDash.Game
                 if (size != Vector2.zero) go.transform.localScale = new Vector2(100, 100) / size * 50;
                 else go.transform.localScale = new Vector2(50, 50);
 
+                if ((int)id == 1)
+                {
+                    BoxCollider2D[] colliders = go.GetComponents<BoxCollider2D>();
+                    if (colliders.Length > 0) colliders[0].size = size / new Vector2(100, 100);
+                    if (colliders.Length > 1) colliders[1].size = size / new Vector2(100, 100) + new Vector2(0.1F, 0.1F);
+                }
+                else
+                {
+                    PolygonCollider2D[] colliders = go.GetComponents<PolygonCollider2D>();
+                    foreach (var collider in colliders)
+                    {
+                        Vector2[] points = collider.points;
+                        for (int i = 0; i < points.Length; i++) points[i] *= size / new Vector2(100, 100);
+                        collider.points = points;
+                    }
+                }
+
                 go.GetComponent<Mur>().colider = colid;
                 go.GetComponent<Mur>().blockID = id;
             }
