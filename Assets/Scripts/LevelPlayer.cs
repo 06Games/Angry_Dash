@@ -93,7 +93,7 @@ namespace AngryDash.Game
         {
             level = item;
             StartCoroutine(Parse()); //Spawn blocks
-            Discord.Presence(LangueAPI.Get("native", "discordPlaying_title", "Play a level"), "", new DiscordClasses.Img("default", LangueAPI.Get("native", "discordPlaying_caption", "Level : [0]", level.name)), null, -1, 0); //Sets the Discord Infos
+            DiscordController.Presence(LangueAPI.Get("native", "discordPlaying_title", "Play a level"), "", new DiscordClasses.Img("default", LangueAPI.Get("native", "discordPlaying_caption", "Level : [0]", level.name)), null, -1, 0); //Sets the Discord Infos
         }
 
         System.Collections.IEnumerator Parse()

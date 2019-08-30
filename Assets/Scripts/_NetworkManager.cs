@@ -80,7 +80,7 @@ public class _NetworkManager : NetworkBehaviour
         StartData();
         mapRequested = false;
 
-        Discord.Presence(LangueAPI.Get("native", "discordServer_title", "Play in a server"), "", new DiscordClasses.Img("default", LangueAPI.Get("native", "discordServer_caption", "Server : [0]:[1]", adress, port.ToString())), null, -1, 0);
+        DiscordController.Presence(LangueAPI.Get("native", "discordServer_title", "Play in a server"), "", new DiscordClasses.Img("default", LangueAPI.Get("native", "discordServer_caption", "Server : [0]:[1]", adress, port.ToString())), null, -1, 0);
         History.LvlPlayed(adress + ":" + port, "S", "");
     }
 
@@ -122,8 +122,6 @@ public class _NetworkManager : NetworkBehaviour
 
         for (int i = 0; i < Items.transform.childCount; i++)
             Destroy(Items.transform.GetChild(i).gameObject);
-
-        Discord.Presence(LangueAPI.Get("native", "discordHome_title", "In the home menu"), "", new DiscordClasses.Img("default"));
         LSC.LoadScreen("Home", new string[] { "Play", "Community Servers" });
     }
 
