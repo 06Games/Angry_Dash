@@ -46,6 +46,7 @@ namespace AngryDash.Game
                 player.PeutAvancer = false;
                 player.vitesse = 0;
                 player.transform.position = player.PositionInitiale;
+                player.onRespawn.Invoke(null, null);
                 StartCoroutine(colid(0.1F));
             }
             else if (colider >= 2.1F & colider < 3) //No Collision + Boost

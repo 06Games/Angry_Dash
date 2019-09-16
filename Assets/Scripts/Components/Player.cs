@@ -32,6 +32,8 @@ namespace AngryDash.Game
         public float vitesse = 1; //Multiplicateur de la vitesse du joueur
         public Level.Player levelSettings; //Autres paramètres défini par le niveau
 
+        //Evenements
+        public BetterEventHandler onRespawn;
 
         void Start()
         {

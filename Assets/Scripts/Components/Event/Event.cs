@@ -35,6 +35,10 @@ namespace AngryDash.Game.Events
 
             interpreter.DoString(script);
             if (interpreter.Globals.Get("Start").IsNotNil()) interpreter.Call(interpreter.Globals["Start"]);
+
+            Player.userPlayer.onRespawn += (s, e) => {
+                if (interpreter.Globals.Get("Respawn").IsNotNil()) interpreter.Call(interpreter.Globals["Respawn"]);
+            };
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
