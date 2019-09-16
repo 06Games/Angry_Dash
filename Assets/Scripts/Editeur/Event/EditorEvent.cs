@@ -68,35 +68,35 @@ namespace AngryDash.Editor.Event
             Transform visual = transform.GetChild(1);
             Transform elements = visual.GetChild(0).GetChild(0).GetComponent<ScrollRect>().content;
 
-            List<string> idList = new List<string>();
-            foreach (var keyPair in ids) idList.AddRange(keyPair.Value);
-            foreach (string id in idList)
-            {
-                GameObject config = Resources.Load<GameObject>($"Events/{id}");
-                if (config != null)
+            foreach (var cat in ids) {
+                foreach (string id in cat.Value)
                 {
-                    if (!visualPrefabs.ContainsKey(id))
+                    GameObject config = Resources.Load<GameObject>($"Events/{cat.Key}/{id}");
+                    if (config != null)
                     {
-                        GameObject Slot = Instantiate(elements.GetChild(0).gameObject, elements);
-                        EditorEventItem Item = Instantiate(config, Slot.transform).GetComponent<EditorEventItem>();
+                        if (!visualPrefabs.ContainsKey(id))
+                        {
+                            GameObject Slot = Instantiate(elements.GetChild(0).gameObject, elements);
+                            EditorEventItem Item = Instantiate(config, Slot.transform).GetComponent<EditorEventItem>();
 
-                        Slot.name = Item.id = id;
-                        Slot.GetComponent<GridLayoutGroup>().cellSize =
-                            Slot.GetComponent<RectTransform>().sizeDelta =
-                            Item.referenceSize =
-                            Item.GetComponent<RectTransform>().sizeDelta;
-                        Slot.GetComponent<UImage_Reader>().baseID = Item.GetComponent<UImage_Reader>().baseID;
-                        Slot.SetActive(true);
+                            Slot.name = Item.id = id;
+                            Slot.GetComponent<GridLayoutGroup>().cellSize =
+                                Slot.GetComponent<RectTransform>().sizeDelta =
+                                Item.referenceSize =
+                                Item.GetComponent<RectTransform>().sizeDelta;
+                            Slot.GetComponent<UImage_Reader>().baseID = Item.GetComponent<UImage_Reader>().baseID;
+                            Slot.SetActive(true);
 
-                        visualPrefabs.Add(id, Item);
+                            visualPrefabs.Add(id, Item);
+                        }
                     }
-                }
 #if UNITY_EDITOR
-                else Debug.LogWarning($"<b>{id}</b> has no prefab");
+                    else Debug.LogWarning($"<b>{id}</b> has no prefab at path <b>Events/{cat.Key}/{id}</b>");
 #endif
-            }
+                }
 
-            if (editor.SelectedBlock.Length == 1) VisualParse(editor.GetBlocStatus("Script", editor.SelectedBlock[0]));
+                if (editor.SelectedBlock.Length == 1) VisualParse(editor.GetBlocStatus("Script", editor.SelectedBlock[0]));
+            }
         }
 
         HashSet<string> triggerImplemented;
