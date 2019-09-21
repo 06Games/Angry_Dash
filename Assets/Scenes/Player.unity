@@ -638,16 +638,6 @@ MonoBehaviour:
   - {fileID: 1063887458892150, guid: 90506414de06ca04da00ffc04afaf8cb, type: 3}
   - {fileID: 1025315392189648, guid: 553701ef5c26ccb4cb9fcd480243182f, type: 3}
   SummonPlace: {fileID: 0}
-  ArrierePlanS:
-  - {fileID: 0}
-  - {fileID: 21300000, guid: 6ff1673b66dc61d4898306d0e0247c7a, type: 3}
-  - {fileID: 21300000, guid: c4458da77d17d334d9488097ef011659, type: 3}
-  - {fileID: 21300000, guid: 63cc352827d2c8f48b686118a65c9388, type: 3}
-  - {fileID: 21300000, guid: 5de7243e1d320624bb831001c4a29501, type: 3}
-  - {fileID: 21300000, guid: 1b28c1840da773f40818ca76aff32c4f, type: 3}
-  - {fileID: 21300000, guid: 8b072bfb1a5f3384ebbff4d0264d1905, type: 3}
-  - {fileID: 21300000, guid: 2fc76fc86fb442740a524bbabc674599, type: 3}
-  - {fileID: 21300000, guid: 704b34f4c22518e4faeeb9f300c57275, type: 3}
   ArrierePlan: {fileID: 101583185}
   EventPrefab: {fileID: 1981134399792410, guid: f821bfdf5d5a8e24796e5e8e532cf5f4,
     type: 3}
@@ -658,8 +648,6 @@ MonoBehaviour:
   Base: {fileID: 1249314462}
   nbLancer: 0
   nbLancerTxt: {fileID: 964563685}
-  SongName: []
-  SongPath: []
 --- !u!114 &160056538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -672,7 +660,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83a0f27867fc84b4983e28dc862db165, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 1292801394490212}
   OnPlayer: 1
 --- !u!20 &160056539 stripped
 Camera:
@@ -3902,7 +3889,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 6ff1673b66dc61d4898306d0e0247c7a, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5260,9 +5247,3 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2130409515}
   m_CullTransparentMesh: 0
---- !u!1 &1292801394490212 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1292801592918698, guid: 79265f9128f23e74d89893cb362141a7,
-    type: 3}
-  m_PrefabInstance: {fileID: 341064142}
-  m_PrefabAsset: {fileID: 0}
