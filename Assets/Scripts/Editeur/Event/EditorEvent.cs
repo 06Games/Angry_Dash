@@ -56,7 +56,7 @@ namespace AngryDash.Editor.Event
         readonly Dictionary<Type, string[]> ids = new Dictionary<Type, string[]>() {
             { Type.trigger, new string[] { "start", "collision", "respawn" } },
             { Type.action, new string[] {
-                "end", "lose", "bgColor", //game
+                "end", "lose", "bgColor", "bgChange", //game
                 "checkpoint", "teleport", //player
                 "changeTexture", //event
                 "color" //group

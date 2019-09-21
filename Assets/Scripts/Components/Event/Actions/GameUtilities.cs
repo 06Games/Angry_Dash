@@ -10,8 +10,11 @@ namespace AngryDash.Game.API
         public static void BackgroundColor(byte r, byte g, byte b)
         {
             Color32 color = new Color32(r, g, b, 255);
-            foreach (var img in Player.userPlayer.LP.ArrierePlan.GetComponentsInChildren<UnityEngine.UI.Image>())
-                img.color = color;
+            foreach (var img in Player.userPlayer.LP.ArrierePlan.GetComponentsInChildren<UnityEngine.UI.Image>()) img.color = color;
+        }
+        public static void ChangeBackground(string id)
+        {
+            foreach (var reader in Player.userPlayer.LP.ArrierePlan.GetComponentsInChildren<Image.Reader.UImage_Reader>()) reader.SetID(id).Load();
         }
     }
 }
