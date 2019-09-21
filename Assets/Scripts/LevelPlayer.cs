@@ -20,7 +20,6 @@ namespace AngryDash.Game
         public GameObject[] Prefabs;
         [HideInInspector] public Transform SummonPlace;
 
-        public Sprite[] ArrierePlanS;
         public Transform ArrierePlan;
 
         Vector3 EndPoint;
@@ -30,9 +29,6 @@ namespace AngryDash.Game
 
         public int nbLancer;
         public Text nbLancerTxt;
-
-        public string[] SongName;
-        public string[] SongPath;
 
         private void Update()
         {
@@ -101,7 +97,7 @@ namespace AngryDash.Game
             for (int i = 0; i < ArrierePlan.childCount; i++)
             {
                 ArrierePlan.GetChild(i).GetComponent<UnityEngine.UI.Image>().color = level.background.color;
-                ArrierePlan.GetChild(i).GetComponent<UImage_Reader>().baseID = level.background.category + "/BACKGROUNDS/" + level.background.id;
+                ArrierePlan.GetChild(i).GetComponent<UImage_Reader>().SetID(level.background.category + "/BACKGROUNDS/" + level.background.id).Load();
             }
             Vector2 size = ArrierePlan.GetChild(0).GetComponent<UnityEngine.UI.Image>().sprite.Size();
             ArrierePlan.GetComponent<CanvasScaler>().referenceResolution = size;
