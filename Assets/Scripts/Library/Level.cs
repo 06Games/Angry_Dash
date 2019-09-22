@@ -11,6 +11,8 @@ namespace Level
         public string name;
         public string description;
         public string author;
+        public string rpURL;
+        public bool rpRequired;
         public Background background;
         public SongItem music;
         public Versioning version;
@@ -32,6 +34,8 @@ namespace Level
             if (name == other.name
                 & description == other.description
                 & author == other.author
+                & rpURL == other.rpURL
+                & rpRequired == other.rpRequired
                 & background == other.background
                 & music == other.music
                 & version == other.version
@@ -95,7 +99,6 @@ namespace Level
         public static bool operator !=(Background left, Background right) { return !(left == right); }
         public override int GetHashCode() { return base.GetHashCode(); }
     }
-
 
     [System.Serializable]
     public class VictoryConditions

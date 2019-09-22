@@ -7,6 +7,8 @@ namespace AngryDash.Image
 {
     public class Sprite_API : MonoBehaviour
     {
+        public static string forceRP { get; set; }
+
         /// <summary>
         /// Get path to a ressource
         /// </summary>
@@ -25,9 +27,9 @@ namespace AngryDash.Image
             }
 
 #endif
+            if(!string.IsNullOrWhiteSpace(forceRP) && File.Exists(forceRP + "textures/" + id)) return forceRP + "textures/" + id;
 
-            if (ConfigAPI.GetString("ressources.pack") == null)
-                ConfigAPI.SetString("ressources.pack", "default");
+            if (ConfigAPI.GetString("ressources.pack") == null) ConfigAPI.SetString("ressources.pack", "default");
             string path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/" + id;
             if (File.Exists(path)) return path;
             else return Application.persistentDataPath + "/Ressources/default/textures/" + id;
@@ -54,8 +56,8 @@ namespace AngryDash.Image
                 APNG apng = new APNG(filePath);
                 Sprite_API_Data SAD = new Sprite_API_Data();
 
-                float[] Delay = new float[apng.Frames.Length];
-                Sprite[] Frames = new Sprite[apng.Frames.Length];
+                float[] Delay;
+                Sprite[] Frames;
 
                 if (apng.IsSimplePNG | !ConfigAPI.GetBool("video.APNG") | forcePNG) //PNG
                 {

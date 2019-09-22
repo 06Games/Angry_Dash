@@ -9,28 +9,38 @@ namespace AngryDash.Image
     {
         public static JSON_PARSE_DATA Parse(string baseID, FileFormat.JSON json = null, bool path = false)
         {
-            CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures/json");
-            if (!cache.ValueExist(baseID))
+            string jsonID = baseID + ".json";
+            string rpPath = Sprite_API.forceRP + "textures/";
+            if (!string.IsNullOrWhiteSpace(Sprite_API.forceRP) && (File.Exists(rpPath + jsonID) | File.Exists(rpPath + baseID + " basic.png")))
             {
-                if (json == null) NewJSON();
-                else if (json.jToken == null) NewJSON();
-                void NewJSON()
-                {
-                    json = new FileFormat.JSON("");
-                    string jsonID = baseID + ".json";
-                    if (!path)
-                    {
-                        string rpPath = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
-                        if (File.Exists(rpPath + jsonID) | File.Exists(rpPath + baseID + " basic.png"))
-                            jsonID = rpPath + baseID + ".json";
-                        else jsonID = Application.persistentDataPath + "/Ressources/default/textures/" + baseID + ".json";
-                    }
-                    if (File.Exists(jsonID)) json = new FileFormat.JSON(File.ReadAllText(jsonID));
-                }
-
-                cache.Set(baseID, LoadParse(baseID, json, path));
+                jsonID = rpPath + baseID + ".json";
+                if (File.Exists(jsonID)) json = new FileFormat.JSON(File.ReadAllText(jsonID));
+                else json = new FileFormat.JSON("");
+                return LoadParse(baseID, json, path);
             }
-            return cache.Get<JSON_PARSE_DATA>(baseID);
+            else
+            {
+                CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures/json");
+                if (!cache.ValueExist(baseID))
+                {
+                    if (json == null) NewJSON();
+                    else if (json.jToken == null) NewJSON();
+                    void NewJSON()
+                    {
+                        json = new FileFormat.JSON("");
+                        if (!path)
+                        {
+                            rpPath = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
+                            if (File.Exists(rpPath + jsonID) | File.Exists(rpPath + baseID + " basic.png")) jsonID = rpPath + baseID + ".json";
+                            else jsonID = Application.persistentDataPath + "/Ressources/default/textures/" + baseID + ".json";
+                        }
+                        if (File.Exists(jsonID)) json = new FileFormat.JSON(File.ReadAllText(jsonID));
+                    }
+
+                    cache.Set(baseID, LoadParse(baseID, json, path));
+                }
+                return cache.Get<JSON_PARSE_DATA>(baseID);
+            }
         }
         public static JSON_PARSE_DATA LoadParse(string baseID, FileFormat.JSON json, bool path)
         {

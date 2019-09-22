@@ -144,6 +144,7 @@ native/GUI/editor/options/music/play
 native/GUI/editor/options/music/exit
 native/GUI/editor/options/music/choose
 native/GUI/editor/options/music/choosen
+native/GUI/editor/options/other
 native/GUI/editor/movements/down
 native/GUI/editor/movements/up
 native/GUI/editor/movements/left

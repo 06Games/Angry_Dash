@@ -4,6 +4,7 @@ using Level;
 using System.IO;
 using Tools;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 namespace AngryDash.Game
@@ -93,6 +94,69 @@ namespace AngryDash.Game
         }
 
         System.Collections.IEnumerator Parse()
+        {
+            if (string.IsNullOrWhiteSpace(level.rpURL)) StartCoroutine(ParseCoroutine());
+            else
+            {
+                Transform go = Base.Find("RP");
+
+                string[] title = new string[] { "levelPlayer.resourcePack.recommend", "This level recommends a resource pack, do you want to install it?" };
+                if(level.rpRequired) title = new string[] { "levelPlayer.resourcePack.required", "This level require a resource pack, do you want to install it?" };
+                go.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", title[0], title[1]);
+
+                if (System.Uri.TryCreate(level.rpURL, System.UriKind.Absolute, out var uri))
+                {
+                    if (uri.Host == "localhost" | uri.Host == "06games.ddns.net") go.GetChild(1).gameObject.SetActive(false);
+                    else go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.resourcePack.warn", "Warning, this resource pack will be downloaded from an external server (<i>[0]</i>), not belonging to 06Games.\nDownload it only if you had full confidence in the host.", uri.Host);
+                    
+
+                    var request = UnityWebRequest.Head(uri);
+                    yield return request.SendWebRequest();
+                    long.TryParse(request.GetResponseHeader("Content-Length"), out var size);
+                    go.GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.resourcePack.install", "Install ([0] KB)", Mathf.RoundToInt(size / 1000F));
+
+                    string[] no = new string[] { "levelPlayer.resourcePack.no", "No Thanks" };
+                    if (level.rpRequired) no = new string[] { "levelPlayer.resourcePack.quit", "Quit" };
+                    go.GetChild(3).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", no[0], no[1]);
+
+                    go.gameObject.SetActive(true);
+                }
+            }
+        }
+        public void DownloadRP() { StartCoroutine(DownloadRPCoroutine()); }
+        System.Collections.IEnumerator DownloadRPCoroutine() {
+            Transform go = Base.Find("RP");
+
+            var request = UnityWebRequest.Get(level.rpURL);
+            var async = request.SendWebRequest();
+            async.completed += (a) => {
+                string path = Application.temporaryCachePath + "/downloadedRP";
+                if(Directory.Exists(path)) Directory.Delete(path, true);
+
+                File.WriteAllBytes(path + ".zip", request.downloadHandler.data);
+                FileFormat.ZIP.Decompress(path + ".zip", path);
+                File.Delete(path + ".zip");
+
+                Image.Sprite_API.forceRP = path+"/";
+
+                StartCoroutine(ParseCoroutine());
+                go.gameObject.SetActive(false);
+            };
+
+            Slider slider = go.GetChild(2).GetChild(1).GetComponent<Slider>();
+            while (!async.isDone)
+            {
+                yield return new WaitForEndOfFrame();
+                slider.value = async.progress;
+            }
+        }
+        public void NoRP()
+        {
+            if (level.rpRequired) Exit();
+            else StartCoroutine(ParseCoroutine());
+        }
+
+        System.Collections.IEnumerator ParseCoroutine()
         {
             for (int i = 0; i < ArrierePlan.childCount; i++)
             {
@@ -294,6 +358,10 @@ namespace AngryDash.Game
 
         public void Exit()
         {
+            Image.Sprite_API.forceRP = null;
+            string path = Application.temporaryCachePath + "/downloadedRP";
+            if (Directory.Exists(path)) Directory.Delete(path, true);
+
             Time.timeScale = 1;
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
             {
