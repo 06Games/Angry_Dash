@@ -1860,7 +1860,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: editor.edit.event.visual.bgColor
+  id: editor.edit.event.visual.backgroundColor
   arg: []
 --- !u!1 &5351004858427389524
 GameObject:
