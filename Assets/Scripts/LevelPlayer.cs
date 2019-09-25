@@ -2,6 +2,7 @@
 using AngryDash.Language;
 using Level;
 using System.IO;
+using System.Linq;
 using Tools;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -393,17 +394,7 @@ namespace AngryDash.Game
         public void Replay()
         {
             Time.timeScale = 1;
-            GameObject player = GameObject.Find("Player");
-            if (player == null) player = GameObject.Find("Player(Clone)");
-            if (player != null) Destroy(player);
-            Player.userPlayer = Instantiate(PlayerPrefab).GetComponent<Player>();
-            nbLancer = 0;
-
-            Transform trace = GameObject.Find("Traces").transform;
-            for (int i = 0; i < trace.childCount; i++)
-                Destroy(trace.GetChild(i).gameObject);
-
-            PlayLevel(level);
+            LoadingScreenControl.GetLSC().LoadScreen("Player", new string[] { FromScene, "Data", LevelItem.Parse(level).ToString() }.Concat(passThroughArgs).ToArray());
         }
 
         public static void Lost(Transform Base)
