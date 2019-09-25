@@ -98,7 +98,7 @@ public class ProfileLevels : MonoBehaviour
                     go.name = items[i]; //Changes the editor gameObject name (useful only for debugging)
 
                     int button = i;
-                    go.GetChild(0).GetComponent<Text>().text = items[i]; //Sets the level's name
+                    go.GetChild(0).GetComponent<Text>().text = items[button]; //Sets the level's name
                     go.GetChild(1).GetComponent<Button>().onClick.AddListener(() =>
                         {
                             Transform panel = transform.GetChild(2);
