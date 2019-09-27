@@ -223,8 +223,10 @@ namespace Level
 
         public override string ToString() { return FileFormat.XML.Utils.ClassToXML(this); }
         public static LevelItem Parse(string data) { return FileFormat.XML.Utils.XMLtoClass<LevelItem>(data); }
-        public static LevelItem Parse(Infos data) {
-            return new LevelItem() {
+        public static LevelItem Parse(Infos data)
+        {
+            return new LevelItem()
+            {
                 Name = data.name,
                 Author = data.author,
                 Description = data.description,
@@ -463,7 +465,7 @@ namespace Level
                                 if (int.TryParse(block, out int index))
                                 {
                                     string Group = updated.blocks[index].parameter["Groups"];
-                                    Group = Group + (string.IsNullOrEmpty(Group) ? "": ", ") + i.ToString();
+                                    Group = Group + (string.IsNullOrEmpty(Group) ? "" : ", ") + i.ToString();
                                     updated.blocks[index].parameter["Groups"] = Group;
                                 }
                             }

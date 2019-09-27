@@ -259,7 +259,7 @@ public class Editeur : MonoBehaviour
                 int[] previouslySelected = SelectedBlock;
 
                 int Selected = GetBloc((int)pos.x, (int)pos.y);
-                if(Selected >= 0)
+                if (Selected >= 0)
                 {
                     if (level.blocks[Selected].id == 0) SelectCtrl = false;
 
@@ -278,7 +278,7 @@ public class Editeur : MonoBehaviour
                     }
                     else SelectedBlock = new int[] { Selected };
                 }
-                else if(!SelectCtrl) SelectedBlock = new int[0];
+                else if (!SelectCtrl) SelectedBlock = new int[0];
 
                 //Removes the selection marker from deselected blocks
                 foreach (int block in previouslySelected.Except(SelectedBlock))

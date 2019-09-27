@@ -107,7 +107,8 @@ public class Editor_MoveTrigger : MonoBehaviour
         for (int i = 0; i < transform.GetChild(1).GetChild(1).childCount; i++)
             transform.GetChild(1).GetChild(1).GetChild(i).GetComponent<Button>().interactable = !(i == a);
     }
-    public void GroupeChange(InputField field) {
+    public void GroupeChange(InputField field)
+    {
         if (!string.IsNullOrEmpty(field.text))
         {
             int.TryParse(field.text, out int groupe);

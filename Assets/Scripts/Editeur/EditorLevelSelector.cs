@@ -177,7 +177,7 @@ public class EditorLevelSelector : MonoBehaviour
                 //ListContent.GetChild(i).GetComponent<Button>().interactable = (i - 1) != selected;
                 var reader = ListContent.GetChild(i).GetComponent<AngryDash.Image.Reader.UImage_Reader>();
                 reader.autoChange = (i - 1) != selected;
-                reader.StartAnimating((i - 1) == selected ? 3: 0);
+                reader.StartAnimating((i - 1) == selected ? 3 : 0);
             }
 
             currentFile = selected; //Set the level as selected

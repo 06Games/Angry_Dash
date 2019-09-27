@@ -13,7 +13,7 @@ public class EditorEditGroup : MonoBehaviour
 
     void Update()
     {
-        if(editor.SelectedBlock == null) { transform.GetComponentInParent<Edit>().EnterToEdit(); return; }
+        if (editor.SelectedBlock == null) { transform.GetComponentInParent<Edit>().EnterToEdit(); return; }
         else if (editor.SelectedBlock.Length == 0) { transform.GetComponentInParent<Edit>().EnterToEdit(); return; }
 
         if (SB != editor.SelectedBlock)
@@ -21,7 +21,8 @@ public class EditorEditGroup : MonoBehaviour
             SB = editor.SelectedBlock;
             groupsPerBlock = new HashSet<int>[SB.Length];
 
-            for (int i = 0; i < SB.Length; i++) {
+            for (int i = 0; i < SB.Length; i++)
+            {
                 HashSet<int> blockGroups = new HashSet<int>();
                 foreach (string group in editor.GetBlocStatus("Groups", SB[i]).Split(", "))
                 {
@@ -57,14 +58,14 @@ public class EditorEditGroup : MonoBehaviour
 
     void Save()
     {
-        for(int i = 0; i < SB.Length; i++) editor.ChangBlocStatus("Groups", string.Join(", ", groupsPerBlock[i]), new int[] { SB[i] });
+        for (int i = 0; i < SB.Length; i++) editor.ChangBlocStatus("Groups", string.Join(", ", groupsPerBlock[i]), new int[] { SB[i] });
     }
 
     public void Add(InputField field)
     {
         foreach (HashSet<int> list in groupsPerBlock)
         {
-            if(int.TryParse(field.text, out int group)) list.Add(group);
+            if (int.TryParse(field.text, out int group)) list.Add(group);
         }
         Save();
         Actualise();

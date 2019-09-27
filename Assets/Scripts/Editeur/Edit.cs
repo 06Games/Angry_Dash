@@ -20,7 +20,7 @@ public class Edit : MonoBehaviour
         try
         {
             GameObject selected = GetComponent<MenuManager>().selectedObject;
-            if(selected != null) selected.GetComponent<MenuManager>().Array(0);
+            if (selected != null) selected.GetComponent<MenuManager>().Array(0);
         }
         catch (System.Exception e) { Debug.LogError(e); return; }
 

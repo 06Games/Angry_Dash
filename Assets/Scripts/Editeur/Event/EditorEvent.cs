@@ -69,7 +69,8 @@ namespace AngryDash.Editor.Event
             Transform visual = transform.GetChild(1);
             Transform elements = visual.GetChild(0).GetChild(0).GetComponent<ScrollRect>().content;
 
-            foreach (var cat in ids) {
+            foreach (var cat in ids)
+            {
                 foreach (string id in cat.Value)
                 {
                     GameObject config = Resources.Load<GameObject>($"Events/{cat.Key}/{id}");
@@ -254,7 +255,7 @@ namespace AngryDash.Editor.Event
                     }
                 }
 
-                if(!string.IsNullOrEmpty(id))
+                if (!string.IsNullOrEmpty(id))
                 {
                     EditorEventItem prefab = visualPrefabs[id];
                     Transform objParent = parent;
@@ -289,7 +290,7 @@ namespace AngryDash.Editor.Event
         public void TextualSave()
         {
             string script = transform.GetChild(2).GetChild(1).GetComponent<InputField>().text;
-            editor.ChangBlocStatus("Script", script, editor.SelectedBlock); 
+            editor.ChangBlocStatus("Script", script, editor.SelectedBlock);
         }
 
         void TextualInitialization()

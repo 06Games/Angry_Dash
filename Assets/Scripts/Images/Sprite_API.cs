@@ -27,7 +27,7 @@ namespace AngryDash.Image
             }
 
 #endif
-            if(!string.IsNullOrWhiteSpace(forceRP) && File.Exists(forceRP + "textures/" + id)) return forceRP + "textures/" + id;
+            if (!string.IsNullOrWhiteSpace(forceRP) && File.Exists(forceRP + "textures/" + id)) return forceRP + "textures/" + id;
 
             if (ConfigAPI.GetString("ressources.pack") == null) ConfigAPI.SetString("ressources.pack", "default");
             string path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/" + id;

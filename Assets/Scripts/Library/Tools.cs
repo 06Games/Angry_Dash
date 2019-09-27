@@ -50,9 +50,10 @@ namespace Tools
         public static string[] Split(this string s, params string[] delimiter) { return s.Split(delimiter, System.StringSplitOptions.None); }
         public static string[] Split(this string s, System.StringSplitOptions options, params string[] delimiter) { return s.Split(delimiter, options); }
 
-        public static bool Contains(this string s, params string[] values) {
-            foreach(string value in values)
-                if(s.Contains(value)) return true;
+        public static bool Contains(this string s, params string[] values)
+        {
+            foreach (string value in values)
+                if (s.Contains(value)) return true;
             return false;
         }
 
@@ -167,7 +168,8 @@ namespace Tools
 
         public StringBuilder Append(string line) { _builder.Append(_prefix).Append(line); return this; }
         public StringBuilder AppendLine() { _builder.Append($"\n{_prefix}"); return this; }
-        public StringBuilder AppendLine(string line) {
+        public StringBuilder AppendLine(string line)
+        {
             if (!string.IsNullOrEmpty(line) | appendEmptyStrings) _builder.Append(_builder.Length > 0 ? "\n" : "").Append(_prefix).Append(line);
             return this;
         }
@@ -180,7 +182,7 @@ namespace Tools
 
         public int LineCount { get { return System.Text.RegularExpressions.Regex.Matches(_builder.ToString(), "\n").Count; } }
         public int Length { get { return _builder.Length; } set { _builder.Length = value; } }
-        public string this[int line] { get { return _builder.ToString().Split("\n")[line]; }}
+        public string this[int line] { get { return _builder.ToString().Split("\n")[line]; } }
     }
 
     public static class TypeExtensions

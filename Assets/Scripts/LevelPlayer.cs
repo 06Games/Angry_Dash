@@ -102,14 +102,14 @@ namespace AngryDash.Game
                 Transform go = Base.Find("RP");
 
                 string[] title = new string[] { "levelPlayer.resourcePack.recommend", "This level recommends a resource pack, do you want to install it?" };
-                if(level.rpRequired) title = new string[] { "levelPlayer.resourcePack.required", "This level require a resource pack, do you want to install it?" };
+                if (level.rpRequired) title = new string[] { "levelPlayer.resourcePack.required", "This level require a resource pack, do you want to install it?" };
                 go.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", title[0], title[1]);
 
                 if (System.Uri.TryCreate(level.rpURL, System.UriKind.Absolute, out var uri))
                 {
                     if (uri.Host == "localhost" | uri.Host == "06games.ddns.net") go.GetChild(1).gameObject.SetActive(false);
                     else go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.resourcePack.warn", "Warning, this resource pack will be downloaded from an external server (<i>[0]</i>), not belonging to 06Games.\nDownload it only if you had full confidence in the host.", uri.Host);
-                    
+
 
                     var request = UnityWebRequest.Head(uri);
                     yield return request.SendWebRequest();
@@ -125,20 +125,22 @@ namespace AngryDash.Game
             }
         }
         public void DownloadRP() { StartCoroutine(DownloadRPCoroutine()); }
-        System.Collections.IEnumerator DownloadRPCoroutine() {
+        System.Collections.IEnumerator DownloadRPCoroutine()
+        {
             Transform go = Base.Find("RP");
 
             var request = UnityWebRequest.Get(level.rpURL);
             var async = request.SendWebRequest();
-            async.completed += (a) => {
+            async.completed += (a) =>
+            {
                 string path = Application.temporaryCachePath + "/downloadedRP";
-                if(Directory.Exists(path)) Directory.Delete(path, true);
+                if (Directory.Exists(path)) Directory.Delete(path, true);
 
                 File.WriteAllBytes(path + ".zip", request.downloadHandler.data);
                 FileFormat.ZIP.Decompress(path + ".zip", path);
                 File.Delete(path + ".zip");
 
-                Image.Sprite_API.forceRP = path+"/";
+                Image.Sprite_API.forceRP = path + "/";
 
                 StartCoroutine(ParseCoroutine());
                 go.gameObject.SetActive(false);

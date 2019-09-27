@@ -107,7 +107,7 @@ public class Inventory : MonoBehaviour
 
         FileFormat.XML.RootElement root = new FileFormat.XML.XML(Result).RootElement;
         FileFormat.XML.Item ItemsRoot = null;
-        foreach(var item in root.GetItems("version"))
+        foreach (var item in root.GetItems("version"))
         {
             string[] versions = item.Attribute("v").Split("-");
             if (versions.Length == 2)
