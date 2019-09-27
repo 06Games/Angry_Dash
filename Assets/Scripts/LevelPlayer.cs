@@ -120,7 +120,15 @@ namespace AngryDash.Game
                     if (level.rpRequired) no = new string[] { "levelPlayer.resourcePack.quit", "Quit" };
                     go.GetChild(3).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", no[0], no[1]);
 
-                    go.gameObject.SetActive(true);
+                    var file = new FileInfo(Application.persistentDataPath + "/Levels/Resource Packs/" + level.rpURL.TrimStart("http://").TrimStart("https://").TrimStart("file://").Replace("\\", "/").Replace("/", "_"));
+                    if (file.Exists && file.Length == size)
+                    {
+                        string dirPath = Application.temporaryCachePath + "/downloadedRP/";
+                        if(!Directory.Exists(dirPath)) FileFormat.ZIP.Decompress(file.FullName, dirPath);
+                        Image.Sprite_API.forceRP = dirPath;
+                        StartCoroutine(ParseCoroutine());
+                    }
+                    else go.gameObject.SetActive(true);
                 }
             }
         }
@@ -133,14 +141,12 @@ namespace AngryDash.Game
             var async = request.SendWebRequest();
             async.completed += (a) =>
             {
-                string path = Application.temporaryCachePath + "/downloadedRP";
-                if (Directory.Exists(path)) Directory.Delete(path, true);
+                string zipPath = Application.persistentDataPath + "/Levels/Resource Packs/" + level.rpURL.TrimStart("http://").TrimStart("https://").TrimStart("file://").Replace("\\", "/").Replace("/", "_");
+                string dirPath = Application.temporaryCachePath + "/downloadedRP/";
 
-                File.WriteAllBytes(path + ".zip", request.downloadHandler.data);
-                FileFormat.ZIP.Decompress(path + ".zip", path);
-                File.Delete(path + ".zip");
-
-                Image.Sprite_API.forceRP = path + "/";
+                File.WriteAllBytes(zipPath, request.downloadHandler.data);
+                FileFormat.ZIP.Decompress(zipPath, dirPath);
+                Image.Sprite_API.forceRP = dirPath;
 
                 StartCoroutine(ParseCoroutine());
                 go.gameObject.SetActive(false);
@@ -361,17 +367,12 @@ namespace AngryDash.Game
 
         public void Exit()
         {
-            Image.Sprite_API.forceRP = null;
-            string path = Application.temporaryCachePath + "/downloadedRP";
-            if (Directory.Exists(path)) Directory.Delete(path, true);
-
             Time.timeScale = 1;
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
             {
                 string scene = FromScene;
                 string[] args = null;
-                if (FromScene == "")
-                    scene = "Home";
+                if (FromScene == "") scene = "Home";
                 else if (FromScene.Contains("/"))
                 {
                     string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
@@ -384,6 +385,13 @@ namespace AngryDash.Game
                     scene = FromScene;
                     args = passThroughArgs;
                     GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
+                }
+
+                if (scene != "Editor")
+                {
+                    string path = Application.temporaryCachePath + "/downloadedRP/";
+                    if (Directory.Exists(path)) Directory.Delete(path, true);
+                    Image.Sprite_API.forceRP = null;
                 }
                 LoadingScreenControl.GetLSC().LoadScreen(scene, args);
             }
