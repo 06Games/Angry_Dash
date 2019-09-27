@@ -107,6 +107,14 @@ public class Editeur : MonoBehaviour
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editor.loading.blocks", "Placing Blocks"));
                 yield return new WaitForEndOfFrame();
 
+                string zipPath = Application.persistentDataPath + "/Levels/Resource Packs/" + level.rpURL.TrimStart("http://").TrimStart("https://").TrimStart("file://").Replace("\\", "/").Replace("/", "_");
+                string dirPath = Application.temporaryCachePath + "/downloadedRP/";
+                if (File.Exists(zipPath))
+                {
+                    FileFormat.ZIP.Decompress(zipPath, dirPath);
+                    AngryDash.Image.Sprite_API.forceRP = dirPath;
+                }
+
                 float each = (int)(level.blocks.Length * 0.25F);
                 if (level.blocks.Length < 100) each = -1F;
                 for (int i = 0; i < level.blocks.Length; i++)
@@ -174,6 +182,11 @@ public class Editeur : MonoBehaviour
     public void ExitEdit()
     {
         SaveLevel();
+
+        string rpPath = Application.temporaryCachePath + "/downloadedRP/";
+        if (Directory.Exists(rpPath)) Directory.Delete(rpPath, true);
+        AngryDash.Image.Sprite_API.forceRP = null;
+
         if (GameObject.Find("Audio") != null) GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
         string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
         LSC.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
@@ -503,15 +516,13 @@ public class Editeur : MonoBehaviour
         else throw new System.NotImplementedException("¯\\_(ツ)_/¯");
 
         SaveLevel();
-        AutoSaveLevelEnabled = false;
         StartCoroutine(AutoSaveLevel());
     }
     /// <summary> Save the Level </summary>
     public void SaveLevel()
     {
         Logging.Log("Start saving...", LogType.Log);
-        if (file != "" & level != null)
-            File.WriteAllText(file, level.ToString());
+        if (file != "" & level != null) try { File.WriteAllText(file, level.ToString()); } catch {}
         Logging.Log("Saving completed !", LogType.Log);
     }
 
