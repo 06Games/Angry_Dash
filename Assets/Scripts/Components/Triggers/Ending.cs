@@ -97,8 +97,8 @@ namespace AngryDash.Game.Events
 {
     public class Ending : MonoBehaviour
     {
-        private void OnTriggerEnter2D(Collider2D collision) { EndGame(collision.GetComponent<AngryDash.Game.Player>()); }
-        public static void EndGame(AngryDash.Game.Player player)
+        private void OnTriggerEnter2D(Collider2D collision) { EndGame(collision.GetComponent<Player>()); }
+        public static void EndGame(Player player)
         {
             Transform EndPanel = GameObject.Find("Base").transform.GetChild(4);
             if (EndPanel == null) return;
@@ -111,7 +111,7 @@ namespace AngryDash.Game.Events
             EndPanel.gameObject.SetActive(true);
 
             FileFormat.XML.RootElement xml = Inventory.xmlDefault;
-            AngryDash.Game.LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<AngryDash.Game.LevelPlayer>();
+            LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
             int gain = 0;
             int lastGain = 0;
             FileFormat.XML.Item lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
@@ -126,7 +126,7 @@ namespace AngryDash.Game.Events
             int.TryParse(xml.GetItem("Money").Value, out int money);
             if (lvlPlayer.FromScene == "Home/Play/Official Levels")
             {
-                AngryDash.Game.RewardChecker.Official reward = new AngryDash.Game.RewardChecker.Official(lvlPlayer.level.name);
+                RewardChecker.Official reward = new RewardChecker.Official(lvlPlayer.level.name);
                 reward.turn = lvlPlayer.nbLancer;
                 gain = reward.money;
             }

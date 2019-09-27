@@ -142,7 +142,7 @@ namespace FileFormat
                 if (v == null) return default;
                 else try { return Tools.StringExtensions.ParseTo<T>(v); } catch { return default; }
             }
-            public string Value { get { if (node == null) return null; else return node.InnerText; } set { node.InnerText = value; } }
+            public string Value { get { if (node == null) return null; else return node.InnerText; } set { if(node != null) node.InnerText = value; } }
             public void Remove() { node.ParentNode.RemoveChild(node); }
         }
 
