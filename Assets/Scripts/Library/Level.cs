@@ -225,12 +225,13 @@ namespace Level
         public static LevelItem Parse(string data) { return FileFormat.XML.Utils.XMLtoClass<LevelItem>(data); }
         public static LevelItem Parse(Infos data)
         {
-            return new LevelItem()
+            if (data == null) return new LevelItem();
+            else return new LevelItem()
             {
                 Name = data.name,
                 Author = data.author,
                 Description = data.description,
-                Music = data.music.Artist + " - " + data.music.Name,
+                Music = data.music != null ? data.music.Artist + " - " + data.music.Name: "",
                 Data = data.ToString()
             };
         }
