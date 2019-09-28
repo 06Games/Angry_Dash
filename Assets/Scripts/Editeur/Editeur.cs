@@ -107,12 +107,15 @@ public class Editeur : MonoBehaviour
                 LvlLoadingStatus(actualValue, maxValue, LangueAPI.Get("native", "editor.loading.blocks", "Placing Blocks"));
                 yield return new WaitForEndOfFrame();
 
-                string zipPath = Application.persistentDataPath + "/Levels/Resource Packs/" + level.rpURL.TrimStart("http://").TrimStart("https://").TrimStart("file://").Replace("\\", "/").Replace("/", "_");
-                string dirPath = Application.temporaryCachePath + "/downloadedRP/";
-                if (File.Exists(zipPath))
+                if (!string.IsNullOrWhiteSpace(level.rpURL))
                 {
-                    FileFormat.ZIP.Decompress(zipPath, dirPath);
-                    AngryDash.Image.Sprite_API.forceRP = dirPath;
+                    string zipPath = Application.persistentDataPath + "/Levels/Resource Packs/" + level.rpURL.TrimStart("http://").TrimStart("https://").TrimStart("file://").Replace("\\", "/").Replace("/", "_");
+                    string dirPath = Application.temporaryCachePath + "/downloadedRP/";
+                    if (File.Exists(zipPath))
+                    {
+                        FileFormat.ZIP.Decompress(zipPath, dirPath);
+                        AngryDash.Image.Sprite_API.forceRP = dirPath;
+                    }
                 }
 
                 float each = (int)(level.blocks.Length * 0.25F);

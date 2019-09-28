@@ -61,6 +61,7 @@ namespace Tools
         public static string TrimStart(this string target, string trimString)
         {
             if (string.IsNullOrEmpty(trimString)) return target;
+            else if (string.IsNullOrEmpty(target)) return "";
 
             string result = target;
             while (result.StartsWith(trimString))
