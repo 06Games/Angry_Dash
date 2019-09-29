@@ -67,7 +67,7 @@ namespace AngryDash.Editor.Event
         void VisualInitialization()
         {
             Transform visual = transform.GetChild(1);
-            Transform elements = visual.GetChild(0).GetChild(0).GetComponent<ScrollRect>().content;
+            Transform elements = visual.GetChild(0).GetChild(1).GetChild(0).GetComponent<ScrollRect>().content;
 
             foreach (var cat in ids)
             {
@@ -78,7 +78,8 @@ namespace AngryDash.Editor.Event
                     {
                         if (!visualPrefabs.ContainsKey(id))
                         {
-                            GameObject Slot = Instantiate(elements.GetChild(0).gameObject, elements);
+                            Transform elementCat = elements.Find(cat.Key.ToString());
+                            GameObject Slot = Instantiate(elementCat.GetChild(0).gameObject, elementCat);
                             EditorEventItem Item = Instantiate(config, Slot.transform).GetComponent<EditorEventItem>();
 
                             Slot.name = Item.id = id;

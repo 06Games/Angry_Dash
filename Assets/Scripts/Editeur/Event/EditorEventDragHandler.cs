@@ -39,7 +39,7 @@ namespace AngryDash.Editor.Event
             itemBeingDragged = null;
             GetComponent<CanvasGroup>().blocksRaycasts = true;
 
-            if (startParent.IsChildOf(visualPanel.GetChild(0).GetChild(0).GetComponent<UnityEngine.UI.ScrollRect>().content)) //The item has just been spawned
+            if (startParent.IsChildOf(visualPanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<UnityEngine.UI.ScrollRect>().content)) //The item has just been spawned
             {
                 if (visualPanel.GetChild(1).GetComponent<RectTransform>().IsOver((RectTransform)transform)) //The item is over the code panel
                 {

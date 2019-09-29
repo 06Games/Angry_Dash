@@ -113,6 +113,8 @@ native/GUI/editor/edit/move/rotation
 native/GUI/editor/edit/move/targets
 native/GUI/editor/edit/move/settings
 native/GUI/editor/edit/event/background
+native/GUI/editor/edit/event/button
+native/GUI/editor/edit/event/exit
 native/GUI/editor/edit/event/visual/triggerBackground
 native/GUI/editor/edit/event/visual/triggerField
 native/GUI/editor/edit/event/visual/actionBackground
