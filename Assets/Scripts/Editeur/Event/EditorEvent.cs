@@ -59,7 +59,7 @@ namespace AngryDash.Editor.Event
                 "end", "lose", "bgColor", "bgChange", //game
                 "checkpoint", "teleport", //player
                 "changeTexture", //event
-                "color" //group
+                "color", "active" //group
             } },
             //{ Type.conditional, new string[] { "if" } }
         };

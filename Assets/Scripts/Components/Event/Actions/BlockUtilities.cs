@@ -26,8 +26,16 @@ namespace AngryDash.Game.API
             Color32 color = new Color32(r, g, b, 255);
             foreach (int block in GetBlocks(blockGroup))
             {
-                GameObject go = GameObject.Find($"Objet n° {block}");
+                GameObject go = GameObject.Find("Items").transform.Find($"Objet n° {block}").gameObject;
                 if (go != null) go.GetComponent<SpriteRenderer>().color = color;
+            }
+        }
+        public static void Active(int blockGroup, string enable)
+        {
+            foreach (int block in GetBlocks(blockGroup))
+            {
+                GameObject go = GameObject.Find("Items").transform.Find($"Objet n° {block}").gameObject;
+                if (go != null) go.SetActive(enable == "True");
             }
         }
     }
