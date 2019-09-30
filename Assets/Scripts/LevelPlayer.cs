@@ -112,16 +112,23 @@ namespace AngryDash.Game
 
 
                     var request = UnityWebRequest.Head(uri);
+                    request.timeout = 15;
                     yield return request.SendWebRequest();
-                    long.TryParse(request.GetResponseHeader("Content-Length"), out var size);
-                    go.GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.resourcePack.install", "Install ([0] KB)", Mathf.RoundToInt(size / 1000F));
+                    bool error = !string.IsNullOrWhiteSpace(request.error);
+                    long size = 0;
 
-                    string[] no = new string[] { "levelPlayer.resourcePack.no", "No Thanks" };
-                    if (level.rpRequired) no = new string[] { "levelPlayer.resourcePack.quit", "Quit" };
-                    go.GetChild(3).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", no[0], no[1]);
+                    if (!error)
+                    {
+                        long.TryParse(request.GetResponseHeader("Content-Length"), out size);
+                        go.GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.resourcePack.install", "Install ([0] KB)", Mathf.RoundToInt(size / 1000F));
+
+                        string[] no = new string[] { "levelPlayer.resourcePack.no", "No Thanks" };
+                        if (level.rpRequired) no = new string[] { "levelPlayer.resourcePack.quit", "Quit" };
+                        go.GetChild(3).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", no[0], no[1]);
+                    }
 
                     var file = new FileInfo(Application.persistentDataPath + "/Levels/Resource Packs/" + level.rpURL.TrimStart("http://").TrimStart("https://").TrimStart("file://").Replace("\\", "/").Replace("/", "_"));
-                    if (file.Exists && file.Length == size)
+                    if (file.Exists && (file.Length == size | error))
                     {
                         string dirPath = Application.temporaryCachePath + "/downloadedRP/";
                         if(!Directory.Exists(dirPath)) FileFormat.ZIP.Decompress(file.FullName, dirPath);
@@ -130,6 +137,7 @@ namespace AngryDash.Game
                     }
                     else go.gameObject.SetActive(true);
                 }
+                else StartCoroutine(ParseCoroutine());
             }
         }
         public void DownloadRP() { StartCoroutine(DownloadRPCoroutine()); }
