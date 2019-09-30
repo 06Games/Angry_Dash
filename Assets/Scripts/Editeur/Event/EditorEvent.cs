@@ -136,9 +136,9 @@ namespace AngryDash.Editor.Event
                         {
                             string actionPrefix = "";
                             string actionSufix = "";
-                            if (parameter.value.contentType.In(InputField.ContentType.IntegerNumber, InputField.ContentType.DecimalNumber, InputField.ContentType.Pin, InputField.ContentType.Custom)) actionPrefix = actionSufix = "";
+                            if (parameter.Value.Key == EventParameter.Type.Number) actionPrefix = actionSufix = "";
                             else actionPrefix = actionSufix = "\"";
-                            actions.Add(actionPrefix + parameter.value.text + actionSufix);
+                            actions.Add(actionPrefix + parameter.Value.Value + actionSufix);
                         }
                         script.AppendLine($"{item.methodName}({string.Join(", ", actions)})");
                     }
@@ -226,9 +226,9 @@ namespace AngryDash.Editor.Event
                         {
                             string actionPrefix = "";
                             string actionSufix = "";
-                            if (item.parameters[i].value.contentType.In(InputField.ContentType.IntegerNumber, InputField.ContentType.DecimalNumber, InputField.ContentType.Pin, InputField.ContentType.Custom)) actionPrefix = actionSufix = "";
+                            if (item.parameters[i].Value.Key == EventParameter.Type.Number) actionPrefix = actionSufix = "";
                             else actionPrefix = actionSufix = "\"";
-                            item.parameters[i].value.text = args[i].TrimStart(actionPrefix).TrimEnd(actionSufix);
+                            item.parameters[i].Value = new KeyValuePair<EventParameter.Type, string>(EventParameter.Type.Text, args[i].TrimStart(actionPrefix).TrimEnd(actionSufix));
                         }
                     }
                     else

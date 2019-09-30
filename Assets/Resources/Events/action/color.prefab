@@ -3101,16 +3101,16 @@ MonoBehaviour:
   fields: []
   parameters:
   - id: Group
-    value: {fileID: 8002747896109728093}
+    selectable: {fileID: 8002747896109728093}
     transform: {fileID: 630621263250100601}
   - id: R
-    value: {fileID: 2839188511098850220}
+    selectable: {fileID: 2839188511098850220}
     transform: {fileID: 8355941701893486164}
   - id: G
-    value: {fileID: 2456632923937842672}
+    selectable: {fileID: 2456632923937842672}
     transform: {fileID: 975133006988674356}
   - id: B
-    value: {fileID: 8459847633398777040}
+    selectable: {fileID: 8459847633398777040}
     transform: {fileID: 3187363761474260760}
 --- !u!114 &6396386009523703025
 MonoBehaviour:

@@ -1155,10 +1155,10 @@ MonoBehaviour:
   fields: []
   parameters:
   - id: X
-    value: {fileID: 8002747896109728093}
+    selectable: {fileID: 8002747896109728093}
     transform: {fileID: 630621263250100601}
   - id: Y
-    value: {fileID: 2839188511098850220}
+    selectable: {fileID: 2839188511098850220}
     transform: {fileID: 8355941701893486164}
 --- !u!114 &6396386009523703025
 MonoBehaviour:

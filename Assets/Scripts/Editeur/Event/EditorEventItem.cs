@@ -1,4 +1,5 @@
 ﻿using AngryDash.Image.Reader;
+using System.Collections.Generic;
 using Tools;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +21,27 @@ namespace AngryDash.Editor.Event
     public class EventParameter
     {
         public string id;
-        public InputField value;
+        public Selectable selectable;
+        public enum Type { Text, Number, Bool }
+        public KeyValuePair<Type, string> Value {
+            get {
+                if (selectable == null) return new KeyValuePair<Type, string>();
+                else if (selectable.GetComponent<InputField>() != null)
+                {
+                    var IF = (InputField)selectable;
+                    var type = IF.contentType.In(InputField.ContentType.IntegerNumber, InputField.ContentType.DecimalNumber, InputField.ContentType.Pin, InputField.ContentType.Custom)? Type.Number: Type.Text;
+                    return new KeyValuePair<Type, string>(type, IF.text);
+                }
+                else if (selectable.GetComponent<Toggle>() != null) return new KeyValuePair<Type, string>(Type.Bool, ((Toggle)selectable).isOn.ToString());
+                else return new KeyValuePair<Type, string>();
+            }
+            set
+            {
+                if (selectable == null) return;
+                else if (selectable.GetComponent<InputField>() != null) ((InputField)selectable).text = value.Value;
+                else if (selectable.GetComponent<Toggle>() != null) { bool.TryParse(value.Value, out bool on); ((Toggle)selectable).isOn = on; }
+            }
+        }
         public RectTransform transform;
     }
 
@@ -66,7 +87,7 @@ namespace AngryDash.Editor.Event
         void Update()
         {
             var elements = transform.FindParent("Elements");
-            foreach (EventParameter parameter in parameters) parameter.value.interactable = elements == null;
+            foreach (EventParameter parameter in parameters) parameter.selectable.interactable = elements == null;
             if (elements != null)
             {
                 if (type == Type.trigger)
