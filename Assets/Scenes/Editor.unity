@@ -1501,7 +1501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.triggers
   arg: []
 --- !u!114 &33018190
 MonoBehaviour:
@@ -5084,7 +5084,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.conditions
   arg: []
 --- !u!114 &141786502
 MonoBehaviour:
@@ -9176,7 +9176,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.actions
   arg: []
 --- !u!114 &270466930
 MonoBehaviour:
@@ -34184,7 +34184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: 
+  id: editor.edit.event.visual.operators
   arg: []
 --- !u!114 &1207096475
 MonoBehaviour:
