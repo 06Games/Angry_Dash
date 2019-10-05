@@ -20,8 +20,8 @@ public class LoadingScreenControl : MonoBehaviour
         else return LSC;
     }
 
+    public void LoadScreen(string Scene) { LoadScreen(Scene, null, false); }
     public void LoadScreen(string Scene, bool keep = false) { LoadScreen(Scene, null, keep); }
-
     public void LoadScreen(string Scene, string[] args, bool keep = false)
     {
         if (async != default) return;
