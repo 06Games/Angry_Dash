@@ -235,6 +235,7 @@ public class Inventory : MonoBehaviour
         {
             xml.GetItem("OwnedItems").CreateItem("item").CreateAttribute("name", items[index].name);
             xml.GetItem("Money").Value = (money - items[index].price).ToString();
+            Social.IncrementEvent("CgkI9r-go54eEAIQCA", (uint)items[index].price); //Statistics about coin expenses
             Reload();
         }
         xmlDefault = xml;
