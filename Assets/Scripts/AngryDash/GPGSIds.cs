@@ -27,6 +27,10 @@ public static class GPGSIds
 {
         public const string achievement_bienvenue = "CgkI9r-go54eEAIQAg"; // <GPGSID>
         public const string leaderboard_solo_levels = "CgkI9r-go54eEAIQAQ"; // <GPGSID>
+        public const string achievement_premiers_pas = "CgkI9r-go54eEAIQBQ"; // <GPGSID>
+        public const string event_niveaux_officiels = "CgkI9r-go54eEAIQBw"; // <GPGSID>
+        public const string event_pices = "CgkI9r-go54eEAIQBA"; // <GPGSID>
+        public const string achievement_un_bon_dbut = "CgkI9r-go54eEAIQBg"; // <GPGSID>
 
 }
 }

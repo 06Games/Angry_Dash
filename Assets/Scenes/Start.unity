@@ -877,7 +877,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Google Play service failed to start
+  m_Text: 'Authentication failed.
+
+    Google Play Games service failed to start.'
 --- !u!222 &148452783
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2164,7 +2166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: googleServiceAuthenticationExitNo
+  id: gameServices.abandon.no
   arg: []
 --- !u!114 &393948076
 MonoBehaviour:
@@ -4678,8 +4680,10 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Ignoring this step will prevent you from unlocking successes and other Google
-    Play Game events during this instance of the game, are you sure to continue?
+  m_Text: 'Ignoring this step will prevent you from unlocking achievements and seeing
+    your rankings in this instance of the game,
+
+    are you sure to continue?'
 --- !u!222 &874193164
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4702,7 +4706,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: googleServiceAuthenticationExitWarning
+  id: gameServices.abandon.warn
   arg: []
 --- !u!1 &885154194
 GameObject:
@@ -5201,7 +5205,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: googleServiceReconnect
+  id: gameServices.authentication.failed.tryAgain
   arg: []
 --- !u!114 &1004107882
 MonoBehaviour:
@@ -5237,7 +5241,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Reconnect
+  m_Text: Try again
 --- !u!222 &1004107883
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6699,7 +6703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: googleServiceAuthenticationExitYes
+  id: gameServices.abandon.yes
   arg: []
 --- !u!114 &1401372811
 MonoBehaviour:
@@ -8282,7 +8286,6 @@ GameObject:
   - component: {fileID: 1664300434}
   - component: {fileID: 1664300433}
   - component: {fileID: 1664300432}
-  - component: {fileID: 1664300435}
   m_Layer: 5
   m_Name: Exit
   m_TagString: Untagged
@@ -8352,16 +8355,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1664300435}
-        m_MethodName: ActiveObject
-        m_Mode: 2
+      - m_Target: {fileID: 261097188}
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
-          m_ObjectArgument: {fileID: 261097188}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
-          m_BoolArgument: 0
+          m_BoolArgument: 1
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
@@ -8402,23 +8405,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1664300430}
   m_CullTransparentMesh: 0
---- !u!114 &1664300435
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1664300430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea2e451ee6625ab44819b4f28b36ec30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnUpdate:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: Base+OnCompleteEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
 --- !u!1 &1709457052
 GameObject:
   m_ObjectHideFlags: 0

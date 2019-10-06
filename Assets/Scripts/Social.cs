@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Tools;
 using GooglePlayGames;
+using System.Linq;
 
 public class Social : MonoBehaviour
 {
@@ -13,23 +14,23 @@ public class Social : MonoBehaviour
     public void NewStart()
     {
         transform.GetChild(0).gameObject.SetActive(true);
-        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "googleServiceAuthenticating", "Authenticating...");
+        transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "gameServices.authentication", "Authentication...");
         transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
+
+        Button quit = transform.GetChild(1).GetChild(1).GetComponent<Button>();
+        quit.onClick.RemoveAllListeners();
+        quit.onClick.AddListener(() => LSC.LoadScreen(scene));
         Auth((error, e) =>
         {
             if ((bool)error)
             {
-                transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "googleServiceAuthenticationFailed", "Authentication failed.\nGoogle Play service failed to start");
+                transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "gameServices.authentication.failed.google", "Authentication failed.\nGoogle Play service failed to start");
                 transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
-
-                Button quit = transform.GetChild(1).GetChild(1).GetComponent<Button>();
-                quit.onClick.RemoveAllListeners();
-                quit.onClick.AddListener(() => LSC.LoadScreen(scene));
             }
             else
             {
-                transform.GetChild(0).GetChild(0).GetComponent<Text>().text = "Authenticated";
-                Achievement("CgkI9r-go54eEAIQAg", true, (bool s) => { Debug.Log("Deblocage de bienvenue: " + s); }); //Débloque le succès Bienvenue
+                transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "gameServices.authentication.success", "Authenticated");
+                Achievement("CgkI9r-go54eEAIQAg", true, (bool s) => { }); //Achievement 'Welcome'
 
                 LSC.LoadScreen(scene);
             }
@@ -37,6 +38,8 @@ public class Social : MonoBehaviour
     }
 
     static bool mWaitingForAuth = false;
+    /// <summary>Authentificate to the game service</summary>
+    /// <param name="onComplete">The function to call at the end of the operation</param>
     public static void Auth(BetterEventHandler onComplete)
     {
         if (!InternetAPI.IsConnected()) { onComplete.Invoke(false, new BetterEventArgs()); return; }
@@ -53,41 +56,151 @@ public class Social : MonoBehaviour
             .Build();
 
             //PlayGamesPlatform.InitializeInstance(config);
-            PlayGamesPlatform.DebugLogEnabled = true; // recommended for debugging
+            PlayGamesPlatform.DebugLogEnabled = Debug.isDebugBuild; // recommended for debugging
             PlayGamesPlatform.Activate(); // Activate the Google Play Games platform
 #endif
             UnityEngine.Social.localUser.Authenticate((bool success) =>
             {
                 mWaitingForAuth = false;
-                if (success) Debug.Log("Welcome " + UnityEngine.Social.localUser.userName);
-                else Debug.LogWarning("Authentication failed.");
+                if (success) Logging.Log("Successfully connected to the Game Services. Welcome " + UnityEngine.Social.localUser.userName);
+                else Logging.Log("Authentication failed.", LogType.Warning);
                 onComplete.Invoke(!success, new BetterEventArgs());
             });
         }
     }
 
+    #region Call
+    /// <summary>Check if the user is authenticated</summary>
+    /// <param name="callback">The api to call at the end of the check</param>
     static void Check(BetterEventHandler callback)
     {
-        if (mWaitingForAuth) Debug.Log("Auth not finished");
-        else if (!UnityEngine.Social.localUser.authenticated) Auth((error, e) => {
-            if (!(bool)error) callback.Invoke(null, null);
-        });
+        if (mWaitingForAuth) return;
+        else if (!UnityEngine.Social.localUser.authenticated)
+        {
+            Auth((error, e) =>
+            {
+                if (!(bool)error) callback.Invoke(null, null);
+            });
+        }
         else callback.Invoke(null, null);
     }
-    public static void Achievement(string id, bool unlock, System.Action<bool> callback)
+
+
+    /***************
+     * Achievement *
+     ***************/
+
+    /// <summary>Reveal/Unlock an achievement</summary>
+    /// <param name="id">ID of the achievement</param>
+    /// <param name="unlock">If true, unlock the achievement else reveal it</param>
+    /// <param name="callback">The function to call at the end of the operation</param>
+    public static void Achievement(string id, bool unlock, System.Action<bool> callback = null)
     {
         Check((s, e) =>
         {
+#if UNITY_ANDROID && !UNITY_EDITOR
             UnityEngine.Social.ReportProgress(id, unlock ? 100F : 0F, callback);
-        });
-    }
-    public static void Achievement(string id, int progress, System.Action<bool> callback)
-    {
-        Check((s, e) =>
-        {
-#if UNITY_ANDROID
-            PlayGamesPlatform.Instance.IncrementAchievement(id, progress, callback);
 #endif
         });
     }
+    /// <summary>Modify an achievement</summary>
+    /// <param name="id">ID of the achievement</param>
+    /// <param name="progress">The progress of the achievement (in %)</param>
+    /// <param name="callback">The function to call at the end of the operation</param>
+    public static void Achievement(string id, double progress, System.Action<bool> callback = null)
+    {
+        Check((s, e) =>
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            UnityEngine.Social.LoadAchievements((data) =>
+            {
+                var aData = data.FirstOrDefault(d => d.id == id);
+                double Progress = progress;
+                if (aData == null || aData.percentCompleted < progress) UnityEngine.Social.ReportProgress(id, progress, callback);
+            });
+#endif
+        });
+    }
+
+
+    /***************
+     * Leaderboard *
+     ***************/
+
+    /// <summary>Modify a score</summary>
+    /// <param name="id">ID of the leaderboard</param>
+    /// <param name="score">The player's score</param>
+    /// <param name="callback">The function to call at the end of the operation</param>
+    public static void Leaderboard(string id, long score, System.Action<bool> callback = null)
+    {
+        Check((s, e) =>
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            UnityEngine.Social.ReportScore(score, id, callback);
+#endif
+        });
+    }
+    /// <summary>Modify a score</summary>
+    /// <param name="id">ID of the leaderboard</param>
+    /// <param name="score">The player's score</param>
+    /// <param name="tag">Metadata tag</param>
+    /// <param name="callback">The function to call at the end of the operation</param>
+    public static void Leaderboard(string id, long score, string tag, System.Action<bool> callback = null)
+    {
+        Check((s, e) =>
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            PlayGamesPlatform.Instance.ReportScore(score, id, tag, callback);
+#endif
+        });
+    }
+
+
+    /**********
+     * Events *
+     **********/
+
+    /// <summary>Increment an event</summary>
+    /// <param name="id">ID of the event</param>
+    /// <param name="toAdd">The value to add the current score</param>
+    public static void IncrementEvent(string id, uint toAdd)
+    {
+        Check((s, e) =>
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            PlayGamesPlatform.Instance.Events.IncrementEvent(id, toAdd);
+#endif
+        });
+    }
+    /// <summary>Modify an event</summary>
+    /// <param name="id">ID of the event</param>
+    /// <param name="value">The value of the event</param>
+    public static void Event(string id, uint value)
+    {
+        Check((s, e) =>
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            PlayGamesPlatform.Instance.Events.FetchEvent(GooglePlayGames.BasicApi.DataSource.ReadCacheOrNetwork, id, (a, d) =>
+            {
+                ulong toAdd = value - d.CurrentCount;
+                if (toAdd > 0) PlayGamesPlatform.Instance.Events.IncrementEvent(id, (uint)toAdd);
+            });
+#endif
+        });
+    }
+    /// <summary>Modify an event</summary>
+    /// <param name="id">ID of the event</param>
+    /// <param name="callback">The function to call after receiving the value (bool: error, ulong: value)</param>
+    public static void GetEvent(string id, System.Action<bool, ulong> callback = null)
+    {
+        Check((s, e) =>
+        {
+#if UNITY_ANDROID && !UNITY_EDITOR
+            PlayGamesPlatform.Instance.Events.FetchEvent(GooglePlayGames.BasicApi.DataSource.ReadCacheOrNetwork, id, (a, d) => callback.Invoke(false, d.CurrentCount));
+#else
+             callback.Invoke(true, 0);
+#endif
+        });
+    }
+#endregion
 }
