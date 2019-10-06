@@ -74,16 +74,6 @@ public class Base : MonoBehaviour
 
     public static string GetVersion() { return Application.version; }
 
-    public void PlayNewLevel(string LevelName)
-    {
-        if (File.Exists(Application.persistentDataPath + "/Levels/Official Levels/" + LevelName + ".level"))
-        {
-            GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
-            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player", new string[] { "Home/Play/Official Levels", "File", Application.persistentDataPath + "/Levels/Official Levels/" + LevelName + ".level" });
-        }
-        else GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Start");
-    }
-
     public void Gold(Text t)
     {
         if (string.IsNullOrEmpty(PlayerPrefs.GetString("money")))
