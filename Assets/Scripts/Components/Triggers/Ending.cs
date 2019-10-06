@@ -138,9 +138,9 @@ namespace AngryDash.Game.Events
 
             if (gain > lastGain)
             {
-                Social.IncrementEvent("CgkI9r-go54eEAIQBA", (uint)gain); //Statistics about coin winning
                 lvlItem.Value = gain.ToString();
                 xml.GetItem("Money").Value = (money + gain - lastGain).ToString();
+                Social.IncrementEvent("CgkI9r-go54eEAIQBA", (uint)gain); //Statistics about coin winning
 
                 EndPanel.GetChild(1).GetChild(1).gameObject.SetActive(true);
                 EndPanel.GetChild(1).GetChild(1).GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.finished.reward.quantity", "x[0]", gain - lastGain);

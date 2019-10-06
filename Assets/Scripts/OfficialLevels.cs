@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class OfficialLevels : MonoBehaviour
 {
     public int lvlNumber = 15;
-    public int[] CoinsStars = new int[]{ 10, 15, 25 };
+    public int[] CoinsStars = new int[] { 10, 15, 25 };
     void OnEnable()
     {
         for (int i = 1; i < transform.childCount; i++) Destroy(transform.GetChild(i).gameObject);
@@ -15,6 +15,7 @@ public class OfficialLevels : MonoBehaviour
         {
             FileFormat.XML.RootElement xml = Inventory.xmlDefault;
             FileFormat.XML.Item lvlItems = xml.GetItemByAttribute("PlayedLevels", "type", "Official");
+            uint stars = 0;
             for (int i = 0; i < lvlNumber; i++)
             {
                 var btn = Instantiate(transform.GetChild(0).gameObject, transform).GetComponent<Button>();
@@ -42,8 +43,12 @@ public class OfficialLevels : MonoBehaviour
                 var Item = lvlItems.GetItemByAttribute("level", "name", LevelName);
                 if (Item != null) int.TryParse(Item.Value, out coins);
                 for (int s = 0; s < 3; s++)
+                {
+                    if (CoinsStars[s] <= coins) stars++;
                     StartCoroutine(e(btn.transform.GetChild(2).GetChild(s).GetComponent<UImage_Reader>(), CoinsStars[s] <= coins ? 0 : 3));
+                }
             }
+            Social.Leaderboard("CgkI9r-go54eEAIQAQ", stars); //Leaderboard of players according to their star number in the official levels
 
             IEnumerator e(UImage_Reader obj, int state)
             {
