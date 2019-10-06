@@ -27,11 +27,11 @@ namespace AngryDash.Game.RewardChecker
                 }
                 else
                 {
-                    if (name <= 10) Social.Achievement("CgkI9r-go54eEAIQBg", name * 10); //Achievement 'A good start'
+                    if (name <= 10) Social.Achievement("CgkI9r-go54eEAIQBg", name * 10, (s) => { }); //Achievement 'A good start'
                     Social.Event("CgkI9r-go54eEAIQBw", name); //Statistics about the highest level completed
                     if (name == 1)
                     {
-                        Social.Achievement("CgkI9r-go54eEAIQBQ", true); //Achievement 'First steps'
+                        Social.Achievement("CgkI9r-go54eEAIQBQ", true, (s) => { }); //Achievement 'First steps'
                         if (turn <= 8) return 25;
                         else if (turn <= 10) return 15;
                         else if (turn <= 12) return 10;

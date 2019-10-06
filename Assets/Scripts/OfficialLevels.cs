@@ -48,7 +48,7 @@ public class OfficialLevels : MonoBehaviour
                     StartCoroutine(e(btn.transform.GetChild(2).GetChild(s).GetComponent<UImage_Reader>(), CoinsStars[s] <= coins ? 0 : 3));
                 }
             }
-            Social.Leaderboard("CgkI9r-go54eEAIQAQ", stars); //Leaderboard of players according to their star number in the official levels
+            Social.Leaderboard("CgkI9r-go54eEAIQAQ", stars, (s) => { }); //Leaderboard of players according to their star number in the official levels
 
             IEnumerator e(UImage_Reader obj, int state)
             {
