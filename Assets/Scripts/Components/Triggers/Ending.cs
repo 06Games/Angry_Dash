@@ -115,8 +115,7 @@ namespace AngryDash.Game.Events
             int gain = 0;
             int lastGain = 0;
             FileFormat.XML.Item lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
-            if (lvlItem != null)
-                int.TryParse(lvlItem.Value, out lastGain);
+            if (lvlItem.node != null) int.TryParse(lvlItem.Value, out lastGain);
             else
             {
                 xml.GetItemByAttribute("PlayedLevels", "type", "Official").CreateItem("level").CreateAttribute("name", lvlPlayer.level.name);
