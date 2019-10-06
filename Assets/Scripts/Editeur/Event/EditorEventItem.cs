@@ -23,13 +23,15 @@ namespace AngryDash.Editor.Event
         public string id;
         public Selectable selectable;
         public enum Type { Text, Number, Bool }
-        public KeyValuePair<Type, string> Value {
-            get {
+        public KeyValuePair<Type, string> Value
+        {
+            get
+            {
                 if (selectable == null) return new KeyValuePair<Type, string>();
                 else if (selectable.GetComponent<InputField>() != null)
                 {
                     var IF = (InputField)selectable;
-                    var type = IF.contentType.In(InputField.ContentType.IntegerNumber, InputField.ContentType.DecimalNumber, InputField.ContentType.Pin, InputField.ContentType.Custom)? Type.Number: Type.Text;
+                    var type = IF.contentType.In(InputField.ContentType.IntegerNumber, InputField.ContentType.DecimalNumber, InputField.ContentType.Pin, InputField.ContentType.Custom) ? Type.Number : Type.Text;
                     return new KeyValuePair<Type, string>(type, IF.text);
                 }
                 else if (selectable.GetComponent<Toggle>() != null) return new KeyValuePair<Type, string>(Type.Bool, ((Toggle)selectable).isOn.ToString());

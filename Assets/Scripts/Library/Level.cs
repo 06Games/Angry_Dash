@@ -231,7 +231,7 @@ namespace Level
                 Name = data.name,
                 Author = data.author,
                 Description = data.description,
-                Music = data.music != null ? data.music.Artist + " - " + data.music.Name: "",
+                Music = data.music != null ? data.music.Artist + " - " + data.music.Name : "",
                 Data = data.ToString()
             };
         }

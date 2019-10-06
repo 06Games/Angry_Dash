@@ -294,7 +294,7 @@ namespace CodeProject
                 m_searchOption = searchOption;
             }
 
-            #region IEnumerable<FileData> Members
+#region IEnumerable<FileData> Members
 
             /// <summary>
             /// Returns an enumerator that iterates through the collection.
@@ -308,9 +308,9 @@ namespace CodeProject
                 return new FileEnumerator(m_path, m_filter, m_searchOption);
             }
 
-            #endregion
+#endregion
 
-            #region IEnumerable Members
+#region IEnumerable Members
 
             /// <summary>
             /// Returns an enumerator that iterates through a collection.
@@ -324,7 +324,7 @@ namespace CodeProject
                 return new FileEnumerator(m_path, m_filter, m_searchOption);
             }
 
-            #endregion
+#endregion
         }
 
         /// <summary>
@@ -419,7 +419,7 @@ namespace CodeProject
                 }
             }
 
-            #region IEnumerator<FileData> Members
+#region IEnumerator<FileData> Members
 
             /// <summary>
             /// Gets the element in the collection at the current position of the enumerator.
@@ -433,9 +433,9 @@ namespace CodeProject
                 get { return new FileData(m_path, m_win_find_data); }
             }
 
-            #endregion
+#endregion
 
-            #region IDisposable Members
+#region IDisposable Members
 
             /// <summary>
             /// Performs application-defined tasks associated with freeing, releasing,
@@ -449,9 +449,9 @@ namespace CodeProject
                 }
             }
 
-            #endregion
+#endregion
 
-            #region IEnumerator Members
+#region IEnumerator Members
 
             /// <summary>
             /// Gets the element in the collection at the current position of the enumerator.
@@ -563,7 +563,7 @@ namespace CodeProject
                 m_hndFindFile = null;
             }
 
-            #endregion
+#endregion
         }
     }
 }

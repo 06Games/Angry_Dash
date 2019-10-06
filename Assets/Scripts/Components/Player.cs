@@ -94,7 +94,7 @@ namespace AngryDash.Game
             }
 
 #if UNITY_ANDROID || UNITY_IOS
-        float size = 0.3F * Screen.height;
+            float size = 0.3F * Screen.height;
 #else
             float size = 0.2F * Screen.height;
 #endif

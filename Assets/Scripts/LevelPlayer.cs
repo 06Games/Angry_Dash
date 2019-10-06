@@ -131,7 +131,7 @@ namespace AngryDash.Game
                     if (file.Exists && (file.Length == size | error))
                     {
                         string dirPath = Application.temporaryCachePath + "/downloadedRP/";
-                        if(!Directory.Exists(dirPath)) FileFormat.ZIP.Decompress(file.FullName, dirPath);
+                        if (!Directory.Exists(dirPath)) FileFormat.ZIP.Decompress(file.FullName, dirPath);
                         Image.Sprite_API.forceRP = dirPath;
                         StartCoroutine(ParseCoroutine());
                     }

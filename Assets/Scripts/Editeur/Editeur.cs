@@ -525,7 +525,7 @@ public class Editeur : MonoBehaviour
     public void SaveLevel()
     {
         Logging.Log("Start saving...", LogType.Log);
-        if (file != "" & level != null) try { File.WriteAllText(file, level.ToString()); } catch {}
+        if (file != "" & level != null) try { File.WriteAllText(file, level.ToString()); } catch { }
         Logging.Log("Saving completed !", LogType.Log);
     }
 
