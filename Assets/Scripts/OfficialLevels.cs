@@ -1,6 +1,7 @@
 ﻿using AngryDash.Image.Reader;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +12,7 @@ public class OfficialLevels : MonoBehaviour
     void OnEnable()
     {
         for (int i = 1; i < transform.childCount; i++) Destroy(transform.GetChild(i).gameObject);
-        Social.GetEvent("CgkI9r-go54eEAIQBw", (error, lvl) =>
+        GetMaxLevel((error, lvl) =>
         {
             FileFormat.XML.RootElement xml = Inventory.xmlDefault;
             FileFormat.XML.Item lvlItems = xml.GetItemByAttribute("PlayedLevels", "type", "Official");
@@ -55,6 +56,21 @@ public class OfficialLevels : MonoBehaviour
                 yield return new WaitForEndOfFrame();
                 obj.StartAnimating(state);
             }
+        });
+    }
+
+    void GetMaxLevel(System.Action<bool, ulong> callback)
+    {
+        Social.GetEvent("CgkI9r-go54eEAIQBw", (error, lvl) =>
+        {
+            if (error)
+            {
+                string max = Inventory.xmlDefault.GetItemByAttribute("PlayedLevels", "type", "Official").GetItems("level").Select(l => l.Attribute("name")).Max();
+                if (max == null) callback.Invoke(false, 0);
+                else if (ulong.TryParse(max, out ulong maxLvl)) callback.Invoke(false, maxLvl);
+                else callback.Invoke(true, 0);
+            }
+            else callback.Invoke(error, lvl);
         });
     }
 }

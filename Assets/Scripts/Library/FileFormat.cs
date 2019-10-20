@@ -158,13 +158,13 @@ namespace FileFormat
             }
             public Item[] GetItems(string key)
             {
-                if (node == null) return null;
+                if (node == null) return new Item[0];
                 System.Xml.XmlNodeList list = node.SelectNodes(key);
                 Item[] items = new Item[list.Count];
                 for (int i = 0; i < items.Length; i++)
                     items[i] = new Item(list[i]);
                 if (items.Length > 0) return items;
-                else return null;
+                else return new Item[0];
             }
             public Item GetItemByAttribute(string key, string attribute, string attributeValue)
             {

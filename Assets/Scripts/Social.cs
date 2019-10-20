@@ -72,7 +72,7 @@ public class Social : MonoBehaviour
         }
     }
 
-#region Call
+    #region Call
     /// <summary>Check if the user is authenticated</summary>
     /// <param name="callback">The api to call at the end of the check</param>
     static void Check(System.Action callback, System.Action errorCallback)
@@ -207,5 +207,5 @@ public class Social : MonoBehaviour
 #endif
         }, () => callback.Invoke(false, 0));
     }
-#endregion
+    #endregion
 }
