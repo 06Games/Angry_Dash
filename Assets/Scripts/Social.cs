@@ -168,26 +168,26 @@ public class Social : MonoBehaviour
     /// <summary>Increment an event</summary>
     /// <param name="id">ID of the event</param>
     /// <param name="toAdd">The value to add the current score</param>
-    public static void IncrementEvent(string id, uint toAdd)
+    public static void IncrementEvent(string id, ulong toAdd)
     {
         Check(() =>
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
-            PlayGamesPlatform.Instance.Events.IncrementEvent(id, toAdd);
+            PlayGamesPlatform.Instance.Events.IncrementEvent(id, (uint)toAdd);
 #endif
         }, () => { });
     }
     /// <summary>Modify an event</summary>
     /// <param name="id">ID of the event</param>
     /// <param name="value">The value of the event</param>
-    public static void Event(string id, uint value)
+    public static void Event(string id, ulong value)
     {
         Check(() =>
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
             PlayGamesPlatform.Instance.Events.FetchEvent(GooglePlayGames.BasicApi.DataSource.ReadCacheOrNetwork, id, (a, d) =>
             {
-                long toAdd = value - (long)d.CurrentCount;
+                long toAdd = (long)value - (long)d.CurrentCount;
                 if (toAdd > 0) PlayGamesPlatform.Instance.Events.IncrementEvent(id, (uint)toAdd);
             });
 #endif
@@ -201,7 +201,7 @@ public class Social : MonoBehaviour
         Check(() =>
         {
 #if UNITY_ANDROID && !UNITY_EDITOR
-            PlayGamesPlatform.Instance.Events.FetchEvent(GooglePlayGames.BasicApi.DataSource.ReadCacheOrNetwork, id, (a, d) => callback.Invoke(a < 0, d.CurrentCount));
+            PlayGamesPlatform.Instance.Events.FetchEvent(GooglePlayGames.BasicApi.DataSource.ReadNetworkOnly, id, (a, d) => callback.Invoke(a >= 0, d == null ? 0: d.CurrentCount));
 #else
             callback.Invoke(true, 0);
 #endif
