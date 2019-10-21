@@ -59,6 +59,9 @@ public class Account : MonoBehaviour
             }
             else if (provider == "Google")
             {
+                string token = ((GooglePlayGames.PlayGamesLocalUser)UnityEngine.Social.localUser).GetIdToken();
+                StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", Complete));
+                Save("Google", new Dictionary<string, string>());
             }
             else complete(false, "");
         }
@@ -138,6 +141,9 @@ public class Account : MonoBehaviour
     }
     public void SignIn_Google()
     {
+        string token = ((GooglePlayGames.PlayGamesLocalUser)UnityEngine.Social.localUser).GetIdToken();
+        StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", Complete));
+        Save("Google", new Dictionary<string, string>());
     }
 
     public void Skip() { complete(null, null); }
