@@ -22,7 +22,12 @@ public class Social : MonoBehaviour
 
         Button quit = transform.GetChild(1).GetChild(1).GetComponent<Button>();
         quit.onClick.RemoveAllListeners();
-        quit.onClick.AddListener(() => LSC.LoadScreen(scene));
+        quit.onClick.AddListener(() => { 
+            Account ac = GameObject.Find("Account").GetComponent<Account>();
+            ac.complete += (s, args) => LSC.LoadScreen(scene);
+            ac.Initialize();
+            gameObject.SetActive(false);
+        });
         Auth((error, e) =>
         {
             if ((bool)error)
@@ -35,7 +40,10 @@ public class Social : MonoBehaviour
                 transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "gameServices.authentication.success", "Authenticated");
                 Achievement("CgkI9r-go54eEAIQAg", true, (bool s) => { }); //Achievement 'Welcome'
 
-                LSC.LoadScreen(scene);
+                Account ac = GameObject.Find("Account").GetComponent<Account>();
+                ac.complete += (s, args) => LSC.LoadScreen(scene); 
+                ac.Initialize();
+                gameObject.SetActive(false);
             }
         });
     }
@@ -55,10 +63,10 @@ public class Social : MonoBehaviour
             .EnableSavedGames()
             .RequestEmail()
             //.RequestServerAuthCode(false)
-            //.RequestIdToken()
+            .RequestIdToken()
             .Build();
 
-            //PlayGamesPlatform.InitializeInstance(config);
+            PlayGamesPlatform.InitializeInstance(config);
             PlayGamesPlatform.DebugLogEnabled = Debug.isDebugBuild; // recommended for debugging
             PlayGamesPlatform.Activate(); // Activate the Google Play Games platform
 #endif

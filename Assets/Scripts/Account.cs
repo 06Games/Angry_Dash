@@ -1,11 +1,11 @@
-﻿using System.IO;
-using System.Net;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using FileFormat.XML;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using Tools;
-using FileFormat.XML;
-using AngryDash.Language;
+using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class Account : MonoBehaviour
 {
@@ -21,9 +21,11 @@ public class Account : MonoBehaviour
         }
     }
     const string passwordKey = "VWtjNGJVbFhTbmhXVkRCNlQwVjBXVTFqUzI1VVZsSlJaREZKTVZkclVXOUtNbFV4VkVad01Fa3lRbTVsYlVWdVdsZEdSbEZYZUdaWGJURkRZbFJOYWxkVlJqaE9WamxKWW10dmVWTnpTM2RQUTA1MVYydFdSVXN3V2taVlYxcHNXVmRTTTB4SVpHbGlhMGx1VldwR1YxQjZXRVJ4VjFFd1RVWnZNVTVFUmpOak1sSTBaV3BGZDNkeVFYSlBWR1pFZFZVdlEzTk5UelZpVFV0dllUSjNjbmR4WnpkM2NXaE1VREZTTUZacldraE9WV1JYVGxSVVJIRkVWVEZOUkZVMFQwUmpNVTVFVGtsV1IxcGFWa2h1UkhGRE1HbDNOa1JFYjAxUGNFdFRURVJ4UjNoMFNWTnlSSFJIZEhOM04ydHhkemRTZDNjMlprUnZUVTl2VVRKYWVXUnRjSEpqTTJNM1RFUkZlVnB0YUhKUGFVVnNkM0pXYzJGWWJEQmthM0Iy";
+    private readonly string apiUrl = "https://06games.ddns.net/accounts/api/";
 
+    public static string Token { get; private set; }
     public static string Username { get; private set; } = "EvanG";
-    public static string Password
+    [Obsolete("Tokens are better ! No more working !")] public static string Password
     {
 #if UNITY_EDITOR
         get
@@ -37,6 +39,50 @@ public class Account : MonoBehaviour
         get; private set;
 #endif
     }
+
+    public bool logErrors { get; set; } = true;
+    public event BetterEventHandler complete;
+    public void CheckAccountFile(Action<bool, string> complete)
+    {
+        if (File.Exists(accountFile))
+        {
+            RootElement xml = new RootElement(null);
+            try { xml = new XML(File.ReadAllText(accountFile)).RootElement; } catch { }
+            string provider = xml.GetItem("provider").Value;
+            var auth = xml.GetItem("auth");
+
+            if (provider == "06Games")
+            {
+                string id = auth.GetItem("id").Value;
+                string password = auth.GetItem("password").Value;
+                StartCoroutine(ContactServer($"{apiUrl}auth/connectAccount.php?id={id}&password={password}", complete));
+            }
+            else if (provider == "Google")
+            {
+            }
+            else complete(false, "");
+        }
+        else complete(false, "");
+    }
+    System.Collections.IEnumerator ContactServer(string url, Action<bool, string> complete)
+    {
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
+        {
+            yield return webRequest.SendWebRequest();
+            var response = new FileFormat.JSON(webRequest.downloadHandler.text);
+            Token = response.Value<string>("token");
+            Username = response.Value<string>("username");
+            complete.Invoke(response.Value<string>("state") == "Connection succesful !", response.Value<string>("state"));
+        }
+    }
+
+    public static void Disconnect()
+    {
+        File.WriteAllText(accountFile, "");
+        FindObjectOfType<LoadingScreenControl>().LoadScreen("Start", new string[] { "Account", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name });
+    }
+
+
 
     void Start()
     {
@@ -53,114 +99,46 @@ public class Account : MonoBehaviour
                     if (child != gameObject) child.SetActive(false);
                 }
                 complete += (sender, e) => LSC.LoadScreen(args[1]);
-                Initialize();
+                CheckAccountFile(Complete);
             }
         }
     }
+    public void Initialize() { CheckAccountFile(Complete); }
 
-    public bool logErrors { get; set; } = true;
-    public event BetterEventHandler complete;
-    public void Initialize()
+    void Complete(bool success, string message)
     {
-        void NoConnectionInformation()
-        {
-            transform.GetChild(0).GetChild(3).GetComponent<Button>().onClick.AddListener(() =>
-            {
-                transform.GetChild(0).GetChild(3).GetComponent<Button>().interactable = false;
-                string username = transform.GetChild(0).GetChild(1).GetComponent<InputField>().text;
-                string password = transform.GetChild(0).GetChild(2).GetComponent<InputField>().text;
-                bool success = Connect(username, password, (sender, e) => complete.Invoke(sender, e));
+        if(success) Logging.Log("Successful connection to 06Games account", LogType.Log);
+        else Logging.Log("06Games account connection failure\n" + message, LogType.Warning);
+        Transform connectPanel = transform.GetChild(0);
+        connectPanel.gameObject.SetActive(!success);
 
-                if (success)
-                {
-                    RootElement RE = new XML().CreateRootElement("account");
-                    RE.CreateItem("username").Value = username;
-                    RE.CreateItem("password").Value = Security.Encrypting.Encrypt(password, passwordKey);
-                    FileInfo accountF = new FileInfo(accountFile);
-                    if (!accountF.Directory.Exists) Directory.CreateDirectory(accountF.DirectoryName);
-                    File.WriteAllText(accountF.FullName, RE.xmlFile.ToString(false));
-                }
-                else transform.GetChild(0).GetChild(3).GetComponent<Button>().interactable = true;
-            });
-            transform.GetChild(0).GetChild(5).gameObject.SetActive(false);
-            transform.GetChild(0).gameObject.SetActive(true);
-        }
+        connectPanel.GetChild(1).gameObject.SetActive(!success);
+        connectPanel.GetChild(1).GetComponent<Text>().text = message;
 
-        if (InternetAPI.IsConnected())
-        {
-            if (File.Exists(accountFile))
-            {
-                RootElement root = new RootElement(null);
-                try { root = new XML(File.ReadAllText(accountFile)).RootElement; } catch { }
-                string username = root.GetItem("username").Value;
-                string password = null;
-                try { password = Security.Encrypting.Decrypt(root.GetItem("password").Value, passwordKey); }
-                catch { NoConnectionInformation(); return; }
+        if (success) complete.Invoke(null, null);
+    }
+    void Save(string provider, Dictionary<string, string> auths)
+    {
+        var xml = new XML().CreateRootElement("account");
+        xml.CreateItem("provider").Value = provider;
 
-                bool success = Connect(username, password, (sender, e) => complete.Invoke(sender, e));
-                if (!success) NoConnectionInformation();
-            }
-            else NoConnectionInformation();
-        }
-        else complete.Invoke(null, null);
+        var xmlAuth = xml.CreateItem("auth");
+        foreach (var auth in auths) xmlAuth.CreateItem(auth.Key).Value = auth.Value;
+
+        File.WriteAllText(accountFile, xml.xmlFile.ToString(false));
     }
 
-    public static void Disconnect()
+    public void SignIn_06Games()
     {
-        File.WriteAllText(accountFile, "");
-        FindObjectOfType<LoadingScreenControl>().LoadScreen("Start",
-            new string[] { "Account", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name });
+        Transform go = transform.GetChild(0).Find("06Games");
+        string id = go.GetChild(1).GetComponent<InputField>().text;
+        string password = go.GetChild(2).GetComponent<InputField>().text;
+        StartCoroutine(ContactServer($"{apiUrl}auth/connectAccount.php?id={id}&password={password}", Complete));
+        Save("06Games", new Dictionary<string, string>() { { "id", id }, { "password", password } });
+    }
+    public void SignIn_Google()
+    {
     }
 
-    public bool Connect(string username, string password, BetterEventHandler success = null)
-    {
-        string url = "https://06games.ddns.net/accounts/lite/connect.php?id=" + username + "&mdp=" + password;
-        WebClient client = new WebClient();
-        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-
-        string Result = "";
-        try { Result = client.DownloadString(url); }
-        catch (Exception e)
-        {
-#if UNITY_EDITOR
-            Result = "Connection succesful !<br><br>Unity<br>UnityAccount<br>01/01/2000<br><b>Jeux :</b><dd>";
-            Debug.LogError(url + "\n" + e);
-#else
-            Result = e.Message;
-#endif
-        }
-
-        if (Result.Contains("Connection succesful !"))
-        {
-            Logging.Log("Successful connection to 06Games account", LogType.Log);
-            transform.GetChild(0).gameObject.SetActive(false);
-
-            string[] a = Result.Split(new string[] { "<br>" }, StringSplitOptions.None);
-            Username = a[3];
-            Password = password;
-
-            if (success != null) success.Invoke(null, null);
-        }
-        else
-        {
-            if (logErrors) Logging.Log("06Games account connection failure", LogType.Warning);
-            transform.GetChild(0).gameObject.SetActive(true);
-            transform.GetChild(0).GetChild(5).gameObject.SetActive(true);
-
-
-            string errorId = "";
-            if (Result == "You must enter a username (or an e-mail address) !") errorId = "AccountErrorNoUsername";
-            else if (Result == "This account doesn't exist !") errorId = "AccountErrorUsername";
-            else if (Result == "You must enter a password !") errorId = "AccountErrorNoPassword";
-            else if (Result == "The password you entered doesn't match the one on our databases !") errorId = "AccountErrorPassword";
-            else if (Result == "Bad URL") errorId = "AccountErrorInternal";
-
-            if (!string.IsNullOrEmpty(errorId))
-                transform.GetChild(0).GetChild(5).GetComponent<Text>().text = LangueAPI.Get("native", errorId, "[0]", Result);
-            else transform.GetChild(0).GetChild(5).GetComponent<Text>().text =
-                    LangueAPI.Get("native", "AccountErrorUnkown", "[0]", Result);
-        }
-
-        return Result.Contains("Connection succesful !");
-    }
+    public void Skip() { complete(null, null); }
 }

@@ -328,9 +328,7 @@ public class DependenciesManager : MonoBehaviour
             else
             {
                 transform.GetChild(2).gameObject.SetActive(false);
-                Account ac = GameObject.Find("Account").GetComponent<Account>();
-                ac.complete += (s, args) => _Social.NewStart();
-                ac.Initialize();
+                _Social.NewStart();
             }
 
             if (c)
