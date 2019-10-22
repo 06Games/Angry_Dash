@@ -25,23 +25,9 @@ public class Account : MonoBehaviour
 
     public static string Token { get; private set; }
     public static string Username { get; private set; } = "EvanG";
-    [Obsolete("Tokens are better ! No more working !")] public static string Password
-    {
-#if UNITY_EDITOR
-        get
-        {
-            RootElement root = new RootElement(null);
-            try { root = new XML(File.ReadAllText(accountFile)).RootElement; } catch { }
-            return Security.Encrypting.Decrypt(root.GetItem("password").Value, passwordKey);
-        }
-        set { }
-#else
-        get; private set;
-#endif
-    }
+    [Obsolete("Tokens are better ! No more working !")] public static string Password { get; }
 
-    public bool logErrors { get; set; } = true;
-    public event BetterEventHandler complete;
+    #region API
     public void CheckAccountFile(Action<bool, string> complete)
     {
         if (File.Exists(accountFile))
@@ -67,15 +53,28 @@ public class Account : MonoBehaviour
         }
         else complete(false, "");
     }
+
+    static RootElement stateTranslations;
     System.Collections.IEnumerator ContactServer(string url, Action<bool, string> complete)
     {
+        if (stateTranslations == null)
+        {
+            using (UnityWebRequest webRequest = UnityWebRequest.Get(apiUrl + "lang/" + AngryDash.Language.LangueAPI.selectedLanguage + ".xml"))
+            {
+                yield return webRequest.SendWebRequest();
+                try { stateTranslations = new XML(webRequest.downloadHandler.text).RootElement; } catch { stateTranslations = new RootElement(null); }
+            }
+        }
         using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
         {
             yield return webRequest.SendWebRequest();
             var response = new FileFormat.JSON(webRequest.downloadHandler.text);
             Token = response.Value<string>("token");
             Username = response.Value<string>("username");
-            complete.Invoke(response.Value<string>("state") == "Connection succesful !", response.Value<string>("state"));
+
+            string message = stateTranslations.GetItemByAttribute("string", "text", response.Value<string>("state")).Value;
+            if (message == null) message = AngryDash.Language.LangueAPI.Get("native", "account.unkownError", " An unknown error has occurred, please contact a manager and report the following error:\n<i><color=#B40404>[0]</color></i>", response.Value<string>("state"));
+            complete.Invoke(response.Value<string>("state") == "Connection succesful !", message.Format());
         }
     }
 
@@ -85,8 +84,20 @@ public class Account : MonoBehaviour
         FindObjectOfType<LoadingScreenControl>().LoadScreen("Start", new string[] { "Account", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name });
     }
 
+    void Save(string provider, Dictionary<string, string> auths)
+    {
+        var xml = new XML().CreateRootElement("account");
+        xml.CreateItem("provider").Value = provider;
 
+        var xmlAuth = xml.CreateItem("auth");
+        foreach (var auth in auths) xmlAuth.CreateItem(auth.Key).Value = auth.Value;
 
+        File.WriteAllText(accountFile, xml.xmlFile.ToString(false));
+    }
+    #endregion
+
+    #region Scene
+    public event BetterEventHandler complete;
     void Start()
     {
         LoadingScreenControl LSC = FindObjectOfType<LoadingScreenControl>();
@@ -110,7 +121,7 @@ public class Account : MonoBehaviour
 
     void Complete(bool success, string message)
     {
-        if(success) Logging.Log("Successful connection to 06Games account", LogType.Log);
+        if (success) Logging.Log("Successful connection to 06Games account", LogType.Log);
         else Logging.Log("06Games account connection failure\n" + message, LogType.Warning);
         Transform connectPanel = transform.GetChild(0);
         connectPanel.gameObject.SetActive(!success);
@@ -119,16 +130,6 @@ public class Account : MonoBehaviour
         connectPanel.GetChild(1).GetComponent<Text>().text = message;
 
         if (success) complete.Invoke(null, null);
-    }
-    void Save(string provider, Dictionary<string, string> auths)
-    {
-        var xml = new XML().CreateRootElement("account");
-        xml.CreateItem("provider").Value = provider;
-
-        var xmlAuth = xml.CreateItem("auth");
-        foreach (var auth in auths) xmlAuth.CreateItem(auth.Key).Value = auth.Value;
-
-        File.WriteAllText(accountFile, xml.xmlFile.ToString(false));
     }
 
     public void SignIn_06Games()
@@ -147,4 +148,5 @@ public class Account : MonoBehaviour
     }
 
     public void Skip() { complete(null, null); }
+    #endregion
 }

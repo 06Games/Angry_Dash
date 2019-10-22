@@ -118,7 +118,7 @@ namespace FileFormat
         {
             public RootElement(System.Xml.XmlNode xmlNode) { node = xmlNode; }
 
-            public XML xmlFile { get { return new XML(node.OwnerDocument); } }
+            public XML xmlFile { get { return new XML(node == null? null: node.OwnerDocument); } }
         }
 
         public class Item : Base_Collection
@@ -168,12 +168,14 @@ namespace FileFormat
             }
             public Item GetItemByAttribute(string key, string attribute, string attributeValue)
             {
-                System.Xml.XmlNode xmlNode = node.SelectSingleNode(key + "[@" + attribute + " = '" + attributeValue + "']");
+                if (node == null) return new Item(null);
+                System.Xml.XmlNode xmlNode = node.SelectSingleNode(key + "[@" + attribute + " = \"" + attributeValue + "\"]");
                 if (xmlNode == null) return new Item(null);
                 else return new Item(xmlNode);
             }
             public Item[] GetItemsByAttribute(string key, string attribute, string attributeValue)
             {
+                if (node == null) return new Item[0];
                 System.Xml.XmlNodeList list = node.SelectNodes(key + "[@" + attribute + " = '" + attributeValue + "']");
                 Item[] items = new Item[list.Count];
                 for (int i = 0; i < items.Length; i++)
