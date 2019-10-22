@@ -70,7 +70,8 @@ public class OfficialLevels : MonoBehaviour
     {
         Social.GetEvent("CgkI9r-go54eEAIQBw", (success, lvl) =>
         {
-            GetLocalMaxLevel((s, l) => {
+            GetLocalMaxLevel((s, l) =>
+            {
                 if (success)
                 {
                     if (l > lvl) callback.Invoke(s, l);

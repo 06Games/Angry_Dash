@@ -14,6 +14,7 @@ public class DependenciesManager : MonoBehaviour
     Slider slider;
 
     public Social _Social;
+    public bool EditorSkip = true;
 
     BetterEventHandler complete;
     void Start()
@@ -53,7 +54,10 @@ public class DependenciesManager : MonoBehaviour
         DownloadPanel.SetActive(true);
 
         complete += (sender, e) => downloadLevels();
-        if (InternetAPI.IsConnected())
+#if !UNITY_EDITOR
+        EditorSkip = false;
+#endif
+        if (InternetAPI.IsConnected() & !EditorSkip)
         {
             string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/";
             WebClient client = new WebClient();

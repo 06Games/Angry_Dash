@@ -118,7 +118,7 @@ namespace FileFormat
         {
             public RootElement(System.Xml.XmlNode xmlNode) { node = xmlNode; }
 
-            public XML xmlFile { get { return new XML(node == null? null: node.OwnerDocument); } }
+            public XML xmlFile { get { return new XML(node == null ? null : node.OwnerDocument); } }
         }
 
         public class Item : Base_Collection

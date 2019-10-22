@@ -1,4 +1,16 @@
-native/GUI/logo
+﻿native/GUI/logo
+native/GUI/startUp/dependencies/background
+native/GUI/startUp/dependencies/progressBg
+native/GUI/startUp/dependencies/progressState
+native/GUI/startUp/social/button
+native/GUI/startUp/social/background
+native/GUI/startUp/social/exit
+native/GUI/startUp/account/button
+native/GUI/startUp/account/background
+native/GUI/startUp/account/google
+native/GUI/startUp/account/apple
+native/GUI/startUp/account/microsoft
+native/GUI/startUp/ressources/background
 native/GUI/mainMenu/background
 native/GUI/mainMenu/button
 native/GUI/mainMenu/inventory
