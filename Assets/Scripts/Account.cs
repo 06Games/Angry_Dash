@@ -115,11 +115,17 @@ public class Account : MonoBehaviour
                     if (child != gameObject) child.SetActive(false);
                 }
                 complete += (sender, e) => LSC.LoadScreen(args[1]);
+
+                transform.GetChild(1).gameObject.SetActive(true);
                 CheckAccountFile(Complete);
             }
         }
     }
-    public void Initialize() { CheckAccountFile(Complete); }
+    public void Initialize()
+    {
+        transform.GetChild(1).gameObject.SetActive(true);
+        CheckAccountFile(Complete);
+    }
 
     void Complete(bool success, string message)
     {
@@ -131,6 +137,7 @@ public class Account : MonoBehaviour
         connectPanel.GetChild(1).gameObject.SetActive(!success);
         connectPanel.GetChild(1).GetComponent<Text>().text = message;
 
+        transform.GetChild(1).gameObject.SetActive(false);
         if (success) complete.Invoke(null, null);
     }
 
@@ -139,6 +146,8 @@ public class Account : MonoBehaviour
         Transform go = transform.GetChild(0).Find("06Games");
         string id = go.GetChild(1).GetComponent<InputField>().text;
         string password = go.GetChild(2).GetComponent<InputField>().text;
+
+        transform.GetChild(1).gameObject.SetActive(true);
         StartCoroutine(ContactServer($"{apiUrl}auth/connectAccount.php?id={id}&password={password}", Complete));
         Save("06Games", new Dictionary<string, string>() { { "id", id }, { "password", password } });
     }
@@ -147,6 +156,8 @@ public class Account : MonoBehaviour
         string token = "";
         try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
         catch { }
+
+        transform.GetChild(1).gameObject.SetActive(true);
         StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", Complete));
         Save("Google", new Dictionary<string, string>());
     }
