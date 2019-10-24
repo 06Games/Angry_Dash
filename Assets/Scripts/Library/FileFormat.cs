@@ -156,6 +156,15 @@ namespace FileFormat
                 if (xmlNode == null) return new Item(null);
                 else return new Item(xmlNode);
             }
+            public Item[] GetItems()
+            {
+                if (node == null) return new Item[0];
+                System.Xml.XmlNodeList list = node.ChildNodes;
+                Item[] items = new Item[list.Count];
+                for (int i = 0; i < items.Length; i++) items[i] = new Item(list[i]);
+                if (items.Length > 0) return items;
+                else return new Item[0];
+            }
             public Item[] GetItems(string key)
             {
                 if (node == null) return new Item[0];
@@ -189,6 +198,7 @@ namespace FileFormat
                 node.AppendChild(xmlNode);
                 return new Item(xmlNode);
             }
+            public System.Collections.Generic.IEnumerator<Item> GetEnumerator() { return GetItems().ToList().GetEnumerator(); }
         }
     }
 

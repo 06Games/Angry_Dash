@@ -36,6 +36,7 @@ public class Account : MonoBehaviour
             try { xml = new XML(File.ReadAllText(accountFile)).RootElement; } catch { }
             string provider = xml.GetItem("provider").Value;
             var auth = xml.GetItem("auth");
+            foreach (var param in auth) param.Value = Security.Encrypting.Decrypt(param.Value, passwordKey);
 
             if (provider == "06Games")
             {
@@ -92,7 +93,7 @@ public class Account : MonoBehaviour
         xml.CreateItem("provider").Value = provider;
 
         var xmlAuth = xml.CreateItem("auth");
-        foreach (var auth in auths) xmlAuth.CreateItem(auth.Key).Value = auth.Value;
+        foreach (var auth in auths) xmlAuth.CreateItem(auth.Key).Value = Security.Encrypting.Encrypt(auth.Value, passwordKey);
 
         File.WriteAllText(accountFile, xml.xmlFile.ToString(false));
     }

@@ -82,7 +82,8 @@ namespace Security
                 algorithm.Key = KEY_BYTES;
 
                 // Get bytes from input string
-                byte[] cipherBytes = System.Convert.FromBase64String(cipherText);
+                byte[] cipherBytes = new byte[0];
+                try { cipherBytes = System.Convert.FromBase64String(cipherText); } catch { return plaintext; }
 
                 // Create the streams used for decryption.
                 using (MemoryStream msDecrypt = new MemoryStream(cipherBytes))
