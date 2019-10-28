@@ -15,6 +15,7 @@
 // </copyright>
 
 #if UNITY_ANDROID
+#pragma warning disable
 
 namespace GooglePlayGames.Android
 {
