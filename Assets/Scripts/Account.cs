@@ -47,8 +47,10 @@ public class Account : MonoBehaviour
             else if (provider == "Google")
             {
                 string token = "";
+#if UNITY_ANDROID
                 try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
                 catch { }
+#endif
                 FindObjectOfType<MonoBehaviour>().StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", complete));
                 Save("Google", new Dictionary<string, string>());
             }
@@ -155,9 +157,10 @@ public class Account : MonoBehaviour
     public void SignIn_Google()
     {
         string token = "";
-        try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
-        catch { }
-
+#if UNITY_ANDROID
+                try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
+                catch { }
+#endif
         transform.GetChild(1).gameObject.SetActive(true);
         StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", Complete));
         Save("Google", new Dictionary<string, string>());
