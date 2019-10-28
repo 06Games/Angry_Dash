@@ -167,6 +167,9 @@ public class DependenciesManager : MonoBehaviour
                 text.text = LangueAPI.Get("native", "download.levels.state", "Level: [0] / [1]", i + 1, downloadList.Length);
 
                 string levelName = Path.GetFileName(downloadList[i].GetItem("name").Value);
+                var levelFile = new FileInfo(levelsPath + levelName);
+                if (levelFile.Exists && FileFormat.Generic.CalculateMD5(levelFile) == downloadList[i].GetItem("hash").Value) continue;
+
                 string levelURL = downloadList[i].GetItem("name").Value;
                 if (!Uri.IsWellFormedUriString(levelURL, UriKind.Absolute)) levelURL = levelsURL + levelURL; //If the URL is relative, create an absolute one
                 using (UnityWebRequest webRequest = UnityWebRequest.Get(levelURL))
