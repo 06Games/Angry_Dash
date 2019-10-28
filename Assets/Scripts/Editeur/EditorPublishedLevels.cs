@@ -268,31 +268,22 @@ public class EditorPublishedLevels : MonoBehaviour
     }
     private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
-        int pourcentage = e.ProgressPercentage; //Progression
+        var unit = new string[] { "B", "KB", "MB", "GB", "TB" };
+        double downloadedSize = e.BytesReceived;
+        double totalSize = e.TotalBytesToReceive;
+        int pourcentage = e.ProgressPercentage;
 
-        //Avancé (x Mo sur x Mo)
-        double Actual = e.BytesReceived;
-        double Total = e.TotalBytesToReceive;
-        int Reduct = 0;
-        for (int i = 0; DependenciesManager.NbChiffreEntier(Total) > 3 & i <= 4; i++)
-        {
-            Actual = Actual / 1024d;
-            Total = Total / 1024d;
-            Reduct++;
-        }
-        Actual = System.Math.Round(Actual, 1);
-        Total = System.Math.Round(Total, 1);
-        string[] LangueID = new string[] { "downloadStateB", "[0] B out of [1] B" };
-        if (Reduct == 0) LangueID = new string[] { "downloadStateB", "[0] B out of [1] B" };
-        else if (Reduct == 1) LangueID = new string[] { "downloadStateKB", "[0] KB out of [1] KB" };
-        else if (Reduct == 2) LangueID = new string[] { "downloadStateMB", "[0] MB out of [1] MB" };
-        else if (Reduct == 3) LangueID = new string[] { "downloadStateGB", "[0] GB out of [1] GB" };
-        else if (Reduct == 4) LangueID = new string[] { "downloadStateTB", "[0] TB out of [1] TB" };
+        //Downloaded size
+        int sizePower = 0;
+        if (totalSize > 0) sizePower = DependenciesManager.GetCorrectUnit(totalSize);
+        else sizePower = DependenciesManager.GetCorrectUnit(downloadedSize);
+        totalSize = System.Math.Round(totalSize / Mathf.Pow(1000, sizePower), 1);
+        downloadedSize = System.Math.Round(downloadedSize / Mathf.Pow(1000, sizePower), 1);
 
         UnityThread.executeInUpdate(() =>
         {
-            string downloaded = LangueAPI.Get("native", LangueID[0], LangueID[1], Actual.ToString("0.0"), Total.ToString("0.0"));
-            string pourcent = LangueAPI.Get("native", "downloadStatePercentage", "[0]%", pourcentage.ToString("00"));
+            string downloaded = LangueAPI.Get("native", $"download.state.{unit[sizePower]}", $"[0] {unit[sizePower]} out of [1] {unit[sizePower]}", downloadedSize.ToString(), totalSize > 0 ? totalSize.ToString() : "~");
+            string pourcent = LangueAPI.Get("native", "download.state.percentage", "[0]%", pourcentage.ToString("00"));
 
             Text DownloadInfo = transform.GetChild(2).GetChild(3).GetChild(3).GetComponent<Text>();
             DownloadInfo.gameObject.SetActive(true);

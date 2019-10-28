@@ -199,6 +199,7 @@ namespace FileFormat
                 return new Item(xmlNode);
             }
             public System.Collections.Generic.IEnumerator<Item> GetEnumerator() { return GetItems().ToList().GetEnumerator(); }
+            public override string ToString() { return node.OuterXml; }
         }
     }
 
@@ -309,7 +310,6 @@ namespace FileFormat
             fastZip.ExtractZip(zipPath, unzipPath, null);
         }
 
-
         public static byte[] Decompress(byte[] input)
         {
             var output = new MemoryStream();
@@ -320,6 +320,12 @@ namespace FileFormat
 
             output.Position = 0;
             return output.ToArray();
+        }
+
+        public static async void DecompressAsync(string zipPath, string unzipPath, System.Action onComplete)
+        {
+            await System.Threading.Tasks.Task.Run(() => Decompress(zipPath, unzipPath), new System.Threading.CancellationToken(false) { });
+            onComplete();
         }
     }
 

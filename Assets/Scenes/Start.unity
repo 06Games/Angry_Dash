@@ -174,7 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: downloadRequireInternetSubtitle
+  id: download.ressourcesPack.noInternet.subtitle
   arg: []
 --- !u!114 &48804772
 MonoBehaviour:
@@ -963,7 +963,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: downloadRPSubtitle
+  id: download.ressourcesPack.subtitle
   arg: []
 --- !u!114 &222504337
 MonoBehaviour:
@@ -3863,6 +3863,8 @@ GameObject:
   - component: {fileID: 554963218}
   - component: {fileID: 554963217}
   - component: {fileID: 554963219}
+  - component: {fileID: 554963221}
+  - component: {fileID: 554963220}
   m_Layer: 5
   m_Name: No Internet
   m_TagString: Untagged
@@ -3924,6 +3926,53 @@ MonoBehaviour:
   baseID: native/GUI/startUp/dependencies/background
   TextConfiguration: 0
   Type: 00000000000000000000000000000000
+--- !u!114 &554963220
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554963216}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea2e451ee6625ab44819b4f28b36ec30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnUpdate:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: Base+OnCompleteEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+--- !u!114 &554963221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554963216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa0d69b00e6bf9f4da3f8173c9f73d0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnCompleteMethods:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 554963220}
+        m_MethodName: Quit
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: SurClique+OnCompleteEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  WantKeyUp: 0
+  SurQuelClique: 0
 --- !u!1 &569076613
 GameObject:
   m_ObjectHideFlags: 0
@@ -4862,7 +4911,8 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1753887451}
   m_Father: {fileID: 313594868}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5916,7 +5966,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: downloadingSoloLevels
+  id: download.levels
   arg: []
 --- !u!114 &918673451
 MonoBehaviour:
@@ -6190,8 +6240,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -25}
-  m_SizeDelta: {x: 1500, y: 50}
+  m_AnchoredPosition: {x: 0, y: -37.5}
+  m_SizeDelta: {x: 1500, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &989555484
 MonoBehaviour:
@@ -6212,7 +6262,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -6240,7 +6290,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 0.627
+  m_Value: 0.5
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -8141,7 +8191,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: downloadRPTitle
+  id: download.ressourcesPack
   arg: []
 --- !u!114 &1456008403
 MonoBehaviour:
@@ -9152,7 +9202,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: downloadRequireInternetTitle
+  id: download.ressourcesPack.noInternet
   arg: []
 --- !u!114 &1607402709
 MonoBehaviour:
@@ -9222,8 +9272,6 @@ GameObject:
   - component: {fileID: 1629237939}
   - component: {fileID: 1629237944}
   - component: {fileID: 1629237943}
-  - component: {fileID: 1629237942}
-  - component: {fileID: 1629237941}
   - component: {fileID: 1629237940}
   m_Layer: 5
   m_Name: Exit
@@ -9247,10 +9295,10 @@ RectTransform:
   m_Father: {fileID: 1525394619}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 100}
-  m_SizeDelta: {x: 1820, y: 100}
+  m_SizeDelta: {x: -100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1629237940
 MonoBehaviour:
@@ -9266,46 +9314,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   category: native
-  id: downloadRequireInternetExit
+  id: download.ressourcesPack.noInternet.exit
   arg: []
---- !u!114 &1629237941
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 114017414319404170, guid: d1bc78131cf35d74293d344732fef65e,
-    type: 2}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1629237938}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea2e451ee6625ab44819b4f28b36ec30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnUpdate:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: Base+OnCompleteEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
---- !u!114 &1629237942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 114453988750713324, guid: d1bc78131cf35d74293d344732fef65e,
-    type: 2}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1629237938}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa0d69b00e6bf9f4da3f8173c9f73d0a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnCompleteMethods:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: SurClique+OnCompleteEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
-  WantKeyUp: 0
-  SurQuelClique: 0
 --- !u!114 &1629237943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10229,6 +10239,85 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!1 &1753887450
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1753887451}
+  - component: {fileID: 1753887453}
+  - component: {fileID: 1753887452}
+  m_Layer: 5
+  m_Name: Text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1753887451
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1753887450}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 713657875}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: -10, y: -10}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1753887452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1753887450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: d3d98c6c765feed42ae3d428bc54f55b, type: 3}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 1
+    m_MinSize: 0
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 50%
+--- !u!222 &1753887453
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1753887450}
+  m_CullTransparentMesh: 0
 --- !u!1 &1759656135
 GameObject:
   m_ObjectHideFlags: 0
@@ -10660,8 +10749,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67a79ae511c6d584d8e91938e0074c88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _Social: {fileID: 2119409147}
-  EditorSkip: 1
 --- !u!114 &1859322063
 MonoBehaviour:
   m_ObjectHideFlags: 0

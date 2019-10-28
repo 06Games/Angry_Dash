@@ -1,369 +1,193 @@
-﻿using System;
+﻿using AngryDash.Language;
+using FileFormat.XML;
+using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
-using UnityEngine;
-using UnityEngine.UI;
 using Tools;
-using AngryDash.Language;
+using UnityEngine;
+using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class DependenciesManager : MonoBehaviour
 {
-    GameObject DownloadPanel;
-    Slider slider;
-
-    public Social _Social;
-    public bool EditorSkip = true;
-
-    BetterEventHandler complete;
+    #region RPs
     void Start()
     {
         LoadingScreenControl LSC = FindObjectOfType<LoadingScreenControl>();
         string[] args = LSC.GetArgs();
         if (args == null) return;
-        if (args.Length >= 3)
+        if (args.Length >= 2)
         {
             if (args[0] == "Dependencies")
             {
+                //Disable start-up actions
                 for (int i = 0; i < transform.parent.childCount; i++)
                 {
                     GameObject child = transform.parent.GetChild(i).gameObject;
                     if (child != gameObject) child.SetActive(false);
                 }
-
-                DownloadPanel = transform.GetChild(1).gameObject;
-                slider = DownloadPanel.transform.GetChild(1).GetComponent<Slider>();
-                slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.Get("native", "download.ressourcesPack.connection", "Connection to the server");
-                slider.transform.GetChild(4).gameObject.SetActive(false);
-                DownloadPanel.SetActive(true);
-
-                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/";
-                complete += (sender, e) => LSC.LoadScreen(args[1], false);
-                downloadFile(0, args[2].Split("\n"), URL, Application.persistentDataPath + "/Ressources/");
+                StartCoroutine(DownloadRPs(() => LSC.LoadScreen(args[1]), new Item[] { new Item(new XML(args[2]).RootElement.node) }));
             }
         }
     }
 
-    public void DownloadDefaultsRP()
-    {
-        DownloadPanel = transform.GetChild(1).gameObject;
-        slider = DownloadPanel.transform.GetChild(1).GetComponent<Slider>();
-        slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.Get("native", "download.ressourcesPack.connection", "Connection to the server");
-        slider.transform.GetChild(4).gameObject.SetActive(false);
-        DownloadPanel.SetActive(true);
-
-        complete += (sender, e) => downloadLevels();
-#if !UNITY_EDITOR
-        EditorSkip = false;
-#endif
-        if (InternetAPI.IsConnected() & !EditorSkip)
-        {
-            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/";
-            WebClient client = new WebClient();
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            string Result = "";
-            try { Result = client.DownloadString(URL + "?v=" + Application.version).Replace("<BR />", "\n"); } //Try to access to the server
-            catch (Exception e) //else
-            {
-                Debug.LogError(e.Message); //log error
-                if (!Directory.Exists(Application.persistentDataPath + "/Ressources/default/"))
-                {
-                    transform.GetChild(0).gameObject.SetActive(true);
-                    DownloadPanel.SetActive(false);
-                }
-                else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); //continue game starting
-                return; //stop this function
-            }
-            string[] lines = Result.Split("\n");
-
-            downloadFile(0, lines, URL, Application.persistentDataPath + "/Ressources/");
-        }
-        else if (!Directory.Exists(Application.persistentDataPath + "/Ressources/default/"))
-        {
-            transform.GetChild(0).gameObject.SetActive(true);
-            DownloadPanel.SetActive(false);
-        }
-        else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
-    }
-
-    string[] downData = new string[4] { "", "", "", "" };
-    System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-    public void downloadFile(int actual, string[] lines, string url, string mainPath)
-    {
-        string name = lines[actual].Split("<name>")[1].Split("</name>")[0];
-        int.TryParse(lines[actual].Split("<size>")[1].Split("B</size>")[0], out int size);
-
-        UnityThread.executeInUpdate(() =>
-        {
-            slider.value = actual / lines.Length;
-            slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.Get("native", "downloadRPNumber", "File : [0] / [1]", actual + 1, lines.Length);
-        });
-
-
-        bool down = false;
-        string rpName = Path.GetFileNameWithoutExtension(name);
-        if (!Directory.Exists(mainPath + rpName + "/")) down = true;
-        else down = new DirectoryInfo(mainPath + rpName + "/").GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length) != size;
-
-        if (down)
-        {
-            if (!Directory.Exists(mainPath)) Directory.CreateDirectory(mainPath);
-
-            using (WebClient wc = new WebClient())
-            {
-                sw.Start();
-                wc.DownloadProgressChanged += wc_DownloadProgressChanged;
-                wc.DownloadFileCompleted += wc_DownloadFileCompleted;
-                string URL = name;
-                if (!Uri.IsWellFormedUriString(URL, UriKind.Absolute)) URL = url + name;
-                wc.DownloadFileAsync(new Uri(URL), Application.temporaryCachePath + "/" + actual + ".zip");
-            }
-        }
-        else
-        {
-            slider.transform.GetChild(4).gameObject.SetActive(false);
-            wc_DownloadFileCompleted(null, new AsyncCompletedEventArgs(null, false, null));
-        }
-
-        string newS = "";
-        for (int i = 0; i < lines.Length; i++)
-        {
-            if (i < lines.Length - 1)
-                newS = newS + lines[i] + "\n";
-            else newS = newS + lines[i];
-        }
-
-        downData[0] = actual.ToString();
-        downData[1] = newS;
-        downData[2] = mainPath;
-        downData[3] = url;
-    }
-
-    private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-    {
-        // Vitesse
-        double speed = Math.Round((e.BytesReceived / sw.Elapsed.TotalSeconds), 1);
-        int SpeedReduct = 0;
-        for (int i = 0; NbChiffreEntier(speed) > 3 & i <= 4; i++)
-        {
-            speed = speed / 1024d;
-            SpeedReduct++;
-        }
-        speed = Math.Round(speed, 1);
-        string[] SpeedLangueID = new string[] { "downloadSpeedB", "[0] B/s" };
-        if (SpeedReduct == 0) SpeedLangueID = new string[] { "downloadSpeedB", "[0] B/s" };
-        else if (SpeedReduct == 1) SpeedLangueID = new string[] { "downloadSpeedKB", "[0] KB/s" };
-        else if (SpeedReduct == 2) SpeedLangueID = new string[] { "downloadSpeedMB", "[0] MB/s" };
-        else if (SpeedReduct == 3) SpeedLangueID = new string[] { "downloadSpeedGB", "[0] GB/s" };
-        else if (SpeedReduct == 4) SpeedLangueID = new string[] { "downloadSpeedTB", "[0] TB/s" };
-
-
-        int pourcentage = e.ProgressPercentage; //Progression
-
-        //Avancé (x Mo sur x Mo)
-        double Actual = e.BytesReceived;
-        double Total = e.TotalBytesToReceive;
-        if (Total < 0) Total = Actual;
-        int Reduct = 0;
-        for (int i = 0; NbChiffreEntier(Total) > 3 & i <= 4; i++)
-        {
-            Actual = Actual / 1024d;
-            Total = Total / 1024d;
-            Reduct++;
-        }
-        Actual = Math.Round(Actual, 1);
-        Total = Math.Round(Total, 1);
-        string[] LangueID = new string[] { "downloadStateB", "[0] B out of [1] B" };
-        if (Reduct == 0) LangueID = new string[] { "downloadStateB", "[0] B out of [1] B" };
-        else if (Reduct == 1) LangueID = new string[] { "downloadStateKB", "[0] KB out of [1] KB" };
-        else if (Reduct == 2) LangueID = new string[] { "downloadStateMB", "[0] MB out of [1] MB" };
-        else if (Reduct == 3) LangueID = new string[] { "downloadStateGB", "[0] GB out of [1] GB" };
-        else if (Reduct == 4) LangueID = new string[] { "downloadStateTB", "[0] TB out of [1] TB" };
-
-        UnityThread.executeInUpdate(() =>
-        {
-            string speedText = LangueAPI.Get("native", SpeedLangueID[0], SpeedLangueID[1], speed);
-            string downloaded = LangueAPI.Get("native", LangueID[0], LangueID[1], Actual.ToString("0.0"), Total.ToString("0.0"));
-            string pourcent = LangueAPI.Get("native", "downloadStatePercentage", "[0]%", pourcentage.ToString("00"));
-
-            Text DownloadInfo = slider.transform.GetChild(4).GetComponent<Text>();
-            DownloadInfo.gameObject.SetActive(true);
-            DownloadInfo.text = speedText + " - " + downloaded + " - <color=grey>" + pourcent + "</color>";
-
-            //Progression plus détaillée
-            string[] lines = downData[1].Split("\n");
-            float baseValue = int.Parse(downData[0]) / lines.Length;
-            float oneValue = 1 / (float)lines.Length;
-            slider.value = baseValue + ((pourcentage / 100F) * oneValue);
-        });
-    }
-
-    private void wc_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-    {
-        sw.Reset();
-        if (e.Cancelled)
-        {
-            print("The download has been cancelled");
-            return;
-        }
-
-        if (e.Error != null) // We have an error ! Retry a few times, then abort.
-        {
-            print("An error ocurred while trying to download file\n" + e.Error);
-
-            return;
-        }
-
-        UnityThread.executeInUpdate(() =>
-        {
-            string[] s = downData[1].Split("\n");
-
-            if (sender == null) DownloadNotFinished();
-            else if (sender.ToString() != "pass") DownloadNotFinished();
-            else
-            {
-                UnityThread.executeInUpdate(() =>
-                {
-                    DownloadPanel.SetActive(false);
-                    complete.Invoke(null, null);
-                });
-            }
-
-            void DownloadNotFinished()
-            {
-                if (sender != null)
-                {
-                    string[] pathTo = s[int.Parse(downData[0])].Split("<name>")[1].Split("</name>")[0].Split("/", "\\");
-                    string path = downData[2] + pathTo[pathTo.Length - 1].Replace(".zip", "") + "/";
-                    if (Directory.Exists(path)) Directory.Delete(path, true);
-                    FileFormat.ZIP.Decompress(Application.temporaryCachePath + "/" + downData[0] + ".zip", path);
-                }
-
-                try
-                {
-                    if (int.Parse(downData[0]) < s.Length - 2)
-                        downloadFile(int.Parse(downData[0]) + 1, s, downData[3], downData[2]);
-                    else wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
-                }
-                catch { wc_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); }
-            }
-        });
-    }
-
-    #region Levels
-    int data_actual;
-    string[] data_lines;
-    public void downloadLevels(int actual = 0, string[] lines = null)
+    public void DownloadRPs(Action complete) { StartCoroutine(DownloadRPs(complete, null)); }
+    public System.Collections.IEnumerator DownloadRPs(Action complete, Item[] downloadList)
     {
         if (InternetAPI.IsConnected())
         {
-            if (lines == null)
+            string ressourcesURL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/";
+            string ressourcesPath = Application.persistentDataPath + "/Ressources/";
+            if (!Directory.Exists(ressourcesPath)) Directory.CreateDirectory(ressourcesPath);
+
+            var DownloadPanel = transform.GetChild(1).gameObject;
+            var slider = DownloadPanel.transform.GetChild(1).GetComponent<Slider>();
+            slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.Get("native", "download.ressourcesPack.connection", "Connection to the server");
+            slider.transform.GetChild(4).gameObject.SetActive(false);
+            DownloadPanel.SetActive(true);
+            Text DownloadInfo = slider.transform.GetChild(4).GetComponent<Text>();
+
+            if (downloadList == null)
             {
-                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/solo/";
-                WebClient client = new WebClient();
-                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                string Result = "";
-                try { Result = client.DownloadString(URL).Replace("<BR />", "\n"); } catch { levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); return; }
-                lines = Result.Split("\n");
-            }
-
-            UnityThread.executeInUpdate(() =>
-            {
-                GameObject go = transform.GetChild(2).gameObject;
-                go.SetActive(true);
-                go.transform.GetChild(0).GetComponent<Slider>().value = (float)actual / lines.Length;
-                go.transform.GetChild(2).GetComponent<Text>().text = actual + "/" + lines.Length;
-            });
-
-            string version = lines[actual].Split("</version>")[0].Replace("<version>", "");
-            string name = lines[actual].Split("<name>")[1].Split("</name>")[0];
-            int size = int.Parse(lines[actual].Split("<size>")[1].Split("B</size>")[0]);
-
-            string desktopPath = Application.persistentDataPath + "/Levels/Official Levels/" + name;
-
-            bool down = false;
-            if (!CheckVersionCompatibility(version)) down = false;
-            else if (File.Exists(desktopPath))
-                if (new FileInfo(desktopPath).Length != size) down = true;
-                else down = false;
-            else down = true;
-            if (down)
-            {
-                if (!Directory.Exists(Application.persistentDataPath + "/Levels/Official Levels/"))
-                    Directory.CreateDirectory(Application.persistentDataPath + "/Levels/Official Levels/");
-
-                string url = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/solo/" + name;
-                using (WebClient wc = new WebClient())
+                using (UnityWebRequest webRequest = UnityWebRequest.Get(ressourcesURL + "?v=" + Application.version))
                 {
-                    wc.DownloadFileCompleted += levels_DownloadFileCompleted;
-                    wc.DownloadFileAsync(new Uri(url), desktopPath);
+                    yield return webRequest.SendWebRequest();
+                    downloadList = new XML(webRequest.downloadHandler.text).RootElement.GetItemsByAttribute("ressource", "required", "TRUE");
                 }
             }
-            else levels_DownloadFileCompleted(null, new AsyncCompletedEventArgs(null, false, null));
+
+            for (int i = 0; i < downloadList.Length; i++)
+            {
+                slider.value = i / downloadList.Length;
+                slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.Get("native", "download.ressourcesPack.state", "File: [0] / [1]", i + 1, downloadList.Length);
+
+                string rpName = Path.GetFileNameWithoutExtension(downloadList[i].GetItem("name").Value);
+                var rpDir = new DirectoryInfo(ressourcesPath + rpName + "/");
+                if (rpDir.Exists && rpDir.GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length) == downloadList[i].GetItem("size").value<long>()) continue;
+
+                string rpURL = downloadList[i].GetItem("name").Value;
+                if (!Uri.IsWellFormedUriString(rpURL, UriKind.Absolute)) rpURL = ressourcesURL + rpURL; //If the URL is relative, create an absolute one
+                using (UnityWebRequest webRequest = UnityWebRequest.Get(rpURL))
+                {
+                    var sw = new System.Diagnostics.Stopwatch();
+                    webRequest.SendWebRequest();
+                    sw.Start();
+                    while (!webRequest.isDone)
+                    {
+                        var unit = new string[] { "B", "KB", "MB", "GB", "TB" };
+                        double downloadedSize = webRequest.downloadedBytes;
+
+                        // Download speed
+                        double speed = downloadedSize / sw.Elapsed.TotalSeconds;
+                        int speedPower = GetCorrectUnit(speed);
+                        speed = Math.Round(speed / Mathf.Pow(1000, speedPower), 1);
+
+                        float pourcentage = webRequest.downloadProgress * 100F; //Progress
+
+                        //Downloaded size
+                        int sizePower = 0;
+                        if (double.TryParse(webRequest.GetResponseHeader("Content-Length"), out double totalSize)) sizePower = GetCorrectUnit(speed);
+                        else sizePower = GetCorrectUnit(speed);
+                        totalSize = Math.Round(totalSize / Mathf.Pow(1000, sizePower), 1);
+                        downloadedSize = Math.Round(downloadedSize / Mathf.Pow(1000, sizePower), 1);
 
 
-            data_actual = actual;
-            data_lines = lines;
+                        //Text
+                        string speedText = LangueAPI.Get("native", $"download.speed.{unit[speedPower]}", $"[0] {unit[speedPower]}/s", speed);
+                        string downloaded = LangueAPI.Get("native", $"download.state.{unit[sizePower]}", $"[0] {unit[sizePower]} out of [1] {unit[sizePower]}", downloadedSize.ToString(), totalSize > 0 ? totalSize.ToString() : "~");
+                        string pourcent = LangueAPI.Get("native", "download.state.percentage", "[0]%", pourcentage.ToString("00"));
+                        DownloadInfo.text = speedText + " - " + downloaded + " - <color=grey>" + pourcent + "</color>";
+                        DownloadInfo.gameObject.SetActive(true);
+
+                        //Progress bar
+                        float baseValue = i / downloadList.Length;
+                        float oneValue = 1F / downloadList.Length;
+                        slider.value = baseValue + (pourcentage / 100F * oneValue);
+
+                        yield return new WaitForEndOfFrame();
+                    }
+
+                    if (string.IsNullOrEmpty(webRequest.error))
+                    {
+                        string zipPath = Application.temporaryCachePath + "/" + i + ".zip";
+                        File.WriteAllBytes(zipPath, webRequest.downloadHandler.data);
+                        if (rpDir.Exists) rpDir.Delete(true);
+                        FileFormat.ZIP.DecompressAsync(zipPath, ressourcesPath + rpName + "/", () => File.Delete(zipPath)); //Unzip in background and delete the file when it's finished
+                    }
+                    else Debug.LogError(webRequest.error);
+                }
+            }
+
+            complete();
         }
-        else levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
+        else if (!Directory.Exists(Application.persistentDataPath + "/Ressources/default/")) transform.GetChild(0).gameObject.SetActive(true); //This is the first start, the game can't start
+        else complete.Invoke(); //Continue without downloading anything
     }
-
-    private void levels_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-    {
-        if (e.Cancelled)
-        {
-            print("The download has been cancelled");
-            return;
-        }
-
-        if (e.Error != null) // We have an error! Retry a few times, then abort.
-        {
-            print("An error ocurred while trying to download file\n" + e.Error);
-
-            return;
-        }
-
-        UnityThread.executeInUpdate(() =>
-        {
-            bool c = false;
-            if (sender == null) c = true;
-            else if (sender.ToString() != "pass") c = true;
-            else
-            {
-                transform.GetChild(2).gameObject.SetActive(false);
-                _Social.NewStart();
-            }
-
-            if (c)
-            {
-                try
-                {
-                    if (data_actual < data_lines.Length - 1)
-                        downloadLevels(data_actual + 1, data_lines);
-                    else levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null));
-                }
-                catch { levels_DownloadFileCompleted("pass", new AsyncCompletedEventArgs(null, false, null)); }
-            }
-        });
+    public static int GetCorrectUnit(double d) {
+        int NbEntier = Math.Round(d, 0).ToString().Length;
+        return (int)((NbEntier - 1) / 3F);
     }
     #endregion
 
-    #region General
-    public static bool CheckVersionCompatibility(string version) { return CheckVersionCompatibility(version, Application.version); }
-    public static bool CheckVersionCompatibility(string version, string app_version)
+    #region Levels
+    public void DownloadLevels(Action complete) { StartCoroutine(DownloadLevels(complete, null)); }
+    public System.Collections.IEnumerator DownloadLevels(Action complete, Item[] downloadList)
     {
-        string[] versionNumberG = version.Split(" - ");
-        if (versionNumberG.Length != 2) return false; //Version parameter is not correctly parsed, returns incompatible
-        Versioning firstVersionG = new Versioning(versionNumberG[0]);
-        Versioning appVersionG = new Versioning(app_version);
-        Versioning secondVersionG = new Versioning(versionNumberG[1]);
+        if (InternetAPI.IsConnected())
+        {
+            string levelsURL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/solo/";
+            string levelsPath = Application.persistentDataPath + "/Levels/Official Levels/";
+            if (!Directory.Exists(levelsPath)) Directory.CreateDirectory(levelsPath);
 
-        if (!appVersionG.CompareTo(firstVersionG, Versioning.SortConditions.NewerOrEqual)) return false; //The first version is newer
-        else if (appVersionG.CompareTo(secondVersionG, Versioning.SortConditions.OlderOrEqual)) return true; //The version of the application is between the 2 specified versions
-        else return false; //The second version is older
+            GameObject DownloadInfo = transform.GetChild(2).gameObject;
+            DownloadInfo.SetActive(true);
+            var slider = DownloadInfo.transform.GetChild(0).GetComponent<Slider>();
+            var text = DownloadInfo.transform.GetChild(2).GetComponent<Text>();
+
+            if (downloadList == null)
+            {
+                using (UnityWebRequest webRequest = UnityWebRequest.Get(levelsURL + "?v=" + Application.version))
+                {
+                    yield return webRequest.SendWebRequest();
+                    downloadList = new XML(webRequest.downloadHandler.text).RootElement.GetItems("level");
+                }
+            }
+
+            for (int i = 0; i < downloadList.Length; i++)
+            {
+                slider.value = (float)i / downloadList.Length;
+                text.text = LangueAPI.Get("native", "download.levels.state", "Level: [0] / [1]", i + 1, downloadList.Length);
+
+                string levelName = Path.GetFileName(downloadList[i].GetItem("name").Value);
+                string levelURL = downloadList[i].GetItem("name").Value;
+                if (!Uri.IsWellFormedUriString(levelURL, UriKind.Absolute)) levelURL = levelsURL + levelURL; //If the URL is relative, create an absolute one
+                using (UnityWebRequest webRequest = UnityWebRequest.Get(levelURL))
+                {
+                    webRequest.SendWebRequest();
+                    while (!webRequest.isDone)
+                    {
+                        //Progress
+                        float baseValue = (float)i / downloadList.Length;
+                        float oneValue = 1F / downloadList.Length;
+                        float total = baseValue + (webRequest.downloadProgress * oneValue);
+
+                        slider.fillRect.GetComponentInChildren<Text>().text = LangueAPI.Get("native", "download.state.percentage", "[0]%", (total * 100F).ToString("00")); //Progress text
+                        slider.value = total; //Progress bar
+
+                        yield return new WaitForEndOfFrame();
+                    }
+
+                    if (string.IsNullOrEmpty(webRequest.error)) File.WriteAllBytes(levelsPath + levelName, webRequest.downloadHandler.data);
+                    else Debug.LogError(webRequest.error);
+                }
+            }
+
+            complete();
+        }
+        else if (!Directory.Exists(Application.persistentDataPath + "/Levels/Official Levels/")) transform.GetChild(0).gameObject.SetActive(true); //This is the first start, the game can't start
+        else complete.Invoke(); //Continue without downloading anything
     }
-
-    public static int NbChiffreEntier(double d) { return Math.Round(d, 0).ToString().Length; }
     #endregion
 }

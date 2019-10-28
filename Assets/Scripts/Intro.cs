@@ -71,8 +71,10 @@ public class Intro : MonoBehaviour
 
     void PlayEnd()
     {
-        gameObject.SetActive(false);
+        var DM = GameObject.Find("Dependencies").GetComponent<DependenciesManager>();
+        DM.DownloadRPs(() => DM.DownloadLevels(() => FindObjectOfType<Social>().NewStart()));
+
         Fond.SetActive(false);
-        GameObject.Find("Dependencies").GetComponent<DependenciesManager>().DownloadDefaultsRP();
+        gameObject.SetActive(false);
     }
 }
