@@ -20,17 +20,17 @@ public class Account : MonoBehaviour
 #endif
         }
     }
-    const string passwordKey = "VWtjNGJVbFhTbmhXVkRCNlQwVjBXVTFqUzI1VVZsSlJaREZKTVZkclVXOUtNbFV4VkVad01Fa3lRbTVsYlVWdVdsZEdSbEZYZUdaWGJURkRZbFJOYWxkVlJqaE9WamxKWW10dmVWTnpTM2RQUTA1MVYydFdSVXN3V2taVlYxcHNXVmRTTTB4SVpHbGlhMGx1VldwR1YxQjZXRVJ4VjFFd1RVWnZNVTVFUmpOak1sSTBaV3BGZDNkeVFYSlBWR1pFZFZVdlEzTk5UelZpVFV0dllUSjNjbmR4WnpkM2NXaE1VREZTTUZacldraE9WV1JYVGxSVVJIRkVWVEZOUkZVMFQwUmpNVTVFVGtsV1IxcGFWa2h1UkhGRE1HbDNOa1JFYjAxUGNFdFRURVJ4UjNoMFNWTnlSSFJIZEhOM04ydHhkemRTZDNjMlprUnZUVTl2VVRKYWVXUnRjSEpqTTJNM1RFUkZlVnB0YUhKUGFVVnNkM0pXYzJGWWJEQmthM0Iy";
-    private readonly string apiUrl = "https://06games.ddns.net/accounts/api/";
+    private readonly static string passwordKey = "VWtjNGJVbFhTbmhXVkRCNlQwVjBXVTFqUzI1VVZsSlJaREZKTVZkclVXOUtNbFV4VkVad01Fa3lRbTVsYlVWdVdsZEdSbEZYZUdaWGJURkRZbFJOYWxkVlJqaE9WamxKWW10dmVWTnpTM2RQUTA1MVYydFdSVXN3V2taVlYxcHNXVmRTTTB4SVpHbGlhMGx1VldwR1YxQjZXRVJ4VjFFd1RVWnZNVTVFUmpOak1sSTBaV3BGZDNkeVFYSlBWR1pFZFZVdlEzTk5UelZpVFV0dllUSjNjbmR4WnpkM2NXaE1VREZTTUZacldraE9WV1JYVGxSVVJIRkVWVEZOUkZVMFQwUmpNVTVFVGtsV1IxcGFWa2h1UkhGRE1HbDNOa1JFYjAxUGNFdFRURVJ4UjNoMFNWTnlSSFJIZEhOM04ydHhkemRTZDNjMlprUnZUVTl2VVRKYWVXUnRjSEpqTTJNM1RFUkZlVnB0YUhKUGFVVnNkM0pXYzJGWWJEQmthM0Iy";
+    private readonly static string apiUrl = "https://06games.ddns.net/accounts/api/";
 
     public static string Token { get; private set; }
-    public static string Username { get; private set; } = "EvanG";
-    [Obsolete("Tokens are better ! No more working !")] public static string Password { get; }
+    public static string Username { get; private set; }
 
     #region API
-    public void CheckAccountFile(Action<bool, string> complete)
+    public static void CheckAccountFile(Action<bool, string> complete)
     {
-        if (File.Exists(accountFile))
+        if (Token != null) complete(true, "");
+        else if (File.Exists(accountFile))
         {
             RootElement xml = new RootElement(null);
             try { xml = new XML(File.ReadAllText(accountFile)).RootElement; } catch { }
@@ -42,14 +42,14 @@ public class Account : MonoBehaviour
             {
                 string id = auth.GetItem("id").Value;
                 string password = auth.GetItem("password").Value;
-                StartCoroutine(ContactServer($"{apiUrl}auth/connectAccount.php?id={id}&password={password}", complete));
+                FindObjectOfType<MonoBehaviour>().StartCoroutine(ContactServer($"{apiUrl}auth/connectAccount.php?id={id}&password={password}", complete));
             }
             else if (provider == "Google")
             {
                 string token = "";
                 try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
                 catch { }
-                StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", Complete));
+                FindObjectOfType<MonoBehaviour>().StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", complete));
                 Save("Google", new Dictionary<string, string>());
             }
             else complete(false, "");
@@ -58,7 +58,7 @@ public class Account : MonoBehaviour
     }
 
     static RootElement stateTranslations;
-    System.Collections.IEnumerator ContactServer(string url, Action<bool, string> complete)
+    static System.Collections.IEnumerator ContactServer(string url, Action<bool, string> complete)
     {
         if (stateTranslations == null)
         {
@@ -87,7 +87,7 @@ public class Account : MonoBehaviour
         FindObjectOfType<LoadingScreenControl>().LoadScreen("Start", new string[] { "Account", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name });
     }
 
-    void Save(string provider, Dictionary<string, string> auths)
+    static void Save(string provider, Dictionary<string, string> auths)
     {
         var xml = new XML().CreateRootElement("account");
         xml.CreateItem("provider").Value = provider;

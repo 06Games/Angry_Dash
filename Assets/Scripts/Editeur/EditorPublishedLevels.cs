@@ -304,11 +304,17 @@ public class EditorPublishedLevels : MonoBehaviour
         WebClient client = new WebClient();
         client.Encoding = System.Text.Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string URL = serverURL + "mark.php?action=set&level=" + items[currentFile].Author + "/" + items[currentFile].Name
-            + "&id=" + Account.Username + "&mdp=" + Account.Password + "&mark=" + (note + 0.5F);
-        string result = client.DownloadString(URL);
-        if (result.Contains("Success")) Select(currentFile);
-        else Debug.LogError("Connection error: " + result);
+        Account.CheckAccountFile((success, msg) =>
+        {
+            if (success)
+            {
+                string URL = serverURL + "mark.php?action=set&token=" + Account.Token + "&level=" + items[currentFile].Author + "/" + items[currentFile].Name + "&mark=" + (note + 0.5F);
+                string result = client.DownloadString(URL);
+                if (result.Contains("Success")) Select(currentFile);
+                else Debug.LogError("Connection error: " + result);
+            }
+            else Debug.LogError(msg);
+        });
     }
 
     public void NewComment(Transform panel)
@@ -326,16 +332,21 @@ public class EditorPublishedLevels : MonoBehaviour
         WebClient client = new WebClient();
         client.Encoding = System.Text.Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string URL = serverURL + "mark.php?action=set&level=" + items[currentFile].Author + "/" + items[currentFile].Name
-            + "&id=" + Account.Username + "&mdp=" + Account.Password
-            + "&comment=" + panel.GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text.HtmlEncode();
-        string result = client.DownloadString(URL);
-        if (result.Contains("Success"))
+        Account.CheckAccountFile((success, msg) =>
         {
-            Select(currentFile);
-            panel.gameObject.SetActive(false);
-        }
-        else Debug.LogError("Connection error: " + result.Replace("<BR />", "\n"));
-
+            if (success)
+            {
+                string URL = serverURL + "mark.php?action=set&token=" + Account.Token + "&level=" + items[currentFile].Author + "/" + items[currentFile].Name
+                    + "&comment=" + panel.GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text.HtmlEncode();
+                string result = client.DownloadString(URL);
+                if (result.Contains("Success"))
+                {
+                    Select(currentFile);
+                    panel.gameObject.SetActive(false);
+                }
+                else Debug.LogError("Connection error: " + result.Replace("<BR />", "\n"));
+            }
+            else Debug.LogError(msg);
+        });
     }
 }

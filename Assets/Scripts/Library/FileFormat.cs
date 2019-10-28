@@ -14,17 +14,23 @@ namespace FileFormat
             if (!string.IsNullOrEmpty(plainText))
             {
                 try { jToken = Newtonsoft.Json.Linq.JObject.Parse(plainText); }
-                catch (System.Exception e) { Debug.LogError("Error with:\n" + plainText + "\nError details:\n" + e.Message); }
+                catch (System.Exception e) { Debug.LogError("Error parsing:\n" + plainText + "\nError details:\n" + e.Message); }
             }
         }
-        public JSON(Newtonsoft.Json.Linq.JToken token) { jToken = (Newtonsoft.Json.Linq.JObject)token; }
+        public JSON(Newtonsoft.Json.Linq.JToken token)
+        {
+            try { jToken = (Newtonsoft.Json.Linq.JObject)token; }
+            catch (System.Exception e) { Debug.LogError("Error parsing the token\nError details:\n" + e.Message); }
+        }
 
         public JSON GetCategory(string token) { if (jToken == null) return new JSON(null); else return new JSON(jToken.SelectToken(token)); }
         public void Delete() { if (jToken != null) jToken.Remove(); }
         public bool ContainsValues { get { if (jToken == null) return false; else return jToken.HasValues; } }
 
-        public T Value<T>(string value) { return jToken.Value<T>(value); }
+        public T Value<T>(string value) { if (jToken == null) return default; else return jToken.Value<T>(value); }
         public bool ValueExist(string value) { if (jToken == null) return false; else return jToken.Value<string>(value) != null; }
+
+        public override string ToString() { return jToken.ToString(); }
     }
 
     namespace XML

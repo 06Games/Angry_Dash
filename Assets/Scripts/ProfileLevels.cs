@@ -137,14 +137,23 @@ public class ProfileLevels : MonoBehaviour
     public void Delete(int i)
     {
         if (i >= items.Length) return;
-        string url = serverURL + "delete.php?id=" + Account.Username + "&mdp=" + Account.Password + "&level=" + items[i];
-        WebClient client = new WebClient();
-        client.Encoding = System.Text.Encoding.UTF8;
-        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        Account.CheckAccountFile((success, msg) =>
+        {
+            if (success) StartCoroutine(Delete(items[i]));
+            else Debug.LogError(msg);
+        });
+    }
+    public IEnumerator Delete(string levelName)
+    {
+        string url = serverURL + "delete.php?token=" + System.Uri.EscapeUriString(Account.Token + "&level=" + levelName);
+        using (var webRequest = UnityEngine.Networking.UnityWebRequest.Get(url))
+        {
+            yield return webRequest.SendWebRequest();
 
-        string file = "";
-        try { file = client.DownloadString(url.Replace(" ", "%20")); } catch { }
-        if (file.Contains("Success")) { Sort(sortMode); }
+            var response = new FileFormat.JSON(webRequest.downloadHandler.text);
+            if (response.Value<string>("state") == "Done") Sort(sortMode);
+            else Debug.LogError(response.Value<string>("state"));
+        }
     }
 
     public void Collaborate(int i)

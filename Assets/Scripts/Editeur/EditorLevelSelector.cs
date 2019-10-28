@@ -332,34 +332,41 @@ public class EditorLevelSelector : MonoBehaviour
     /// <param name="index">Index of desired level</param>
     public void PublishLevel(int index)
     {
-        string id = Account.Username;
-        string mdp = Account.Password;
-
         MenuManager PublishPanel = transform.GetChild(5).GetComponent<MenuManager>();
         PublishPanel.Array(0);
         PublishPanel.gameObject.SetActive(true);
 
-        WebClient client = new WebClient();
-        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/upload.php?id=" + id + "&mdp=" + mdp + "&level=" + Path.GetFileNameWithoutExtension(files[index].Name);
-
-        string lvl = File.ReadAllText(files[index].FullName); //Read the level file
-        if (FileFormat.XML.Utils.IsValid(lvl)) // If the level is in XML, minimize it
-            lvl = lvl.Replace("\n", "").Replace("\r", "").Replace("\t", "");
-        client.UploadDataCompleted += (sender, e) =>
+        Account.CheckAccountFile((success, msg) =>
         {
-            string Result = "";
-            if (e.Error != null) Result = e.Error.Message;
-            else Result = System.Text.Encoding.ASCII.GetString(e.Result);
+            if (success)
+            {
+                WebClient client = new WebClient();
+                ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/upload.php?token=" + Account.Token + "&level=" + Path.GetFileNameWithoutExtension(files[index].Name);
 
-            if (Result.Contains("Success")) PublishPanel.Array(2);
-            else
+                string lvl = File.ReadAllText(files[index].FullName); //Read the level file
+                if (FileFormat.XML.Utils.IsValid(lvl)) // If the level is in XML, minimize it
+                    lvl = lvl.Replace("\n", "").Replace("\r", "").Replace("\t", "");
+                client.UploadDataCompleted += (sender, e) =>
+                {
+                    if (e.Error != null) Error(e.Error.Message);
+                    else
+                    {
+                        var response = new FileFormat.JSON(System.Text.Encoding.UTF8.GetString(e.Result));
+                        if (response.Value<string>("state") == "Done") PublishPanel.Array(2);
+                        else Error(response.Value<string>("state"));
+                    }
+                };
+                client.UploadDataAsync(new System.Uri(URL.Replace(" ", "%20")), lvl.ToByte());
+
+            }
+            else Error(msg);
+            void Error(string error)
             {
                 PublishPanel.Array(1);
-                PublishPanel.GO[1].transform.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "EditorEditPublishError", "<color=red>Error</color> : [0]", Result);
-            }
-        };
-        client.UploadDataAsync(new System.Uri(URL.Replace(" ", "%20")), lvl.ToByte());
+                PublishPanel.GO[1].transform.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "EditorEditPublishError", "<color=red>Error</color> : [0]", error);
 
+            }
+        });
     }
 }
