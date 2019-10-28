@@ -88,8 +88,8 @@ public class DependenciesManager : MonoBehaviour
 
                         //Downloaded size
                         int sizePower = 0;
-                        if (double.TryParse(webRequest.GetResponseHeader("Content-Length"), out double totalSize)) sizePower = GetCorrectUnit(speed);
-                        else sizePower = GetCorrectUnit(speed);
+                        if (double.TryParse(webRequest.GetResponseHeader("Content-Length"), out double totalSize)) sizePower = GetCorrectUnit(totalSize);
+                        else sizePower = GetCorrectUnit(downloadedSize);
                         totalSize = Math.Round(totalSize / Mathf.Pow(1000, sizePower), 1);
                         downloadedSize = Math.Round(downloadedSize / Mathf.Pow(1000, sizePower), 1);
 
