@@ -36,12 +36,12 @@ public class DependenciesManager : MonoBehaviour
     public void DownloadRPs(Action complete) { StartCoroutine(DownloadRPs(complete, null)); }
     public System.Collections.IEnumerator DownloadRPs(Action complete, Item[] downloadList)
     {
+        string ressourcesURL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/";
+        string ressourcesPath = Application.persistentDataPath + "/Ressources/";
+        if (!Directory.Exists(ressourcesPath)) Directory.CreateDirectory(ressourcesPath);
+
         if (InternetAPI.IsConnected())
         {
-            string ressourcesURL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/";
-            string ressourcesPath = Application.persistentDataPath + "/Ressources/";
-            if (!Directory.Exists(ressourcesPath)) Directory.CreateDirectory(ressourcesPath);
-
             var DownloadPanel = transform.GetChild(1).gameObject;
             var slider = DownloadPanel.transform.GetChild(1).GetComponent<Slider>();
             slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.Get("native", "download.ressourcesPack.connection", "Connection to the server");
@@ -106,7 +106,7 @@ public class DependenciesManager : MonoBehaviour
                         float oneValue = 1F / downloadList.Length;
                         slider.value = baseValue + (pourcentage / 100F * oneValue);
 
-                        if (Input.GetKey(KeyCode.Escape) && Directory.Exists(Application.persistentDataPath + "/Ressources/default/")) //If the user wants to skip and a RP already exists
+                        if (Input.GetKey(KeyCode.Escape) && Directory.Exists(ressourcesPath + "default/")) //If the user wants to skip and the default RP already exists
                         {
                             webRequest.Abort(); //Stop the download
                             i = downloadList.Length; //Don't download any other RPs
@@ -121,13 +121,13 @@ public class DependenciesManager : MonoBehaviour
                         if (rpDir.Exists) rpDir.Delete(true);
                         FileFormat.ZIP.DecompressAsync(zipPath, ressourcesPath + rpName + "/", () => File.Delete(zipPath)); //Unzip in background and delete the file when it's finished
                     }
-                    else if(webRequest.error != "Request aborted") Debug.LogError(webRequest.error);
+                    else if (webRequest.error != "Request aborted") Debug.LogError(webRequest.error);
                 }
             }
 
             complete();
         }
-        else if (!Directory.Exists(Application.persistentDataPath + "/Ressources/default/")) transform.GetChild(0).gameObject.SetActive(true); //This is the first start, the game can't start
+        else if (!Directory.Exists(ressourcesPath + "default/")) transform.GetChild(0).gameObject.SetActive(true); //This is the first start, the game can't start
         else complete.Invoke(); //Continue without downloading anything
     }
     public static int GetCorrectUnit(double d)
