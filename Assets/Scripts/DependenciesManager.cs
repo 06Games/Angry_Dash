@@ -106,6 +106,11 @@ public class DependenciesManager : MonoBehaviour
                         float oneValue = 1F / downloadList.Length;
                         slider.value = baseValue + (pourcentage / 100F * oneValue);
 
+                        if (Input.GetKey(KeyCode.Escape) && Directory.Exists(Application.persistentDataPath + "/Ressources/default/")) //If the user wants to skip and a RP already exists
+                        {
+                            webRequest.Abort(); //Stop the download
+                            i = downloadList.Length; //Don't download any other RPs
+                        }
                         yield return new WaitForEndOfFrame();
                     }
 
@@ -116,7 +121,7 @@ public class DependenciesManager : MonoBehaviour
                         if (rpDir.Exists) rpDir.Delete(true);
                         FileFormat.ZIP.DecompressAsync(zipPath, ressourcesPath + rpName + "/", () => File.Delete(zipPath)); //Unzip in background and delete the file when it's finished
                     }
-                    else Debug.LogError(webRequest.error);
+                    else if(webRequest.error != "Request aborted") Debug.LogError(webRequest.error);
                 }
             }
 
@@ -125,7 +130,8 @@ public class DependenciesManager : MonoBehaviour
         else if (!Directory.Exists(Application.persistentDataPath + "/Ressources/default/")) transform.GetChild(0).gameObject.SetActive(true); //This is the first start, the game can't start
         else complete.Invoke(); //Continue without downloading anything
     }
-    public static int GetCorrectUnit(double d) {
+    public static int GetCorrectUnit(double d)
+    {
         int NbEntier = Math.Round(d, 0).ToString().Length;
         return (int)((NbEntier - 1) / 3F);
     }
@@ -176,11 +182,16 @@ public class DependenciesManager : MonoBehaviour
                         slider.fillRect.GetComponentInChildren<Text>().text = LangueAPI.Get("native", "download.state.percentage", "[0]%", (total * 100F).ToString("00")); //Progress text
                         slider.value = total; //Progress bar
 
+                        if (Input.GetKey(KeyCode.Escape)) //If the user wants to skip
+                        {
+                            webRequest.Abort(); //Stop the download
+                            i = downloadList.Length; //Don't download any other RPs
+                        }
                         yield return new WaitForEndOfFrame();
                     }
 
                     if (string.IsNullOrEmpty(webRequest.error)) File.WriteAllBytes(levelsPath + levelName, webRequest.downloadHandler.data);
-                    else Debug.LogError(webRequest.error);
+                    else if (webRequest.error != "Request aborted") Debug.LogError(webRequest.error);
                 }
             }
 
