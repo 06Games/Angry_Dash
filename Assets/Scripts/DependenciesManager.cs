@@ -111,7 +111,7 @@ public class DependenciesManager : MonoBehaviour
 
                     if (string.IsNullOrEmpty(webRequest.error))
                     {
-                        string zipPath = Application.temporaryCachePath + "/" + i + ".zip";
+                        string zipPath = Application.temporaryCachePath + "/" + rpName + ".zip";
                         File.WriteAllBytes(zipPath, webRequest.downloadHandler.data);
                         if (rpDir.Exists) rpDir.Delete(true);
                         FileFormat.ZIP.DecompressAsync(zipPath, ressourcesPath + rpName + "/", () => File.Delete(zipPath)); //Unzip in background and delete the file when it's finished
