@@ -1,4 +1,4 @@
-﻿native/GUI/logo
+native/GUI/logo
 native/GUI/startUp/dependencies/background
 native/GUI/startUp/dependencies/progressBg
 native/GUI/startUp/dependencies/progressState
