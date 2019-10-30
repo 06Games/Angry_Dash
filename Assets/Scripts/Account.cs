@@ -51,8 +51,8 @@ public class Account : MonoBehaviour
                 try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
                 catch { }
 #endif
-                FindObjectOfType<MonoBehaviour>().StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", complete));
-                Save("Google", new Dictionary<string, string>());
+                if(!string.IsNullOrEmpty(token)) FindObjectOfType<MonoBehaviour>().StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", complete));
+                else complete(false, "");
             }
             else complete(false, "");
         }
@@ -162,7 +162,8 @@ public class Account : MonoBehaviour
                 catch { }
 #endif
         transform.GetChild(1).gameObject.SetActive(true);
-        StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", Complete));
+        if (!string.IsNullOrEmpty(token)) StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", Complete));
+        else Complete(false, "");
         Save("Google", new Dictionary<string, string>());
     }
 
