@@ -125,6 +125,7 @@ public class DependenciesManager : MonoBehaviour
                 }
             }
 
+            DownloadPanel.SetActive(false);
             complete();
         }
         else if (!Directory.Exists(ressourcesPath + "default/")) transform.GetChild(0).gameObject.SetActive(true); //This is the first start, the game can't start
@@ -147,10 +148,10 @@ public class DependenciesManager : MonoBehaviour
             string levelsPath = Application.persistentDataPath + "/Levels/Official Levels/";
             if (!Directory.Exists(levelsPath)) Directory.CreateDirectory(levelsPath);
 
-            GameObject DownloadInfo = transform.GetChild(2).gameObject;
-            DownloadInfo.SetActive(true);
-            var slider = DownloadInfo.transform.GetChild(0).GetComponent<Slider>();
-            var text = DownloadInfo.transform.GetChild(2).GetComponent<Text>();
+            GameObject DownloadPanel = transform.GetChild(2).gameObject;
+            DownloadPanel.SetActive(true);
+            var slider = DownloadPanel.transform.GetChild(0).GetComponent<Slider>();
+            var text = DownloadPanel.transform.GetChild(2).GetComponent<Text>();
 
             if (downloadList == null)
             {
@@ -198,6 +199,7 @@ public class DependenciesManager : MonoBehaviour
                 }
             }
 
+            DownloadPanel.SetActive(false);
             complete();
         }
         else if (!Directory.Exists(Application.persistentDataPath + "/Levels/Official Levels/")) transform.GetChild(0).gameObject.SetActive(true); //This is the first start, the game can't start
