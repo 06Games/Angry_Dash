@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class AndroidBuild : MonoBehaviour
 {
-
     [PostProcessBuild]
     public static void OnPostProcessBuild(BuildTarget buildTarget, string pathToBuiltProject)
     {
