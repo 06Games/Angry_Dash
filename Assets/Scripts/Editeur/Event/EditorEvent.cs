@@ -97,9 +97,8 @@ namespace AngryDash.Editor.Event
                     else Debug.LogWarning($"<b>{id}</b> has no prefab at path <b>Events/{cat.Key}/{id}</b>");
 #endif
                 }
-
-                if (editor.SelectedBlock.Length == 1) VisualParse(editor.GetBlocStatus("Script", editor.SelectedBlock[0]));
             }
+            if (editor.SelectedBlock.Length == 1) VisualParse(editor.GetBlocStatus("Script", editor.SelectedBlock[0]));
         }
 
         HashSet<string> triggerImplemented;
@@ -248,13 +247,7 @@ namespace AngryDash.Editor.Event
             {
                 string id = "";
                 if (visualPrefabs.ContainsKey(method)) id = method;
-                else
-                {
-                    foreach (EditorEventItem prefab in visualPrefabs.Values)
-                    {
-                        if (prefab.methodName == method) { id = prefab.id; break; }
-                    }
-                }
+                else id = visualPrefabs.Values.FirstOrDefault(p => p.methodName == method)?.id;
 
                 if (!string.IsNullOrEmpty(id))
                 {
