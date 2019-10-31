@@ -251,6 +251,79 @@ public class Editeur : MonoBehaviour
 #endif
         if (!canInteract) return;
 
+#if UNITY_STANDALONE || UNITY_EDITOR
+        bool Ctrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 & Ctrl) Zoom();
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0 & Ctrl) Dezoom();
+#elif UNITY_ANDROID || UNITY_IOS
+        // If there are two touches on the device...
+        if (Input.touchCount == 2)
+        {
+            // Store both touches.
+            Touch touchZero = Input.GetTouch(0);
+            Touch touchOne = Input.GetTouch(1);
+
+            // Find the position in the previous frame of each touch.
+            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+            // Find the magnitude of the vector (the distance) between the touches in each frame.
+            float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+            float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+
+            // Find the difference in the distances between each frame.
+            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+            // ... change the orthographic size based on the change in distance between the touches.
+            if (deltaMagnitudeDiff < 0)
+                Zoom(5);
+            else if(deltaMagnitudeDiff > 0)
+                Dezoom(5);
+            if(deltaMagnitudeDiff != 0) return; //Prevents other actions from taking place
+        }
+#endif
+
+#if UNITY_STANDALONE || UNITY_EDITOR
+        int MoveX = 0;
+        int MoveY = 0;
+
+        int Speed = CameraMouvementSpeed;
+        if (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift)) Speed = CameraMouvementSpeed * 2;
+
+        if (Input.GetKey(KeyCode.RightArrow)) MoveX = 1;
+        else if (Input.GetKey(KeyCode.LeftArrow)) MoveX = -1;
+
+        if (Input.GetKey(KeyCode.UpArrow)) MoveY = 1;
+        else if (Input.GetKey(KeyCode.DownArrow)) MoveY = -1;
+
+        Deplacer(MoveX * Speed, MoveY * Speed);
+#elif UNITY_ANDROID || UNITY_IOS
+        bool isSimple = newblockid < 0 & (Input.touchCount == 1 | Input.touchCount == 2);
+        bool isAdvence = newblockid >= 0 & (Input.touchCount == 2 | Input.touchCount == 3);
+        if (isAdvence | isSimple)
+        {
+            Touch touchZero = Input.GetTouch(0);
+
+            bool isInTop = touchZero.position.y > Screen.height - (Screen.height / 10);
+            bool isInRightTop = touchZero.position.x > Screen.width - (Screen.width / 6);
+            if (touchZero.position.y > Screen.height / 4 & !(isInTop & isInRightTop))
+            {
+                float Speed = 1F;
+                if ((Input.touchCount == 2 & isSimple) | (Input.touchCount == 3 & isAdvence))
+                    Speed = Speed * 2;
+
+                Vector2 TouchPosition =  touchZero.position;
+                if(touchLastPosition == new Vector2(-50000, -50000))
+                    touchLastPosition = TouchPosition;
+                Vector2 touchZeroPrevPos = touchLastPosition - TouchPosition; // Find the diference between the last position.
+                Deplacer(touchZeroPrevPos.x * Speed, touchZeroPrevPos.y * Speed);
+                if(touchZeroPrevPos != Vector2.zero) return; //Prevents other actions from taking place
+                touchLastPosition = TouchPosition;
+            }
+        }
+        else touchLastPosition = new Vector2(-50000, -50000);
+#endif
+
         //Détection de la localisation lors de l'ajout d'un bloc
         if (newblockid >= 0 & !SelectMode)
         {
@@ -338,78 +411,7 @@ public class Editeur : MonoBehaviour
 #endif
         }
         NoBlocSelectedPanel.SetActive(SelectMode & SelectedBlock.Length == 0);
-
-#if UNITY_STANDALONE || UNITY_EDITOR
-        bool Ctrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
-        if (Input.GetAxis("Mouse ScrollWheel") > 0 & Ctrl) Zoom();
-        else if (Input.GetAxis("Mouse ScrollWheel") < 0 & Ctrl) Dezoom();
-#elif UNITY_ANDROID || UNITY_IOS
-        // If there are two touches on the device...
-        if (Input.touchCount == 2)
-        {
-            // Store both touches.
-            Touch touchZero = Input.GetTouch(0);
-            Touch touchOne = Input.GetTouch(1);
-
-            // Find the position in the previous frame of each touch.
-            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
-            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
-
-            // Find the magnitude of the vector (the distance) between the touches in each frame.
-            float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
-            float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
-
-            // Find the difference in the distances between each frame.
-            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
-
-            // ... change the orthographic size based on the change in distance between the touches.
-            if (deltaMagnitudeDiff < 0)
-                Zoom(5);
-            else if(deltaMagnitudeDiff > 0)
-                Dezoom(5);
-        }
-#endif
-
-#if UNITY_STANDALONE || UNITY_EDITOR
-        int MoveX = 0;
-        int MoveY = 0;
-
-        int Speed = CameraMouvementSpeed;
-        if (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift)) Speed = CameraMouvementSpeed * 2;
-
-        if (Input.GetKey(KeyCode.RightArrow)) MoveX = 1;
-        else if (Input.GetKey(KeyCode.LeftArrow)) MoveX = -1;
-
-        if (Input.GetKey(KeyCode.UpArrow)) MoveY = 1;
-        else if (Input.GetKey(KeyCode.DownArrow)) MoveY = -1;
-
-        Deplacer(MoveX * Speed, MoveY * Speed);
-#elif UNITY_ANDROID || UNITY_IOS
-        bool isSimple = newblockid < 0 & (Input.touchCount == 1 | Input.touchCount == 2);
-        bool isAdvence = newblockid >= 0 & (Input.touchCount == 2 | Input.touchCount == 3);
-        if (isAdvence | isSimple)
-        {
-            Touch touchZero = Input.GetTouch(0);
-
-            bool isInTop = touchZero.position.y > Screen.height - (Screen.height / 10);
-            bool isInRightTop = touchZero.position.x > Screen.width - (Screen.width / 6);
-            if (touchZero.position.y > Screen.height / 4 & !(isInTop & isInRightTop))
-            {
-                float Speed = 1F;
-                if ((Input.touchCount == 2 & isSimple) | (Input.touchCount == 3 & isAdvence))
-                    Speed = Speed * 2;
-
-                Vector2 TouchPosition =  touchZero.position;
-                if(touchLastPosition == new Vector2(-50000, -50000))
-                    touchLastPosition = TouchPosition;
-                Vector2 touchZeroPrevPos = touchLastPosition - TouchPosition; // Find the diference between the last position.
-                Deplacer(touchZeroPrevPos.x * Speed, touchZeroPrevPos.y * Speed);
-                touchLastPosition = TouchPosition;
-            }
-        }
-        else touchLastPosition = new Vector2(-50000, -50000);
-#endif
-
+        
 #if UNITY_STANDALONE || UNITY_EDITOR
         if (ConfigAPI.GetBool("editor.hideToolbox"))
         {
