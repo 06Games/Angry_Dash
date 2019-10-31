@@ -12,14 +12,11 @@ public class OfficialLevels : MonoBehaviour
     void OnEnable()
     {
         for (int i = 1; i < transform.childCount; i++) Destroy(transform.GetChild(i).gameObject);
-        GetMaxLevel((success, lvl) =>
+        GetMaxLevel((lvl) =>
         {
-            if (success)
-            {
-                Social.Event("CgkI9r-go54eEAIQBw", lvl); //Statistics about the highest level completed
-                if (lvl >= 1) Social.Achievement("CgkI9r-go54eEAIQBQ", true, (s) => { }); //Achievement 'First steps'
-                Social.Achievement("CgkI9r-go54eEAIQBg", lvl < 10 ? (lvl * 10) : 100, (s) => { }); //Achievement 'A good start'
-            }
+            Social.Event("CgkI9r-go54eEAIQBw", lvl); //Statistics about the highest level completed
+            if (lvl >= 1) Social.Achievement("CgkI9r-go54eEAIQBQ", true, (s) => { }); //Achievement 'First steps'
+            Social.Achievement("CgkI9r-go54eEAIQBg", lvl < 10 ? (lvl * 10) : 100, (s) => { }); //Achievement 'A good start'
 
             FileFormat.XML.RootElement xml = Inventory.xmlDefault;
             FileFormat.XML.Item lvlItems = xml.GetItemByAttribute("PlayedLevels", "type", "Official");
@@ -31,7 +28,7 @@ public class OfficialLevels : MonoBehaviour
                 btn.name = "Level " + LevelName;
                 btn.gameObject.SetActive(true);
 
-                btn.interactable = !success ? true : (uint)i <= lvl;
+                btn.interactable = (uint)i <= lvl;
                 btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(() =>
                 {
@@ -66,24 +63,10 @@ public class OfficialLevels : MonoBehaviour
         });
     }
 
-    void GetMaxLevel(System.Action<bool, ulong> callback)
+    void GetMaxLevel(System.Action<ulong> callback)
     {
-        Social.GetEvent("CgkI9r-go54eEAIQBw", (success, lvl) =>
-        {
-            GetLocalMaxLevel((s, l) =>
-            {
-                if (success)
-                {
-                    if (l > lvl) callback.Invoke(s, l);
-                    else callback.Invoke(success, lvl);
-                }
-                else callback.Invoke(s, l);
-            });
-        });
-    }
-    void GetLocalMaxLevel(System.Action<bool, ulong> callback)
-    {
-        ulong max = Inventory.xmlDefault.GetItemByAttribute("PlayedLevels", "type", "Official").GetItems("level").Select(l => { ulong.TryParse(l.Attribute("name"), out ulong c); return c; }).Max();
-        callback.Invoke(true, max);
+        var levels = Inventory.xmlDefault.GetItemByAttribute("PlayedLevels", "type", "Official").GetItems("level");
+        if (levels.Length > 0) callback(levels.Select(l => { ulong.TryParse(l.Attribute("name"), out ulong c); return c; }).Max());
+        else Social.GetEvent("CgkI9r-go54eEAIQBw", (success, lvl) => callback(success ? lvl : 0));
     }
 }
