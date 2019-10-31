@@ -249,9 +249,10 @@ public class Editeur : MonoBehaviour
         transform.GetChild(0).GetChild(6).GetComponent<Text>().text =
         GetWorldPosition(Display.Screen.Resolution / 2, false).ToString("0.0");
 #endif
+        if (!canInteract) return;
 
         //Détection de la localisation lors de l'ajout d'un bloc
-        if (newblockid >= 0 & !SelectMode & canInteract)
+        if (newblockid >= 0 & !SelectMode)
         {
             if (Input.GetKey(KeyCode.Mouse0) && !IsHoverGUI())
             {
@@ -260,7 +261,7 @@ public class Editeur : MonoBehaviour
             }
         }
 
-        if (SelectMode & canInteract)
+        if (SelectMode)
         {
             if (Input.GetKey(KeyCode.Mouse0) && !IsHoverGUI())
             {
