@@ -156,7 +156,9 @@ public class DependenciesManager : MonoBehaviour
             GameObject DownloadPanel = transform.GetChild(2).gameObject;
             DownloadPanel.SetActive(true);
             var slider = DownloadPanel.transform.GetChild(0).GetComponent<Slider>();
+            slider.value = 0;
             var text = DownloadPanel.transform.GetChild(2).GetComponent<Text>();
+            text.text = "";
 
             if (downloadList == null)
             {
