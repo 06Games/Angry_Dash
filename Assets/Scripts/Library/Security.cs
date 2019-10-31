@@ -22,8 +22,7 @@ namespace Security
             byte[] KEY_BYTES = Encoding.UTF8.GetBytes(KEY);
 
             // Check arguments.
-            if (plainText == null || plainText.Length <= 0)
-                throw new System.ArgumentNullException("plainText");
+            if (plainText == null) throw new System.ArgumentNullException("plainText");
 
             byte[] encrypted;
             // Create an AesManaged object

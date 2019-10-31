@@ -51,7 +51,7 @@ public class Account : MonoBehaviour
                 try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
                 catch { }
 #endif
-                if(!string.IsNullOrEmpty(token)) FindObjectOfType<MonoBehaviour>().StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", complete));
+                if (!string.IsNullOrEmpty(token)) FindObjectOfType<MonoBehaviour>().StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", complete));
                 else complete(false, "");
             }
             else complete(false, "");
@@ -60,27 +60,37 @@ public class Account : MonoBehaviour
     }
 
     static RootElement stateTranslations;
+    static UnityWebRequest serverRequest;
     static System.Collections.IEnumerator ContactServer(string url, Action<bool, string> complete)
     {
+        bool aborted = false;
         if (stateTranslations == null)
         {
-            using (UnityWebRequest webRequest = UnityWebRequest.Get(apiUrl + "lang/" + AngryDash.Language.LangueAPI.selectedLanguage + ".xml"))
-            {
-                yield return webRequest.SendWebRequest();
-                try { stateTranslations = new XML(webRequest.downloadHandler.text).RootElement; } catch { stateTranslations = new RootElement(null); }
-            }
+            serverRequest = UnityWebRequest.Get(apiUrl + "lang/" + AngryDash.Language.LangueAPI.selectedLanguage + ".xml");
+            yield return serverRequest.SendWebRequest();
+            try { stateTranslations = new XML(serverRequest.downloadHandler.text).RootElement; } catch { stateTranslations = new RootElement(null); }
+            aborted = serverRequest.error == "Request aborted";
+            serverRequest.Dispose();
         }
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(url))
-        {
-            yield return webRequest.SendWebRequest();
-            var response = new FileFormat.JSON(webRequest.downloadHandler.text);
-            Token = response.Value<string>("token");
-            Username = response.Value<string>("username");
 
-            string message = stateTranslations.GetItemByAttribute("string", "text", response.Value<string>("state")).Value;
-            if (message == null) message = AngryDash.Language.LangueAPI.Get("native", "account.unkownError", " An unknown error has occurred, please contact a manager and report the following error:\n<i><color=#B40404>[0]</color></i>", response.Value<string>("state"));
-            complete.Invoke(response.Value<string>("state") == "Connection succesful !", message.Format());
+        if (!aborted)
+        {
+            serverRequest = UnityWebRequest.Get(url);
+            yield return serverRequest.SendWebRequest();
+            if (string.IsNullOrEmpty(serverRequest.error))
+            {
+                var response = new FileFormat.JSON(serverRequest.downloadHandler.text);
+                Token = response.Value<string>("token");
+                Username = response.Value<string>("username");
+
+                string message = stateTranslations.GetItemByAttribute("string", "text", response.Value<string>("state")).Value;
+                if (message == null) message = AngryDash.Language.LangueAPI.Get("native", "account.unkownError", " An unknown error has occurred, please contact a manager and report the following error:\n<i><color=#B40404>[0]</color></i>", response.Value<string>("state"));
+                complete.Invoke(response.Value<string>("state") == "Connection succesful !", message.Format());
+            }
+            else complete(false, serverRequest.error != "Request aborted" ? serverRequest.error : "");
+            serverRequest.Dispose();
         }
+        else complete(false, "");
     }
 
     public static void Disconnect()
@@ -95,7 +105,7 @@ public class Account : MonoBehaviour
         xml.CreateItem("provider").Value = provider;
 
         var xmlAuth = xml.CreateItem("auth");
-        foreach (var auth in auths) xmlAuth.CreateItem(auth.Key).Value = Security.Encrypting.Encrypt(auth.Value, passwordKey);
+        foreach (var auth in auths) xmlAuth.CreateItem(auth.Key).Value = Security.Encrypting.Encrypt(auth.Value == null ? "" : auth.Value, passwordKey);
 
         File.WriteAllText(accountFile, xml.xmlFile.ToString(false));
     }
@@ -129,6 +139,7 @@ public class Account : MonoBehaviour
         transform.GetChild(1).gameObject.SetActive(true);
         CheckAccountFile(Complete);
     }
+    public void CancelServerRequest() { serverRequest.Abort(); }
 
     void Complete(bool success, string message)
     {
@@ -158,8 +169,8 @@ public class Account : MonoBehaviour
     {
         string token = "";
 #if UNITY_ANDROID
-                try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
-                catch { }
+        try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
+        catch { }
 #endif
         transform.GetChild(1).gameObject.SetActive(true);
         if (!string.IsNullOrEmpty(token)) StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", Complete));

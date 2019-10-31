@@ -53,8 +53,13 @@ public class DependenciesManager : MonoBehaviour
             {
                 using (UnityWebRequest webRequest = UnityWebRequest.Get(ressourcesURL + "?v=" + Application.version))
                 {
-                    yield return webRequest.SendWebRequest();
-                    downloadList = new XML(webRequest.downloadHandler.text).RootElement.GetItemsByAttribute("ressource", "required", "TRUE");
+                    webRequest.SendWebRequest();
+                    while (!webRequest.isDone)
+                    {
+                        if (Input.GetKey(KeyCode.Escape) && Directory.Exists(ressourcesPath + "default/")) webRequest.Abort();
+                        yield return new WaitForEndOfFrame();
+                    }
+                    try { downloadList = new XML(webRequest.downloadHandler.text).RootElement.GetItemsByAttribute("ressource", "required", "TRUE"); } catch { downloadList = new Item[0]; }
                 }
             }
 
@@ -157,8 +162,13 @@ public class DependenciesManager : MonoBehaviour
             {
                 using (UnityWebRequest webRequest = UnityWebRequest.Get(levelsURL + "?v=" + Application.version))
                 {
-                    yield return webRequest.SendWebRequest();
-                    downloadList = new XML(webRequest.downloadHandler.text).RootElement.GetItems("level");
+                    webRequest.SendWebRequest();
+                    while (!webRequest.isDone)
+                    {
+                        if (Input.GetKey(KeyCode.Escape)) webRequest.Abort();
+                        yield return new WaitForEndOfFrame();
+                    }
+                    try { downloadList = new XML(webRequest.downloadHandler.text).RootElement.GetItems("level"); } catch { downloadList = new Item[0]; }
                 }
             }
 
