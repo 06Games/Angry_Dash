@@ -29,6 +29,7 @@ public class Account : MonoBehaviour
     #region API
     public static void CheckAccountFile(Action<bool, string> complete)
     {
+        Logging.Log("Checking file");
         if (Token != null) complete(true, "");
         else if(!InternetAPI.IsConnected()) complete(true, "");
         else if (File.Exists(accountFile))
@@ -39,6 +40,7 @@ public class Account : MonoBehaviour
             var auth = xml.GetItem("auth");
             foreach (var param in auth) param.Value = Security.Encrypting.Decrypt(param.Value, passwordKey);
 
+            Logging.Log("Connecting using " + provider);
             if (provider == "06Games")
             {
                 string id = auth.GetItem("id").Value;
@@ -61,37 +63,62 @@ public class Account : MonoBehaviour
     }
 
     static RootElement stateTranslations;
-    static UnityWebRequest serverRequest;
+    static bool abort = false;
     static System.Collections.IEnumerator ContactServer(string url, Action<bool, string> complete)
     {
+        Logging.Log("Start contacting");
         bool aborted = false;
         if (stateTranslations == null)
         {
-            serverRequest = UnityWebRequest.Get(apiUrl + "lang/" + AngryDash.Language.LangueAPI.selectedLanguage + ".xml");
-            yield return serverRequest.SendWebRequest();
-            try { stateTranslations = new XML(serverRequest.downloadHandler.text).RootElement; } catch { stateTranslations = new RootElement(null); }
-            aborted = serverRequest.error == "Request aborted";
-            serverRequest.Dispose();
+            using (UnityWebRequest serverRequest = UnityWebRequest.Get(apiUrl + "lang/" + AngryDash.Language.LangueAPI.selectedLanguage + ".xml"))
+            {
+                Logging.Log("Getting translations at " + serverRequest.url);
+                serverRequest.timeout = 10;
+                serverRequest.SendWebRequest();
+                while (!serverRequest.isDone)
+                {
+                    if (abort)
+                    {
+                        serverRequest.Abort();
+                        abort = false;
+                    }
+                    yield return new WaitForEndOfFrame();
+                }
+                try { stateTranslations = new XML(serverRequest.downloadHandler.text).RootElement; } catch { stateTranslations = new RootElement(null); }
+                aborted = serverRequest.error == "Request aborted";
+            }
         }
 
         if (!aborted)
         {
-            serverRequest = UnityWebRequest.Get(url);
-            yield return serverRequest.SendWebRequest();
-            if (string.IsNullOrEmpty(serverRequest.error))
+            using (UnityWebRequest serverRequest = UnityWebRequest.Get(url))
             {
-                var response = new FileFormat.JSON(serverRequest.downloadHandler.text);
-                Token = response.Value<string>("token");
-                Username = response.Value<string>("username");
+                serverRequest.timeout = 10;
+                serverRequest.SendWebRequest();
+                while (!serverRequest.isDone)
+                {
+                    if (abort)
+                    {
+                        serverRequest.Abort();
+                        abort = false;
+                    }
+                    yield return new WaitForEndOfFrame();
+                }
+                if (string.IsNullOrEmpty(serverRequest.error))
+                {
+                    var response = new FileFormat.JSON(serverRequest.downloadHandler.text);
+                    Token = response.Value<string>("token");
+                    Username = response.Value<string>("username");
 
-                string message = stateTranslations.GetItemByAttribute("string", "text", response.Value<string>("state")).Value;
-                if (message == null) message = AngryDash.Language.LangueAPI.Get("native", "account.unkownError", " An unknown error has occurred, please contact a manager and report the following error:\n<i><color=#B40404>[0]</color></i>", response.Value<string>("state"));
-                complete.Invoke(response.Value<string>("state") == "Connection succesful !", message.Format());
+                    string message = stateTranslations.GetItemByAttribute("string", "text", response.Value<string>("state")).Value;
+                    if (message == null) message = AngryDash.Language.LangueAPI.Get("native", "account.unkownError", " An unknown error has occurred, please contact a manager and report the following error:\n<i><color=#B40404>[0]</color></i>", response.Value<string>("state"));
+                    complete.Invoke(response.Value<string>("state") == "Connection succesful !", message.Format());
+                }
+                else complete(false, serverRequest.error != "Request aborted" ? serverRequest.error : "");
             }
-            else complete(false, serverRequest.error != "Request aborted" ? serverRequest.error : "");
-            serverRequest.Dispose();
         }
         else complete(false, "");
+        Logging.Log("End of communication");
     }
 
     public static void Disconnect()
@@ -108,6 +135,7 @@ public class Account : MonoBehaviour
         var xmlAuth = xml.CreateItem("auth");
         foreach (var auth in auths) xmlAuth.CreateItem(auth.Key).Value = Security.Encrypting.Encrypt(auth.Value == null ? "" : auth.Value, passwordKey);
 
+        Logging.Log("Saving...");
         File.WriteAllText(accountFile, xml.xmlFile.ToString(false));
     }
     #endregion
@@ -140,7 +168,7 @@ public class Account : MonoBehaviour
         transform.GetChild(1).gameObject.SetActive(true);
         CheckAccountFile(Complete);
     }
-    public void CancelServerRequest() { serverRequest.Abort(); }
+    public void CancelServerRequest() { abort = true; }
 
     void Complete(bool success, string message)
     {
