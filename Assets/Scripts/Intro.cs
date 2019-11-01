@@ -8,18 +8,14 @@ public class Intro : MonoBehaviour
 
     public VideoClip videoToPlay;
     public GameObject Fond;
-    [System.Serializable] public class OnCompleteEvent : UnityEngine.Events.UnityEvent { }
 
-    void Update() { if (Input.anyKey) PlayEnd(); }
     void Start()
     {
         Fond.SetActive(true);
-        OnCompleteEvent onComplete = new OnCompleteEvent();
-        onComplete.AddListener(() => PlayEnd());
-        StartCoroutine(playVideo(onComplete));
+        StartCoroutine(playVideo(() => StartCoroutine(PlayEnd())));
     }
 
-    IEnumerator playVideo(OnCompleteEvent onComplete = null)
+    IEnumerator playVideo(System.Action onComplete = null)
     {
         //Add VideoPlayer to the GameObject
         VideoPlayer videoPlayer = gameObject.AddComponent<VideoPlayer>();
@@ -46,35 +42,43 @@ public class Intro : MonoBehaviour
         videoPlayer.Prepare();
 
         //Wait until video is prepared
-        while (!videoPlayer.isPrepared) yield return null;
+        while (!videoPlayer.isPrepared & !Input.anyKey) yield return null;
+        if (Input.anyKey) End();
+        else
+        {
+            //Assign the Texture from Video to RawImage to be displayed
+            UnityEngine.UI.RawImage rawImage = gameObject.AddComponent<UnityEngine.UI.RawImage>();
+            float sizeMultiplier = 1080F / Screen.height;
+            transform.localScale = new Vector2(videoPlayer.texture.width / sizeMultiplier, videoPlayer.texture.height / sizeMultiplier);
+            rawImage.texture = videoPlayer.texture;
 
-        //Assign the Texture from Video to RawImage to be displayed
-        UnityEngine.UI.RawImage rawImage = gameObject.AddComponent<UnityEngine.UI.RawImage>();
-        float sizeMultiplier = 1080F / Screen.height;
-        transform.localScale = new Vector2(videoPlayer.texture.width / sizeMultiplier, videoPlayer.texture.height / sizeMultiplier);
-        rawImage.texture = videoPlayer.texture;
+            //Play Video
+            videoPlayer.Play();
 
-        //Play Video
-        videoPlayer.Play();
+            //Play Sound
+            audioSource.Play();
 
-        //Play Sound
-        audioSource.Play();
+            while (videoPlayer.isPlaying & !Input.anyKey) yield return null;
+            Destroy(rawImage);
 
-        while (videoPlayer.isPlaying) yield return null;
+            End();
+        }
 
-        Destroy(videoPlayer);
-        Destroy(audioSource);
-        Destroy(rawImage);
-
-        if (onComplete != null) onComplete.Invoke();
+        void End()
+        {
+            Destroy(videoPlayer);
+            Destroy(audioSource);
+            onComplete?.Invoke();
+        }
     }
 
-    void PlayEnd()
+    IEnumerator PlayEnd()
     {
-        var DM = GameObject.Find("Dependencies").GetComponent<DependenciesManager>();
-        DM.DownloadRPs(() => DM.DownloadLevels(() => FindObjectOfType<Social>().NewStart()));
-
+        yield return new WaitForEndOfFrame();
         Fond.SetActive(false);
-        gameObject.SetActive(false);
+
+        var DM = GameObject.Find("Dependencies").GetComponent<DependenciesManager>();
+        var social = FindObjectOfType<Social>();
+        yield return DM.DownloadRPs(() => DM.DownloadLevels(() => social.NewStart()), null);
     }
 }
