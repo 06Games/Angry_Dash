@@ -13,6 +13,8 @@ public class Intro : MonoBehaviour
     {
         Fond.SetActive(true);
         StartCoroutine(playVideo(() => StartCoroutine(PlayEnd())));
+
+        AngryDash.Language.LangueAPI.LoadAsync("native", Application.persistentDataPath);
     }
 
     IEnumerator playVideo(System.Action onComplete = null)
@@ -75,6 +77,7 @@ public class Intro : MonoBehaviour
     IEnumerator PlayEnd()
     {
         yield return new WaitForEndOfFrame();
+        DiscordController.Presence(AngryDash.Language.LangueAPI.Get("native", "discordStarting_title", "Starting the game"), "", new DiscordClasses.Img("default"));
         Fond.SetActive(false);
 
         var DM = GameObject.Find("Dependencies").GetComponent<DependenciesManager>();

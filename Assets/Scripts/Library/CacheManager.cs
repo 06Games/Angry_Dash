@@ -43,7 +43,7 @@ namespace CacheManager
     [System.Serializable]
     public class Cache
     {
-        Dictionary<string, object> dictionary;
+        [System.NonSerialized] Dictionary<string, object> dictionary;
 
         public Cache(string name)
         {

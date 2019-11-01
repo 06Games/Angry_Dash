@@ -84,7 +84,6 @@ public class DiscordController : MonoBehaviour
 
         discord = new Discord.Discord(470264480786284544, (ulong)CreateFlags.Default);
         activityManager = discord.GetActivityManager();
-        Presence(LangueAPI.Get("native", "discordStarting_title", "Starting the game"), "", new Img("default"));
     }
 
     void OnDisable()
