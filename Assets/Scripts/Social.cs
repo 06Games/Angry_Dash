@@ -32,9 +32,9 @@ public class Social : MonoBehaviour
             ac.Initialize();
             gameObject.SetActive(false);
         });
-        Auth((error, e) =>
+        Auth((error) =>
         {
-            if ((bool)error)
+            if (error)
             {
                 transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "gameServices.authentication.failed.google", "Authentication failed.\nGoogle Play service failed to start");
                 transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
@@ -55,10 +55,10 @@ public class Social : MonoBehaviour
     static bool mWaitingForAuth = false;
     /// <summary>Authentificate to the game service</summary>
     /// <param name="onComplete">The function to call at the end of the operation</param>
-    public static void Auth(BetterEventHandler onComplete)
+    public static void Auth(System.Action<bool> onComplete)
     {
-        if (!InternetAPI.IsConnected()) { onComplete.Invoke(false, new BetterEventArgs()); return; }
-        if (UnityEngine.Social.localUser.authenticated) { onComplete.Invoke(true, new BetterEventArgs()); return; }
+        if (!InternetAPI.IsConnected()) { onComplete.Invoke(false); return; }
+        if (UnityEngine.Social.localUser.authenticated) { onComplete.Invoke(true); return; }
         if (!mWaitingForAuth)
         {
             mWaitingForAuth = true;
@@ -71,19 +71,23 @@ public class Social : MonoBehaviour
             .Build();
 
             PlayGamesPlatform.InitializeInstance(config);
-            PlayGamesPlatform.DebugLogEnabled = Debug.isDebugBuild; // recommended for debugging
+            PlayGamesPlatform.DebugLogEnabled = true; // Bug fix
             PlayGamesPlatform.Activate(); // Activate the Google Play Games platform
 #endif
-            UnityEngine.Social.localUser.Authenticate((bool success) =>
+            try
             {
-                mWaitingForAuth = false;
+                UnityEngine.Social.localUser.Authenticate((bool success) =>
+                {
+                    mWaitingForAuth = false;
 #if UNITY_EDITOR
                 if (!editorContinue && UnityEngine.Social.localUser.userName == "Lerpz") success = false;
 #endif
                 if (success) Logging.Log("Successfully connected to the Game Services. Welcome " + UnityEngine.Social.localUser.userName);
-                else Logging.Log("Authentication failed.", LogType.Warning);
-                onComplete.Invoke(!success, new BetterEventArgs());
-            });
+                    else Logging.Log("Authentication failed.", LogType.Warning);
+                    onComplete.Invoke(!success);
+                });
+            }
+            catch(System.Exception e) { Debug.LogError(e); onComplete.Invoke(false); }
         }
     }
 
@@ -96,9 +100,9 @@ public class Social : MonoBehaviour
         else if (mWaitingForAuth) errorCallback.Invoke();
         else if (!UnityEngine.Social.localUser.authenticated)
         {
-            Auth((error, e) =>
+            Auth((error) =>
             {
-                if ((bool)error) errorCallback.Invoke();
+                if (error) errorCallback.Invoke();
                 else callback.Invoke();
             });
         }
