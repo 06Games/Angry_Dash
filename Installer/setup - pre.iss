@@ -17,7 +17,7 @@ DefaultDirName=C:\Games\06Games\{#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=C:\Users\evan\Documents\Unity\Compiller\Angry Dash\Windows\Windows_Angry Dash {#MyAppVersion} - pre{#MyDateTimeString}
 OutputBaseFilename=Windows_Angry_Dash_{#MyAppVersion}-{#MyDateTimeString}_installer
-SetupIconFile=C:\Users\evan\Documents\Unity\Compiller\Angry Dash\Windows\angry dash.ico
+SetupIconFile=C:\Users\evan\Documents\Unity\Projets\Angry Dash\Installer\angry dash.ico
 Compression=lzma
 SolidCompression=yes
 

@@ -11,8 +11,8 @@ public class AndroidBuild : MonoBehaviour
         if (buildTarget == BuildTarget.Android)
         {
             FileInfo build = new FileInfo(pathToBuiltProject);
-            string symbolsPath = build.DirectoryName + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(build.FullName) + "-" + Application.version + "-v" + PlayerSettings.Android.bundleVersionCode + ".symbols.zip";
-            File.Delete(symbolsPath);
+            File.Delete(build.DirectoryName + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(build.FullName) + "-" + Application.version + "-v" + PlayerSettings.Android.bundleVersionCode + ".symbols.zip");
+            File.Delete(build.DirectoryName + Path.DirectorySeparatorChar + Path.GetFileNameWithoutExtension(build.FullName) + "_mapping.txt");
         }
     }
 }
