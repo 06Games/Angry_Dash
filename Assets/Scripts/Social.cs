@@ -11,8 +11,11 @@ using GooglePlayGames;
 public class Social : MonoBehaviour
 {
     public LoadingScreenControl LSC;
-    public bool EditorContinue = true;
     readonly string scene = "Load";
+
+#if UNITY_EDITOR
+    static bool editorContinue = true;
+#endif
 
     public void NewStart()
     {
@@ -74,6 +77,9 @@ public class Social : MonoBehaviour
             UnityEngine.Social.localUser.Authenticate((bool success) =>
             {
                 mWaitingForAuth = false;
+#if UNITY_EDITOR
+                if (!editorContinue && UnityEngine.Social.localUser.userName == "Lerpz") success = false;
+#endif
                 if (success) Logging.Log("Successfully connected to the Game Services. Welcome " + UnityEngine.Social.localUser.userName);
                 else Logging.Log("Authentication failed.", LogType.Warning);
                 onComplete.Invoke(!success, new BetterEventArgs());

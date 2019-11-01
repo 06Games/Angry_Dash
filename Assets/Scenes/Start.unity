@@ -11891,7 +11891,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LSC: {fileID: 327852930}
-  EditorContinue: 1
 --- !u!114 &2119409148
 MonoBehaviour:
   m_ObjectHideFlags: 0
