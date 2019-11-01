@@ -30,6 +30,7 @@ public class Account : MonoBehaviour
     public static void CheckAccountFile(Action<bool, string> complete)
     {
         if (Token != null) complete(true, "");
+        else if(!InternetAPI.IsConnected()) complete(true, "");
         else if (File.Exists(accountFile))
         {
             RootElement xml = new RootElement(null);
