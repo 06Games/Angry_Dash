@@ -257,7 +257,7 @@ public class Editeur : MonoBehaviour
         else if (Input.GetAxis("Mouse ScrollWheel") < 0 & Ctrl) Dezoom();
 #elif UNITY_ANDROID || UNITY_IOS
         // If there are two touches on the device...
-        if (Input.touchCount == 2)
+        if (Input.touchCount == 2 && newblockid < 0 && !IsHoverGUI())
         {
             // Store both touches.
             Touch touchZero = Input.GetTouch(0);
@@ -275,10 +275,8 @@ public class Editeur : MonoBehaviour
             float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
             // ... change the orthographic size based on the change in distance between the touches.
-            if (deltaMagnitudeDiff < 0)
-                Zoom(5);
-            else if(deltaMagnitudeDiff > 0)
-                Dezoom(5);
+            if (deltaMagnitudeDiff < 0) Zoom(Mathf.RoundToInt(deltaMagnitudeDiff * -1));
+            else if(deltaMagnitudeDiff > 0) Dezoom(Mathf.RoundToInt(deltaMagnitudeDiff));
             if(deltaMagnitudeDiff != 0) return; //Prevents other actions from taking place
         }
 #endif
@@ -298,30 +296,21 @@ public class Editeur : MonoBehaviour
 
         Deplacer(MoveX * Speed, MoveY * Speed);
 #elif UNITY_ANDROID || UNITY_IOS
-        bool isSimple = newblockid < 0 & (Input.touchCount == 1 | Input.touchCount == 2);
-        bool isAdvence = newblockid >= 0 & (Input.touchCount == 2 | Input.touchCount == 3);
-        if (isAdvence | isSimple)
+        if ((Input.GetKey(KeyCode.Mouse0) | Input.touchCount > 0) && newblockid < 0 && !IsHoverGUI())
         {
-            Touch touchZero = Input.GetTouch(0);
+            Vector2 mvt = Vector2.zero;
+            if(Input.touchCount > 0) mvt = Input.GetTouch(0).deltaPosition * new Vector2(-1, -1); //Touchscreen
+            else mvt = touchLastPosition - (Vector2)Input.mousePosition; //Mouse
+            mvt *= cam.orthographicSize / Screen.height * 2; //Movement relative to the zoom
 
-            bool isInTop = touchZero.position.y > Screen.height - (Screen.height / 10);
-            bool isInRightTop = touchZero.position.x > Screen.width - (Screen.width / 6);
-            if (touchZero.position.y > Screen.height / 4 & !(isInTop & isInRightTop))
+            Deplacer(mvt.x, mvt.y);
+            if (mvt != Vector2.zero) //If there is a movement
             {
-                float Speed = 1F;
-                if ((Input.touchCount == 2 & isSimple) | (Input.touchCount == 3 & isAdvence))
-                    Speed = Speed * 2;
-
-                Vector2 TouchPosition =  touchZero.position;
-                if(touchLastPosition == new Vector2(-50000, -50000))
-                    touchLastPosition = TouchPosition;
-                Vector2 touchZeroPrevPos = touchLastPosition - TouchPosition; // Find the diference between the last position.
-                Deplacer(touchZeroPrevPos.x * Speed, touchZeroPrevPos.y * Speed);
-                if(touchZeroPrevPos != Vector2.zero) return; //Prevents other actions from taking place
-                touchLastPosition = TouchPosition;
+                touchLastPosition = Input.mousePosition; //Set the input position
+                return; //Prevents other actions from taking place
             }
         }
-        else touchLastPosition = new Vector2(-50000, -50000);
+        touchLastPosition = Input.mousePosition; //Set the input position
 #endif
 
         //Détection de la localisation lors de l'ajout d'un bloc
@@ -411,7 +400,7 @@ public class Editeur : MonoBehaviour
 #endif
         }
         NoBlocSelectedPanel.SetActive(SelectMode & SelectedBlock.Length == 0);
-        
+
 #if UNITY_STANDALONE || UNITY_EDITOR
         if (ConfigAPI.GetBool("editor.hideToolbox"))
         {
