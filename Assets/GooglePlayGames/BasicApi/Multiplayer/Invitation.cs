@@ -16,6 +16,8 @@
 
 #if UNITY_ANDROID
 
+using System;
+
 namespace GooglePlayGames.BasicApi.Multiplayer
 {
     using System;

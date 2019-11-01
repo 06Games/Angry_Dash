@@ -1,5 +1,4 @@
-﻿#if UNITY_ANDROID
-#pragma warning disable
+#if UNITY_ANDROID
 
 namespace GooglePlayGames.Android
 {
@@ -145,7 +144,7 @@ namespace GooglePlayGames.Android
                             }));
                             return;
                         }
-                        
+
                         if (status != UIStatus.Valid)
                         {
                             listenerOnGameThread.OnRoomConnected(false);
@@ -309,7 +308,7 @@ namespace GooglePlayGames.Android
                         mAndroidClient.SignOut((() => listenerOnGameThread.OnRoomConnected(false)));
                         return;
                     }
-                    
+
                     if (status != UIStatus.Valid)
                     {
                         OurUtils.Logger.d("User did not complete invitation screen.");
@@ -482,7 +481,7 @@ namespace GooglePlayGames.Android
         {
             foreach (var participant in GetParticipantList())
             {
-                if (participant.Player.id.Equals(mAndroidClient.GetUserId()))
+                if (participant.Player != null && participant.Player.id.Equals(mAndroidClient.GetUserId()))
                 {
                     return participant;
                 }
@@ -788,7 +787,8 @@ namespace GooglePlayGames.Android
             private AndroidRealTimeMultiplayerClient mParent;
 
             public RoomUpdateCallbackProxy(AndroidRealTimeMultiplayerClient parent,
-                OnGameThreadForwardingListener listener) : base("com/google/games/bridge/RoomUpdateCallbackProxy$Callback")
+                OnGameThreadForwardingListener listener) : base(
+                "com/google/games/bridge/RoomUpdateCallbackProxy$Callback")
             {
                 mListener = listener;
                 mParent = parent;

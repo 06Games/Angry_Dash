@@ -659,13 +659,6 @@ namespace GooglePlayGames
 
             mClient.LoadAchievements(ach =>
             {
-                if (ach == null)
-                {
-                    GooglePlayGames.OurUtils.Logger.e("Unable to load achievements");
-                    callback.Invoke(false);
-                    return;
-                }
-
                 for (int i = 0; i < ach.Length; i++)
                 {
                     if (ach[i].Id == achievementID)
@@ -1379,6 +1372,11 @@ namespace GooglePlayGames
 
         private static Action<T> ToOnGameThread<T>(Action<T> toConvert)
         {
+            if (toConvert == null)
+            {
+                return delegate { };
+            }
+
             return (val) => PlayGamesHelperObject.RunOnGameThread(() => toConvert(val));
         }
     }

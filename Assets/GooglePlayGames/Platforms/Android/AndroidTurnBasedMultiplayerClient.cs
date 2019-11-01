@@ -1,5 +1,4 @@
-﻿#if UNITY_ANDROID
-#pragma warning disable
+#if UNITY_ANDROID
 
 namespace GooglePlayGames.Android
 {
@@ -84,7 +83,7 @@ namespace GooglePlayGames.Android
                         mAndroidClient.SignOut((() => callback(status, null)));
                         return;
                     }
-                    
+
                     if (status != UIStatus.Valid)
                     {
                         callback(status, null);
@@ -286,7 +285,7 @@ namespace GooglePlayGames.Android
                     mAndroidClient.SignOut(() => callback(false, null));
                     return;
                 }
-                
+
                 if (status != UIStatus.Valid)
                 {
                     callback(false, null);

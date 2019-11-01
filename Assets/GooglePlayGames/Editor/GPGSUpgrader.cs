@@ -33,7 +33,7 @@ namespace GooglePlayGames.Editor
         /// </summary>
         static GPGSUpgrader()
         {
-            //Debug.Log("GPGSUpgrader start");
+            Debug.Log("GPGSUpgrader start");
             string initialVer = GPGSProjectSettings.Instance.Get(GPGSUtil.LASTUPGRADEKEY, "00000");
             if (!initialVer.Equals(PluginVersion.VersionKey))
             {
@@ -100,7 +100,7 @@ namespace GooglePlayGames.Editor
             }
 
             AssetDatabase.Refresh();
-            //Debug.Log("GPGSUpgrader done");
+            Debug.Log("GPGSUpgrader done");
         }
 
         /// <summary>
@@ -133,7 +133,6 @@ namespace GooglePlayGames.Editor
                 CleanDuplicates(s);
             }
         }
-
 
         private static string Upgrade942(string prevVer)
         {

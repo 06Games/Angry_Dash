@@ -1,5 +1,4 @@
-﻿#if UNITY_ANDROID
-#pragma warning disable
+#if UNITY_ANDROID
 
 namespace GooglePlayGames.Android
 {
