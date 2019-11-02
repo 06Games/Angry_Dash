@@ -791,7 +791,7 @@ namespace Tools
         {
             get
             {
-#if !UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && !UNITY_EDITOR
                 AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
                 AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
                 AndroidJavaObject currentResources = currentActivity.Call<AndroidJavaObject>("getResources");
