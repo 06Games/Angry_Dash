@@ -192,7 +192,7 @@ public class EditorLevelSelector : MonoBehaviour
         RectTransform infos = (RectTransform)transform.GetChild(2);
         Vector2 pos = new Vector2(0, 137.5F);
         if (open) infos.position = new Vector2(pos.x, pos.y * -1);
-        else infos.anchoredPosition = pos;
+        else infos.position = pos;
         infos.gameObject.SetActive(true);
 
         //List
