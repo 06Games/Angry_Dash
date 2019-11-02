@@ -253,8 +253,7 @@ public class Editeur : MonoBehaviour
 
 #if UNITY_STANDALONE || UNITY_EDITOR
         bool Ctrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
-        if (Input.GetAxis("Mouse ScrollWheel") > 0 & Ctrl) Zoom();
-        else if (Input.GetAxis("Mouse ScrollWheel") < 0 & Ctrl) Dezoom();
+        if (Input.GetAxis("Mouse ScrollWheel") != 0 & Ctrl) Zoom(Input.GetAxis("Mouse ScrollWheel") * -10 * ZoomSensitive);
 #elif UNITY_ANDROID || UNITY_IOS
         // If there are two touches on the device...
         if (Input.touchCount == 2 && newblockid < 0 && !IsHoverGUI())
@@ -275,8 +274,7 @@ public class Editeur : MonoBehaviour
             float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
             // ... change the orthographic size based on the change in distance between the touches.
-            if (deltaMagnitudeDiff < 0) Zoom(Mathf.RoundToInt(deltaMagnitudeDiff * -1));
-            else if(deltaMagnitudeDiff > 0) Dezoom(Mathf.RoundToInt(deltaMagnitudeDiff));
+            Zoom(deltaMagnitudeDiff);
             if(deltaMagnitudeDiff != 0) return; //Prevents other actions from taking place
         }
 #endif
@@ -443,7 +441,6 @@ public class Editeur : MonoBehaviour
         StartCoroutine(HideToolbox(toolbox, toolboxY, hide));
         Toolbox.transform.parent.GetChild(4).GetComponent<UImage_Reader>().SetID(hide ? "native/GUI/editor/toolboxShow" : "native/GUI/editor/toolboxHide").Load();
     }
-
     /// <summary> Toolbox hide/show animation </summary>
     /// <param name="toolbox">The toolbox transform</param>
     /// <param name="Y">The height of the toolbox</param>
@@ -563,36 +560,28 @@ public class Editeur : MonoBehaviour
         SelectedBlock = new int[0];
     }
 
-    /// <summary> Zoom in </summary>
-    /// <param name="Z">the sensibility</param>
-    void Zoom(int Z = 0)
+    /// <summary> Zoom </summary>
+    /// <param name="sensibility">the sensibility</param>
+    void Zoom(float sensibility)
     {
-        if (Z == 0) Z = ZoomSensitive;
-
-        if (cam.orthographicSize > 240) cam.orthographicSize = cam.orthographicSize - Z;
-        StartCoroutine(ZoomIndicator());
+        float orth = cam.orthographicSize + sensibility;
+        if (orth > 240 & orth < 1200) cam.orthographicSize = orth;
+        zoomIndex++;
+        StartCoroutine(ZoomIndicator(zoomIndex));
         Grille(true);
     }
-    /// <summary> Zoom out </summary>
-    /// <param name="Z">the sensibility</param>
-    void Dezoom(int Z = 0)
-    {
-        if (Z == 0) Z = ZoomSensitive;
-
-        if (cam.orthographicSize < 1200) cam.orthographicSize = cam.orthographicSize + Z;
-        StartCoroutine(ZoomIndicator());
-        Grille(true);
-    }
+    ulong zoomIndex = 0;
     /// <summary> Show the Zoom Indicator during 1s </summary>
-    IEnumerator ZoomIndicator()
+    IEnumerator ZoomIndicator(ulong index)
     {
         zoomIndicator.gameObject.SetActive(true);
         zoomIndicator.value = (cam.orthographicSize - 240) / 960 * -1 + 1;
         yield return new WaitForSeconds(1F);
-
-        bool Ctrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
-        if (Input.GetAxis("Mouse ScrollWheel") == 0 & !Ctrl)
+        if (zoomIndex == index)
+        {
             zoomIndicator.gameObject.SetActive(false);
+            zoomIndex = 0;
+        }
     }
 
     /// <summary> Switch on/off the Grid </summary>
