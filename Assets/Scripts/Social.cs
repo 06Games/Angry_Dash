@@ -62,7 +62,7 @@ public class Social : MonoBehaviour
         if (!mWaitingForAuth)
         {
             mWaitingForAuth = true;
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID
             var config = new GooglePlayGames.BasicApi.PlayGamesClientConfiguration.Builder()
             .EnableSavedGames()
             .RequestEmail()
