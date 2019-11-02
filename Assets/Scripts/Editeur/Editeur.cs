@@ -28,21 +28,16 @@ public class Editeur : MonoBehaviour
     bool SelectMode = false; //Is the user in a menu where he has to select blocks ?
     public int[] SelectedBlock; //The selected blocks
     public GameObject NoBlocSelectedPanel;
+    bool MultiSelect = false;
     public MenuManager Toolbox;
 
     public Scrollbar zoomIndicator;
     public int ZoomSensitive = 20;
 
     [HideInInspector] public bool bloqueEchap;
-
-#if UNITY_STANDALONE || UNITY_EDITOR
+    
     public int CameraMouvementSpeed = 10;
-#endif
-
-#if (UNITY_IOS || UNITY_ANDROID) && !UNITY_EDITOR
-    bool MultiSelect = false;
     Vector2 touchLastPosition;
-#endif
 
     #region UI
     public void CreateFile(string path, string desc)
@@ -156,7 +151,7 @@ public class Editeur : MonoBehaviour
                 if (ConfigAPI.GetBool("editor.hideToolbox"))
                 {
                     Toolbox.transform.parent.position *= new Vector2(1, -1);
-                    Toolbox.transform.parent.GetChild(4).gameObject.SetActive(SystemInfo.deviceType != DeviceType.Desktop);
+                    Toolbox.transform.parent.GetChild(4).gameObject.SetActive(!Input.mousePresent);
                 }
             }
         }
@@ -242,21 +237,14 @@ public class Editeur : MonoBehaviour
 
     void Update()
     {
-#if UNITY_EDITOR || UNITY_STANDALONE
-        transform.GetChild(0).GetChild(6).GetComponent<Text>().text =
-        GetWorldPosition(Input.mousePosition, false).ToString("0.0");
-#else
-        transform.GetChild(0).GetChild(6).GetComponent<Text>().text =
-        GetWorldPosition(Display.Screen.Resolution / 2, false).ToString("0.0");
-#endif
+        //Position
+        if(Input.mousePresent) transform.GetChild(0).GetChild(6).GetComponent<Text>().text = GetWorldPosition(Input.mousePosition, false).ToString("0.0");
+        else transform.GetChild(0).GetChild(6).GetComponent<Text>().text = GetWorldPosition(Display.Screen.Resolution / 2, false).ToString("0.0");
+
         if (!canInteract) return;
 
-#if UNITY_STANDALONE || UNITY_EDITOR
-        bool Ctrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
-        if (Input.GetAxis("Mouse ScrollWheel") != 0 & Ctrl) Zoom(Input.GetAxis("Mouse ScrollWheel") * -10 * ZoomSensitive);
-#elif UNITY_ANDROID || UNITY_IOS
-        // If there are two touches on the device...
-        if (Input.touchCount == 2 && newblockid < 0 && !IsHoverGUI())
+        if (Input.mousePresent && Input.GetAxis("Mouse ScrollWheel") != 0 & (Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl))) Zoom(Input.GetAxis("Mouse ScrollWheel") * -10 * ZoomSensitive);
+        else if (Input.touchCount == 2 && newblockid < 0 && !IsHoverGUI()) // If there are two touches on the device...
         {
             // Store both touches.
             Touch touchZero = Input.GetTouch(0);
@@ -277,24 +265,23 @@ public class Editeur : MonoBehaviour
             Zoom(deltaMagnitudeDiff);
             if(deltaMagnitudeDiff != 0) return; //Prevents other actions from taking place
         }
-#endif
 
-#if UNITY_STANDALONE || UNITY_EDITOR
-        int MoveX = 0;
-        int MoveY = 0;
+        if (InputExtensions.isHardwareKeyboardAvailable) {
+            int MoveX = 0;
+            int MoveY = 0;
 
-        int Speed = CameraMouvementSpeed;
-        if (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift)) Speed = CameraMouvementSpeed * 2;
+            int Speed = CameraMouvementSpeed;
+            if (Input.GetKey(KeyCode.LeftShift) | Input.GetKey(KeyCode.RightShift)) Speed = CameraMouvementSpeed * 2;
 
-        if (Input.GetKey(KeyCode.RightArrow)) MoveX = 1;
-        else if (Input.GetKey(KeyCode.LeftArrow)) MoveX = -1;
+            if (Input.GetKey(KeyCode.RightArrow)) MoveX = 1;
+            else if (Input.GetKey(KeyCode.LeftArrow)) MoveX = -1;
 
-        if (Input.GetKey(KeyCode.UpArrow)) MoveY = 1;
-        else if (Input.GetKey(KeyCode.DownArrow)) MoveY = -1;
+            if (Input.GetKey(KeyCode.UpArrow)) MoveY = 1;
+            else if (Input.GetKey(KeyCode.DownArrow)) MoveY = -1;
 
-        Deplacer(MoveX * Speed, MoveY * Speed);
-#elif UNITY_ANDROID || UNITY_IOS
-        if ((Input.GetKey(KeyCode.Mouse0) | Input.touchCount > 0) && newblockid < 0 && !IsHoverGUI())
+            Deplacer(MoveX * Speed, MoveY * Speed);
+        }
+        else if ((Input.GetKey(KeyCode.Mouse0) | Input.touchCount > 0) && newblockid < 0 && !IsHoverGUI())
         {
             Vector2 mvt = Vector2.zero;
             if(Input.touchCount > 0) mvt = Input.GetTouch(0).deltaPosition * new Vector2(-1, -1); //Touchscreen
@@ -309,7 +296,6 @@ public class Editeur : MonoBehaviour
             }
         }
         touchLastPosition = Input.mousePosition; //Set the input position
-#endif
 
         //Détection de la localisation lors de l'ajout d'un bloc
         if (newblockid >= 0 & !SelectMode)
@@ -327,11 +313,7 @@ public class Editeur : MonoBehaviour
             {
                 Vector2 pos = GetWorldPosition(Input.mousePosition);
 
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-                bool SelectCtrl = MultiSelect;
-#else
-                bool SelectCtrl = Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl);
-#endif
+                bool SelectCtrl = InputExtensions.isHardwareKeyboardAvailable ? Input.GetKey(KeyCode.LeftControl) | Input.GetKey(KeyCode.RightControl) : MultiSelect;
 
                 int[] previouslySelected = SelectedBlock;
 
@@ -399,8 +381,7 @@ public class Editeur : MonoBehaviour
         }
         NoBlocSelectedPanel.SetActive(SelectMode & SelectedBlock.Length == 0);
 
-#if UNITY_STANDALONE || UNITY_EDITOR
-        if (ConfigAPI.GetBool("editor.hideToolbox"))
+        if (Input.mousePresent && ConfigAPI.GetBool("editor.hideToolbox"))
         {
             Transform toolbox = Toolbox.transform.parent;
             float toolboxY = toolbox.GetComponent<RectTransform>().sizeDelta.y * transform.GetChild(0).GetComponent<Canvas>().scaleFactor;
@@ -415,7 +396,6 @@ public class Editeur : MonoBehaviour
                     StartCoroutine(HideToolbox(toolbox, toolboxY, true));
             }
         }
-#endif
     }
 
     /// <summary> Is the mouse hover GUI ? </summary>
@@ -542,11 +522,9 @@ public class Editeur : MonoBehaviour
     /// <param name="btn">The button</param>
     public void ChangeMultiSelect(Image btn)
     {
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
         MultiSelect = !MultiSelect;
         if(MultiSelect) btn.color = new Color32(75, 75, 75, 255);
         else btn.color = new Color32(125, 125, 125, 255);
-#endif
     }
 
     /// <summary> Deselect all selected blocks </summary>
@@ -694,11 +672,8 @@ public class Editeur : MonoBehaviour
     /// <param name="_Color">Color of the block</param>
     void CreateBlock(int x, int y, Color32 _Color)
     {
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-        if (Input.touchCount == 1)
-        {
-#endif
         if (newblockid < 0) return;
+        else if (!Input.mousePresent && Input.touchCount > 1) return;
         int l = selectedLayer;
         if (l == -2) l = 0;
         Vector3 a = new Vector3(x, y, l);
@@ -721,10 +696,6 @@ public class Editeur : MonoBehaviour
             level.blocks = level.blocks.Union(new Level.Block[] { newBlock }).ToArray();
             if (level.blocks.Length > 0) Instance(level.blocks.Length - 1);
         }
-
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-        }
-#endif
     }
 
     /// <summary>Selects a block</summary>

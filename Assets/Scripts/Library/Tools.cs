@@ -783,4 +783,25 @@ namespace Tools
             }
         }
     }
+
+    public static class InputExtensions
+    {
+        /// <summary>Detects if the device has a physical keyboard</summary>
+        public static bool isHardwareKeyboardAvailable
+        {
+            get
+            {
+#if !UNITY_ANDROID && !UNITY_EDITOR
+                AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+                AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+                AndroidJavaObject currentResources = currentActivity.Call<AndroidJavaObject>("getResources");
+                AndroidJavaObject currentConfiguration = currentResources.Call<AndroidJavaObject>("getConfiguration");
+                int keyboard = currentConfiguration.Get<int>("keyboard");
+                return keyboard != 1; //Keyboard = 1 means no physical keyboard. See https://developer.android.com/reference/android/content/res/Configuration.html#keyboard
+#else
+                return !TouchScreenKeyboard.isSupported; //There is no API to retrieve this information, so we consider that all devices with a touch screen use a virtual keyboard.
+#endif
+            }
+        }
+    }
 }
