@@ -43,8 +43,8 @@ namespace AngryDash.Game.RewardChecker
                     }
                     else if (name == 3)
                     {
-                        if (turn <= 4) return 25;
-                        else if (turn == 5) return 10;
+                        if (turn <= 5) return 25;
+                        else if (turn == 6) return 10;
                         else return 5;
                     }
                     else if (name == 4)
@@ -61,16 +61,23 @@ namespace AngryDash.Game.RewardChecker
                         else if (turn <= 25) return 10;
                         else return 5;
                     }
-                    else if (name >= 6 & name <= 7)
+                    else if (name == 6)
                     {
-                        if (turn <= 17) return 25;
+                        if (turn <= 16) return 25;
                         else if (turn <= 20) return 15;
-                        else if (turn <= 25) return 10;
+                        else if (turn <= 24) return 10;
+                        else return 5;
+                    }
+                    else if (name == 7)
+                    {
+                        if (turn <= 18) return 25;
+                        else if (turn <= 21) return 15;
+                        else if (turn <= 24) return 10;
                         else return 5;
                     }
                     else if (name == 8)
                     {
-                        if (turn <= 5) return 25;
+                        if (turn <= 6) return 25;
                         else if (turn <= 8) return 15;
                         else if (turn <= 10) return 10;
                         else return 5;
@@ -87,6 +94,27 @@ namespace AngryDash.Game.RewardChecker
                         if (turn <= 20) return 25;
                         else if (turn <= 25) return 15;
                         else if (turn <= 30) return 10;
+                        else return 5;
+                    }
+                    else if (name == 11)
+                    {
+                        if (turn <= 17) return 25;
+                        else if (turn <= 20) return 15;
+                        else if (turn <= 25) return 10;
+                        else return 5;
+                    }
+                    else if (name == 12)
+                    {
+                        if (turn <= 16) return 25;
+                        else if (turn <= 18) return 15;
+                        else if (turn <= 22) return 10;
+                        else return 5;
+                    }
+                    else if (name == 13)
+                    {
+                        if (turn <= 17) return 25;
+                        else if (turn <= 20) return 15;
+                        else if (turn <= 25) return 10;
                         else return 5;
                     }
                     else return 0;
