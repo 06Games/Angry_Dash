@@ -3,6 +3,8 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using AngryDash.Language;
+using UnityEngine.Profiling;
+using UnityEngine.SceneManagement;
 
 public class RessourcePackLoader : MonoBehaviour
 {
@@ -11,17 +13,33 @@ public class RessourcePackLoader : MonoBehaviour
 
     void Start()
     {
+        if(path == null) path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
+        if (ids == null) ids = IDs.text.Split(new string[] { "\n" }, System.StringSplitOptions.None);
+        Status.text = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", index, ids.Length - 1);
+
+
+        if (sw == null)
+        {
+            sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+        }
+
         StartCoroutine(Load());
     }
 
+    static string path;
+    static string[] ids;
+
+    static int index = 0;
+    int reloadEach = 25;
+
+
+    static System.Diagnostics.Stopwatch sw;
+    static float maxMem = 0;
     IEnumerator Load()
     {
-        System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-        sw.Start();
 
-        string path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
-        string[] ids = IDs.text.Split(new string[] { "\n" }, System.StringSplitOptions.None);
-        for (int i = 0; i < ids.Length; i++)
+        for (int i = index; i < ids.Length; i++)
         {
             if (!string.IsNullOrEmpty(ids[i]))
             {
@@ -37,6 +55,14 @@ public class RessourcePackLoader : MonoBehaviour
 
                 yield return new WaitForEndOfFrame();
                 Status.text = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", i, ids.Length - 1);
+
+                var mem = Profiler.GetTotalReservedMemoryLong() / 1048576f;
+                if (maxMem < mem) maxMem = mem;
+                if (i / (float)reloadEach == i / reloadEach)
+                {
+                    index = i + 1;
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                }
             }
         }
 
@@ -44,6 +70,6 @@ public class RessourcePackLoader : MonoBehaviour
         LSC.LoadScreen("Home", LSC.GetArgs());
 
         sw.Stop();
-        Debug.Log(sw.Elapsed.ToString("g"));
+        Debug.Log(sw.Elapsed.TotalSeconds.ToString("0.000").Replace(".", ",") + "\n" + maxMem.ToString("0.000").Replace(".", ","));
     }
 }

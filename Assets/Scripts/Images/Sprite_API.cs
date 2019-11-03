@@ -133,11 +133,11 @@ namespace AngryDash.Image
             Vector2 offset = new Vector2(frame.fcTLChunk.XOffset, info.buffer.height - frame.fcTLChunk.YOffset - frameImg.height);
             if (frame.fcTLChunk.BlendOp == BlendOps.APNGBlendOpOver)
             {
-                UnityEngine.Color[] fgColor = frameImg.GetPixels();
-                UnityEngine.Color[] bgColor = frameTampon.GetPixels((int)offset.x, (int)offset.y, frameImg.width, frameImg.height);
+                Color[] fgColor = frameImg.GetPixels();
+                Color[] bgColor = frameTampon.GetPixels((int)offset.x, (int)offset.y, frameImg.width, frameImg.height);
                 for (int c = 0; c < fgColor.Length; c++)
                 {
-                    if (fgColor[c].a == 0) { /* Do nothing */ }
+                    if (fgColor[c].a == 0) continue;
                     else if (fgColor[c].a == 255) bgColor[c] = fgColor[c];
                     else
                     {
