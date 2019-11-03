@@ -90,6 +90,13 @@ native/GUI/profileMenu/myLevels/download
 native/GUI/profileMenu/myFriends
 native/GUI/profileMenu/myAccount
 native/GUI/levelLauncher/pause
+native/GUI/levelLauncher/blurring
+native/GUI/levelLauncher/panel
+native/GUI/levelLauncher/star
+native/GUI/levelLauncher/money
+native/GUI/levelLauncher/button
+native/GUI/levelLauncher/replay
+native/GUI/levelLauncher/quit
 native/GUI/editor/toolbox
 native/GUI/editor/toolboxMenu
 native/GUI/editor/toolboxShow

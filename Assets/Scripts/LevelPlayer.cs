@@ -78,7 +78,9 @@ namespace AngryDash.Game
                 if (string.IsNullOrEmpty(lvl.name)) lvl.name = Path.GetFileNameWithoutExtension(file);
                 PlayLevel(lvl);
             }
-            else FromFile(Application.persistentDataPath + "/Levels/Official Levels/4.level", "Home");
+#if UNITY_EDITOR
+            else FromFile(Application.persistentDataPath + "/Levels/Official Levels/4.level", "Home/Play/Official Levels");
+#endif
         }
 
         public void PlayLevel(LevelItem item)

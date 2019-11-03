@@ -10,15 +10,13 @@ namespace AngryDash.Game.Events
         private void OnTriggerEnter2D(Collider2D collision) { EndGame(collision.GetComponent<Player>()); }
         public static void EndGame(Player player)
         {
-            Transform EndPanel = GameObject.Find("Base").transform.GetChild(4);
-            if (EndPanel == null) return;
-            else if (EndPanel.gameObject.activeInHierarchy) return;
+            Transform EndPanel = GameObject.Find("Base").transform.GetChild(4).GetChild(0);
+            if (EndPanel.parent.gameObject.activeInHierarchy) return;
             player.PeutAvancer = false;
 
             EndPanel.GetChild(0).GetComponent<Text>().text = player.LP.level.name; //Sets the level name
-            EndPanel.GetChild(2).GetChild(0).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online");
-            EndPanel.GetChild(2).GetChild(1).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online");
-            EndPanel.gameObject.SetActive(true);
+            EndPanel.GetChild(3).GetChild(1).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online");
+            EndPanel.parent.gameObject.SetActive(true);
 
             FileFormat.XML.RootElement xml = Inventory.xmlDefault;
             LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
@@ -35,10 +33,12 @@ namespace AngryDash.Game.Events
             int.TryParse(xml.GetItem("Money").Value, out int money);
             if (lvlPlayer.FromScene == "Home/Play/Official Levels")
             {
-                RewardChecker.Official reward = new RewardChecker.Official(lvlPlayer.level.name);
-                reward.turn = lvlPlayer.nbLancer;
+                RewardChecker.Official reward = new RewardChecker.Official(lvlPlayer.level.name) { turn = lvlPlayer.nbLancer };
                 gain = reward.money;
+
+                for (int i = 0; i < 3; i++) UnityThread.executeCoroutine(OfficialLevels.SetStar(EndPanel.GetChild(1).GetChild(i).GetComponent<Image.Reader.UImage_Reader>(), reward.stars > i ? 0 : 3));
             }
+            else EndPanel.GetChild(1).gameObject.SetActive(false);
 
             if (gain > lastGain)
             {
@@ -46,10 +46,10 @@ namespace AngryDash.Game.Events
                 xml.GetItem("Money").Value = (money + gain - lastGain).ToString();
                 Social.IncrementEvent("CgkI9r-go54eEAIQBA", (uint)gain); //Statistics about coin winning
 
-                EndPanel.GetChild(1).GetChild(1).gameObject.SetActive(true);
-                EndPanel.GetChild(1).GetChild(1).GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.finished.reward.quantity", "x[0]", gain - lastGain);
+                EndPanel.GetChild(2).GetChild(1).gameObject.SetActive(true);
+                EndPanel.GetChild(2).GetChild(1).GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.finished.reward.quantity", "x[0]", gain - lastGain);
             }
-            else EndPanel.GetChild(1).GetChild(1).gameObject.SetActive(false);
+            else EndPanel.GetChild(2).GetChild(1).gameObject.SetActive(false);
             Inventory.xmlDefault = xml;
         }
     }
