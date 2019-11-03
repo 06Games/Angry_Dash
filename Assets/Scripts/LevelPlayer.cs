@@ -36,7 +36,7 @@ namespace AngryDash.Game
         {
             if (level.victoryConditions == null) nbLancerTxt.text = "";
             else if (nbLancer > level.victoryConditions.maxThrow & level.victoryConditions.maxThrow > 0) Lost(Base);
-            else nbLancerTxt.text = LangueAPI.Get("native", "levelPlayer.throw", "[0] Throw", nbLancer);
+            else nbLancerTxt.text = LangueAPI.Get("native", nbLancer <= 1 ? "levelPlayer.throw" : "levelPlayer.throws", nbLancer <= 1 ? "[0] throw" : "[0] throws", nbLancer);
         }
 
         private void Start()

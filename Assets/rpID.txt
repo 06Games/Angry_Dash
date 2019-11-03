@@ -19,6 +19,7 @@ native/GUI/playMenu/background
 native/GUI/playMenu/button
 native/GUI/playMenu/exit
 native/GUI/playMenu/officialLevels
+native/GUI/playMenu/officialLevels/popup
 native/GUI/playMenu/officialLevels/button
 native/GUI/playMenu/officialLevels/illustration
 native/GUI/playMenu/officialLevels/star
