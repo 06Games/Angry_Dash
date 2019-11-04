@@ -66,6 +66,14 @@ public class RessourcePackLoader : MonoBehaviour
             }
         }
 
+        //Reset all vars
+        path = default;
+        ids = default;
+        index = default;
+        reloadEach = default;
+        sw = default;
+        maxMem = default;
+
         LoadingScreenControl LSC = GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>();
         LSC.LoadScreen("Home", LSC.GetArgs());
 
