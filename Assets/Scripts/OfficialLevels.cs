@@ -1,6 +1,6 @@
 ﻿using AngryDash.Image.Reader;
 using System.Collections;
-using System.Collections.Generic;
+using Tools;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,11 +8,10 @@ using UnityEngine.UI;
 public class OfficialLevels : MonoBehaviour
 {
     public int lvlNumber = 15;
-    public int[] CoinsStars = new int[] { 10, 15, 25 };
+    public readonly int[] CoinsStars = new int[] { 10, 15, 25 };
     FileFormat.XML.Item lvlItems;
     void OnEnable()
     {
-        for (int i = 1; i < transform.childCount - 1; i++) Destroy(transform.GetChild(i).gameObject);
         GetMaxLevel((lvl) =>
         {
             Social.Event("CgkI9r-go54eEAIQBw", lvl); //Statistics about the highest level completed
@@ -45,9 +44,12 @@ public class OfficialLevels : MonoBehaviour
                     StartCoroutine(SetStar(btn.transform.GetChild(2).GetChild(s).GetComponent<UImage_Reader>(), CoinsStars[s] <= coins ? 0 : 3));
                 }
             }
-            transform.GetChild(1).SetSiblingIndex(transform.childCount - 1);
             Social.Leaderboard("CgkI9r-go54eEAIQAQ", stars, (s) => { }); //Leaderboard of players according to their star number in the official levels
         });
+    }
+    private void OnDisable()
+    {
+        foreach (Transform go in transform.GetChilds().Where(c => c.name.Contains("Level "))) Destroy(go.gameObject);
     }
     public static IEnumerator SetStar(UImage_Reader obj, int state)
     {
@@ -64,7 +66,8 @@ public class OfficialLevels : MonoBehaviour
 
     void Select(string levelName)
     {
-        var selectedPanel = transform.GetChild(transform.childCount - 1).GetChild(0);
+        var selectedPanel = transform.Find("SelectedPanel").GetChild(0);
+        selectedPanel.parent.SetSiblingIndex(transform.childCount - 1);
         selectedPanel.GetChild(0).GetComponent<Text>().text = AngryDash.Language.LangueAPI.Get("native", "play.officialLevels.level", "Level [0]", levelName);
         var stars = selectedPanel.GetChild(1);
         var maxThrows = new AngryDash.Game.RewardChecker.Official(levelName).starsGain;

@@ -337,6 +337,8 @@ namespace Tools
             transform.localScale = new Vector3(globalScale.x / transform.lossyScale.x, globalScale.y / transform.lossyScale.y, globalScale.z / transform.lossyScale.z);
         }
 
+        /// <summary>Find a parent of the transform/summary>
+        /// <param name="n">the name of the parent</param>
         public static Transform FindParent(this Transform transform, string n)
         {
             Transform parent = transform.parent;
@@ -346,6 +348,14 @@ namespace Tools
                 else parent = parent.parent;
             }
             return null;
+        }
+
+        /// <summary>Get all childs of the transform</summary>
+        public static List<Transform> GetChilds(this Transform transform)
+        {
+            var list = new List<Transform>();
+            foreach (Transform go in transform) list.Add(go);
+            return list;
         }
     }
     public static class RectTransformExtensions
@@ -526,11 +536,18 @@ namespace Tools
 
     public static class EnumerableExtensions
     {
+        /// <summary>Converts a IEnumerator to IEnumerable</summary>
+        public static IEnumerable<T> ToIEnumerable<T>(this IEnumerator<T> enumerator) { while (enumerator.MoveNext()) yield return enumerator.Current; }
+        /// <summary>Converts a IEnumerator to IEnumerable</summary>
+        public static IEnumerable ToIEnumerable(this IEnumerator enumerator) { while (enumerator.MoveNext()) yield return enumerator.Current; }
+
+        /// <summary>Compare two strings in a natural way (ex. 1,2,3,..,10 and not 1,10,2,3,...)</summary>
         public static int CompareNatural(string strA, string strB)
         {
             return CompareNatural(strA, strB, System.Globalization.CultureInfo.CurrentCulture, System.Globalization.CompareOptions.IgnoreCase);
         }
 
+        /// <summary>Compare two strings in a natural way (ex. 1,2,3,..,10 and not 1,10,2,3,...)</summary>
         public static int CompareNatural(string strA, string strB, System.Globalization.CultureInfo culture, System.Globalization.CompareOptions options)
         {
             System.Globalization.CompareInfo cmp = culture.CompareInfo;
