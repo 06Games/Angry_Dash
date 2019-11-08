@@ -23,20 +23,26 @@ namespace AngryDash.Game.API
 
         public static void Color(int blockGroup, byte r, byte g, byte b)
         {
-            Color32 color = new Color32(r, g, b, 255);
+            UnityThread.executeInUpdate(() =>
+            {
+                Color32 color = new Color32(r, g, b, 255);
             foreach (int block in GetBlocks(blockGroup))
             {
                 GameObject go = GameObject.Find("Items").transform.Find($"Objet n° {block}").gameObject;
                 if (go != null) go.GetComponent<SpriteRenderer>().color = color;
-            }
+                }
+            });
         }
         public static void Active(int blockGroup, string enable)
         {
-            foreach (int block in GetBlocks(blockGroup))
+            UnityThread.executeInUpdate(() =>
             {
-                GameObject go = GameObject.Find("Items").transform.Find($"Objet n° {block}").gameObject;
-                if (go != null) go.SetActive(enable == "True");
-            }
+                foreach (int block in GetBlocks(blockGroup))
+                {
+                    GameObject go = GameObject.Find("Items").transform.Find($"Objet n° {block}").gameObject;
+                    if (go != null) go.SetActive(enable == "True");
+                }
+            });
         }
     }
 }

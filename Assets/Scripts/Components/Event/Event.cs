@@ -32,14 +32,26 @@ namespace AngryDash.Game.Events
                 if (_namespace.StartsWith(parentNamespace)) _namespace = _namespace.Remove(0, parentNamespace.Length + 1);
                 return _namespace + "." + methodInfo.Name;
             }
+            
+            interpreter.Globals.Set("sleep", DynValue.NewCallback((ctx, args) =>
+            {
+                System.Threading.Thread.Sleep((int)(args[0].ToObject<float>() * 1000));
+                return DynValue.NewNil();
+            }));
+
 
             interpreter.DoString(script);
-            if (interpreter.Globals.Get("Start").IsNotNil()) interpreter.Call(interpreter.Globals["Start"]);
 
-            Player.userPlayer.onRespawn += (s, e) =>
+            Execute("Start");
+            Player.userPlayer.onRespawn += (s, e) => Execute("Respawn");
+        }
+
+        public async void Execute(string voidName)
+        {
+            await System.Threading.Tasks.Task.Run(() =>
             {
-                if (interpreter.Globals.Get("Respawn").IsNotNil()) interpreter.Call(interpreter.Globals["Respawn"]);
-            };
+                if (interpreter.Globals.Get(voidName).IsNotNil()) interpreter.Call(interpreter.Globals[voidName]);
+            });
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
