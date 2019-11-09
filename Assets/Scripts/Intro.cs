@@ -14,7 +14,7 @@ public class Intro : MonoBehaviour
         Fond.SetActive(true);
         StartCoroutine(playVideo(() => StartCoroutine(PlayEnd())));
 
-        AngryDash.Language.LangueAPI.LoadAsync("native", Application.persistentDataPath);
+        _ = AngryDash.Language.LangueAPI.LoadAsync("native", Application.persistentDataPath);
     }
 
     IEnumerator playVideo(System.Action onComplete = null)

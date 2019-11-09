@@ -3,17 +3,14 @@ using UnityEngine;
 
 public class ArgsMenuManager : MonoBehaviour
 {
-
-    public LoadingScreenControl LS;
     public MenuManager[] CM;
 
     void Start()
     {
         if (CM.Length < transform.childCount) CM = CM.Concat(new MenuManager[transform.childCount - CM.Length]).ToArray();
 
-        string[] args = LS.GetArgs();
-        if (args == null) return;
-        else if (args.Length < 2) return;
+        string[] args = LoadingScreenControl.args;
+        if (args.Length < 2) return;
 
         for (int p = 0; p < transform.childCount; p++)
         {

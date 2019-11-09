@@ -144,9 +144,7 @@ public class Account : MonoBehaviour
     public event Action complete;
     void Start()
     {
-        LoadingScreenControl LSC = FindObjectOfType<LoadingScreenControl>();
-        string[] args = LSC.GetArgs();
-        if (args == null) return;
+        string[] args = LoadingScreenControl.args;
         if (args.Length >= 2)
         {
             if (args[0] == "Account")
@@ -156,7 +154,7 @@ public class Account : MonoBehaviour
                     GameObject child = transform.parent.GetChild(i).gameObject;
                     if (child != gameObject) child.SetActive(false);
                 }
-                complete += () => LSC.LoadScreen(args[1]);
+                complete += () => LoadingScreenControl.GetLSC().LoadScreen(args[1]);
 
                 transform.GetChild(1).gameObject.SetActive(true);
                 CheckAccountFile(Complete);

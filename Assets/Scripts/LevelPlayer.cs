@@ -47,19 +47,15 @@ namespace AngryDash.Game
 
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
             {
-                string[] args = LoadingScreenControl.GetLSC().GetArgs();
-                if (args != null)
+                string[] args = LoadingScreenControl.args;
+                if (args.Length > 2)
                 {
-                    if (args.Length > 2)
+                    passThroughArgs = args.RemoveAt(0, 2);
+                    if (args[1] == "File") FromFile(args[2], args[0]);
+                    else if (args[1] == "Data")
                     {
-                        passThroughArgs = args.RemoveAt(0, 2);
-                        if (args[1] == "File") FromFile(args[2], args[0]);
-                        else if (args[1] == "Data")
-                        {
-                            FromScene = args[0]; //Define the scene that will be open at the level player's exit
-                            PlayLevel(LevelItem.Parse(args[2]));
-                        }
-                        else FromFile();
+                        FromScene = args[0]; //Define the scene that will be open at the level player's exit
+                        PlayLevel(LevelItem.Parse(args[2]));
                     }
                     else FromFile();
                 }

@@ -35,7 +35,7 @@ public class Editeur : MonoBehaviour
     public int ZoomSensitive = 20;
 
     [HideInInspector] public bool bloqueEchap;
-    
+
     public int CameraMouvementSpeed = 10;
     Vector2 touchLastPosition;
 
@@ -203,24 +203,20 @@ public class Editeur : MonoBehaviour
         zoomIndicator.gameObject.SetActive(false);
         BulleDeveloppementCat.SetActive(false);
 
-        string[] args = LoadingScreenControl.GetLSC().GetArgs();
-        if (args != null)
+        string[] args = LoadingScreenControl.args;
+        if (args.Length > 2)
         {
-            if (args.Length > 2)
+            if (args[0] != "Player")
             {
-                if (args[0] != "Player")
+                FromScene = args[0];
+                if (args[1] == "Edit")
                 {
-                    FromScene = args[0];
-                    if (args[1] == "Edit")
-                    {
-                        file = args[2];
-                        EditFile(file);
-                    }
-                    else if (args[1] == "Create" & args.Length > 3)
-                        CreateFile(args[2], args[3]);
+                    file = args[2];
+                    EditFile(file);
                 }
+                else if (args[1] == "Create" & args.Length > 3)
+                    CreateFile(args[2], args[3]);
             }
-            else LSC.LoadScreen(FromScene);
         }
         else
         {
@@ -238,7 +234,7 @@ public class Editeur : MonoBehaviour
     void Update()
     {
         //Position
-        if(Input.mousePresent) transform.GetChild(0).GetChild(6).GetComponent<Text>().text = GetWorldPosition(Input.mousePosition, false).ToString("0.0");
+        if (Input.mousePresent) transform.GetChild(0).GetChild(6).GetComponent<Text>().text = GetWorldPosition(Input.mousePosition, false).ToString("0.0");
         else transform.GetChild(0).GetChild(6).GetComponent<Text>().text = GetWorldPosition(Display.Screen.Resolution / 2, false).ToString("0.0");
 
         if (!canInteract) return;
@@ -263,10 +259,11 @@ public class Editeur : MonoBehaviour
 
             // ... change the orthographic size based on the change in distance between the touches.
             Zoom(deltaMagnitudeDiff);
-            if(deltaMagnitudeDiff != 0) return; //Prevents other actions from taking place
+            if (deltaMagnitudeDiff != 0) return; //Prevents other actions from taking place
         }
 
-        if (InputExtensions.isHardwareKeyboardAvailable) {
+        if (InputExtensions.isHardwareKeyboardAvailable)
+        {
             int MoveX = 0;
             int MoveY = 0;
 
@@ -284,7 +281,7 @@ public class Editeur : MonoBehaviour
         else if ((Input.GetKey(KeyCode.Mouse0) | Input.touchCount > 0) && newblockid < 0 && !IsHoverGUI())
         {
             Vector2 mvt = Vector2.zero;
-            if(Input.touchCount > 0) mvt = Input.GetTouch(0).deltaPosition * new Vector2(-1, -1); //Touchscreen
+            if (Input.touchCount > 0) mvt = Input.GetTouch(0).deltaPosition * new Vector2(-1, -1); //Touchscreen
             else mvt = touchLastPosition - (Vector2)Input.mousePosition; //Mouse
             mvt *= cam.orthographicSize / Screen.height * 2; //Movement relative to the zoom
 
@@ -523,7 +520,7 @@ public class Editeur : MonoBehaviour
     public void ChangeMultiSelect(Image btn)
     {
         MultiSelect = !MultiSelect;
-        if(MultiSelect) btn.color = new Color32(75, 75, 75, 255);
+        if (MultiSelect) btn.color = new Color32(75, 75, 75, 255);
         else btn.color = new Color32(125, 125, 125, 255);
     }
 

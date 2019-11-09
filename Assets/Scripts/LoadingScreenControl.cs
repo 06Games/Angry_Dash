@@ -6,13 +6,13 @@ using System.Linq;
 
 public class LoadingScreenControl : MonoBehaviour
 {
-    public GameObject loadingScreenObj;
-    public Slider slider;
+    GameObject loadingScreenObj;
     AsyncOperation async;
 
     public static bool CanChange { get; set; } = true;
     public static event System.Action<Scene> OnSceneChange;
 
+    public static string[] args { get; private set; }
     public static LoadingScreenControl GetLSC()
     {
         var LSC = FindObjectOfType<LoadingScreenControl>();
@@ -22,23 +22,12 @@ public class LoadingScreenControl : MonoBehaviour
 
     public void LoadScreen(string Scene) { LoadScreen(Scene, null, false); }
     public void LoadScreen(string Scene, bool keep = false) { LoadScreen(Scene, null, keep); }
-    public void LoadScreen(string Scene, string[] args, bool keep = false)
+    public void LoadScreen(string Scene, string[] Args, bool keep = false)
     {
         if (async != default) return;
-        if (GameObject.Find("Temp_var") != null) Destroy(GameObject.Find("Temp_var"));
-        if (args == null) args = new string[0];
-        if (args.Length > 0)
-        {
-            GameObject var = new GameObject("Temp_var");
-            DontDestroyOnLoad(var);
-            Text txt = var.AddComponent<Text>();
-            if (args.Length > 0) txt.text = args[0];
-            for (int v = 1; v < args.Length; v++)
-                txt.text = txt.text + "\\newParam" + args[v];
-        }
+        args = Args == null? new string[0]: Args;
 
         loadingScreenObj = transform.GetChild(0).gameObject;
-        slider = loadingScreenObj.transform.GetChild(0).GetComponent<Slider>();
 
         string bgPath = Application.persistentDataPath + "/Ressources/default/textures/native/GUI/other/loadingScreen/splashScreens/";
 #if UNITY_STANDALONE_WIN
@@ -56,12 +45,6 @@ public class LoadingScreenControl : MonoBehaviour
         }
 
         StartCoroutine(LoadingScreen(Scene, keep));
-    }
-
-    public string[] GetArgs()
-    {
-        if (GameObject.Find("Temp_var") == null) return null;
-        else return GameObject.Find("Temp_var").GetComponent<Text>().text.Split(new string[] { "\\newParam" }, System.StringSplitOptions.None);
     }
 
     IEnumerator LoadingScreen(string scene, bool keep)

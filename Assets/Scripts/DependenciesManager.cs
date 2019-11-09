@@ -15,9 +15,7 @@ public class DependenciesManager : MonoBehaviour
     #region RPs
     void Start()
     {
-        LoadingScreenControl LSC = FindObjectOfType<LoadingScreenControl>();
-        string[] args = LSC.GetArgs();
-        if (args == null) return;
+        string[] args = LoadingScreenControl.args;
         if (args.Length >= 2)
         {
             if (args[0] == "Dependencies")
@@ -28,7 +26,7 @@ public class DependenciesManager : MonoBehaviour
                     GameObject child = transform.parent.GetChild(i).gameObject;
                     if (child != gameObject) child.SetActive(false);
                 }
-                StartCoroutine(DownloadRPs(() => LSC.LoadScreen(args[1]), new Item[] { new Item(new XML(args[2]).RootElement.node) }));
+                StartCoroutine(DownloadRPs(() => LoadingScreenControl.GetLSC().LoadScreen(args[1]), new Item[] { new Item(new XML(args[2]).RootElement.node) }));
             }
         }
     }
