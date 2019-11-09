@@ -410,7 +410,7 @@ namespace AngryDash.Game
         public void Replay()
         {
             Time.timeScale = 1;
-            SceneManager.LoadScene("Player", new string[] { FromScene, "Data", LevelItem.Parse(level).ToString() }.Concat(passThroughArgs).ToArray());
+            SceneManager.ReloadScene();
         }
 
         public static void Lost(Transform Base)

@@ -74,7 +74,7 @@ public class RessourcePackLoader : MonoBehaviour
         sw = default;
         maxMem = default;
 
-        SceneManager.LoadScene("Home", SceneManager.args);
+        SceneManager.ReloadScene();
 
         sw.Stop();
         Debug.Log(sw.Elapsed.TotalSeconds.ToString("0.000").Replace(".", ",") + "\n" + maxMem.ToString("0.000").Replace(".", ","));

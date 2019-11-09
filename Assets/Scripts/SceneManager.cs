@@ -13,7 +13,7 @@ public class SceneManager : MonoBehaviour
     public static bool CanChange { get; set; } = true;
     public static event System.Action<Scene> OnSceneChange;
 
-    public static string[] args { get; private set; }
+    public static string[] args { get; private set; } = new string[0];
 
     static SceneManager GetLSC()
     {
@@ -21,6 +21,9 @@ public class SceneManager : MonoBehaviour
         if (LSC == null) throw new System.NullReferenceException("No Loading Screen");
         else return LSC;
     }
+
+    public static void ReloadScene(bool keepArgs = true) { LoadScene(Manager.GetActiveScene().name, keepArgs ? args : null, false); }
+    public static void ReloadScene(string[] args) { LoadScene(Manager.GetActiveScene().name, args, false); }
 
     public static void LoadScene(string Scene) { LoadScene(Scene, null, false); }
     public static void LoadScene(string Scene, bool keep = false) { LoadScene(Scene, null, keep); }
@@ -42,8 +45,7 @@ public class SceneManager : MonoBehaviour
         if (files.Count() > 0)
         {
             int bgIndex = Random.Range(0, files.Count());
-            string bgID = files.ElementAt(bgIndex).Path.Remove(0, (Application.persistentDataPath + "/Ressources/default/textures/").Length);
-            Debug.Log(bgIndex + " - " + files.Count() + "\n" + bgID);
+            string bgID = files.ElementAt(bgIndex).Path.Remove(0, (Application.persistentDataPath + "/Ressources/default/textures/").Length).Replace("\\", "/");
             LSC.loadingScreenObj.transform.GetChild(1).GetChild(0).GetComponent<AngryDash.Image.Reader.UImage_Reader>().SetID(bgID.Remove(bgID.Length - " basic.png".Length)).Load();
         }
 

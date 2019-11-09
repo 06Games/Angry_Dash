@@ -267,8 +267,7 @@ public class EditorLevelSelector : MonoBehaviour
     public void PlayLevel(int index)
     {
         History.LvlPlayed(files[index].FullName, "P");
-        SceneManager.LoadScene("Player",
-            new string[] { "Home/Editor/Editor", "File", files[index].FullName });
+        SceneManager.LoadScene("Player", new string[] { "Home/Editor/Editor", "File", files[index].FullName });
     }
 
     /// <summary> Edit the selected level </summary>
