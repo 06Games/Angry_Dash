@@ -1,4 +1,4 @@
-native/GUI/logo
+﻿native/GUI/logo
 native/GUI/startUp/dependencies/background
 native/GUI/startUp/dependencies/progressBg
 native/GUI/startUp/dependencies/progressState
@@ -180,6 +180,12 @@ native/GUI/editor/movements/forward
 native/GUI/other/internetNotification/panel
 native/GUI/other/internetNotification/connected
 native/GUI/other/internetNotification/disconnected
+native/GUI/other/loadingScreen/background
+native/GUI/other/loadingScreen/progressBg
+native/GUI/other/loadingScreen/progressState
+native/GUI/other/loadingScreen/splashScreenBg
+native/GUI/other/loadingScreen/splashScreens/0
+native/GUI/other/loadingScreen/splashScreens/1
 native/BACKGROUNDS/0
 native/BACKGROUNDS/1
 native/BACKGROUNDS/2

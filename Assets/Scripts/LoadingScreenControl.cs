@@ -8,7 +8,6 @@ public class LoadingScreenControl : MonoBehaviour
 {
     public GameObject loadingScreenObj;
     public Slider slider;
-    public Sprite[] Backgrounds;
     AsyncOperation async;
 
     public static bool CanChange { get; set; } = true;
@@ -41,11 +40,20 @@ public class LoadingScreenControl : MonoBehaviour
         loadingScreenObj = transform.GetChild(0).gameObject;
         slider = loadingScreenObj.transform.GetChild(0).GetComponent<Slider>();
 
-        System.Random rnd = new System.Random();
-        int i = rnd.Next(0, Backgrounds.Length);
-        if (i >= Backgrounds.Length)
-            i = Backgrounds.Length - 1;
-        loadingScreenObj.transform.GetChild(1).GetChild(0).GetComponent<Image>().sprite = Backgrounds[i];
+        string bgPath = Application.persistentDataPath + "/Ressources/default/textures/native/GUI/other/loadingScreen/splashScreens/";
+#if UNITY_STANDALONE_WIN
+        System.Collections.Generic.IEnumerable<CodeProject.FileData> files = CodeProject.FastDirectoryEnumerator.EnumerateFiles(bgPath, "* basic.png");
+#else
+        System.Collections.Generic.IEnumerable<System.IO.FileInfo> files = new System.IO.DirectoryInfo(bgPath).EnumerateFiles("* basic.png");
+#endif
+
+        if (files.Count() > 0)
+        {
+            int bgIndex = Random.Range(0, files.Count());
+            string bgID = files.ElementAt(bgIndex).Path.Remove(0, (Application.persistentDataPath + "/Ressources/default/textures/").Length);
+            Debug.Log(bgIndex + " - " + files.Count() + "\n" + bgID);
+            loadingScreenObj.transform.GetChild(1).GetChild(0).GetComponent<AngryDash.Image.Reader.UImage_Reader>().SetID(bgID.Remove(bgID.Length - " basic.png".Length)).Load();
+        }
 
         StartCoroutine(LoadingScreen(Scene, keep));
     }
