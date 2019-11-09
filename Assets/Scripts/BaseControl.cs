@@ -64,7 +64,7 @@ public class BaseControl : MonoBehaviour
             if (scene == "" & returnScene) Base.Quit(true);
             else if (!sceneChanging & returnScene)
             {
-                LoadingScreenControl.GetLSC().LoadScreen(scene);
+                LoadingScreenControl.LoadScreen(scene);
                 sceneChanging = true;
             }
 

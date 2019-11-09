@@ -399,7 +399,7 @@ namespace AngryDash.Game
                     if (Directory.Exists(path)) Directory.Delete(path, true);
                     Image.Sprite_API.forceRP = null;
                 }
-                LoadingScreenControl.GetLSC().LoadScreen(scene, args);
+                LoadingScreenControl.LoadScreen(scene, args);
             }
             else
             {
@@ -410,7 +410,7 @@ namespace AngryDash.Game
         public void Replay()
         {
             Time.timeScale = 1;
-            LoadingScreenControl.GetLSC().LoadScreen("Player", new string[] { FromScene, "Data", LevelItem.Parse(level).ToString() }.Concat(passThroughArgs).ToArray());
+            LoadingScreenControl.LoadScreen("Player", new string[] { FromScene, "Data", LevelItem.Parse(level).ToString() }.Concat(passThroughArgs).ToArray());
         }
 
         public static void Lost(Transform Base)

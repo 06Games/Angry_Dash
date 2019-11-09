@@ -10,7 +10,6 @@ using GooglePlayGames;
 
 public class Social : MonoBehaviour
 {
-    public LoadingScreenControl LSC;
     readonly string scene = "Load";
 
 #if UNITY_EDITOR
@@ -28,7 +27,7 @@ public class Social : MonoBehaviour
         quit.onClick.AddListener(() =>
         {
             Account ac = GameObject.Find("Account").GetComponent<Account>();
-            ac.complete += () => LSC.LoadScreen(scene);
+            ac.complete += () => LoadingScreenControl.LoadScreen(scene);
             ac.Initialize();
             gameObject.SetActive(false);
         });
@@ -45,7 +44,7 @@ public class Social : MonoBehaviour
                 Achievement("CgkI9r-go54eEAIQAg", true, (bool s) => { }); //Achievement 'Welcome'
 
                 Account ac = GameObject.Find("Account").GetComponent<Account>();
-                ac.complete += () => LSC.LoadScreen(scene);
+                ac.complete += () => LoadingScreenControl.LoadScreen(scene);
                 ac.Initialize();
                 gameObject.SetActive(false);
             }

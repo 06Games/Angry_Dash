@@ -8,7 +8,6 @@ using FileFormat.XML;
 
 public class RessourcePackManager : MonoBehaviour
 {
-    public LoadingScreenControl LS;
     int category = 0;
 
     Item[] RPs;
@@ -131,7 +130,7 @@ public class RessourcePackManager : MonoBehaviour
 
     public void Download(int index)
     {
-        LS.LoadScreen("Start", new string[] { "Dependencies", "Home", RPs[index].ToString() }, true);
+        LoadingScreenControl.LoadScreen("Start", new string[] { "Dependencies", "Home", RPs[index].ToString() }, true);
         transform.GetChild(1).GetChild(0).GetChild(0).GetChild(index + 1).GetChild(3).gameObject.SetActive(false);
     }
 
@@ -139,7 +138,7 @@ public class RessourcePackManager : MonoBehaviour
     {
         CacheManager.Dictionary.Static().dictionary.Remove("Ressources/textures/json");
         CacheManager.Dictionary.Static().dictionary.Remove("Ressources/textures");
-        LS.LoadScreen("Load", new string[] { "Settings", "Ressource Pack" });
+        LoadingScreenControl.LoadScreen("Load", new string[] { "Settings", "Ressource Pack" });
     }
 
     string Format(string s)

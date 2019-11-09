@@ -91,9 +91,9 @@ public class OfficialLevels : MonoBehaviour
             if (System.IO.File.Exists(Application.persistentDataPath + "/Levels/Official Levels/" + levelName + ".level"))
             {
                 GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
-                GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player", new string[] { "Home/Play/Official Levels", "File", Application.persistentDataPath + "/Levels/Official Levels/" + levelName + ".level" });
+                LoadingScreenControl.LoadScreen("Player", new string[] { "Home/Play/Official Levels", "File", Application.persistentDataPath + "/Levels/Official Levels/" + levelName + ".level" });
             }
-            else GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Start");
+            else LoadingScreenControl.LoadScreen("Start");
         });
 
         selectedPanel.parent.gameObject.SetActive(true);

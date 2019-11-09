@@ -7,7 +7,6 @@ public class CommunityServers : MonoBehaviour
 {
 #pragma warning disable CS0618 // En attendant la nouvelle API
 
-    public LoadingScreenControl LS;
     public Sprite DefaultServerIcon;
 
     NetworkManager NM;
@@ -30,7 +29,7 @@ public class CommunityServers : MonoBehaviour
         if (InternetAPI.ValidateIPv4(transform.GetChild(1).GetChild(0).GetComponent<InputField>().text))
         {
             NM.StopClient();
-            LS.LoadScreen("Online", new string[] { "Connect", adress + ":" + port });
+            LoadingScreenControl.LoadScreen("Online", new string[] { "Connect", adress + ":" + port });
         }
     }
 

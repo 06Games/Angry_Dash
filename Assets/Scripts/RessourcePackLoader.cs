@@ -74,7 +74,7 @@ public class RessourcePackLoader : MonoBehaviour
         sw = default;
         maxMem = default;
 
-        LoadingScreenControl.GetLSC().LoadScreen("Home", LoadingScreenControl.args);
+        LoadingScreenControl.LoadScreen("Home", LoadingScreenControl.args);
 
         sw.Stop();
         Debug.Log(sw.Elapsed.TotalSeconds.ToString("0.000").Replace(".", ",") + "\n" + maxMem.ToString("0.000").Replace(".", ","));

@@ -10,8 +10,6 @@ using AngryDash.Image.Reader;
 
 public class EditorPublishedLevels : MonoBehaviour
 {
-    /// <summary> To change scene </summary>
-    public LoadingScreenControl loadingScreenControl;
     /// <summary> URL of the community server root </summary>
     public readonly string serverURL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/";
     /// <summary> How the levels should be sorted </summary>
@@ -235,7 +233,7 @@ public class EditorPublishedLevels : MonoBehaviour
 
         LevelItem item = items[index];
         item.Data = client.DownloadString(url).Replace("\r", "");
-        loadingScreenControl.LoadScreen("Player", new string[] { "Home/Editor/Community Levels", "Data", item.ToString() });
+        LoadingScreenControl.LoadScreen("Player", new string[] { "Home/Editor/Community Levels", "Data", item.ToString() });
     }
 
 

@@ -37,8 +37,6 @@ public class _NetworkManager : NetworkBehaviour
     public GameObject Selection;
     public GameObject Items;
 
-    public LoadingScreenControl LSC;
-
     NetworkManager NM;
 
     string adress = "localhost";
@@ -48,7 +46,7 @@ public class _NetworkManager : NetworkBehaviour
     {
         NM = GetComponent<NetworkManager>();
 
-        string[] launchArgs = LSC.GetArgs();
+        string[] launchArgs = LoadingScreenControl.args;
         if (launchArgs == null) launchArgs = new string[0];
         if (launchArgs.Length > 0)
         {
@@ -122,7 +120,7 @@ public class _NetworkManager : NetworkBehaviour
 
         for (int i = 0; i < Items.transform.childCount; i++)
             Destroy(Items.transform.GetChild(i).gameObject);
-        LSC.LoadScreen("Home", new string[] { "Play", "Community Servers" });
+        LoadingScreenControl.LoadScreen("Home", new string[] { "Play", "Community Servers" });
     }
 
     private bool isSetup = false;

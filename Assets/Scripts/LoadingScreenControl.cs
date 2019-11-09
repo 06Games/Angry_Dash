@@ -1,8 +1,8 @@
 ﻿using System.Collections;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class LoadingScreenControl : MonoBehaviour
 {
@@ -13,21 +13,23 @@ public class LoadingScreenControl : MonoBehaviour
     public static event System.Action<Scene> OnSceneChange;
 
     public static string[] args { get; private set; }
-    public static LoadingScreenControl GetLSC()
+
+    static LoadingScreenControl GetLSC()
     {
         var LSC = FindObjectOfType<LoadingScreenControl>();
         if (LSC == null) throw new System.NullReferenceException("No Loading Screen");
         else return LSC;
     }
 
-    public void LoadScreen(string Scene) { LoadScreen(Scene, null, false); }
-    public void LoadScreen(string Scene, bool keep = false) { LoadScreen(Scene, null, keep); }
-    public void LoadScreen(string Scene, string[] Args, bool keep = false)
+    public static void LoadScreen(string Scene) { LoadScreen(Scene, null, false); }
+    public static void LoadScreen(string Scene, bool keep = false) { LoadScreen(Scene, null, keep); }
+    public static void LoadScreen(string Scene, string[] Args, bool keep = false)
     {
-        if (async != default) return;
+        var LSC = GetLSC();
+        if (LSC.async != default) return;
         args = Args == null? new string[0]: Args;
 
-        loadingScreenObj = transform.GetChild(0).gameObject;
+        LSC.loadingScreenObj = LSC.transform.GetChild(0).gameObject;
 
         string bgPath = Application.persistentDataPath + "/Ressources/default/textures/native/GUI/other/loadingScreen/splashScreens/";
 #if UNITY_STANDALONE_WIN
@@ -41,10 +43,10 @@ public class LoadingScreenControl : MonoBehaviour
             int bgIndex = Random.Range(0, files.Count());
             string bgID = files.ElementAt(bgIndex).Path.Remove(0, (Application.persistentDataPath + "/Ressources/default/textures/").Length);
             Debug.Log(bgIndex + " - " + files.Count() + "\n" + bgID);
-            loadingScreenObj.transform.GetChild(1).GetChild(0).GetComponent<AngryDash.Image.Reader.UImage_Reader>().SetID(bgID.Remove(bgID.Length - " basic.png".Length)).Load();
+            LSC.loadingScreenObj.transform.GetChild(1).GetChild(0).GetComponent<AngryDash.Image.Reader.UImage_Reader>().SetID(bgID.Remove(bgID.Length - " basic.png".Length)).Load();
         }
 
-        StartCoroutine(LoadingScreen(Scene, keep));
+        LSC.StartCoroutine(LSC.LoadingScreen(Scene, keep));
     }
 
     IEnumerator LoadingScreen(string scene, bool keep)

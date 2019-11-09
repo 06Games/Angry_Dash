@@ -26,7 +26,7 @@ public class DependenciesManager : MonoBehaviour
                     GameObject child = transform.parent.GetChild(i).gameObject;
                     if (child != gameObject) child.SetActive(false);
                 }
-                StartCoroutine(DownloadRPs(() => LoadingScreenControl.GetLSC().LoadScreen(args[1]), new Item[] { new Item(new XML(args[2]).RootElement.node) }));
+                StartCoroutine(DownloadRPs(() => LoadingScreenControl.LoadScreen(args[1]), new Item[] { new Item(new XML(args[2]).RootElement.node) }));
             }
         }
     }

@@ -10,7 +10,6 @@ public class History : MonoBehaviour
 
     public static string HistoryFile { get { return Application.persistentDataPath + "/history.txt"; } }
 
-    public LoadingScreenControl LSC;
     public EditorPublishedLevels PublishedLevels;
 
     void Start() { Refresh(); }
@@ -69,10 +68,8 @@ public class History : MonoBehaviour
         string action = a[0];
         string file = c[0];
 
-        if (action == "P" | file.Contains(Application.persistentDataPath + "/Levels/Official Levels/"))
-            LSC.LoadScreen("Player", new string[] { "Home/Play/History", "File", file });
-        else if (action == "E")
-            LSC.LoadScreen("Editor", new string[] { "Home/Play/History", "Edit", file });
+        if (action == "P" | file.Contains(Application.persistentDataPath + "/Levels/Official Levels/")) LoadingScreenControl.LoadScreen("Player", new string[] { "Home/Play/History", "File", file });
+        else if (action == "E") LoadingScreenControl.LoadScreen("Editor", new string[] { "Home/Play/History", "Edit", file });
         else if (action == "O")
         {
             PublishedLevels.transform.parent.parent.gameObject.SetActive(true);
@@ -81,8 +78,7 @@ public class History : MonoBehaviour
             PublishedLevels.Select(0);
             transform.parent.parent.gameObject.SetActive(false);
         }
-        else if (action == "S")
-            GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Online", new string[] { "Connect", file });
+        else if (action == "S") LoadingScreenControl.LoadScreen("Online", new string[] { "Connect", file });
     }
 
     static void Initialise()

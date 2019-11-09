@@ -11,7 +11,6 @@ using UnityEngine.UI;
 public class Editeur : MonoBehaviour
 {
     Camera cam;
-    public LoadingScreenControl LSC;
     public Transform LoadingLevel;
     public Background backgroundManager;
     string FromScene = "Home";
@@ -73,7 +72,7 @@ public class Editeur : MonoBehaviour
         if (!File.Exists(txt))
         {
             string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
-            LSC.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
+            LoadingScreenControl.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
         }
         else
         {
@@ -87,7 +86,7 @@ public class Editeur : MonoBehaviour
             if (level == null)
             {
                 string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
-                LSC.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
+                LoadingScreenControl.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
             }
             else
             {
@@ -187,7 +186,7 @@ public class Editeur : MonoBehaviour
 
         if (GameObject.Find("Audio") != null) GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
         string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
-        LSC.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
+        LoadingScreenControl.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
     }
     #endregion
 
@@ -1064,7 +1063,7 @@ public class Editeur : MonoBehaviour
         SaveLevel();
         string[] args = new string[] { "Editor", "File", file };
         string[] passThrough = new string[] { "Player", "Edit", file };
-        GameObject.Find("LoadingScreen").GetComponent<LoadingScreenControl>().LoadScreen("Player", args.Concat(passThrough).ToArray(), true);
+        LoadingScreenControl.LoadScreen("Player", args.Concat(passThrough).ToArray(), true);
     }
 
     //Inspector only

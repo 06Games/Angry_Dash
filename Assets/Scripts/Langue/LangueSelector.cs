@@ -12,7 +12,6 @@ namespace AngryDash.Language
     {
 
         public Transform Langues;
-        public LoadingScreenControl LS;
 
         public string[] LangueDispo;
         public int actuel = 0;
@@ -46,7 +45,7 @@ namespace AngryDash.Language
         {
             if (i != actuel) actuel = i;
         }
-        public void ReloadScene() { if (LangueAPI.selectedLanguage == LangueDispo[actuel]) return; Apply(); LS.LoadScreen(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, new string[] { "Settings", "Langues" }); }
+        public void ReloadScene() { if (LangueAPI.selectedLanguage == LangueDispo[actuel]) return; Apply(); LoadingScreenControl.LoadScreen(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name, new string[] { "Settings", "Langues" }); }
         void Apply() { if (LangueDispo.Length > actuel) LangueAPI.selectedLanguage = LangueDispo[actuel]; else Debug.LogError((actuel + 1) + " is more than the number of language file : " + LangueDispo.Length); }
 
         void GetLangDispo()
