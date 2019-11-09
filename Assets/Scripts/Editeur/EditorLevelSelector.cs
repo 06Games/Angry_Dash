@@ -1,12 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using AngryDash.Language;
+using System.Collections;
 using System.IO;
 using System.Linq;
+using System.Net;
+using Tools;
 using UnityEngine;
 using UnityEngine.UI;
-using Tools;
-using System.Net;
-using AngryDash.Language;
 
 /// <summary> Script managing the user-created level selection menu </summary>
 public class EditorLevelSelector : MonoBehaviour

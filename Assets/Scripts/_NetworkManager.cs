@@ -1,11 +1,8 @@
 ﻿using AngryDash.Language;
 using Level;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.Networking.NetworkSystem;
 using UnityEngine.UI;
 
 #pragma warning disable CS0618 // En attendant la nouvelle API

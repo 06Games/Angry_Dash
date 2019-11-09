@@ -1,11 +1,10 @@
-﻿using System.Collections;
+﻿using AngryDash.Image.Reader;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Tools;
 using UnityEngine;
 using UnityEngine.UI;
-using Tools;
-using AngryDash.Image.Reader;
 
 public class Background : MonoBehaviour
 {

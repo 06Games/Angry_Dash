@@ -1,6 +1,4 @@
 ﻿using AngryDash.Language;
-using GooglePlayGames;
-using Tools;
 using UnityEngine;
 using UnityEngine.UI;
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -79,14 +77,14 @@ public class Social : MonoBehaviour
                 {
                     mWaitingForAuth = false;
 #if UNITY_EDITOR
-                if (!editorContinue && UnityEngine.Social.localUser.userName == "Lerpz") success = false;
+                    if (!editorContinue && UnityEngine.Social.localUser.userName == "Lerpz") success = false;
 #endif
-                if (success) Logging.Log("Successfully connected to the Game Services. Welcome " + UnityEngine.Social.localUser.userName);
+                    if (success) Logging.Log("Successfully connected to the Game Services. Welcome " + UnityEngine.Social.localUser.userName);
                     else Logging.Log("Authentication failed.", LogType.Warning);
                     onComplete.Invoke(!success);
                 });
             }
-            catch(System.Exception e) { Debug.LogError(e); onComplete.Invoke(false); }
+            catch (System.Exception e) { Debug.LogError(e); onComplete.Invoke(false); }
         }
     }
 

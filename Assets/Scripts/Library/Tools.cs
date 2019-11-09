@@ -821,7 +821,7 @@ namespace Tools
         /// <returns>A list of reference to the Scenes.</returns>
         public static IEnumerable<UnityEngine.SceneManagement.Scene> GetScenesByName(string name)
         {
-            for(int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+            for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
             {
                 var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
                 if (scene.name == name) yield return scene;

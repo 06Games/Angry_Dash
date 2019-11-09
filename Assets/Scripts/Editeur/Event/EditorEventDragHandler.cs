@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using Tools;
+using UnityEngine;
 using UnityEngine.EventSystems;
-using Tools;
 
 namespace AngryDash.Editor.Event
 {

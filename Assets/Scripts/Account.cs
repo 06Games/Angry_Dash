@@ -31,7 +31,7 @@ public class Account : MonoBehaviour
     {
         Logging.Log("Checking file");
         if (Token != null) complete(true, "");
-        else if(!InternetAPI.IsConnected()) complete(true, "");
+        else if (!InternetAPI.IsConnected()) complete(true, "");
         else if (File.Exists(accountFile))
         {
             RootElement xml = new RootElement(null);

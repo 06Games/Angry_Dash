@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using MessengerExtensions;
 using UnityEngine;
-using MessengerExtensions;
 
 public class SettingsApplicator : MonoBehaviour
 {

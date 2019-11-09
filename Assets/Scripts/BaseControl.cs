@@ -1,6 +1,5 @@
 ﻿using AngryDash.Language;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class BaseControl : MonoBehaviour
 {

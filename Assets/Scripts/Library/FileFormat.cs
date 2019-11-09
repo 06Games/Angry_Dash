@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using System.Linq;
+using System.Text;
+using UnityEngine;
 
 namespace FileFormat
 {

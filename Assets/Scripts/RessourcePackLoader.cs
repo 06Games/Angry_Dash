@@ -1,10 +1,8 @@
-﻿using System.Collections;
+﻿using AngryDash.Language;
+using System.Collections;
 using System.IO;
-using System.Collections.Generic;
 using UnityEngine;
-using AngryDash.Language;
 using UnityEngine.Profiling;
-using UnityEngine.SceneManagement;
 
 public class RessourcePackLoader : MonoBehaviour
 {
@@ -13,7 +11,7 @@ public class RessourcePackLoader : MonoBehaviour
 
     void Start()
     {
-        if(path == null) path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
+        if (path == null) path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
         if (ids == null) ids = IDs.text.Split(new string[] { "\n" }, System.StringSplitOptions.None);
         Status.text = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", index, ids.Length - 1);
 

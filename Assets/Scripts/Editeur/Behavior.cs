@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Linq;
+﻿using System.Linq;
 using Tools;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class Behavior : MonoBehaviour
 {

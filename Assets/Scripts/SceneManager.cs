@@ -2,8 +2,8 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Manager = UnityEngine.SceneManagement.SceneManager;
 using UnityEngine.UI;
+using Manager = UnityEngine.SceneManagement.SceneManager;
 
 public class SceneManager : MonoBehaviour
 {

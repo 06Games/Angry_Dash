@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
-using System;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Events;
 
 public class SurCollision : MonoBehaviour

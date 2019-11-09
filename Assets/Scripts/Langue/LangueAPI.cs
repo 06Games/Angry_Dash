@@ -11,7 +11,8 @@ namespace AngryDash.Language
         public static string selectedLanguage
         {
             get { return ConfigAPI.GetString("Language"); }
-            set { 
+            set
+            {
                 ConfigAPI.SetString("Language", value);
                 CacheManager.Dictionary.Static().dictionary.Remove("language");
             }
@@ -46,10 +47,11 @@ namespace AngryDash.Language
             return c.Format(); //Returns the text after formatting (line breaks, tabs, ...)
         }
 
-        public static Dictionary<string, string> Load(string category ,string persistentPath = null)
-        { 
+        public static Dictionary<string, string> Load(string category, string persistentPath = null)
+        {
             var cache = new CacheManager.Cache("language");
-            if (!cache.ValueExist(category)) {
+            if (!cache.ValueExist(category))
+            {
                 var dic = new Dictionary<string, string>();
                 for (int i = 0; i < 4; i++)
                 {
@@ -60,7 +62,7 @@ namespace AngryDash.Language
                     else if (i == 2) { RP = ConfigAPI.GetString("ressources.pack"); Language = "English"; } //Third pass: Get all texts in English and in the selected RP
                     else if (i == 3) { RP = "default"; Language = "English"; } //Fourth pass: Get all texts in English and in the default RP
 
-                    if(string.IsNullOrEmpty(persistentPath)) persistentPath = UnityEngine.Application.persistentDataPath;
+                    if (string.IsNullOrEmpty(persistentPath)) persistentPath = UnityEngine.Application.persistentDataPath;
                     string path = persistentPath + "/Ressources/" + RP + "/languages/" + category.TrimEnd('/') + "/" + Language + ".lang";
                     if (File.Exists(path))
                     {

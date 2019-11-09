@@ -1,7 +1,6 @@
 ﻿using AngryDash.Image.Reader;
 using AngryDash.Language;
 using FileFormat;
-using System.Collections;
 using System.Linq;
 using System.Net;
 using Tools;

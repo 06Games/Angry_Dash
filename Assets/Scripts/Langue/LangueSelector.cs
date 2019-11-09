@@ -1,8 +1,5 @@
 ﻿using AngryDash.Image.Reader;
-using System;
-using System.Collections;
 using System.IO;
-using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
 

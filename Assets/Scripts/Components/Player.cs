@@ -1,9 +1,9 @@
-﻿using CnControls;
+﻿using AngryDash.Image.Reader;
+using CnControls;
 using System.Collections;
+using Tools;
 using UnityEngine;
 using UnityEngine.Networking;
-using Tools;
-using AngryDash.Image.Reader;
 
 namespace AngryDash.Game
 {

@@ -26,10 +26,10 @@ namespace AngryDash.Game.API
             UnityThread.executeInUpdate(() =>
             {
                 Color32 color = new Color32(r, g, b, 255);
-            foreach (int block in GetBlocks(blockGroup))
-            {
-                GameObject go = GameObject.Find("Items").transform.Find($"Objet n° {block}").gameObject;
-                if (go != null) go.GetComponent<SpriteRenderer>().color = color;
+                foreach (int block in GetBlocks(blockGroup))
+                {
+                    GameObject go = GameObject.Find("Items").transform.Find($"Objet n° {block}").gameObject;
+                    if (go != null) go.GetComponent<SpriteRenderer>().color = color;
                 }
             });
         }

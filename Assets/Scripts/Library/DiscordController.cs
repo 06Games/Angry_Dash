@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using System;
-using AngryDash.Language;
-using Discord;
+﻿using Discord;
 using DiscordClasses;
+using System;
+using UnityEngine;
 
 public class DiscordController : MonoBehaviour
 {

@@ -32,7 +32,7 @@ namespace AngryDash.Game.Events
                 if (_namespace.StartsWith(parentNamespace)) _namespace = _namespace.Remove(0, parentNamespace.Length + 1);
                 return _namespace + "." + methodInfo.Name;
             }
-            
+
             interpreter.Globals.Set("sleep", DynValue.NewCallback((ctx, args) =>
             {
                 System.Threading.Thread.Sleep((int)(args[0].ToObject<float>() * 1000));
