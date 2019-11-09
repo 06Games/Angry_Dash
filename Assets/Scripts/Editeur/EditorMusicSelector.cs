@@ -186,16 +186,16 @@ public class EditorMusicSelector : MonoBehaviour
                 else
                 {
                     load = newLoad;
-                    load.Readable += (sender, e) =>
+                    load.Readable += (clip) =>
                     {
                         playPanel.GetChild(0).GetComponent<Button>().interactable = true;
                         float timepos = 0;
-                        if (((AudioClip)e.UserState).name == source.clip.name) timepos = source.time;
-                        go.GetComponent<menuMusic>().LoadMusic((AudioClip)e.UserState, timepos);
+                        if (clip.name == source.clip.name) timepos = source.time;
+                        go.GetComponent<menuMusic>().LoadMusic(clip, timepos);
                         StartCoroutine(PlayMusicState(source, state));
                     };
-                    load.ReadProgressChanged += (sender, e) =>
-                         state.transform.GetChild(0).GetComponent<Scrollbar>().size = (float)e.UserState;
+                    load.ReadProgressChanged += (progress) =>
+                         state.transform.GetChild(0).GetComponent<Scrollbar>().size = progress;
                     playPanel.GetChild(0).GetComponent<Button>().interactable = false;
                     StartCoroutine(load.Start(false));
                 }

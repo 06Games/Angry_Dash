@@ -43,7 +43,7 @@ namespace AngryDash.Game.Events
             interpreter.DoString(script);
 
             Execute("Start");
-            Player.userPlayer.onRespawn += (s, e) => Execute("Respawn");
+            Player.userPlayer.onRespawn += () => Execute("Respawn");
         }
 
         public async void Execute(string voidName)

@@ -141,7 +141,7 @@ public class Account : MonoBehaviour
     #endregion
 
     #region Scene
-    public event BetterEventHandler complete;
+    public event Action complete;
     void Start()
     {
         LoadingScreenControl LSC = FindObjectOfType<LoadingScreenControl>();
@@ -156,7 +156,7 @@ public class Account : MonoBehaviour
                     GameObject child = transform.parent.GetChild(i).gameObject;
                     if (child != gameObject) child.SetActive(false);
                 }
-                complete += (sender, e) => LSC.LoadScreen(args[1]);
+                complete += () => LSC.LoadScreen(args[1]);
 
                 transform.GetChild(1).gameObject.SetActive(true);
                 CheckAccountFile(Complete);
@@ -181,7 +181,7 @@ public class Account : MonoBehaviour
         connectPanel.GetChild(1).GetComponent<Text>().text = message;
 
         transform.GetChild(1).gameObject.SetActive(false);
-        if (success) complete.Invoke(null, null);
+        if (success) complete();
     }
 
     public void SignIn_06Games()
@@ -207,6 +207,6 @@ public class Account : MonoBehaviour
         Save("Google", new Dictionary<string, string>());
     }
 
-    public void Skip() { complete(null, null); }
+    public void Skip() { complete(); }
     #endregion
 }

@@ -28,7 +28,7 @@ public class Social : MonoBehaviour
         quit.onClick.AddListener(() =>
         {
             Account ac = GameObject.Find("Account").GetComponent<Account>();
-            ac.complete += (s, args) => LSC.LoadScreen(scene);
+            ac.complete += () => LSC.LoadScreen(scene);
             ac.Initialize();
             gameObject.SetActive(false);
         });
@@ -45,7 +45,7 @@ public class Social : MonoBehaviour
                 Achievement("CgkI9r-go54eEAIQAg", true, (bool s) => { }); //Achievement 'Welcome'
 
                 Account ac = GameObject.Find("Account").GetComponent<Account>();
-                ac.complete += (s, args) => LSC.LoadScreen(scene);
+                ac.complete += () => LSC.LoadScreen(scene);
                 ac.Initialize();
                 gameObject.SetActive(false);
             }

@@ -260,14 +260,6 @@ namespace Tools
         }
     }
 
-    public delegate void BetterEventHandler(object sender, BetterEventArgs e);
-    public class BetterEventArgs : System.EventArgs
-    {
-        public object UserState { get; }
-        public BetterEventArgs() { }
-        public BetterEventArgs(object userToken) { UserState = userToken; }
-    }
-
     public static class DateExtensions
     {
         /// <summary> Return a DateTime as a string </summary>

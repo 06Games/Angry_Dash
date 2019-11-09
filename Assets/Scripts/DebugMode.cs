@@ -60,10 +60,9 @@ public class DebugMode : MonoBehaviour
     {
         Transform content = transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<ScrollRect>().content;
         GameObject template = content.GetChild(0).gameObject;
-        void Logs(object sender, Tools.BetterEventArgs e)
+        void Logs(LogType logType, string scene)
         {
             string type = "";
-            LogType logType = (LogType)sender;
             if (logType == LogType.Log) type = "<color=grey>Info: </color>";
             else if (logType == LogType.Warning) type = "<color=orange>Warning: </color>";
             else if (logType == LogType.Error | logType == LogType.Exception) type = "<color=red>Error: </color>";
@@ -72,7 +71,7 @@ public class DebugMode : MonoBehaviour
 
             if (content.childCount >= 5) Destroy(content.GetChild(1).gameObject);
             GameObject go = Instantiate(template, content);
-            go.transform.GetChild(0).GetComponent<Text>().text = type + (string)e.UserState;
+            go.transform.GetChild(0).GetComponent<Text>().text = type + scene;
             go.SetActive(true);
             StartCoroutine(LogAutoSuppr(go));
         }
@@ -107,7 +106,7 @@ public class DebugMode : MonoBehaviour
         if (on)
         {
             StartCoroutine(CoordinatesRefresh(transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>()));
-            LoadingScreenControl.OnSceneChange += (sender, e) => Coordinates = (string)e.UserState == "Player";
+            LoadingScreenControl.OnSceneChange += (scene) => Coordinates = scene.name == "Player";
         }
     }
     IEnumerator CoordinatesRefresh(Text text, GameObject player = null)

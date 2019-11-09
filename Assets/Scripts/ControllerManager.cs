@@ -24,7 +24,7 @@ public class ControllerManager : MonoBehaviour
         if (eventSystem == null)
         {
             eventSystem = GameObject.Find("EventSystem").GetComponent<UnityEngine.EventSystems.EventSystem>();
-            baseSelectable = eventSystem.firstSelectedGameObject.GetComponent<Selectable>();
+            baseSelectable = eventSystem.firstSelectedGameObject?.GetComponent<Selectable>();
         }
         bool newController = Input.GetJoystickNames().Length > 0;
         if (newController) newController = !(Input.GetJoystickNames().Length == 1 & string.IsNullOrEmpty(Input.GetJoystickNames()[0]));

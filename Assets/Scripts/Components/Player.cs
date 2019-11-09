@@ -33,16 +33,13 @@ namespace AngryDash.Game
         public Level.Player levelSettings; //Autres paramètres défini par le niveau
 
         //Evenements
-        public BetterEventHandler onRespawn;
+        public System.Action onRespawn;
 
         void Start()
         {
-            if (LP == null)
-                LP = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
-            if (JoyStick == null)
-                JoyStick = GameObject.Find("SensitiveJoystick");
-            if (Trace == null)
-                Trace = GameObject.Find("Traces").transform;
+            if (LP == null) LP = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
+            if (JoyStick == null) JoyStick = GameObject.Find("SensitiveJoystick");
+            if (Trace == null) Trace = GameObject.Find("Traces").transform;
 
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online")
             {

@@ -46,7 +46,7 @@ public class BaseControl : MonoBehaviour
                 if (GetComponent<AudioSource>().clip == null)
                 {
                     SoundAPI.Load load = new SoundAPI.Load("native/click");
-                    load.Complete += (sender, e) => { GetComponent<AudioSource>().clip = (AudioClip)e.UserState; GetComponent<AudioSource>().Play(); };
+                    load.Complete += (clip) => { GetComponent<AudioSource>().clip = clip; GetComponent<AudioSource>().Play(); };
                     StartCoroutine(load.Start());
                 }
                 else GetComponent<AudioSource>().Play();
