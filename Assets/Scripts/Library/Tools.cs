@@ -813,4 +813,19 @@ namespace Tools
             }
         }
     }
+
+    public static class SceneManagerExtensions
+    {
+        /// <summary>Searches through the Scenes loaded for scenes with the given name.</summary>
+        /// <param name="name">Name of scenes to find.</param>
+        /// <returns>A list of reference to the Scenes.</returns>
+        public static IEnumerable<UnityEngine.SceneManagement.Scene> GetScenesByName(string name)
+        {
+            for(int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+            {
+                var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                if (scene.name == name) yield return scene;
+            }
+        }
+    }
 }

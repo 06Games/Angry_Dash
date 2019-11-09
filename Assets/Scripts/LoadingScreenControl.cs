@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class LoadingScreenControl : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class LoadingScreenControl : MonoBehaviour
     AsyncOperation async;
 
     public static bool CanChange { get; set; } = true;
-    public static event Tools.BetterEventHandler OnSceneChange;
+    public static event System.Action<Scene> OnSceneChange;
 
     public static LoadingScreenControl GetLSC()
     {
@@ -57,42 +58,61 @@ public class LoadingScreenControl : MonoBehaviour
 
     IEnumerator LoadingScreen(string scene, bool keep)
     {
-        if (!CanChange) yield return new WaitUntil(() => CanChange);
-
-        LoadSceneMode lsm = LoadSceneMode.Single;
-        if (keep) lsm = LoadSceneMode.Additive;
-
+        yield return new WaitUntil(() => CanChange);
         loadingScreenObj.SetActive(true);
-        if (SceneManager.GetSceneByName(scene) == default | (!keep & scene == SceneManager.GetActiveScene().name))
-            async = SceneManager.LoadSceneAsync(scene, lsm);
-        else
+
+
+        var temp = SceneManager.CreateScene("LoadingScene");
+        var oldScene = SceneManager.GetActiveScene();
+        if (!keep)
         {
-            async = SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene());
-            foreach (GameObject go in SceneManager.GetSceneByName(scene).GetRootGameObjects()) go.SetActive(true);
+            SceneManager.MoveGameObjectToScene(gameObject, temp);
+            SceneManager.MoveGameObjectToScene(new GameObject().AddComponent<Camera>().gameObject, temp);
+            SceneManager.SetActiveScene(temp);
+
+            var oldName = oldScene.name;
+            yield return SceneManager.UnloadSceneAsync(oldScene);
+            Logging.Log($"Scene '{oldName}' unloaded");
         }
 
-        async.completed += new System.Action<AsyncOperation>((task) =>
+        if (SceneManager.GetSceneByName(scene) == default) async = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Additive);
+        else
         {
-            if (keep)
-            {
-                async = default;
-                loadingScreenObj.SetActive(false);
-                Scene oldScene = SceneManager.GetActiveScene();
-                foreach (GameObject go in oldScene.GetRootGameObjects()) go.SetActive(false);
-                SceneManager.SetActiveScene(SceneManager.GetSceneByName(scene));
-            }
-            if (OnSceneChange != null) OnSceneChange.Invoke(null, new Tools.BetterEventArgs(scene));
-        });
+            foreach (GameObject go in SceneManager.GetSceneByName(scene).GetRootGameObjects()) go.SetActive(true);
+            Completed();
+            yield break;
+        }
+
+
         async.allowSceneActivation = false;
-        while (async.isDone == false)
+        async.completed += (t) => Completed();
+        var slider = loadingScreenObj.transform.GetChild(0).GetComponent<Slider>();
+        while (async != null && !async.isDone)
         {
             slider.value = async.progress;
             if (async.progress == 0.9f)
             {
-                slider.value = 1f;
                 async.allowSceneActivation = true;
+                slider.value = 1f;
             }
             yield return null;
+        }
+
+        void Completed()
+        {
+            if (keep)
+            {
+                loadingScreenObj.SetActive(false);
+                foreach (GameObject go in oldScene.GetRootGameObjects()) go.SetActive(false);
+            }
+            async = default;
+
+            var loadedScene = Tools.SceneManagerExtensions.GetScenesByName(scene).LastOrDefault();
+            SceneManager.SetActiveScene(loadedScene);
+            Logging.Log($"Scene '{loadedScene.name}' loaded");
+
+            SceneManager.UnloadSceneAsync(temp);
+            OnSceneChange?.Invoke(loadedScene);
         }
     }
 }
