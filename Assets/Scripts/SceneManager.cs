@@ -5,14 +5,17 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Manager = UnityEngine.SceneManagement.SceneManager;
 
+/// <summary>Scene loading manager</summary>
 public class SceneManager : MonoBehaviour
 {
     GameObject loadingScreenObj;
     AsyncOperation async;
 
+    /// <summary>Can the scene be changed</summary>
     public static bool CanChange { get; set; } = true;
+    /// <summary>When scene loaded</summary>
     public static event System.Action<Scene> OnSceneChange;
-
+    /// <summary>Loading arguments</summary>
     public static string[] args { get; private set; } = new string[0];
 
     static SceneManager GetLSC()
@@ -22,11 +25,24 @@ public class SceneManager : MonoBehaviour
         else return LSC;
     }
 
+    /// <summary>Reload the active scene</summary>
+    /// <param name="keepArgs">Should keep the arguments</param>
     public static void ReloadScene(bool keepArgs = true) { LoadScene(Manager.GetActiveScene().name, keepArgs ? args : null, false); }
+    /// <summary>Reload the active scene</summary>
+    /// <param name="args">Loading arguments</param>
     public static void ReloadScene(string[] args) { LoadScene(Manager.GetActiveScene().name, args, false); }
 
+    /// <summary>Load a scene</summary>
+    /// <param name="Scene">Scene name</param>
     public static void LoadScene(string Scene) { LoadScene(Scene, null, false); }
+    /// <summary>Load a scene</summary>
+    /// <param name="Scene">Scene name</param>
+    /// <param name="keep">Caching the active scene</param>
     public static void LoadScene(string Scene, bool keep = false) { LoadScene(Scene, null, keep); }
+    /// <summary>Load a scene</summary>
+    /// <param name="Scene">Scene name</param>
+    /// <param name="Args">Loading arguments</param>
+    /// <param name="keep">Caching the active scene</param>
     public static void LoadScene(string Scene, string[] Args, bool keep = false)
     {
         var LSC = GetLSC();
