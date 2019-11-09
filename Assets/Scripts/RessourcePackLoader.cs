@@ -61,7 +61,7 @@ public class RessourcePackLoader : MonoBehaviour
                 if (i / (float)reloadEach == i / reloadEach)
                 {
                     index = i + 1;
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                    UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
                 }
             }
         }
@@ -74,7 +74,7 @@ public class RessourcePackLoader : MonoBehaviour
         sw = default;
         maxMem = default;
 
-        LoadingScreenControl.LoadScreen("Home", LoadingScreenControl.args);
+        SceneManager.LoadScene("Home", SceneManager.args);
 
         sw.Stop();
         Debug.Log(sw.Elapsed.TotalSeconds.ToString("0.000").Replace(".", ",") + "\n" + maxMem.ToString("0.000").Replace(".", ","));

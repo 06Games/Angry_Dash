@@ -124,7 +124,7 @@ public class Account : MonoBehaviour
     public static void Disconnect()
     {
         File.WriteAllText(accountFile, "");
-        LoadingScreenControl.LoadScreen("Start", new string[] { "Account", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name });
+        SceneManager.LoadScene("Start", new string[] { "Account", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name });
     }
 
     static void Save(string provider, Dictionary<string, string> auths)
@@ -144,7 +144,7 @@ public class Account : MonoBehaviour
     public event Action complete;
     void Start()
     {
-        string[] args = LoadingScreenControl.args;
+        string[] args = SceneManager.args;
         if (args.Length >= 2)
         {
             if (args[0] == "Account")
@@ -154,7 +154,7 @@ public class Account : MonoBehaviour
                     GameObject child = transform.parent.GetChild(i).gameObject;
                     if (child != gameObject) child.SetActive(false);
                 }
-                complete += () => LoadingScreenControl.LoadScreen(args[1]);
+                complete += () => SceneManager.LoadScene(args[1]);
 
                 transform.GetChild(1).gameObject.SetActive(true);
                 CheckAccountFile(Complete);

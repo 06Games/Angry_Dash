@@ -233,7 +233,7 @@ public class EditorPublishedLevels : MonoBehaviour
 
         LevelItem item = items[index];
         item.Data = client.DownloadString(url).Replace("\r", "");
-        LoadingScreenControl.LoadScreen("Player", new string[] { "Home/Editor/Community Levels", "Data", item.ToString() });
+        SceneManager.LoadScene("Player", new string[] { "Home/Editor/Community Levels", "Data", item.ToString() });
     }
 
 

@@ -9,7 +9,7 @@ public class ArgsMenuManager : MonoBehaviour
     {
         if (CM.Length < transform.childCount) CM = CM.Concat(new MenuManager[transform.childCount - CM.Length]).ToArray();
 
-        string[] args = LoadingScreenControl.args;
+        string[] args = SceneManager.args;
         if (args.Length < 2) return;
 
         for (int p = 0; p < transform.childCount; p++)

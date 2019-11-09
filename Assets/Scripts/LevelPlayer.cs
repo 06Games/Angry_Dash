@@ -47,7 +47,7 @@ namespace AngryDash.Game
 
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
             {
-                string[] args = LoadingScreenControl.args;
+                string[] args = SceneManager.args;
                 if (args.Length > 2)
                 {
                     passThroughArgs = args.RemoveAt(0, 2);
@@ -399,7 +399,7 @@ namespace AngryDash.Game
                     if (Directory.Exists(path)) Directory.Delete(path, true);
                     Image.Sprite_API.forceRP = null;
                 }
-                LoadingScreenControl.LoadScreen(scene, args);
+                SceneManager.LoadScene(scene, args);
             }
             else
             {
@@ -410,7 +410,7 @@ namespace AngryDash.Game
         public void Replay()
         {
             Time.timeScale = 1;
-            LoadingScreenControl.LoadScreen("Player", new string[] { FromScene, "Data", LevelItem.Parse(level).ToString() }.Concat(passThroughArgs).ToArray());
+            SceneManager.LoadScene("Player", new string[] { FromScene, "Data", LevelItem.Parse(level).ToString() }.Concat(passThroughArgs).ToArray());
         }
 
         public static void Lost(Transform Base)

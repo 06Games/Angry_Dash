@@ -209,7 +209,7 @@ public class menuMusic : MonoBehaviour
     }
     void Update()
     {
-        if (SceneManager.GetActiveScene().name == "DontDestroyOnLoad")
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "DontDestroyOnLoad")
         {
             GetComponent<AudioSource>().Stop();
             AudioBegin = false;

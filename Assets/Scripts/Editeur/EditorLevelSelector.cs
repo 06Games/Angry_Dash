@@ -228,7 +228,7 @@ public class EditorLevelSelector : MonoBehaviour
             if (!File.Exists(path))
             {
                 string desc = CreatePanel.GetChild(2).GetComponent<InputField>().text;
-                LoadingScreenControl.LoadScreen("Editor", new string[] { "Home/Editor/Editor", "Create", path, desc.Unformat() });
+                SceneManager.LoadScene("Editor", new string[] { "Home/Editor/Editor", "Create", path, desc.Unformat() });
             }
             else CreatePanel.GetChild(1).GetChild(5).gameObject.SetActive(true);
         }
@@ -267,7 +267,7 @@ public class EditorLevelSelector : MonoBehaviour
     public void PlayLevel(int index)
     {
         History.LvlPlayed(files[index].FullName, "P");
-        LoadingScreenControl.LoadScreen("Player",
+        SceneManager.LoadScene("Player",
             new string[] { "Home/Editor/Editor", "File", files[index].FullName });
     }
 
@@ -275,7 +275,7 @@ public class EditorLevelSelector : MonoBehaviour
     public void EditCurrentLevel() { EditLevel(currentFile); }
     /// <summary> Edit the level at the index specified </summary>
     /// <param name="index">Index of desired level</param>
-    public void EditLevel(int index) { LoadingScreenControl.LoadScreen("Editor", new string[] { "Home/Editor/Editor", "Edit", files[index].FullName }); }
+    public void EditLevel(int index) { SceneManager.LoadScene("Editor", new string[] { "Home/Editor/Editor", "Edit", files[index].FullName }); }
 
     /// <summary> Copy the selected level </summary>
     public void CopyCurrentLevel() { CopyLevel(currentFile); }

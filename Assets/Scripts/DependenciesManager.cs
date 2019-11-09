@@ -15,7 +15,7 @@ public class DependenciesManager : MonoBehaviour
     #region RPs
     void Start()
     {
-        string[] args = LoadingScreenControl.args;
+        string[] args = SceneManager.args;
         if (args.Length >= 2)
         {
             if (args[0] == "Dependencies")
@@ -26,7 +26,7 @@ public class DependenciesManager : MonoBehaviour
                     GameObject child = transform.parent.GetChild(i).gameObject;
                     if (child != gameObject) child.SetActive(false);
                 }
-                StartCoroutine(DownloadRPs(() => LoadingScreenControl.LoadScreen(args[1]), new Item[] { new Item(new XML(args[2]).RootElement.node) }));
+                StartCoroutine(DownloadRPs(() => SceneManager.LoadScene(args[1]), new Item[] { new Item(new XML(args[2]).RootElement.node) }));
             }
         }
     }

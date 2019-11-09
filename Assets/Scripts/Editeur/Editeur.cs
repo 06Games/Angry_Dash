@@ -72,7 +72,7 @@ public class Editeur : MonoBehaviour
         if (!File.Exists(txt))
         {
             string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
-            LoadingScreenControl.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
+            SceneManager.LoadScene(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
         }
         else
         {
@@ -86,7 +86,7 @@ public class Editeur : MonoBehaviour
             if (level == null)
             {
                 string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
-                LoadingScreenControl.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
+                SceneManager.LoadScene(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
             }
             else
             {
@@ -186,7 +186,7 @@ public class Editeur : MonoBehaviour
 
         if (GameObject.Find("Audio") != null) GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
         string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
-        LoadingScreenControl.LoadScreen(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
+        SceneManager.LoadScene(FromSceneDetails[0], FromSceneDetails.RemoveAt(0));
     }
     #endregion
 
@@ -202,7 +202,7 @@ public class Editeur : MonoBehaviour
         zoomIndicator.gameObject.SetActive(false);
         BulleDeveloppementCat.SetActive(false);
 
-        string[] args = LoadingScreenControl.args;
+        string[] args = SceneManager.args;
         if (args.Length > 2)
         {
             if (args[0] != "Player")
@@ -1063,7 +1063,7 @@ public class Editeur : MonoBehaviour
         SaveLevel();
         string[] args = new string[] { "Editor", "File", file };
         string[] passThrough = new string[] { "Player", "Edit", file };
-        LoadingScreenControl.LoadScreen("Player", args.Concat(passThrough).ToArray(), true);
+        SceneManager.LoadScene("Player", args.Concat(passThrough).ToArray(), true);
     }
 
     //Inspector only

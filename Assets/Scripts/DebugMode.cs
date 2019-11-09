@@ -20,7 +20,7 @@ public class DebugMode : MonoBehaviour
 
     public void OpenClose(bool open)
     {
-        LoadingScreenControl.CanChange = !open;
+        SceneManager.CanChange = !open;
         if (open)
         {
             Transform content = transform.GetChild(1).GetChild(2).GetComponent<ScrollRect>().content;
@@ -106,7 +106,7 @@ public class DebugMode : MonoBehaviour
         if (on)
         {
             StartCoroutine(CoordinatesRefresh(transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>()));
-            LoadingScreenControl.OnSceneChange += (scene) => Coordinates = scene.name == "Player";
+            SceneManager.OnSceneChange += (scene) => Coordinates = scene.name == "Player";
         }
     }
     IEnumerator CoordinatesRefresh(Text text, GameObject player = null)

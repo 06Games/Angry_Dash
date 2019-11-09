@@ -19,7 +19,7 @@ public class BaseControl : MonoBehaviour
         UnityThread.initUnityThread();
         System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
 
-        if (SceneManager.GetActiveScene().buildIndex == 0)
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex == 0)
         {
             Application.logMessageReceived += (logString, stackTrace, type) => Logging.Log(logString, type, stackTrace);
             Logging.Log("The game start", LogType.Log);
@@ -52,7 +52,7 @@ public class BaseControl : MonoBehaviour
                 else GetComponent<AudioSource>().Play();
             });
 
-        if (SceneManager.GetActiveScene().name == "Home")
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Home")
             DiscordController.Presence(LangueAPI.Get("native", "discordHome_title", "In the home menu"), "", new DiscordClasses.Img("default"));
     }
 
@@ -64,7 +64,7 @@ public class BaseControl : MonoBehaviour
             if (scene == "" & returnScene) Base.Quit(true);
             else if (!sceneChanging & returnScene)
             {
-                LoadingScreenControl.LoadScreen(scene);
+                SceneManager.LoadScene(scene);
                 sceneChanging = true;
             }
 
@@ -72,7 +72,7 @@ public class BaseControl : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.F11) & !VideoSettings.mobile())
         {
-            if (SceneManager.GetActiveScene().name == "Home")
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Home")
                 FindObjectOfType<SettingsApplicator>().objects[0].GetComponent<VideoSettings>().FullScreen(!Display.Screen.fullScreen);
             else
             {

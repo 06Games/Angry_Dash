@@ -44,6 +44,6 @@ public class SurCollision : MonoBehaviour
 
     public void Scene(string Scène)
     {
-        SceneManager.LoadScene(Scène); //alors charger la scene
+        UnityEngine.SceneManagement.SceneManager.LoadScene(Scène); //alors charger la scene
     }
 }

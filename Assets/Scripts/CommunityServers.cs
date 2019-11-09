@@ -29,7 +29,7 @@ public class CommunityServers : MonoBehaviour
         if (InternetAPI.ValidateIPv4(transform.GetChild(1).GetChild(0).GetComponent<InputField>().text))
         {
             NM.StopClient();
-            LoadingScreenControl.LoadScreen("Online", new string[] { "Connect", adress + ":" + port });
+            SceneManager.LoadScene("Online", new string[] { "Connect", adress + ":" + port });
         }
     }
 

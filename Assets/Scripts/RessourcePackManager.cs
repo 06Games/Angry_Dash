@@ -130,7 +130,7 @@ public class RessourcePackManager : MonoBehaviour
 
     public void Download(int index)
     {
-        LoadingScreenControl.LoadScreen("Start", new string[] { "Dependencies", "Home", RPs[index].ToString() }, true);
+        SceneManager.LoadScene("Start", new string[] { "Dependencies", "Home", RPs[index].ToString() }, true);
         transform.GetChild(1).GetChild(0).GetChild(0).GetChild(index + 1).GetChild(3).gameObject.SetActive(false);
     }
 
@@ -138,7 +138,7 @@ public class RessourcePackManager : MonoBehaviour
     {
         CacheManager.Dictionary.Static().dictionary.Remove("Ressources/textures/json");
         CacheManager.Dictionary.Static().dictionary.Remove("Ressources/textures");
-        LoadingScreenControl.LoadScreen("Load", new string[] { "Settings", "Ressource Pack" });
+        SceneManager.LoadScene("Load", new string[] { "Settings", "Ressource Pack" });
     }
 
     string Format(string s)

@@ -2,9 +2,10 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Manager = UnityEngine.SceneManagement.SceneManager;
 using UnityEngine.UI;
 
-public class LoadingScreenControl : MonoBehaviour
+public class SceneManager : MonoBehaviour
 {
     GameObject loadingScreenObj;
     AsyncOperation async;
@@ -14,20 +15,20 @@ public class LoadingScreenControl : MonoBehaviour
 
     public static string[] args { get; private set; }
 
-    static LoadingScreenControl GetLSC()
+    static SceneManager GetLSC()
     {
-        var LSC = FindObjectOfType<LoadingScreenControl>();
+        var LSC = FindObjectOfType<SceneManager>();
         if (LSC == null) throw new System.NullReferenceException("No Loading Screen");
         else return LSC;
     }
 
-    public static void LoadScreen(string Scene) { LoadScreen(Scene, null, false); }
-    public static void LoadScreen(string Scene, bool keep = false) { LoadScreen(Scene, null, keep); }
-    public static void LoadScreen(string Scene, string[] Args, bool keep = false)
+    public static void LoadScene(string Scene) { LoadScene(Scene, null, false); }
+    public static void LoadScene(string Scene, bool keep = false) { LoadScene(Scene, null, keep); }
+    public static void LoadScene(string Scene, string[] Args, bool keep = false)
     {
         var LSC = GetLSC();
         if (LSC.async != default) return;
-        args = Args == null? new string[0]: Args;
+        args = Args == null ? new string[0] : Args;
 
         LSC.loadingScreenObj = LSC.transform.GetChild(0).gameObject;
 
@@ -55,23 +56,23 @@ public class LoadingScreenControl : MonoBehaviour
         loadingScreenObj.SetActive(true);
 
 
-        var temp = SceneManager.CreateScene("LoadingScene");
-        var oldScene = SceneManager.GetActiveScene();
+        var temp = Manager.CreateScene("LoadingScene");
+        var oldScene = Manager.GetActiveScene();
         if (!keep)
         {
-            SceneManager.MoveGameObjectToScene(gameObject, temp);
-            SceneManager.MoveGameObjectToScene(new GameObject().AddComponent<Camera>().gameObject, temp);
-            SceneManager.SetActiveScene(temp);
+            Manager.MoveGameObjectToScene(gameObject, temp);
+            Manager.MoveGameObjectToScene(new GameObject().AddComponent<Camera>().gameObject, temp);
+            Manager.SetActiveScene(temp);
 
             var oldName = oldScene.name;
-            yield return SceneManager.UnloadSceneAsync(oldScene);
+            yield return Manager.UnloadSceneAsync(oldScene);
             Logging.Log($"Scene '{oldName}' unloaded");
         }
 
-        if (SceneManager.GetSceneByName(scene) == default) async = SceneManager.LoadSceneAsync(scene, LoadSceneMode.Additive);
+        if (Manager.GetSceneByName(scene) == default) async = Manager.LoadSceneAsync(scene, LoadSceneMode.Additive);
         else
         {
-            foreach (GameObject go in SceneManager.GetSceneByName(scene).GetRootGameObjects()) go.SetActive(true);
+            foreach (GameObject go in Manager.GetSceneByName(scene).GetRootGameObjects()) go.SetActive(true);
             Completed();
             yield break;
         }
@@ -101,10 +102,10 @@ public class LoadingScreenControl : MonoBehaviour
             async = default;
 
             var loadedScene = Tools.SceneManagerExtensions.GetScenesByName(scene).LastOrDefault();
-            SceneManager.SetActiveScene(loadedScene);
+            Manager.SetActiveScene(loadedScene);
             Logging.Log($"Scene '{loadedScene.name}' loaded");
 
-            SceneManager.UnloadSceneAsync(temp);
+            Manager.UnloadSceneAsync(temp);
             OnSceneChange?.Invoke(loadedScene);
         }
     }

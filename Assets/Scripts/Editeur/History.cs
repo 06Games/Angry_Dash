@@ -68,8 +68,8 @@ public class History : MonoBehaviour
         string action = a[0];
         string file = c[0];
 
-        if (action == "P" | file.Contains(Application.persistentDataPath + "/Levels/Official Levels/")) LoadingScreenControl.LoadScreen("Player", new string[] { "Home/Play/History", "File", file });
-        else if (action == "E") LoadingScreenControl.LoadScreen("Editor", new string[] { "Home/Play/History", "Edit", file });
+        if (action == "P" | file.Contains(Application.persistentDataPath + "/Levels/Official Levels/")) SceneManager.LoadScene("Player", new string[] { "Home/Play/History", "File", file });
+        else if (action == "E") SceneManager.LoadScene("Editor", new string[] { "Home/Play/History", "Edit", file });
         else if (action == "O")
         {
             PublishedLevels.transform.parent.parent.gameObject.SetActive(true);
@@ -78,7 +78,7 @@ public class History : MonoBehaviour
             PublishedLevels.Select(0);
             transform.parent.parent.gameObject.SetActive(false);
         }
-        else if (action == "S") LoadingScreenControl.LoadScreen("Online", new string[] { "Connect", file });
+        else if (action == "S") SceneManager.LoadScene("Online", new string[] { "Connect", file });
     }
 
     static void Initialise()

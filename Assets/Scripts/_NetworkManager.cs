@@ -46,7 +46,7 @@ public class _NetworkManager : NetworkBehaviour
     {
         NM = GetComponent<NetworkManager>();
 
-        string[] launchArgs = LoadingScreenControl.args;
+        string[] launchArgs = SceneManager.args;
         if (launchArgs == null) launchArgs = new string[0];
         if (launchArgs.Length > 0)
         {
@@ -120,7 +120,7 @@ public class _NetworkManager : NetworkBehaviour
 
         for (int i = 0; i < Items.transform.childCount; i++)
             Destroy(Items.transform.GetChild(i).gameObject);
-        LoadingScreenControl.LoadScreen("Home", new string[] { "Play", "Community Servers" });
+        SceneManager.LoadScene("Home", new string[] { "Play", "Community Servers" });
     }
 
     private bool isSetup = false;
