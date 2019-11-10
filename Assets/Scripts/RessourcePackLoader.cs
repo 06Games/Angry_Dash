@@ -11,33 +11,21 @@ public class RessourcePackLoader : MonoBehaviour
 
     void Start()
     {
-        if (path == null) path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
-        if (ids == null) ids = IDs.text.Split(new string[] { "\n" }, System.StringSplitOptions.None);
-        Status.text = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", index, ids.Length - 1);
-
-
-        if (sw == null)
-        {
-            sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-        }
-
         StartCoroutine(Load());
     }
 
-    static string path;
-    static string[] ids;
-
-    static int index = 0;
     int reloadEach = 25;
-
-
-    static System.Diagnostics.Stopwatch sw;
-    static float maxMem = 0;
     IEnumerator Load()
     {
+        var path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
+        var ids = IDs.text.Split(new string[] { "\n" }, System.StringSplitOptions.None);
+        Status.text = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", 0, ids.Length - 1);
 
-        for (int i = index; i < ids.Length; i++)
+        float maxMem = 0;
+        var sw = new System.Diagnostics.Stopwatch();
+        sw.Start();
+
+        for (int i = 0; i < ids.Length; i++)
         {
             if (!string.IsNullOrEmpty(ids[i]))
             {
@@ -56,25 +44,13 @@ public class RessourcePackLoader : MonoBehaviour
 
                 var mem = Profiler.GetTotalReservedMemoryLong() / 1048576f;
                 if (maxMem < mem) maxMem = mem;
-                if (i / (float)reloadEach == i / reloadEach)
-                {
-                    index = i + 1;
-                    UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-                }
+                if (i / (float)reloadEach == i / reloadEach) Resources.UnloadUnusedAssets();
             }
         }
 
-        //Reset all vars
-        path = default;
-        ids = default;
-        index = default;
-        reloadEach = default;
-        sw = default;
-        maxMem = default;
-
-        SceneManager.ReloadScene();
-
         sw.Stop();
         Debug.Log(sw.Elapsed.TotalSeconds.ToString("0.000").Replace(".", ",") + "\n" + maxMem.ToString("0.000").Replace(".", ","));
+
+        SceneManager.LoadScene("Home", SceneManager.args);
     }
 }
