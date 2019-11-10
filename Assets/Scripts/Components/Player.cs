@@ -28,7 +28,7 @@ namespace AngryDash.Game
         bool Moving = false; //Le joueur est en mouvement ?
 
         //Paramètres
-        int selectedTrace = 0; //Trace Type
+        string selectedTrace = "0"; //Trace Type
         public float vitesse = 1; //Multiplicateur de la vitesse du joueur
         public Level.Player levelSettings; //Autres paramètres défini par le niveau
 
@@ -56,39 +56,8 @@ namespace AngryDash.Game
             else userPlayer = this;
 
             FileFormat.XML.RootElement xml = Inventory.xmlDefault;
-
-            //Player Image
-            int playerSkin = 0;
-            FileFormat.XML.Item xmlPlayerItem = xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", "native/PLAYERS/");
-            if (xmlPlayerItem != null) playerSkin = xmlPlayerItem.value<int>();
-            if (!Inventory.Owned(xml, playerSkin.ToString()) | xmlPlayerItem != null)
-            {
-                if (xmlPlayerItem == null)
-                {
-                    xmlPlayerItem = xml.GetItem("SelectedItems").CreateItem("item");
-                    xmlPlayerItem.CreateAttribute("category", "native/PLAYERS/");
-                }
-                xmlPlayerItem.Value = "0";
-                playerSkin = 0;
-                Inventory.xmlDefault = xml;
-            }
-            GetComponent<UImage_Reader>().baseID = "native/PLAYERS/" + playerSkin;
-            GetComponent<UImage_Reader>().Load();
-
-            //Trace Image
-            FileFormat.XML.Item xmlTraceItem = xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", "native/TRACES/");
-            if (xmlTraceItem != null) selectedTrace = xmlTraceItem.value<int>();
-            if (!Inventory.Owned(xml, selectedTrace.ToString()) | xmlTraceItem == null)
-            {
-                if (xmlTraceItem == null)
-                {
-                    xmlTraceItem = xml.GetItem("SelectedItems").CreateItem("item");
-                    xmlTraceItem.CreateAttribute("category", "native/TRACES/");
-                }
-                xmlTraceItem.Value = "0";
-                selectedTrace = 0;
-                Inventory.xmlDefault = xml;
-            }
+            GetComponent<UImage_Reader>().SetID("native/PLAYERS/" + Inventory.GetSelected(xml, "native/PLAYERS/")).Load(); //Player Image
+            selectedTrace = Inventory.GetSelected(xml, "native/TRACES/"); //Trace Image
 
 #if UNITY_ANDROID || UNITY_IOS
             float size = 0.3F * Screen.height;

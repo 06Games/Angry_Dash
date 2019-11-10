@@ -1135,7 +1135,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 6ff1673b66dc61d4898306d0e0247c7a, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -17092,18 +17092,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e09bd60866c1db1449e7dcab4d010fb3, type: 3}
---- !u!114 &583720993 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114861797434291566, guid: e09bd60866c1db1449e7dcab4d010fb3,
-    type: 3}
-  m_PrefabInstance: {fileID: 583720992}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cae7e23966a9fce479cb78ec64f89762, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &589249692
 GameObject:
   m_ObjectHideFlags: 0
@@ -29345,7 +29333,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b9ae30063e5fa04fadd4cf97c4ab7c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LSC: {fileID: 583720993}
   LoadingLevel: {fileID: 1948087404}
   backgroundManager: {fileID: 906749453}
   file: 

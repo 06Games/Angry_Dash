@@ -132,14 +132,20 @@ namespace FileFormat
             public RootElement rootElement { get { return new RootElement(node.OwnerDocument.DocumentElement); } }
 
             public string Attribute(string key) { return node.Attributes[key].Value; }
-            public void CreateAttribute(string key, string value)
+            public Item SetAttribute(string key, string value = "")
             {
-                System.Xml.XmlAttribute xmlAttribute = node.OwnerDocument.CreateAttribute(key);
-                node.Attributes.Append(xmlAttribute);
-                xmlAttribute.Value = value;
+                if (node.Attributes != null && node.Attributes[key] != null) //Set value
+                    node.Attributes[key].Value = value;
+                else { //Create attribute
+                    System.Xml.XmlAttribute xmlAttribute = node.OwnerDocument.CreateAttribute(key);
+                    node.Attributes.Append(xmlAttribute);
+                    xmlAttribute.Value = value;
+                }
+                return this;
             }
-            public void SetAttribute(string key, string value) { node.Attributes[key].Value = value; }
-            public void RemoveAttribute(string key) { node.Attributes.Remove(node.Attributes[key]); }
+            public Item RemoveAttribute(string key) { if (node != null) node.Attributes.Remove(node.Attributes[key]); return this; }
+
+            public Item Parent { get { return new Item(node == null ? null : node.ParentNode); } }
 
             public T value<T>()
             {
@@ -147,7 +153,11 @@ namespace FileFormat
                 if (v == null) return default;
                 else try { return Tools.StringExtensions.ParseTo<T>(v); } catch { return default; }
             }
-            public string Value { get { if (node == null) return null; else return node.InnerText; } set { if (node != null) node.InnerText = value; } }
+            public string Value
+            {
+                get { if (node == null) return null; else return node.InnerText; }
+                set { if (node == null) throw new System.Exception("This item does not exist! Can not set a value!\nCheck Item.Exist before calling this function."); else node.InnerText = value; }
+            }
             public void Remove() { node.ParentNode.RemoveChild(node); }
         }
 
@@ -180,14 +190,14 @@ namespace FileFormat
                 if (items.Length > 0) return items;
                 else return new Item[0];
             }
-            public Item GetItemByAttribute(string key, string attribute, string attributeValue)
+            public Item GetItemByAttribute(string key, string attribute, string attributeValue = "")
             {
                 if (node == null) return new Item(null);
                 System.Xml.XmlNode xmlNode = node.SelectSingleNode(key + "[@" + attribute + " = \"" + attributeValue + "\"]");
                 if (xmlNode == null) return new Item(null);
                 else return new Item(xmlNode);
             }
-            public Item[] GetItemsByAttribute(string key, string attribute, string attributeValue)
+            public Item[] GetItemsByAttribute(string key, string attribute, string attributeValue = "")
             {
                 if (node == null) return new Item[0];
                 System.Xml.XmlNodeList list = node.SelectNodes(key + "[@" + attribute + " = '" + attributeValue + "']");
@@ -199,10 +209,14 @@ namespace FileFormat
             }
             public Item CreateItem(string key)
             {
+                if (node == null) throw new System.Exception("This item does not exist! Can not create a child!\nCheck Item.Exist before calling this function.");
                 System.Xml.XmlNode xmlNode = node.OwnerDocument.CreateElement(key);
                 node.AppendChild(xmlNode);
                 return new Item(xmlNode);
             }
+
+            public bool Exist { get { return node != null; } }
+
             public System.Collections.Generic.IEnumerator<Item> GetEnumerator() { return GetItems().ToList().GetEnumerator(); }
             public override string ToString() { return node.OuterXml; }
         }

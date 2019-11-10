@@ -533,6 +533,15 @@ namespace Tools
         /// <summary>Converts a IEnumerator to IEnumerable</summary>
         public static IEnumerable ToIEnumerable(this IEnumerator enumerator) { while (enumerator.MoveNext()) yield return enumerator.Current; }
 
+        /// <summary>Performs the specified action on each element of the enumerable</summary>
+        /// <param name="source">The enumerable to loop through</param>
+        /// <param name="action">The Action delegate to perform on each element of the enumerable</param>
+        public static void ForEach<T>(this IEnumerable<T> source, System.Action<T> action)
+        {
+            foreach (var item in source)
+                action(item);
+        }
+
         /// <summary>Compare two strings in a natural way (ex. 1,2,3,..,10 and not 1,10,2,3,...)</summary>
         public static int CompareNatural(string strA, string strB)
         {

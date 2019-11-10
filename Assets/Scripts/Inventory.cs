@@ -32,13 +32,13 @@ public class Inventory : MonoBehaviour
             //Default value
             string XML = string.Join("",
             "<root>",
-                "<OwnedItems>",
-                    "<item name=\"0\" />",
-                "</OwnedItems>",
-                "<SelectedItems>",
-                    "<item category=\"native/PLAYERS/\">0</item>",
-                    "<item category=\"native/TRACES/\">0</item>",
-                "</SelectedItems>",
+                "<Inventory>",
+                    "<category name=\"native/PLAYERS/\">",
+                        "<item name=\"0\" selected=\"\" />",
+                    "</category>",
+                    "<category name=\"native/TRACES/\">",
+                        "<item name=\"0\" selected=\"\" />",
+                "</Inventory>",
                 "<Money>0</Money>",
                 "<PlayedLevels type=\"Official\" />",
             "</root>");
@@ -147,19 +147,11 @@ public class Inventory : MonoBehaviour
         for (int i = 1; i < content.childCount; i++)
             Destroy(content.GetChild(i).gameObject);
 
-        FileFormat.XML.Item xmlItem = xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category);
-        if (xmlItem == null)
-        {
-            xmlItem = xml.GetItem("SelectedItems").CreateItem("item");
-            xmlItem.CreateAttribute("category", category);
-        }
-
-        string xmlSelected = xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).value<string>();
-        selected = System.Array.IndexOf(items, items.SingleOrDefault(item => item.name == xmlSelected));
+        selected = System.Array.IndexOf(items, items.SingleOrDefault(item => item.name == GetSelected(xml, category)));
         if (selected < 0 | selected > items.Length) selected = 0;
         else if (!Owned(items[selected].name))
         {
-            xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value = "0";
+            xml.GetItem("Inventory").GetItemByAttribute("category", "name", category).GetItemByAttribute("item", "selected").Value = "0";
             selected = 0;
         }
 
@@ -218,12 +210,12 @@ public class Inventory : MonoBehaviour
 
     /// <summary> Check if the item is owned </summary>
     /// <param name="name">Item's name</param>
-    public bool Owned(string name) { return xml.GetItem("OwnedItems").GetItemByAttribute("item", "name", name) != null; }
+    public bool Owned(string name) { return Owned(xml, category, name); }
     /// <summary> Check if the item is owned </summary>
     /// <param name="xml">Xml file</param>
+    /// <param name=" category">Item's category</param>
     /// <param name="name">Item's name</param>
-    public static bool Owned(FileFormat.XML.RootElement xml, string name)
-    { return xml.GetItem("OwnedItems").GetItemByAttribute("item", "name", name) != null; }
+    public static bool Owned(FileFormat.XML.RootElement xml, string category, string name) { return xml.GetItem("Inventory").GetItemByAttribute("category", "name", category).GetItemByAttribute("item", "name", name).Exist; }
 
     /// <summary> Buy the item </summary>
     /// <param name="index">Item's index</param>
@@ -232,7 +224,8 @@ public class Inventory : MonoBehaviour
         int money = int.Parse(xml.GetItem("Money").Value);
         if (items[index].price <= money)
         {
-            xml.GetItem("OwnedItems").CreateItem("item").CreateAttribute("name", items[index].name);
+            if(!xml.GetItem("Inventory").GetItemByAttribute("category", "name", category).Exist) xml.GetItem("Inventory").CreateItem("category").SetAttribute("name", category);
+            xml.GetItem("Inventory").GetItemByAttribute("category", "name", category).CreateItem("item").SetAttribute("name", items[index].name);
             xml.GetItem("Money").Value = (money - items[index].price).ToString();
             Social.IncrementEvent("CgkI9r-go54eEAIQCA", (uint)items[index].price); //Statistics about coin expenses
             Reload();
@@ -245,8 +238,12 @@ public class Inventory : MonoBehaviour
     public void Select(int index)
     {
         selected = index;
-        xml.GetItem("SelectedItems").GetItemByAttribute("item", "category", category).Value = items[index].name;
+        var cat = xml.GetItem("Inventory").GetItemByAttribute("category", "name", category);
+        cat.GetItemsByAttribute("item", "selected").ForEach(i => i.RemoveAttribute("selected")); //Unselects
+        cat.GetItemByAttribute("item", "name", items[index].name).SetAttribute("selected"); //Selects
         Reload();
         xmlDefault = xml;
     }
+
+    public static string GetSelected(FileFormat.XML.RootElement xml, string category) { return xml.GetItem("Inventory").GetItemByAttribute("category", "name", category).GetItemByAttribute("item", "selected").Attribute("name"); }
 }
