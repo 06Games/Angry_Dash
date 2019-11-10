@@ -2,9 +2,9 @@
 using AngryDash.Language;
 using FileFormat;
 using System.Linq;
-using System.Net;
 using Tools;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 [System.Serializable] //Display in Editor
@@ -38,6 +38,7 @@ public class Inventory : MonoBehaviour
                     "</category>",
                     "<category name=\"native/TRACES/\">",
                         "<item name=\"0\" selected=\"\" />",
+                    "</category>",
                 "</Inventory>",
                 "<Money>0</Money>",
                 "<PlayedLevels type=\"Official\" />",
@@ -81,61 +82,59 @@ public class Inventory : MonoBehaviour
 
     private void Start()
     {
-        if (!InternetAPI.IsConnected())
-        {
-            transform.parent.GetComponent<MenuManager>().Array(0);
-            return; //If no connection then stop loading
-        }
         xml = xmlDefault;
-        Refresh();
+        StartCoroutine(Refresh());
     }
 
     /// <summary> Check item's price and setup the items array </summary>
-    public void Refresh()
+    System.Collections.IEnumerator Refresh()
     {
-        WebClient client = new WebClient();
-        client.Encoding = System.Text.Encoding.UTF8;
-        ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string Result = null;
-        try { Result = client.DownloadString(serverURL); }
-        catch
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(serverURL))
         {
-            transform.parent.GetComponent<MenuManager>().Array(0);
-            return; //If no connection then stop loading
-        }
+            webRequest.timeout = 10;
+            yield return webRequest.SendWebRequest();
 
-        FileFormat.XML.RootElement root = new FileFormat.XML.XML(Result).RootElement;
-        FileFormat.XML.Item ItemsRoot = null;
-        foreach (var item in root.GetItems("version"))
-        {
-            string[] versions = item.Attribute("v").Split("-");
-            if (versions.Length == 2)
+            string xmlResult = "";
+            if (!string.IsNullOrEmpty(webRequest.error))
             {
-                Versioning actual = Versioning.Actual;
-                Versioning old = new Versioning(versions[0]);
-                Versioning newer = new Versioning(versions[1]);
+                xmlResult = "<root><version v=\"0 - " + Application.version + "\">";
+                foreach (var item in xml.GetItem("Inventory").GetItemByAttribute("category", "name", category).GetItems("item")) xmlResult += "<item name=\"" + item.Attribute("name") + "\" />";
+                xmlResult += "</version></root>";
+            }
+            else xmlResult = webRequest.downloadHandler.text;
 
-                //Check if the game version is between the defined versions
-                if (old.CompareTo(actual, Versioning.SortConditions.OlderOrEqual) & newer.CompareTo(actual, Versioning.SortConditions.NewerOrEqual))
+            FileFormat.XML.RootElement root = new FileFormat.XML.XML(xmlResult).RootElement;
+            FileFormat.XML.Item ItemsRoot = null;
+            foreach (var item in root.GetItems("version"))
+            {
+                string[] versions = item.Attribute("v").Split("-");
+                if (versions.Length == 2)
                 {
-                    ItemsRoot = item;
-                    break;
+                    Versioning actual = Versioning.Actual;
+                    Versioning old = new Versioning(versions[0]);
+                    Versioning newer = new Versioning(versions[1]);
+
+                    //Check if the game version is between the defined versions
+                    if (old.CompareTo(actual, Versioning.SortConditions.OlderOrEqual) & newer.CompareTo(actual, Versioning.SortConditions.NewerOrEqual))
+                    {
+                        ItemsRoot = item;
+                        break;
+                    }
                 }
             }
-        }
-        if (ItemsRoot != null)
-        {
-            FileFormat.XML.Item[] shopItem = ItemsRoot.GetItems("item");
-            items = new InvItem[shopItem.Length];
-            for (int i = 0; i < shopItem.Length; i++)
+            if (ItemsRoot != null)
             {
-                float price = 0;
-                float.TryParse(shopItem[i].Value, out price);
-                string Name = shopItem[i].Attribute("name");
-                items[i] = new InvItem(Name, price);
-            }
+                FileFormat.XML.Item[] shopItem = ItemsRoot.GetItems("item");
+                items = new InvItem[shopItem.Length];
+                for (int i = 0; i < shopItem.Length; i++)
+                {
+                    if (!float.TryParse(shopItem[i].GetItem("price").Value, out float price)) price = -1;
+                    string Name = shopItem[i].Attribute("name");
+                    items[i] = new InvItem(Name, price);
+                }
 
-            Reload();
+                Reload();
+            }
         }
     }
 
@@ -197,7 +196,7 @@ public class Inventory : MonoBehaviour
                     go.GetChild(1).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "InventoryItemFree", "Free");
                     go.GetChild(1).GetChild(0).GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
                 }
-                else
+                else if (items[i].price > 0)
                 {
                     go.GetChild(1).GetChild(0).GetComponent<Text>().text = items[i].price.ToString();
                     go.GetChild(1).GetChild(0).GetComponent<Text>().alignment = TextAnchor.MiddleRight;
@@ -224,7 +223,7 @@ public class Inventory : MonoBehaviour
         int money = int.Parse(xml.GetItem("Money").Value);
         if (items[index].price <= money)
         {
-            if(!xml.GetItem("Inventory").GetItemByAttribute("category", "name", category).Exist) xml.GetItem("Inventory").CreateItem("category").SetAttribute("name", category);
+            if (!xml.GetItem("Inventory").GetItemByAttribute("category", "name", category).Exist) xml.GetItem("Inventory").CreateItem("category").SetAttribute("name", category);
             xml.GetItem("Inventory").GetItemByAttribute("category", "name", category).CreateItem("item").SetAttribute("name", items[index].name);
             xml.GetItem("Money").Value = (money - items[index].price).ToString();
             Social.IncrementEvent("CgkI9r-go54eEAIQCA", (uint)items[index].price); //Statistics about coin expenses

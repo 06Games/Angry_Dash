@@ -136,7 +136,8 @@ namespace FileFormat
             {
                 if (node.Attributes != null && node.Attributes[key] != null) //Set value
                     node.Attributes[key].Value = value;
-                else { //Create attribute
+                else
+                { //Create attribute
                     System.Xml.XmlAttribute xmlAttribute = node.OwnerDocument.CreateAttribute(key);
                     node.Attributes.Append(xmlAttribute);
                     xmlAttribute.Value = value;
