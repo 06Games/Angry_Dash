@@ -44,7 +44,11 @@ public class Background : MonoBehaviour
         if (Selected >= 0 & Selected < sp.Length)
         {
             if (sp[Selected].Frames.Length > 0)
-                CP.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = sp[Selected].Frames[0];
+            {
+                var json = jsonData[Selected].DeepClone();
+                json.type[0] = AngryDash.Image.JSON_PARSE_DATA.Type.Simple;
+                CP.transform.GetChild(0).GetChild(0).GetComponent<UImage_Reader>().Load(sp[Selected]).ApplyJson(json);
+            }
         }
 
         Editor.level.background = new Level.Background { id = Selected, color = bgColor };
