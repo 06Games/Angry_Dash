@@ -7,12 +7,13 @@ namespace AngryDash.Image
     {
         [Header("Textures")]
         public string[] path = new string[4];
-        public Vector4[] border = new Vector4[4];
-        public int[] type = new int[4];
+        [System.NonSerialized] public Vector4[] border = new Vector4[4];
+        public enum Type { Simple, Sliced, Tiled, Fit, Envelope }
+        public Type[] type = new Type[4];
 
         [Space(10)]
         [Header("Text Components")]
-        public Color32 textColor = new Color32(255, 255, 255, 255);
+        [System.NonSerialized] public Color32 textColor = new Color32(255, 255, 255, 255);
         public FontStyle textStyle = FontStyle.Normal;
         public TextAnchor textAnchor = TextAnchor.MiddleLeft;
         public bool textResize;

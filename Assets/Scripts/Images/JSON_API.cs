@@ -70,7 +70,7 @@ namespace AngryDash.Image
                     string[] paramNames = new string[] { "basic", "hover", "pressed", "disabled" };
                     if (data.path == null) data.path = new string[paramNames.Length];
                     if (data.border == null) data.border = new Vector4[paramNames.Length];
-                    if (data.type == null) data.type = new int[paramNames.Length];
+                    if (data.type == null) data.type = new JSON_PARSE_DATA.Type[paramNames.Length];
                     for (int i = 0; i < paramNames.Length; i++)
                     {
                         if (string.IsNullOrEmpty(data.path[i]) | !File.Exists(data.path[i]))
@@ -95,19 +95,11 @@ namespace AngryDash.Image
                             //Path
                             if (string.IsNullOrEmpty(data.path[i]) & paramCategory.ValueExist("path"))
                             {
-                                if (path) data.path[i] = new FileInfo(ID + ".json").Directory.FullName +
-                                        "/" + paramCategory.Value<string>("path");
-                                else data.path[i] = new FileInfo(Sprite_API.spritesPath(ID + ".json")).Directory.FullName +
-                                        "/" + paramCategory.Value<string>("path");
+                                if (path) data.path[i] = new FileInfo(ID + ".json").Directory.FullName + "/" + paramCategory.Value<string>("path");
+                                else data.path[i] = new FileInfo(Sprite_API.spritesPath(ID + ".json")).Directory.FullName + "/" + paramCategory.Value<string>("path");
                             }
 
-                            if (paramCategory.ValueExist("type") & data.type[i] == default)
-                            {
-                                string ImageType = paramCategory.Value<string>("type");
-                                if (ImageType == "Simple") data.type[i] = 0;
-                                else if (ImageType == "Sliced") data.type[i] = 1;
-                                else if (ImageType == "Tiled") data.type[i] = 2;
-                            }
+                            if (paramCategory.ValueExist("type")) System.Enum.TryParse(paramCategory.Value<string>("type"), out data.type[i]);
                         }
                     }
                 }

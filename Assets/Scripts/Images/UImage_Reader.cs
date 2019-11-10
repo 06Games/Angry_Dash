@@ -15,6 +15,7 @@ namespace AngryDash.Image.Reader
 
         //Parameters
         Sprite_API_Data[] data = new Sprite_API_Data[4];
+        GameObject obj;
 
         //Data
         new Coroutine[] animation = new Coroutine[4];
@@ -22,7 +23,7 @@ namespace AngryDash.Image.Reader
         uint[] Played = new uint[4];
         int[] Frame = new int[4];
         [HideInInspector]
-        public int[] Type = new int[4];
+        public JSON_PARSE_DATA.Type[] Type = new JSON_PARSE_DATA.Type[4];
 
         public Vector2 FrameSize
         {
@@ -62,11 +63,12 @@ namespace AngryDash.Image.Reader
 
         public UImage_Reader ApplyJson(JSON_PARSE_DATA data)
         {
+            if (obj == null) obj = gameObject;
             //Textures
             if (GetComponent<Selectable>() != null)
             {
-                lastInteractable = GetComponent<Selectable>().interactable;
-                GetComponent<Selectable>().transition = Selectable.Transition.None;
+                lastInteractable = obj.GetComponent<Selectable>().interactable;
+                obj.GetComponent<Selectable>().transition = Selectable.Transition.None;
             }
             Type = data.type;
 
@@ -100,14 +102,15 @@ namespace AngryDash.Image.Reader
         public bool autoChange { get; set; } = true;
         void Update()
         {
-            if (GetComponent<Selectable>() == null) return;
+            if (obj == null) obj = gameObject;
+            if (obj.GetComponent<Selectable>() == null) return;
             else if (!autoChange) { lastInteractable = false; return; }
 
-            if (GetComponent<Selectable>().interactable != lastInteractable)
+            if (obj.GetComponent<Selectable>().interactable != lastInteractable)
             {
-                if (GetComponent<Selectable>().interactable) StartAnimating(3, -1);
+                if (obj.GetComponent<Selectable>().interactable) StartAnimating(3, -1);
                 else StartAnimating(3, 1);
-                lastInteractable = GetComponent<Selectable>().interactable;
+                lastInteractable = obj.GetComponent<Selectable>().interactable;
             }
         }
 
@@ -118,8 +121,30 @@ namespace AngryDash.Image.Reader
             if (index >= data.Length) return;
             if (data[index] == null) return;
 
-            if (GetComponent<UnityEngine.UI.Image>() != null) GetComponent<UnityEngine.UI.Image>().type = (UnityEngine.UI.Image.Type)Type[index];
-            else if (GetComponent<SpriteRenderer>() != null) GetComponent<SpriteRenderer>().drawMode = (SpriteDrawMode)Type[index];
+            if ((int)Type[index] <= 3 || (Type[index] == JSON_PARSE_DATA.Type.Fit & GetComponent<UnityEngine.UI.Image>() != null))
+            {
+                if (obj?.name == name + " - " + GetType().Name) Destroy(obj);
+                obj = gameObject;
+            }
+            else if (obj == null || obj.name != name + " - " + GetType().Name)
+            {
+                obj = Instantiate(gameObject, transform);
+                obj.name = name + " - " + GetType().Name;
+                Destroy(obj.GetComponent<UImage_Reader>());
+                obj.AddComponent<AspectRatioFitter>();
+            }
+            if (GetComponent<UnityEngine.UI.Image>() != null) GetComponent<UnityEngine.UI.Image>().enabled = (int)Type[index] <= 3;
+            else if (GetComponent<SpriteRenderer>() != null) GetComponent<SpriteRenderer>().enabled = (int)Type[index] <= 3;
+
+            SpriteDrawMode type = (int)Type[index] > 3 ? SpriteDrawMode.Simple : (SpriteDrawMode)Type[index];
+            if (obj.GetComponent<UnityEngine.UI.Image>() != null) obj.GetComponent<UnityEngine.UI.Image>().type = (UnityEngine.UI.Image.Type)type;
+            else if (obj.GetComponent<SpriteRenderer>() != null) obj.GetComponent<SpriteRenderer>().drawMode = type;
+            if (Type[index] == JSON_PARSE_DATA.Type.Fit)
+            {
+                if (obj.GetComponent<UnityEngine.UI.Image>() != null) obj.GetComponent<UnityEngine.UI.Image>().preserveAspect = true;
+                else if (obj.GetComponent<SpriteRenderer>() != null) obj.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+            }
+            else if (Type[index] == JSON_PARSE_DATA.Type.Envelope) obj.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
 
             if (data[index].Frames.Length > 1)
             {
@@ -133,8 +158,8 @@ namespace AngryDash.Image.Reader
             }
             else if (data[index].Frames.Length == 1 & frameAddition > 0)
             {
-                if (GetComponent<UnityEngine.UI.Image>() != null) GetComponent<UnityEngine.UI.Image>().sprite = data[index].Frames[0];
-                else if (GetComponent<SpriteRenderer>() != null) GetComponent<SpriteRenderer>().sprite = data[index].Frames[0];
+                if (obj.GetComponent<UnityEngine.UI.Image>() != null) obj.GetComponent<UnityEngine.UI.Image>().sprite = data[index].Frames[0];
+                else if (obj.GetComponent<SpriteRenderer>() != null) obj.GetComponent<SpriteRenderer>().sprite = data[index].Frames[0];
             }
             else if (data[index].Frames.Length == 1 & frameAddition < 0)
                 StartAnimating(0, 1);
@@ -185,8 +210,8 @@ namespace AngryDash.Image.Reader
 
                 if (frameIndex > -1)
                 {
-                    if (GetComponent<UnityEngine.UI.Image>() != null) GetComponent<UnityEngine.UI.Image>().sprite = data[index].Frames[frameIndex];
-                    else if (GetComponent<SpriteRenderer>() != null) GetComponent<SpriteRenderer>().sprite = data[index].Frames[frameIndex];
+                    if (obj.GetComponent<UnityEngine.UI.Image>() != null) obj.GetComponent<UnityEngine.UI.Image>().sprite = data[index].Frames[frameIndex];
+                    else if (obj.GetComponent<SpriteRenderer>() != null) obj.GetComponent<SpriteRenderer>().sprite = data[index].Frames[frameIndex];
 
                     Frame[index] = frameIndex;
                     animationTime[index].Restart();

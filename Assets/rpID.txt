@@ -1,4 +1,4 @@
-native/GUI/logo
+﻿native/GUI/logo
 native/GUI/startUp/dependencies/background
 native/GUI/startUp/dependencies/progressBg
 native/GUI/startUp/dependencies/progressState
@@ -198,6 +198,7 @@ native/BACKGROUNDS/8
 native/BACKGROUNDS/9
 native/BACKGROUNDS/10
 native/BACKGROUNDS/11
+native/BACKGROUNDS/12
 native/BLOCKS/0.2
 native/BLOCKS/0.3
 native/BLOCKS/1.0
