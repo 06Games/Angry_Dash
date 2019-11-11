@@ -222,7 +222,7 @@ public class Editeur : MonoBehaviour
 #if UNITY_EDITOR
             EditFile(Application.persistentDataPath + "/Levels/Official Levels/4.level");
 #else
-            LSC.LoadScreen(FromScene);
+            SceneManager.LoadScene(FromScene);
 #endif
         }
 

@@ -53,15 +53,15 @@ public class SceneManager : MonoBehaviour
 
         string bgPath = Application.persistentDataPath + "/Ressources/default/textures/native/GUI/other/loadingScreen/splashScreens/";
 #if UNITY_STANDALONE_WIN
-        System.Collections.Generic.IEnumerable<CodeProject.FileData> files = CodeProject.FastDirectoryEnumerator.EnumerateFiles(bgPath, "* basic.png");
+        System.Collections.Generic.IEnumerable<string> files = CodeProject.FastDirectoryEnumerator.EnumerateFiles(bgPath, "* basic.png").Select(f => f.Path);
 #else
-        System.Collections.Generic.IEnumerable<System.IO.FileInfo> files = new System.IO.DirectoryInfo(bgPath).EnumerateFiles("* basic.png");
+        System.Collections.Generic.IEnumerable<string> files = new System.IO.DirectoryInfo(bgPath).EnumerateFiles("* basic.png").Select(f => f.FullName);
 #endif
 
         if (files.Count() > 0)
         {
             int bgIndex = Random.Range(0, files.Count());
-            string bgID = files.ElementAt(bgIndex).Path.Remove(0, (Application.persistentDataPath + "/Ressources/default/textures/").Length).Replace("\\", "/");
+            string bgID = files.ElementAt(bgIndex).Remove(0, (Application.persistentDataPath + "/Ressources/default/textures/").Length).Replace("\\", "/");
             LSC.loadingScreenObj.transform.GetChild(1).GetChild(0).GetComponent<AngryDash.Image.Reader.UImage_Reader>().SetID(bgID.Remove(bgID.Length - " basic.png".Length)).Load();
         }
 

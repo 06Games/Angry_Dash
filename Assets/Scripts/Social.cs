@@ -1,7 +1,7 @@
 ﻿using AngryDash.Language;
 using UnityEngine;
 using UnityEngine.UI;
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID
 using System.Linq;
 using GooglePlayGames;
 #endif
