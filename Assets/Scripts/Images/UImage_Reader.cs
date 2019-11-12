@@ -90,6 +90,7 @@ namespace AngryDash.Image.Reader
             }
 
             StartAnimating(0);
+            if(Image.gameObject?.GetComponent<Selectable>()?.interactable == false) StartAnimating(3);
             return this;
         }
 
