@@ -1,5 +1,6 @@
 ﻿using AngryDash.Image.Reader;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +12,7 @@ namespace AngryDash.Language
         public Transform Langues;
 
         public string[] LangueDispo;
-        public int actuel = 0;
+        public uint actuel = 0;
         Sprite[] LangFlag;
 
         void Start() { NewStart(); if (Langues != null) Langues.GetChild(0).gameObject.SetActive(false); }
@@ -23,10 +24,7 @@ namespace AngryDash.Language
             if (Langues != null)
                 if (Langues.childCount <= 1) GetLangDispo();
 
-            for (int i = 0; i < LangueDispo.Length; i++)
-            {
-                if (LangueAPI.selectedLanguage == LangueDispo[i]) actuel = i;
-            }
+            actuel = (uint)System.Array.IndexOf(LangueDispo, LangueAPI.selectedLanguage);
         }
 
         void Update()
@@ -38,7 +36,7 @@ namespace AngryDash.Language
             }
         }
 
-        public void Chang(int i)
+        public void Chang(uint i)
         {
             if (i != actuel) actuel = i;
         }
@@ -47,25 +45,21 @@ namespace AngryDash.Language
 
         void GetLangDispo()
         {
-            string[] languages = Directory.GetFiles(Application.persistentDataPath + "/Ressources/default/languages/native/");
-            LangFlag = new Sprite[languages.Length];
-            for (int i = 0; i < languages.Length; i++)
+            LangueDispo = Directory.GetFiles(Application.persistentDataPath + "/Ressources/default/languages/native/").Select(f => Path.GetFileNameWithoutExtension(f)).OrderBy(f => f).ToArray();
+            LangFlag = new Sprite[LangueDispo.Length];
+            for (uint i = 0; i < LangueDispo.Length; i++)
             {
                 Transform go = Instantiate(Langues.GetChild(0).gameObject, new Vector3(), new Quaternion(), Langues).transform;
-                go.name = Path.GetFileNameWithoutExtension(languages[i]);
-                int dispo = i;
+                go.name = LangueDispo[i];
+                uint dispo = i;
                 go.GetComponent<Button>().onClick.RemoveAllListeners();
                 go.GetComponent<Button>().onClick.AddListener(() => Chang(dispo));
-                go.GetComponent<UImage_Reader>().SetID("native/GUI/settingsMenu/languages/" + Path.GetFileNameWithoutExtension(languages[i])).Load();
+                go.GetComponent<UImage_Reader>().SetID("native/GUI/settingsMenu/languages/" + LangueDispo[dispo]).Load();
                 go.gameObject.SetActive(true);
             }
 
             if (LangueAPI.selectedLanguage == null) Apply();
-
-            for (int i = 0; i < LangueDispo.Length; i++)
-            {
-                if (LangueAPI.selectedLanguage == LangueDispo[i]) actuel = i;
-            }
+            actuel = (uint)System.Array.IndexOf(LangueDispo, LangueAPI.selectedLanguage);
         }
     }
 }
