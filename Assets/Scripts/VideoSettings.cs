@@ -44,8 +44,7 @@ public class VideoSettings : MonoBehaviour
     void ShowFPS(bool show, Toggle _Toggle = null)
     {
         ConfigAPI.SetBool("video.showFPS", show);
-        if (_Toggle == null)
-            GraphicalOptions.GetChild(0).GetComponent<Toggle>().isOn = show;
+        if (_Toggle == null) GraphicalOptions.GetChild(0).GetComponent<Toggle>().isOn = show;
     }
 
     public void MaxFPS(Slider _Slider) { MaxFPS(_Slider.value, _Slider); }

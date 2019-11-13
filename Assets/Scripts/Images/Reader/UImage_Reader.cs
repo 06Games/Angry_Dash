@@ -65,10 +65,10 @@ namespace AngryDash.Image.Reader
             if (Image == null) Image = new UniversalImage(gameObject);
 
             //Textures
-            if (Image.gameObject != null && Image.gameObject.GetComponent<Selectable>() != null)
+            if (GetComponent<Selectable>() != null)
             {
-                lastInteractable = Image.gameObject.GetComponent<Selectable>().interactable;
-                Image.gameObject.GetComponent<Selectable>().transition = Selectable.Transition.None;
+                lastInteractable = GetComponent<Selectable>().interactable;
+                GetComponent<Selectable>().transition = Selectable.Transition.None;
             }
             Type = data.type;
 
@@ -90,37 +90,40 @@ namespace AngryDash.Image.Reader
             }
 
             StartAnimating(0);
-            if(Image.gameObject?.GetComponent<Selectable>()?.interactable == false) StartAnimating(3);
+            if(GetComponent<Selectable>()?.interactable == false) StartAnimating(3);
             return this;
         }
 
         void OnEnable() { StartAnimating(0); }
-        public void OnPointerEnter(PointerEventData eventData) { if (lastInteractable) StartAnimating(1, 1); }
-        public void OnPointerExit(PointerEventData eventData) { if (lastInteractable) StartAnimating(1, -1); }
-        public void OnPointerDown(PointerEventData pointerEventData) { if (lastInteractable) StartAnimating(2, 1); }
-        public void OnPointerUp(PointerEventData pointerEventData) { if (lastInteractable) StartAnimating(2, -1); }
+        public void OnPointerEnter(PointerEventData eventData) { if (lastInteractable & autoChange) StartAnimating(1, 1); }
+        public void OnPointerExit(PointerEventData eventData) { if (lastInteractable & autoChange) StartAnimating(1, -1); }
+        public void OnPointerDown(PointerEventData pointerEventData) { if (lastInteractable & autoChange) StartAnimating(2, 1); }
+        public void OnPointerUp(PointerEventData pointerEventData) { if (lastInteractable & autoChange) StartAnimating(2, -1); }
         bool lastInteractable = true;
         public bool autoChange { get; set; } = true;
         void Update()
         {
             if (Image == null) Image = new UniversalImage(gameObject);
-            if (Image.gameObject?.GetComponent<Selectable>() == null) return;
+            if (GetComponent<Selectable>() == null) return;
             else if (!autoChange) { lastInteractable = false; return; }
 
-            if (Image.gameObject?.GetComponent<Selectable>().interactable != lastInteractable)
+            if (GetComponent<Selectable>().interactable != lastInteractable)
             {
-                if ((bool)Image.gameObject?.GetComponent<Selectable>().interactable) StartAnimating(3, -1);
+                if (GetComponent<Selectable>().interactable) StartAnimating(3, -1);
                 else StartAnimating(3, 1);
-                lastInteractable = (bool)Image.gameObject?.GetComponent<Selectable>().interactable;
+                lastInteractable = GetComponent<Selectable>().interactable;
             }
         }
 
-        public void StartAnimating(int index) { StartAnimating(index, 1, false); }
-        public void StartAnimating(int index, int frameAddition, bool keepFrame = true)
+        internal System.Action<int> animationChanged;
+        public bool StartAnimating(int index) { return StartAnimating(index, 1, false); }
+        public bool StartAnimating(int index, int frameAddition, bool keepFrame = true)
         {
-            if (data == null) return;
-            if (index >= data.Length) return;
-            if (data[index] == null) return;
+            if (data == null) return false;
+            if (index >= data.Length) return false;
+            if (data[index] == null) return false;
+
+            animationChanged?.Invoke(index);
 
             var thisImage = new UniversalImage(gameObject);
             if ((int)Type[index] <= 3 || (Type[index] == JSON_PARSE_DATA.Type.Fit & thisImage.image != null))
@@ -159,8 +162,14 @@ namespace AngryDash.Image.Reader
                 animationTime[index].Start();
                 animation[index] = StartCoroutine(APNG(index, frameAddition));
             }
-            else if (data[index].Frames.Length == 1 & frameAddition > 0) Image.sprite = data[index].Frames[0];
+            else if (data[index].Frames.Length == 1 & frameAddition > 0)
+            {
+                if (index == 0) Image.sprite = data[index].Frames[0];
+                else StartAnimating(0);
+            }
             else if (data[index].Frames.Length == 1 & frameAddition < 0) StartAnimating(0, 1);
+
+            return true;
         }
         public void StopAnimating(int index) { StopAnimating(index, false); }
         public void StopAnimating(int index, bool keepFrame)
@@ -178,8 +187,10 @@ namespace AngryDash.Image.Reader
             if (!keepFrame) StartAnimating(0);
         }
 
+        public int animationIndex { get; private set; }
         System.Collections.IEnumerator APNG(int index, int frameAddition)
         {
+            animationIndex = index;
             int futurFrame = Frame[index] + frameAddition;
             if (futurFrame <= -1 | futurFrame >= data[index].Frames.Length)
             {
@@ -215,7 +226,11 @@ namespace AngryDash.Image.Reader
                 yield return new WaitForEndOfFrame();
                 animation[index] = StartCoroutine(APNG(index, frameAddition));
             }
-            else StopAnimating(index, true);
+            else
+            {
+                StopAnimating(index, true);
+                StartAnimating(0);
+            }
         }
     }
 }
