@@ -105,7 +105,7 @@ namespace AngryDash.Image.Reader
         {
             if (Image == null) Image = new UniversalImage(gameObject);
             if (GetComponent<Selectable>() == null) return;
-            else if (!autoChange) { lastInteractable = false; return; }
+            else if (!autoChange) return;
 
             if (GetComponent<Selectable>().interactable != lastInteractable)
             {
@@ -122,7 +122,6 @@ namespace AngryDash.Image.Reader
             if (data == null) return false;
             if (index >= data.Length) return false;
             if (data[index] == null) return false;
-
             animationChanged?.Invoke(index);
 
             var thisImage = new UniversalImage(gameObject);
@@ -164,8 +163,8 @@ namespace AngryDash.Image.Reader
             }
             else if (data[index].Frames.Length == 1 & frameAddition > 0)
             {
-                if (index == 0) Image.sprite = data[index].Frames[0];
-                else StartAnimating(0);
+                Image.sprite = data[index].Frames[0];
+                return false;
             }
             else if (data[index].Frames.Length == 1 & frameAddition < 0) StartAnimating(0, 1);
 
