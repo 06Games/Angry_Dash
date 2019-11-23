@@ -52,7 +52,10 @@ public class BaseControl : MonoBehaviour
             });
 
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Home")
-            DiscordController.Presence(LangueAPI.Get("native", "discordHome_title", "In the home menu"), "", new DiscordClasses.Img("default"));
+            DiscordController.UpdatePresence(
+                state: LangueAPI.Get("native", "discordHome_title", "In the home menu"), 
+                lImage: new DiscordClasses.Img("default")
+           );
     }
 
     bool sceneChanging = false;

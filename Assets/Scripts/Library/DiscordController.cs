@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class DiscordController : MonoBehaviour
 {
-    public Discord.Discord discord;
-    public ActivityManager activityManager;
+    public static Discord.Discord discord;
+    static ActivityManager activityManager;
 
     /// <summary>
     /// Update the Discord RPC Presence
@@ -19,18 +19,15 @@ public class DiscordController : MonoBehaviour
     /// <param name="startTime">Temps en seconde depuis le démarage de la partie (-2 keep, -1 pour le désactiver, 0 pour actuelement)</param>
     /// <param name="minPartySize">Taille actuelle de la partie, du lobby ou du groupe (-1 pour le désactiver)</param>
     /// <param name="maxPartySize">Taille maximale de la partie, du lobby ou du groupe (-1 pour le désactiver)</param>
-    public static void Presence(string state, string detail = null, Img lImage = null, Img sImage = null, int remainingTime = -1, long startTime = -1, int minPartySize = -1, int maxPartySize = -1)
+    public static void UpdatePresence(string state, string detail = null, Img lImage = null, Img sImage = null, TimeSpan remainingTime = default, DateTime startTime = default)
     {
-#if UNITY_STANDALONE || UNITY_EDITOR
+#if UNITY_EDITOR
         GameObject go = GameObject.Find("Discord");
-        if (go != null) go.GetComponent<DiscordController>().UpdatePresence(state, detail, lImage, sImage, remainingTime, startTime);
+        if (go == null) new GameObject("Discord").AddComponent<DiscordController>();
 #endif
-    }
 
 #if UNITY_STANDALONE || UNITY_EDITOR
-    Activity presence;
-    void UpdatePresence(string detail, string state, Img lImage, Img sImage, int remainingTime, long startTime)
-    {
+        Activity presence = new Activity();
         presence.State = state; //State
         presence.Details = detail; //Detail
 
@@ -47,25 +44,15 @@ public class DiscordController : MonoBehaviour
             presence.Assets.SmallImage = sImage.key;
             presence.Assets.SmallText = sImage.legende;
         }
-        else
-        {
-            presence.Assets.SmallImage = null;
-            presence.Assets.SmallText = null;
-        }
+        else presence.Assets.SmallText = presence.Assets.SmallImage = null;
 
         //End Timestamp
-        if (remainingTime >= 0)
-            presence.Timestamps.End = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds) + remainingTime;
-        else if (remainingTime == -1)
-            presence.Timestamps.End = 0;
+        if (remainingTime != default) presence.Timestamps.End = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds + remainingTime.TotalSeconds);
+        else presence.Timestamps.End = 0;
 
         //Start Timestamp
-        if (startTime == 0)
-            presence.Timestamps.Start = Convert.ToInt64((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds);
-        else if (startTime > 0)
-            presence.Timestamps.Start = startTime;
-        else if (startTime == -1)
-            presence.Timestamps.Start = 0;
+        if (startTime != default) presence.Timestamps.Start = Convert.ToInt64((startTime - new DateTime(1970, 1, 1)).TotalSeconds);
+        else presence.Timestamps.Start = 0;
 
         activityManager?.UpdateActivity(presence, (res) =>
         {
@@ -75,11 +62,14 @@ public class DiscordController : MonoBehaviour
 
     void OnEnable()
     {
-        Logging.Log("Discord API is starting", LogType.Log);
         DontDestroyOnLoad(gameObject);
 
-        discord = new Discord.Discord(470264480786284544, (ulong)CreateFlags.Default);
-        activityManager = discord.GetActivityManager();
+        if (discord == null)
+        {
+            Logging.Log("Discord API is starting", LogType.Log);
+            discord = new Discord.Discord(470264480786284544, (ulong)CreateFlags.Default);
+            activityManager = discord.GetActivityManager();
+        }
     }
 
     void OnDisable()
@@ -90,8 +80,8 @@ public class DiscordController : MonoBehaviour
     void Update()
     {
         discord.RunCallbacks();
-    }
 #endif
+    }
 }
 
 namespace DiscordClasses

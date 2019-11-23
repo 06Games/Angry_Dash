@@ -139,7 +139,11 @@ public class Editeur : MonoBehaviour
                 if (level.victoryConditions == null) level.victoryConditions = new Level.VictoryConditions();
                 OpenCat(-1);
 
-                DiscordController.Presence(LangueAPI.Get("native", "discordEditor_title", "In the editor"), LangueAPI.Get("native", "discordEditor_subtitle", "Editing [0]", level.name), new DiscordClasses.Img("default"));
+                DiscordController.UpdatePresence(
+                    state: LangueAPI.Get("native", "discordEditor_title", "In the editor"), 
+                    detail: LangueAPI.Get("native", "discordEditor_subtitle", "Editing [0]", level.name),
+                    lImage: new DiscordClasses.Img("default")
+                );
                 cam.GetComponent<BaseControl>().returnScene = false;
 
                 LvlLoadingActivation(false);
@@ -192,7 +196,10 @@ public class Editeur : MonoBehaviour
 
     private void Start()
     {
-        DiscordController.Presence(LangueAPI.Get("native", "discordEditor_title", "In the editor"), "", new DiscordClasses.Img("default"));
+        DiscordController.UpdatePresence(
+            state: LangueAPI.Get("native", "discordEditor_title", "In the editor"), 
+            lImage: new DiscordClasses.Img("default")
+        );
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         cam.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, -10);
         cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;

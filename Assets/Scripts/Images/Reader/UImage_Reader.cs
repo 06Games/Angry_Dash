@@ -17,10 +17,10 @@ namespace AngryDash.Image.Reader
         UniversalImage Image;
 
         //Data
-        new Coroutine[] animation = new Coroutine[4];
+        Coroutine[] coroutines = new Coroutine[4];
         System.Diagnostics.Stopwatch[] animationTime = new System.Diagnostics.Stopwatch[4];
-        uint[] Played = new uint[4];
-        int[] Frame = new int[4];
+        readonly uint[] Played = new uint[4];
+        readonly int[] Frame = new int[4];
         [HideInInspector]
         public JSON_PARSE_DATA.Type[] Type = new JSON_PARSE_DATA.Type[4];
 
@@ -155,11 +155,11 @@ namespace AngryDash.Image.Reader
             {
                 if (!keepFrame) Frame[index] = 0;
                 Played[index] = 0;
-                if (animation[index] != null) StopCoroutine(animation[index]);
+                if (coroutines[index] != null) StopCoroutine(coroutines[index]);
 
                 animationTime[index] = new System.Diagnostics.Stopwatch();
                 animationTime[index].Start();
-                animation[index] = StartCoroutine(APNG(index, frameAddition));
+                coroutines[index] = StartCoroutine(APNG(index, frameAddition));
             }
             else if (data[index].Frames.Length == 1 & frameAddition > 0)
             {
@@ -179,7 +179,7 @@ namespace AngryDash.Image.Reader
             if (data[index].Frames.Length > 1)
             {
                 animationTime[index].Stop();
-                if (animation[index] != null) StopCoroutine(animation[index]);
+                if (coroutines[index] != null) StopCoroutine(coroutines[index]);
                 if (!keepFrame) Frame[index] = 0;
             }
 
@@ -223,7 +223,7 @@ namespace AngryDash.Image.Reader
                     animationTime[index].Restart();
                 }
                 yield return new WaitForEndOfFrame();
-                animation[index] = StartCoroutine(APNG(index, frameAddition));
+                coroutines[index] = StartCoroutine(APNG(index, frameAddition));
             }
             else
             {
