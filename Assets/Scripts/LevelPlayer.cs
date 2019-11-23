@@ -1,5 +1,6 @@
 ﻿using AngryDash.Image.Reader;
 using AngryDash.Language;
+using DiscordAPI;
 using Level;
 using System.IO;
 using Tools;
@@ -88,9 +89,9 @@ namespace AngryDash.Game
         {
             level = item;
             StartCoroutine(Parse()); //Spawn blocks
-            DiscordController.UpdatePresence(
-                state: LangueAPI.Get("native", "discordPlaying_title", "Play a level"), 
-                lImage: new DiscordClasses.Img("default", LangueAPI.Get("native", "discordPlaying_caption", "Level : [0]", level.name)),
+            DiscordAPI.Discord.NewActivity(
+                state: LangueAPI.Get("native", "discordPlaying_title", "Play a level"),
+                image: new Img(cap: LangueAPI.Get("native", "discordPlaying_caption", "Level : [0]", level.name)),
                 startTime: System.DateTime.UtcNow
            );
         }

@@ -139,10 +139,9 @@ public class Editeur : MonoBehaviour
                 if (level.victoryConditions == null) level.victoryConditions = new Level.VictoryConditions();
                 OpenCat(-1);
 
-                DiscordController.UpdatePresence(
-                    state: LangueAPI.Get("native", "discordEditor_title", "In the editor"), 
-                    detail: LangueAPI.Get("native", "discordEditor_subtitle", "Editing [0]", level.name),
-                    lImage: new DiscordClasses.Img("default")
+                DiscordAPI.Discord.NewActivity(
+                    state: LangueAPI.Get("native", "discordEditor_title", "In the editor"),
+                    detail: LangueAPI.Get("native", "discordEditor_subtitle", "Editing [0]", level.name)
                 );
                 cam.GetComponent<BaseControl>().returnScene = false;
 
@@ -194,12 +193,16 @@ public class Editeur : MonoBehaviour
     }
     #endregion
 
+    private void OnEnable()
+    {
+        if (level != null) DiscordAPI.Discord.NewActivity(
+             state: LangueAPI.Get("native", "discordEditor_title", "In the editor"),
+             detail: LangueAPI.Get("native", "discordEditor_subtitle", "Editing [0]", level.name)
+         );
+    }
     private void Start()
     {
-        DiscordController.UpdatePresence(
-            state: LangueAPI.Get("native", "discordEditor_title", "In the editor"), 
-            lImage: new DiscordClasses.Img("default")
-        );
+        DiscordAPI.Discord.NewActivity(LangueAPI.Get("native", "discordEditor_title", "In the editor"));
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         cam.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, -10);
         cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;

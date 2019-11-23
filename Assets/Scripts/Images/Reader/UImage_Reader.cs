@@ -90,7 +90,7 @@ namespace AngryDash.Image.Reader
             }
 
             StartAnimating(0);
-            if(GetComponent<Selectable>()?.interactable == false) StartAnimating(3);
+            if (GetComponent<Selectable>()?.interactable == false) StartAnimating(3);
             return this;
         }
 

@@ -1,5 +1,5 @@
-﻿using _Image = UnityEngine.UI.Image;
-using UnityEngine;
+﻿using UnityEngine;
+using _Image = UnityEngine.UI.Image;
 
 namespace AngryDash.Image.Reader
 {

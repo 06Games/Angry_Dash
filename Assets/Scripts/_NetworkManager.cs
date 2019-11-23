@@ -75,9 +75,9 @@ public class _NetworkManager : NetworkBehaviour
         StartData();
         mapRequested = false;
 
-        DiscordController.UpdatePresence(
-            state: LangueAPI.Get("native", "discordServer_title", "Play in a server"), 
-            lImage: new DiscordClasses.Img("default", LangueAPI.Get("native", "discordServer_caption", "Server : [0]:[1]", adress, port.ToString())),
+        DiscordAPI.Discord.NewActivity(
+            state: LangueAPI.Get("native", "discordServer_title", "Play in a server"),
+            image: new DiscordAPI.Img(cap: LangueAPI.Get("native", "discordServer_caption", "Server : [0]:[1]", adress, port.ToString())),
             startTime: DateTime.UtcNow
         );
         History.LvlPlayed(adress + ":" + port, "S", "");

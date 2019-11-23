@@ -76,10 +76,7 @@ public class Intro : MonoBehaviour
     IEnumerator PlayEnd()
     {
         yield return new WaitForEndOfFrame();
-        DiscordController.UpdatePresence(
-            state: AngryDash.Language.LangueAPI.Get("native", "discordStarting_title", "Starting the game"), 
-            lImage: new DiscordClasses.Img("default")
-        );
+        DiscordAPI.Discord.NewActivity(AngryDash.Language.LangueAPI.Get("native", "discordStarting_title", "Starting the game"));
         Fond.SetActive(false);
 
         var DM = GameObject.Find("Dependencies").GetComponent<DependenciesManager>();
