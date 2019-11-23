@@ -67,7 +67,7 @@ public class DiscordController : MonoBehaviour
         else if (startTime == -1)
             presence.Timestamps.Start = 0;
 
-        activityManager.UpdateActivity(presence, (res) =>
+        activityManager?.UpdateActivity(presence, (res) =>
         {
             if (res == Result.Ok) Logging.Log("Discord activity updated", LogType.Log);
         });
