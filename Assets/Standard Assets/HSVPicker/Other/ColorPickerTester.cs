@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ColorPickerTester : MonoBehaviour 
 {
-
+#pragma warning disable CS0109
     public new Renderer renderer;
     public ColorPicker picker;
 

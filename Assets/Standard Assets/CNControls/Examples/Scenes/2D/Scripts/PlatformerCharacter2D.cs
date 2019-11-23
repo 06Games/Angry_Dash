@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 
 // Just in case so no "duplicate definition" stuff shows up
@@ -6,6 +6,7 @@ namespace UnityStandardAssets.Copy._2D
 {
     public class PlatformerCharacter2D : MonoBehaviour
     {
+#pragma warning disable CS0649
         [SerializeField]
         private float m_MaxSpeed = 10f;                    // The fastest the player can travel in the x axis.
         [SerializeField]

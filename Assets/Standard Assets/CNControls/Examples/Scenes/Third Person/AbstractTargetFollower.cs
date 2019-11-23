@@ -1,5 +1,4 @@
-using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace UnityStandardAssets.Cameras
 {
@@ -12,12 +11,13 @@ namespace UnityStandardAssets.Cameras
             ManualUpdate, // user must call to update camera
         }
 
+#pragma warning disable CS0649
         [SerializeField] protected Transform m_Target;            // The target object to follow
         [SerializeField] private bool m_AutoTargetPlayer = true;  // Whether the rig should automatically target the player.
         [SerializeField] private UpdateType m_UpdateType;         // stores the selected update type
 
         protected Rigidbody targetRigidbody;
-
+        
 
         protected virtual void Start()
         {
