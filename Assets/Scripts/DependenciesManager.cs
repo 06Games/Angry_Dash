@@ -68,6 +68,9 @@ public class DependenciesManager : MonoBehaviour
                 if (rpDir.Exists && rpDir.GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length) == downloadList[i].GetItem("size").value<long>()) continue;
 
                 string rpURL = downloadList[i].GetItem("name").Value;
+#if UNITY_EDITOR
+                rpURL = rpURL.Replace("https://github.com/06-Games/Angry-Dash/blob/", "files/").Replace("builds/", "");
+#endif
                 if (!Uri.IsWellFormedUriString(rpURL, UriKind.Absolute)) rpURL = ressourcesURL + rpURL; //If the URL is relative, create an absolute one
                 using (UnityWebRequest webRequest = UnityWebRequest.Get(rpURL))
                 {
