@@ -59,13 +59,29 @@ namespace DiscordAPI
             if (discord == null)
             {
                 Logging.Log("Discord API is starting", LogType.Log);
-                discord = new discord(470264480786284544, (ulong)CreateFlags.Default);
+                discord = new discord(470264480786284544, (ulong)CreateFlags.NoRequireDiscord);
                 activityManager = discord.GetActivityManager();
             }
         }
         void OnDisable() { discord.Dispose(); }
         void Update() { discord.RunCallbacks(); }
 #endif
+
+        public static void Token(Action<string> callback)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+#if UNITY_STANDALONE || UNITY_EDITOR
+                discord.GetApplicationManager().GetOAuth2Token((Result result, ref OAuth2Token oauth2) =>
+                {
+                    token = oauth2.AccessToken;
+                    if (result != Result.Ok) Debug.LogError(result);
+                });
+#endif
+            }
+            callback(token);
+        }
+        static string token;
     }
 
     /// <summary>Discord image previously created at the address https://discordapp.com/developers/applications/ </summary>

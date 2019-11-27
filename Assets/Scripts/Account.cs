@@ -1,4 +1,5 @@
-﻿using FileFormat.XML;
+﻿using Discord;
+using FileFormat.XML;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -47,16 +48,8 @@ public class Account : MonoBehaviour
                 string password = auth.GetItem("password").Value;
                 FindObjectOfType<MonoBehaviour>().StartCoroutine(ContactServer($"{apiUrl}auth/connectAccount.php?id={id}&password={password}", complete));
             }
-            else if (provider == "Google")
-            {
-                string token = "";
-#if UNITY_ANDROID
-                try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
-                catch { }
-#endif
-                if (!string.IsNullOrEmpty(token)) FindObjectOfType<MonoBehaviour>().StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", complete));
-                else complete(false, "");
-            }
+            else if (provider == "Google") GoogleSignIn(complete);
+            else if (provider == "Discord") DiscordSignIn(complete);
             else complete(false, "");
         }
         else complete(false, "");
@@ -138,6 +131,28 @@ public class Account : MonoBehaviour
         Logging.Log("Saving...");
         File.WriteAllText(accountFile, xml.xmlFile.ToString(false));
     }
+
+
+
+    public static void GoogleSignIn(Action<bool, string> complete)
+    {
+        string token = "";
+#if UNITY_ANDROID
+                try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
+                catch { }
+#endif
+        if (!string.IsNullOrEmpty(token)) FindObjectOfType<MonoBehaviour>().StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", complete));
+        else complete(false, "");
+    }
+
+    public static void DiscordSignIn(Action<bool, string> complete)
+    {
+        DiscordAPI.Discord.Token((token) =>
+        {
+            if (!string.IsNullOrEmpty(token)) FindObjectOfType<MonoBehaviour>().StartCoroutine(ContactServer($"{apiUrl}auth/connectDiscord.php?token={token}", complete));
+            else complete(false, "");
+        });
+    }
     #endregion
 
     #region Scene
@@ -157,7 +172,6 @@ public class Account : MonoBehaviour
                 complete += () => SceneManager.LoadScene(args[1]);
 
                 transform.GetChild(1).gameObject.SetActive(true);
-                CheckAccountFile(Complete);
             }
         }
     }
@@ -194,15 +208,21 @@ public class Account : MonoBehaviour
     }
     public void SignIn_Google()
     {
-        string token = "";
-#if UNITY_ANDROID
-        try { token = GooglePlayGames.PlayGamesPlatform.Instance.GetIdToken(); }
-        catch { }
-#endif
         transform.GetChild(1).gameObject.SetActive(true);
-        if (!string.IsNullOrEmpty(token)) StartCoroutine(ContactServer($"{apiUrl}auth/connectGoogle.php?token={token}", Complete));
-        else Complete(false, "");
-        Save("Google", new Dictionary<string, string>());
+        GoogleSignIn((success, msg) =>
+        {
+            Complete(success, msg);
+            Save("Google", new Dictionary<string, string>());
+        });
+    }
+    public void SignIn_Discord()
+    {
+        transform.GetChild(1).gameObject.SetActive(true);
+        DiscordSignIn((success, msg) =>
+        {
+            Complete(success, msg);
+            Save("Discord", new Dictionary<string, string>());
+        });
     }
 
     public void Skip() { complete(); }

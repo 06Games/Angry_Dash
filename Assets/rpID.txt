@@ -260,3 +260,4 @@ native/TRACES/1/Success
 native/TRACES/1/SuccessEnd
 native/TRACES/1/Missed
 native/TRACES/1/MissedEnd
+native/GUI/startUp/account/discord
