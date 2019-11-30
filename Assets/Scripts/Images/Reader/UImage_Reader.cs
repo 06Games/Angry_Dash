@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -13,7 +15,7 @@ namespace AngryDash.Image.Reader
         public bool TextConfiguration = true;
 
         //Parameters
-        Sprite_API_Data[] data = new Sprite_API_Data[4];
+        List<Sprite_API_Data> data = new List<Sprite_API_Data>();
         UniversalImage Image;
 
         //Data
@@ -22,7 +24,7 @@ namespace AngryDash.Image.Reader
         readonly uint[] Played = new uint[4];
         readonly int[] Frame = new int[4];
         [HideInInspector]
-        public JSON_PARSE_DATA.Type[] Type = new JSON_PARSE_DATA.Type[4];
+        public Texture.Type[] Type = new Texture.Type[4];
 
         public Vector2 FrameSize
         {
@@ -35,14 +37,14 @@ namespace AngryDash.Image.Reader
         }
 
         void Start() { if (!string.IsNullOrEmpty(baseID)) Load(); }
-        public UImage_Reader Load(Sprite_API_Data spriteData) { data = new Sprite_API_Data[] { spriteData }; return this; }
-        public UImage_Reader Load(Sprite_API_Data[] spriteData) { data = spriteData; return this; }
+        public UImage_Reader Load(Sprite_API_Data spriteData) { data = new List<Sprite_API_Data>() { spriteData }; return this; }
+        public UImage_Reader Load(Sprite_API_Data[] spriteData) { data = new List<Sprite_API_Data>(spriteData); return this; }
         public UImage_Reader Load()
         {
             JSON_PARSE_DATA jsonData = JSON_API.Parse(baseID);
 
-            data = new Sprite_API_Data[4];
-            for (int i = 0; i < data.Length; i++) data[i] = Sprite_API.GetSprites(jsonData.path[i], jsonData.border[i]);
+            data = new List<Sprite_API_Data>();
+            foreach(var texture in jsonData.textures) data.Add(Sprite_API.GetSprites(texture.path, texture.border));
 
             ApplyJson(jsonData);
             return this;
@@ -51,9 +53,8 @@ namespace AngryDash.Image.Reader
         {
             JSON_PARSE_DATA jsonData = JSON_API.Parse(id, null, true);
 
-            data = new Sprite_API_Data[4];
-            for (int i = 0; i < data.Length; i++)
-                data[i] = Sprite_API.GetSprites(jsonData.path[i], jsonData.border[i]);
+            data = new List<Sprite_API_Data>();
+            foreach(var texture in jsonData.textures) data.Add(Sprite_API.GetSprites(texture.path, texture.border));
 
             ApplyJson(jsonData);
             return this;
@@ -70,7 +71,7 @@ namespace AngryDash.Image.Reader
                 lastInteractable = GetComponent<Selectable>().interactable;
                 GetComponent<Selectable>().transition = Selectable.Transition.None;
             }
-            Type = data.type;
+            Type = data.textures.Select(t => t.type).ToArray();
 
             if (TextConfiguration)
             {
@@ -120,12 +121,12 @@ namespace AngryDash.Image.Reader
         public bool StartAnimating(int index, int frameAddition, bool keepFrame = true)
         {
             if (data == null) return false;
-            if (index >= data.Length) return false;
+            if (index >= data.Count) return false;
             if (data[index] == null) return false;
             animationChanged?.Invoke(index);
 
             var thisImage = new UniversalImage(gameObject);
-            if ((int)Type[index] <= 3 || (Type[index] == JSON_PARSE_DATA.Type.Fit & thisImage.image != null))
+            if ((int)Type[index] <= 3 || (Type[index] == Texture.Type.Fit & thisImage.image != null))
             {
                 if (Image?.gameObject?.name == name + " - " + GetType().Name)
                 {
@@ -144,12 +145,12 @@ namespace AngryDash.Image.Reader
             }
 
             Image.type = (int)Type[index] > 3 ? SpriteDrawMode.Simple : (SpriteDrawMode)Type[index];
-            if (Type[index] == JSON_PARSE_DATA.Type.Fit)
+            if (Type[index] == Texture.Type.Fit)
             {
                 if (Image.image != null) Image.image.preserveAspect = true;
                 else if (Image.spriteR != null) gameObject.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             }
-            else if (Type[index] == JSON_PARSE_DATA.Type.Envelope) Image.gameObject.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            else if (Type[index] == Texture.Type.Envelope) Image.gameObject.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
 
             if (data[index].Frames.Length > 1)
             {
@@ -174,7 +175,7 @@ namespace AngryDash.Image.Reader
         public void StopAnimating(int index, bool keepFrame)
         {
             if (data == null) return;
-            if (index >= data.Length) return;
+            if (index >= data.Count) return;
             if (data[index] == null) return;
             if (data[index].Frames.Length > 1)
             {

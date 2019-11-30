@@ -6,10 +6,7 @@ namespace AngryDash.Image
     public class JSON_PARSE_DATA
     {
         [Header("Textures")]
-        public string[] path = new string[4];
-        [System.NonSerialized] public Vector4[] border = new Vector4[4];
-        public enum Type { Simple, Sliced, Tiled, Fit, Envelope }
-        public Type[] type = new Type[4];
+        public Texture[] textures = new Texture[4];
 
         [Space(10)]
         [Header("Text Components")]
@@ -19,5 +16,14 @@ namespace AngryDash.Image
         public bool textResize;
         public int textSize; //Only if textResize = false or for compatibility with layout groups
         public int[] textResizeMinAndMax = new int[2];  //Only works if textResize = true
+    }
+
+    [System.Serializable]
+    public class Texture
+    {
+        public string path;
+        [System.NonSerialized] public Vector4 border;
+        public enum Type { Simple, Sliced, Tiled, Fit, Envelope }
+        public Type type;
     }
 }

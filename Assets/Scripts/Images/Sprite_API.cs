@@ -16,7 +16,7 @@ namespace AngryDash.Image
         public static string spritesPath(string id)
         {
 #if UNITY_EDITOR
-            if (!id.Contains("bg") & !id.Contains("languages/") & !id.Contains("common/") & !string.IsNullOrEmpty(id))
+            if (!id.Contains("bg") & !id.Contains("languages/") & !id.Contains("common/") & !id.Contains("startUp/button") & !string.IsNullOrEmpty(id))
             {
                 string fid = id.Replace(" basic", "").Replace(" hover", "").Replace(" pressed", "").Replace(" disabled", "");
                 string idPath = Application.dataPath + "/rpID.txt";

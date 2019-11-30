@@ -46,7 +46,7 @@ public class Background : MonoBehaviour
             if (sp[Selected].Frames.Length > 0)
             {
                 var json = jsonData[Selected].DeepClone();
-                json.type[0] = AngryDash.Image.JSON_PARSE_DATA.Type.Simple;
+                json.textures[0].type = AngryDash.Image.Texture.Type.Simple;
                 CP.transform.GetChild(0).GetChild(0).GetComponent<UImage_Reader>().Load(sp[Selected]).ApplyJson(json);
             }
         }
@@ -74,7 +74,7 @@ public class Background : MonoBehaviour
 
                 AngryDash.Image.JSON_PARSE_DATA jData = AngryDash.Image.JSON_API.Parse(baseID);
                 jsons.Add(jData);
-                sprites.Add(AngryDash.Image.Sprite_API.GetSprites(jData.path[0], jData.border[0]));
+                sprites.Add(AngryDash.Image.Sprite_API.GetSprites(jData.textures[0].path, jData.textures[0].border));
             }
             sp = sprites.ToArray();
             jsonData = jsons.ToArray();

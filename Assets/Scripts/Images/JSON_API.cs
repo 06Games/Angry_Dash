@@ -68,15 +68,14 @@ namespace AngryDash.Image
                     FileFormat.JSON category = json.GetCategory("textures");
 
                     string[] paramNames = new string[] { "basic", "hover", "pressed", "disabled" };
-                    if (data.path == null) data.path = new string[paramNames.Length];
-                    if (data.border == null) data.border = new Vector4[paramNames.Length];
-                    if (data.type == null) data.type = new JSON_PARSE_DATA.Type[paramNames.Length];
+                    if (data.textures == null) data.textures = new Texture[paramNames.Length];
                     for (int i = 0; i < paramNames.Length; i++)
                     {
-                        if (string.IsNullOrEmpty(data.path[i]) | !File.Exists(data.path[i]))
+                        if (data.textures[i] == null) data.textures[i] = new Texture();
+                        if (string.IsNullOrEmpty(data.textures[i].path) | !File.Exists(data.textures[i].path))
                         {
-                            if (path) data.path[i] = ID + " " + paramNames[i] + ".png";
-                            else data.path[i] = Sprite_API.spritesPath(ID + " " + paramNames[i] + ".png");
+                            if (path) data.textures[i].path = ID + " " + paramNames[i] + ".png";
+                            else data.textures[i].path = Sprite_API.spritesPath(ID + " " + paramNames[i] + ".png");
                         }
 
                         FileFormat.JSON paramCategory = category.GetCategory(paramNames[i]);
@@ -84,22 +83,22 @@ namespace AngryDash.Image
                         {
                             //Border
                             FileFormat.JSON borderCategory = paramCategory.GetCategory("border");
-                            if (borderCategory.ContainsValues & data.border[i] == default)
+                            if (borderCategory.ContainsValues & data.textures[i].border == default)
                             {
-                                if (borderCategory.ValueExist("left")) data.border[i].x = borderCategory.Value<float>("left");
-                                if (borderCategory.ValueExist("right")) data.border[i].z = borderCategory.Value<float>("right");
-                                if (borderCategory.ValueExist("top")) data.border[i].w = borderCategory.Value<float>("top");
-                                if (borderCategory.ValueExist("bottom")) data.border[i].y = borderCategory.Value<float>("bottom");
+                                if (borderCategory.ValueExist("left")) data.textures[i].border.x = borderCategory.Value<float>("left");
+                                if (borderCategory.ValueExist("right")) data.textures[i].border.z = borderCategory.Value<float>("right");
+                                if (borderCategory.ValueExist("top")) data.textures[i].border.w = borderCategory.Value<float>("top");
+                                if (borderCategory.ValueExist("bottom")) data.textures[i].border.y = borderCategory.Value<float>("bottom");
                             }
 
                             //Path
-                            if (string.IsNullOrEmpty(data.path[i]) & paramCategory.ValueExist("path"))
+                            if (string.IsNullOrEmpty(data.textures[i].path) & paramCategory.ValueExist("path"))
                             {
-                                if (path) data.path[i] = new FileInfo(ID + ".json").Directory.FullName + "/" + paramCategory.Value<string>("path");
-                                else data.path[i] = new FileInfo(Sprite_API.spritesPath(ID + ".json")).Directory.FullName + "/" + paramCategory.Value<string>("path");
+                                if (path) data.textures[i].path = new FileInfo(ID + ".json").Directory.FullName + "/" + paramCategory.Value<string>("path");
+                                else data.textures[i].path = new FileInfo(Sprite_API.spritesPath(ID + ".json")).Directory.FullName + "/" + paramCategory.Value<string>("path");
                             }
 
-                            if (paramCategory.ValueExist("type")) System.Enum.TryParse(paramCategory.Value<string>("type"), out data.type[i]);
+                            if (paramCategory.ValueExist("type")) System.Enum.TryParse(paramCategory.Value<string>("type"), out data.textures[i].type);
                         }
                     }
                 }
