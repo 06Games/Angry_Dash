@@ -8,6 +8,7 @@ public class RessourcePackLoader : MonoBehaviour
 {
     public TextAsset IDs;
     public UnityEngine.UI.Text Status;
+    public UnityEngine.UI.Text Infos;
 
     void Start()
     {
@@ -25,6 +26,8 @@ public class RessourcePackLoader : MonoBehaviour
         var sw = new System.Diagnostics.Stopwatch();
         sw.Start();
 
+        int state = 0;
+        UnityThread.executeCoroutine(UpdateData());
         for (int i = 0; i < ids.Length; i++)
         {
             if (!string.IsNullOrEmpty(ids[i]))
@@ -35,16 +38,13 @@ public class RessourcePackLoader : MonoBehaviour
                 string jsonID = path + baseID + ".json";
                 if (File.Exists(jsonID)) json = new FileFormat.JSON(File.ReadAllText(jsonID));
                 AngryDash.Image.JSON_PARSE_DATA jsonData = AngryDash.Image.JSON_API.Parse(baseID, json);
+                state = i;
 
                 for (int f = 0; f < 4; f++)
                     AngryDash.Image.Sprite_API.Load(jsonData.path[f], jsonData.border[f]);
 
                 yield return new WaitForEndOfFrame();
-                Status.text = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", i, ids.Length - 1);
 
-                var mem = Profiler.GetTotalReservedMemoryLong() / 1048576f;
-                if (maxMem < mem) maxMem = mem;
-                if (i / (float)reloadEach == i / reloadEach) Resources.UnloadUnusedAssets();
             }
         }
 
@@ -52,5 +52,19 @@ public class RessourcePackLoader : MonoBehaviour
         Debug.Log(sw.Elapsed.TotalSeconds.ToString("0.000").Replace(".", ",") + "\n" + maxMem.ToString("0.000").Replace(".", ","));
 
         SceneManager.LoadScene("Home", SceneManager.args);
+
+        IEnumerator UpdateData()
+        {
+            while (state < ids.Length)
+            {
+                Status.text = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", state, ids.Length);
+                Infos.text = LangueAPI.Get("native", "", "[0] GB - [1] elapsed", (Profiler.GetTotalReservedMemoryLong() / 1048576f / 1000F).ToString("0.000"), sw.Elapsed.ToString("mm\\:ss"));
+                yield return new WaitForEndOfFrame();
+
+                var mem = Profiler.GetTotalReservedMemoryLong() / 1048576f;
+                if (maxMem < mem) maxMem = mem;
+                Resources.UnloadUnusedAssets();
+            }
+        }
     }
 }
