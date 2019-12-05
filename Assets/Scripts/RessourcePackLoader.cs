@@ -15,7 +15,6 @@ public class RessourcePackLoader : MonoBehaviour
         StartCoroutine(Load());
     }
 
-    int reloadEach = 25;
     IEnumerator Load()
     {
         var path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
@@ -26,27 +25,30 @@ public class RessourcePackLoader : MonoBehaviour
         var sw = new System.Diagnostics.Stopwatch();
         sw.Start();
 
-        int state = 0;
+        double state = 0;
         UnityThread.executeCoroutine(UpdateData());
         for (int i = 0; i < ids.Length; i++)
         {
             if (!string.IsNullOrEmpty(ids[i]))
             {
-                string baseID = ids[i].Replace("\r", "");
-
                 FileFormat.JSON json = new FileFormat.JSON("");
+                string baseID = ids[i].Replace("\r", "");
                 string jsonID = path + baseID + ".json";
                 if (File.Exists(jsonID)) json = new FileFormat.JSON(File.ReadAllText(jsonID));
                 AngryDash.Image.JSON_PARSE_DATA jsonData = AngryDash.Image.JSON_API.Parse(baseID, json);
-                state = i;
 
-                for (int f = 0; f < 4; f++)
-                    AngryDash.Image.Sprite_API.Load(jsonData.path[f], jsonData.border[f]);
+                foreach (var texture in jsonData.textures)
+                {
+                    //if (tasks.Where(t => !t.IsCompleted).Count() >= 5) yield return new WaitForEndOfFrame(); //Max 5 loads in the same time
 
-                yield return new WaitForEndOfFrame();
-
+                    AngryDash.Image.Sprite_API.LoadAsync(texture.path, () => state += 1D / jsonData.textures.Length, texture.border);
+                }
+                yield return new WaitWhile(() => state < i);
             }
+            else state++;
         }
+
+        while (state < ids.Length) { yield return new WaitForEndOfFrame(); }
 
         sw.Stop();
         Debug.Log(sw.Elapsed.TotalSeconds.ToString("0.000").Replace(".", ",") + "\n" + maxMem.ToString("0.000").Replace(".", ","));
@@ -57,13 +59,16 @@ public class RessourcePackLoader : MonoBehaviour
         {
             while (state < ids.Length)
             {
-                Status.text = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", state, ids.Length);
-                Infos.text = LangueAPI.Get("native", "", "[0] GB - [1] elapsed", (Profiler.GetTotalReservedMemoryLong() / 1048576f / 1000F).ToString("0.000"), sw.Elapsed.ToString("mm\\:ss"));
-                yield return new WaitForEndOfFrame();
-
                 var mem = Profiler.GetTotalReservedMemoryLong() / 1048576f;
                 if (maxMem < mem) maxMem = mem;
-                Resources.UnloadUnusedAssets();
+
+                var status = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", state.ToString("0.00"), ids.Length.ToString());
+                if(Status.text != status) Resources.UnloadUnusedAssets();
+
+                Status.text = status;
+                if (Infos.IsDestroyed()) break; 
+                Infos.text = LangueAPI.Get("native", "", "[0] GB - [1] elapsed", (Profiler.GetTotalReservedMemoryLong() / 1048576f / 1000F).ToString("0.000"), sw.Elapsed.ToString("mm\\:ss"));
+                yield return new WaitForEndOfFrame();
             }
         }
     }

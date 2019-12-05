@@ -129,6 +129,7 @@ namespace LibAPNG
                 frames.Insert(0, defaultImage);
                 DefaultImageIsAnimated = true;
             }
+            else otherChunks.ForEach(defaultImage.AddOtherChunk);
 
             // Now we should apply every chunk in otherChunks to every frame.
             frames.ForEach(f => otherChunks.ForEach(f.AddOtherChunk));

@@ -1,6 +1,9 @@
-﻿using LibAPNG;
+﻿using Hjg.Pngcs;
+using LibAPNG;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace AngryDash.Image
@@ -41,72 +44,87 @@ namespace AngryDash.Image
         /// <param name="filePath">Path to the file</param>
         /// <param name="border">Border of the Sprites</param>
         /// <returns></returns>
+        public static async Task<Sprite_API_Data> GetSpritesAsync(string filePath, Vector4 border = new Vector4(), bool forcePNG = false)
+        {
+            await Task.Run(() => LoadAsync(filePath, () => { }, border, forcePNG));
+            return new CacheManager.Cache("Ressources/textures").Get<Sprite_API_Data>(filePath);
+        }
         public static Sprite_API_Data GetSprites(string filePath, Vector4 border = new Vector4(), bool forcePNG = false)
         {
             Load(filePath, border, forcePNG);
             return new CacheManager.Cache("Ressources/textures").Get<Sprite_API_Data>(filePath);
         }
 
-        public static void Load(string filePath, Vector4 border = new Vector4(), bool forcePNG = false)
+        [System.Obsolete("Use LoadAsync")] public static void Load(string filePath, Vector4 border = new Vector4(), bool forcePNG = false) { }
+        public static void LoadAsync(string filePath, System.Action callback, Vector4 border = new Vector4(), bool forcePNG = false)
         {
-            CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures");
-            if (cache.ValueExist(filePath)) return;
-            if (File.Exists(filePath))
+            UnityThread.executeCoroutine(LoadC());
+            System.Collections.IEnumerator LoadC()
             {
-                APNG apng = new APNG(filePath);
-                Sprite_API_Data SAD = new Sprite_API_Data();
-
-                float[] Delay;
-                Sprite[] Frames;
-
-                if (apng.IsSimplePNG | !ConfigAPI.GetBool("video.APNG") | forcePNG) //PNG
+                CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures");
+                if (!cache.ValueExist(filePath) && File.Exists(filePath))
                 {
-                    Frames = new Sprite[1];
-                    Delay = new float[1] { 0 };
-                    Texture2D tex = new Texture2D(1, 1);
-                    tex.LoadImage(File.ReadAllBytes(filePath));
-                    tex = Tools.Texture2DExtensions.PremultiplyAlpha(tex);
-                    tex.Apply();
-                    Frames[0] = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f),
-                        100, 0, SpriteMeshType.FullRect, border);
-                    Frames[0].name = Path.GetFileNameWithoutExtension(filePath);
-                }
-                else //APNG
-                {
-                    Frames = new Sprite[apng.Frames.Length];
-                    Delay = new float[apng.Frames.Length];
-                    SAD.Repeat = apng.acTLChunk.NumPlays;
+                    APNG apng = new APNG(filePath);
+                    Sprite_API_Data SAD = new Sprite_API_Data();
+
+                    float[] Delay;
+                    Sprite[] Frames;
 
                     APNGFrameInfo info = new APNGFrameInfo(filePath, apng, 0, border);
-                    for (int i = 0; i < apng.Frames.Length; i++)
+                    Logging.Log("Loading: " + info.id);
+                    if (apng.IsSimplePNG | !ConfigAPI.GetBool("video.APNG") | forcePNG) //PNG
                     {
-                        if (apng.Frames[i].fcTLChunk.DelayNum == 0) Delay[i] = 10000;
-                        else if (apng.Frames[i].fcTLChunk.DelayDen == 0) Delay[i] = apng.Frames[i].fcTLChunk.DelayNum / 100F;
-                        else Delay[i] = apng.Frames[i].fcTLChunk.DelayNum / (float)apng.Frames[i].fcTLChunk.DelayDen;
-                        if (Delay[i] == 0) Delay[i] = 60;
+                        Frames = new Sprite[1];
+                        Delay = new float[1] { 0 };
+                        info.frame = apng.DefaultImage;
+                        GetSprite(info, (s) =>
+                        {
+                            Frames[0] = s;
+                            Frames[0].name = Path.GetFileNameWithoutExtension(filePath);
+                        });
+                    }
+                    else //APNG
+                    {
+                        Frames = new Sprite[apng.Frames.Length];
+                        Delay = new float[apng.Frames.Length];
+                        SAD.Repeat = apng.acTLChunk.NumPlays;
 
-                        info.index = i;
-                        Frames[i] = GetSprite(info);
-                        Frames[i].name = Path.GetFileNameWithoutExtension(filePath) + " n°" + i;
+                        for (int i = 0; i < apng.Frames.Length; i++)
+                        {
+                            if (apng.Frames[i].fcTLChunk.DelayNum == 0) Delay[i] = 10000;
+                            else if (apng.Frames[i].fcTLChunk.DelayDen == 0) Delay[i] = apng.Frames[i].fcTLChunk.DelayNum / 100F;
+                            else Delay[i] = apng.Frames[i].fcTLChunk.DelayNum / (float)apng.Frames[i].fcTLChunk.DelayDen;
+                            if (Delay[i] == 0) Delay[i] = 60;
+
+                            info.index = i;
+                            info.frame = apng.Frames[i];
+                            GetSprite(info, (s) =>
+                            {
+                                Frames[i] = s;
+                                Frames[i].name = Path.GetFileNameWithoutExtension(filePath);
+                            });
+                            yield return new WaitWhile(() => Frames[i] == null);
+                        }
                     }
 
-                    for (int i = 0; i < info.errors.Length; i++)
-                        Logging.Log(info.errors[i], LogType.Error);
+                    foreach (var error in info.errors) Logging.Log(error, LogType.Error);
+                    SAD.Frames = Frames;
+                    SAD.Delay = Delay;
+                    cache.Set(filePath, SAD);
+                    callback();
                 }
-
-                SAD.Frames = Frames;
-                SAD.Delay = Delay;
-                cache.Set(filePath, SAD);
+                else callback();
             }
         }
 
         public class APNGFrameInfo
         {
             public string id { get; set; }
+            public Frame frame { get; set; }
             public APNG apng { get; set; }
             public Vector4 border { get; set; }
             public int index { get; set; }
-            public Texture2D buffer { get; set; }
+            public Texture buffer { get; set; }
             public DisposeOps dispose { get; set; }
             public string[] errors { get; set; }
 
@@ -116,79 +134,182 @@ namespace AngryDash.Image
                 apng = png;
                 border = Border;
                 index = i;
-                buffer = CreateTransparent(png.IHDRChunk.Width, png.IHDRChunk.Height);
-                if (apng.DefaultImageIsAnimated) dispose = apng.DefaultImage.fcTLChunk.DisposeOp;
+                buffer = new Texture(apng.IHDRChunk.Width, apng.IHDRChunk.Height, (Texture.ColorType)apng.IHDRChunk.ColorType);
+                if (png.DefaultImageIsAnimated) dispose = png.DefaultImage.fcTLChunk.DisposeOp;
                 errors = new string[0];
             }
         }
 
-        static Sprite GetSprite(APNGFrameInfo info)
+        public class Texture
         {
-            Frame frame = info.apng.Frames[info.index];
+            List<int> pixels { get; set; } = new List<int>();
+            public uint width { get; private set; }
+            public uint height { get; private set; }
+            public int colorBand { get; private set; }
+            public enum ColorType { grayscale = 0, grayscaleA = 4, RGB = 2, RGBA = 6, palette = 3 }
 
-            Texture2D frameImg = new Texture2D(1, 1);
-            frameImg.LoadImage(frame.GetStream().ToArray());
-
-            Texture2D frameTampon = info.buffer;
-            Vector2 offset = new Vector2(frame.fcTLChunk.XOffset, info.buffer.height - frame.fcTLChunk.YOffset - frameImg.height);
-            if (frame.fcTLChunk.BlendOp == BlendOps.APNGBlendOpOver)
+            public Texture(int x, int y, ColorType colorBand)
             {
-                Color[] fgColor = frameImg.GetPixels();
-                Color[] bgColor = frameTampon.GetPixels((int)offset.x, (int)offset.y, frameImg.width, frameImg.height);
-                for (int c = 0; c < fgColor.Length; c++)
+                var background = new int[4];
+                if (colorBand == ColorType.grayscale) background = new int[1];
+                else if (colorBand == ColorType.grayscaleA) background = new int[2];
+                else if (colorBand == ColorType.RGB) background = new int[3];
+                else if (colorBand == ColorType.RGBA) background = new int[4];
+                else if (colorBand == ColorType.palette) background = new int[3];
+
+                Instanciate(x, y, background);
+            }
+            public Texture(int x, int y, int[] background = null) { Instanciate(x, y, background ?? new int[4]); }
+            void Instanciate(int x, int y, int[] background)
+            {
+                for (int i = 0; i < x * y; i++) pixels.AddRange(background);
+
+                width = (uint)x;
+                height = (uint)y;
+                colorBand = background.Length;
+            }
+
+            public List<int> GetPixels(long xOffset, long yOffset, long xSize, long ySize)
+            {
+                if (xOffset == 0 & yOffset == 0 & xSize == width & ySize == height) return pixels;
+                else
                 {
-                    if (fgColor[c].a == 0) continue;
-                    else if (fgColor[c].a == 255) bgColor[c] = fgColor[c];
-                    else
-                    {
-                        for (int i = 0; i < 3; i++)
-                            bgColor[c][i] = fgColor[c].a * fgColor[c][i] + (1 - fgColor[c].a) * bgColor[c][i];
-                    }
+                    var bounds = WorkOnPixels(xOffset, yOffset, xSize, ySize);
+                    return pixels.GetRange(bounds.Item1, bounds.Item2 - bounds.Item1);
                 }
-                frameTampon.SetPixels((int)offset.x, (int)offset.y, frameImg.width, frameImg.height, bgColor);
             }
-            else if (frame.fcTLChunk.BlendOp == BlendOps.APNGBlendOpSource)
+            public void SetPixels(long xOffset, long yOffset, long xSize, long ySize, List<int> colors)
             {
-                frameTampon.SetPixels((int)offset.x, (int)offset.y, frameImg.width, frameImg.height, //Image position
-                frameImg.GetPixels(0, 0, frameImg.width, frameImg.height)); //Copy image
+                if (pixels.Count == colors.Count) pixels = colors;
+                else
+                {
+                    var bounds = WorkOnPixels(xOffset, yOffset, xSize, ySize);
+                    for (int i = bounds.Item1; i < bounds.Item2 & i < colors.Count - bounds.Item1; i++) pixels[i] = colors[i - bounds.Item1];
+                }
+            }
+            (int, int) WorkOnPixels(long xOffset, long yOffset, long xSize, long ySize)
+            {
+                long minIndex = width * yOffset + xOffset;
+                long maxIndex = width * (yOffset + ySize - 1) + (xOffset + xSize);
+                return ((int)minIndex * colorBand, (int)maxIndex * colorBand);
             }
 
-            info.dispose = frame.fcTLChunk.DisposeOp;
-            TamponCleaner(info, frameTampon);
+            public Sprite ToSprite(Vector4 border)
+            {
+                var size = new Vector2Int((int)width, (int)height);
+                var format = TextureFormat.RGB24;
+                if (colorBand == 1) format = TextureFormat.Alpha8;
+                else if (colorBand == 3) format = TextureFormat.RGB24;
+                else if (colorBand == 4) format = TextureFormat.RGBA32;
+                var texture = new Texture2D(size.x, size.y, format, false);
 
-            frameTampon.Apply();
-            return Sprite.Create(frameTampon, new Rect(0, 0, frameTampon.width, frameTampon.height), new Vector2(.5f, .5f),
-                        100, 0, SpriteMeshType.FullRect, info.border);
+                try { texture.LoadRawTextureData(pixels.Select(i => (byte)i).ToArray()); }
+                catch { Debug.LogError("[" + colorBand + " - " + format + "] Espected : " + texture.GetRawTextureData().Length + ", Got : " + pixels.Count); }
+                FlipTextureVertically(texture);
 
+                texture.Apply();
+                return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100, 0, SpriteMeshType.FullRect, border);
+            }
         }
 
-        static void TamponCleaner(APNGFrameInfo info, Texture2D frameTampon)
+        public static void FlipTextureVertically(Texture2D original)
+        {
+            var originalPixels = original.GetPixels();
+
+            Color[] newPixels = new Color[originalPixels.Length];
+
+            int width = original.width;
+            int rows = original.height;
+
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < rows; y++)
+                {
+                    newPixels[x + y * width] = originalPixels[x + (rows - y - 1) * width];
+                }
+            }
+
+            original.SetPixels(newPixels);
+            original.Apply();
+        }
+
+        static void GetSprite(APNGFrameInfo info, System.Action<Sprite> callback)
+        {
+            Texture frameTampon = info.buffer;
+            Task.Run(() =>
+            {
+                Frame frame = info.frame;
+                uint[] size = frame.fcTLChunk != null ? new uint[] { frame.fcTLChunk.Width, frame.fcTLChunk.Height } : new uint[] { frameTampon.width, frameTampon.height };
+                long[] offset = frame.fcTLChunk != null ? new long[] { frame.fcTLChunk.XOffset, info.buffer.height - frame.fcTLChunk.YOffset - frame.fcTLChunk.Height } : new long[] { 0, 0 };
+                var bgColors = frameTampon.GetPixels(offset[0], offset[1], size[0], size[1]);
+                frameTampon.SetPixels(offset[0], offset[1], size[0], size[1], ProcessSprite(info, bgColors));
+                if (frame.fcTLChunk != null) TamponCleaner(info, frameTampon);
+            }).ContinueWith((t) =>
+            {
+                if (t.Exception != null) Debug.LogError(info.id + "\n" + t.Exception);
+                UnityThread.executeInUpdate(() => callback(frameTampon.ToSprite(info.border)));
+            });
+        }
+
+        static List<int> ProcessSprite(APNGFrameInfo info, List<int> bgColors)
+        {
+            PngReader png = new PngReader(new MemoryStream(info.frame.GetStream().ToArray()));
+            var blendOp = info.frame.fcTLChunk != null ? info.frame.fcTLChunk.BlendOp : BlendOps.APNGBlendOpSource;
+            int colorNb = png.ImgInfo.Channels;
+            if (blendOp == BlendOps.APNGBlendOpSource) bgColors.Clear();
+
+            var PLTE = info.frame.OtherChunks.FirstOrDefault(c => c.ChunkType == "PLTE")?.ChunkData.ToList();
+
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+            for (int y = 0; y < png.ImgInfo.Rows; y++)
+            {
+                var row = png.ReadRow(y).Scanline;
+
+                if (blendOp == BlendOps.APNGBlendOpSource && info.apng.IHDRChunk.ColorType != 3) bgColors.AddRange(row);
+                else
+                {
+                    int bgIndex = y * info.buffer.colorBand;
+                    for (int x = 0, xIndex = 0; x < png.ImgInfo.Cols & xIndex < row.Length; xIndex += colorNb, x++)
+                    {
+                        if (blendOp == BlendOps.APNGBlendOpOver)
+                        {
+                            try
+                            {
+                                int a = colorNb == 4 ? row[xIndex + 3] : 255;
+                                if (a == 255) bgColors[bgIndex + x] = row[xIndex];
+                                else if (a > 0) for (int i = 0; i < 3; i++) bgColors[bgIndex + i] = a * row[xIndex + i] + (1 - a) * row[xIndex + i];
+                            }
+                            catch
+                            {
+                                Debug.LogError(bgColors.Count + " - " + bgIndex + "\n" + png.ImgInfo.Cols + ", " + png.ImgInfo.Rows + "\n" + y);
+                            }
+                        }
+                        else if (blendOp == BlendOps.APNGBlendOpSource & PLTE != null)
+                        {
+                            if(PLTE.Count > row[xIndex] * 3 + 3) bgColors.AddRange(PLTE.GetRange(row[xIndex] * 3, 3).Select(c => (int)c));
+                        }
+                    }
+                }
+            }
+            Logging.Log("Done: " + info.id + "\n" + png.ImgInfo.Rows + " rows in " + sw.Elapsed + "\nBlend Op: " + blendOp);
+            png.End();
+            sw.Stop();
+
+            info.dispose = info.frame.fcTLChunk != null ? info.frame.fcTLChunk.DisposeOp : DisposeOps.APNGDisposeOpNone;
+            return bgColors;
+        }
+
+        static void TamponCleaner(APNGFrameInfo info, Texture frameTampon)
         {
             if (info.index == 0 & info.dispose == DisposeOps.APNGDisposeOpPrevious) //Previous in the first frame
                 info.dispose = DisposeOps.APNGDisposeOpBackground; //is treated as Background
 
             if (info.dispose == DisposeOps.APNGDisposeOpPrevious) { } //don't apply anything
             else if (info.dispose == DisposeOps.APNGDisposeOpBackground) //reset the buffer
-                info.buffer = CreateTransparent(info.apng.IHDRChunk.Width, info.apng.IHDRChunk.Height);
+                info.buffer = new Texture(info.apng.IHDRChunk.Width, info.apng.IHDRChunk.Height);
             else if (info.dispose == DisposeOps.APNGDisposeOpNone) //set the frame to the buffer
-            {
-                Texture2D texture_ = new Texture2D(info.apng.IHDRChunk.Width, info.apng.IHDRChunk.Height);
-                texture_.LoadRawTextureData(frameTampon.GetRawTextureData());
-                info.buffer = texture_;
-            }
-        }
-
-        static Texture2D CreateTransparent(int width, int height)
-        {
-            Texture2D texture_ = new Texture2D(width, height);
-
-            Color32 resetColor = new Color32(0, 0, 0, 0);
-            Color32[] resetColorArray = texture_.GetPixels32();
-            for (int i = 0; i < resetColorArray.Length; i++)
-                resetColorArray[i] = resetColor;
-
-            texture_.SetPixels32(resetColorArray);
-            return texture_;
+                info.buffer = frameTampon;
         }
     }
 }
