@@ -24,7 +24,7 @@ namespace AngryDash.Image.Reader
         readonly uint[] Played = new uint[4];
         readonly int[] Frame = new int[4];
         [HideInInspector]
-        public Texture.Type[] Type = new Texture.Type[4];
+        public JSON.Texture.Type[] Type = new JSON.Texture.Type[4];
 
         public Vector2 FrameSize
         {
@@ -41,7 +41,7 @@ namespace AngryDash.Image.Reader
         public UImage_Reader Load(Sprite_API_Data[] spriteData) { data = new List<Sprite_API_Data>(spriteData); return this; }
         public UImage_Reader Load()
         {
-            JSON_PARSE_DATA jsonData = JSON_API.Parse(baseID);
+            JSON.Data jsonData = JSON_API.Parse(baseID);
 
             data = new List<Sprite_API_Data>();
             foreach(var texture in jsonData.textures) data.Add(Sprite_API.GetSprites(texture.path, texture.border));
@@ -51,7 +51,7 @@ namespace AngryDash.Image.Reader
         }
         public UImage_Reader SetPath(string id)
         {
-            JSON_PARSE_DATA jsonData = JSON_API.Parse(id, null, true);
+            JSON.Data jsonData = JSON_API.Parse(id, null, true);
 
             data = new List<Sprite_API_Data>();
             foreach(var texture in jsonData.textures) data.Add(Sprite_API.GetSprites(texture.path, texture.border));
@@ -61,7 +61,7 @@ namespace AngryDash.Image.Reader
         }
 
 
-        public UImage_Reader ApplyJson(JSON_PARSE_DATA data)
+        public UImage_Reader ApplyJson(JSON.Data data)
         {
             if (Image == null) Image = new UniversalImage(gameObject);
 
@@ -126,7 +126,7 @@ namespace AngryDash.Image.Reader
             animationChanged?.Invoke(index);
 
             var thisImage = new UniversalImage(gameObject);
-            if ((int)Type[index] <= 3 || (Type[index] == Texture.Type.Fit & thisImage.image != null))
+            if ((int)Type[index] <= 3 || (Type[index] == JSON.Texture.Type.Fit & thisImage.image != null))
             {
                 if (Image?.gameObject?.name == name + " - " + GetType().Name)
                 {
@@ -145,12 +145,12 @@ namespace AngryDash.Image.Reader
             }
 
             Image.type = (int)Type[index] > 3 ? SpriteDrawMode.Simple : (SpriteDrawMode)Type[index];
-            if (Type[index] == Texture.Type.Fit)
+            if (Type[index] == JSON.Texture.Type.Fit)
             {
                 if (Image.image != null) Image.image.preserveAspect = true;
                 else if (Image.spriteR != null) gameObject.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             }
-            else if (Type[index] == Texture.Type.Envelope) Image.gameObject.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            else if (Type[index] == JSON.Texture.Type.Envelope) Image.gameObject.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
 
             if (data[index].Frames.Length > 1)
             {

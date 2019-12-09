@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-namespace AngryDash.Image
+namespace AngryDash.Image.JSON
 {
     [System.Serializable]
-    public class JSON_PARSE_DATA
+    public class Data
     {
         [Header("Textures")]
         public Texture[] textures = new Texture[4];

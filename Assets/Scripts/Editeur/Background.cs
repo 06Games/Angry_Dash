@@ -12,7 +12,7 @@ public class Background : MonoBehaviour
     public int Selected;
     public Editeur Editor;
     AngryDash.Image.Sprite_API_Data[] sp;
-    AngryDash.Image.JSON_PARSE_DATA[] jsonData;
+    AngryDash.Image.JSON.Data[] jsonData;
 
     public ColorPicker CP;
 
@@ -46,7 +46,7 @@ public class Background : MonoBehaviour
             if (sp[Selected].Frames.Length > 0)
             {
                 var json = jsonData[Selected].DeepClone();
-                json.textures[0].type = AngryDash.Image.Texture.Type.Simple;
+                json.textures[0].type = AngryDash.Image.JSON.Texture.Type.Simple;
                 CP.transform.GetChild(0).GetChild(0).GetComponent<UImage_Reader>().Load(sp[Selected]).ApplyJson(json);
             }
         }
@@ -66,13 +66,13 @@ public class Background : MonoBehaviour
             IEnumerable<FileInfo> files = new DirectoryInfo(Application.persistentDataPath + "/Ressources/default/textures/native/BACKGROUNDS/").EnumerateFiles("* basic.png", SearchOption.TopDirectoryOnly);
 #endif
             List<AngryDash.Image.Sprite_API_Data> sprites = new List<AngryDash.Image.Sprite_API_Data>();
-            List<AngryDash.Image.JSON_PARSE_DATA> jsons = new List<AngryDash.Image.JSON_PARSE_DATA>();
+            List<AngryDash.Image.JSON.Data> jsons = new List<AngryDash.Image.JSON.Data>();
             foreach (var file in files.OrderBy(f => f.Name, new EnumerableExtensions.Comparer<string>(EnumerableExtensions.CompareNatural)))
             {
                 string bgName = Path.GetFileNameWithoutExtension(file.Name);
                 string baseID = "native/BACKGROUNDS/" + bgName.Remove(bgName.Length - 6);
 
-                AngryDash.Image.JSON_PARSE_DATA jData = AngryDash.Image.JSON_API.Parse(baseID);
+                AngryDash.Image.JSON.Data jData = AngryDash.Image.JSON_API.Parse(baseID);
                 jsons.Add(jData);
                 sprites.Add(AngryDash.Image.Sprite_API.GetSprites(jData.textures[0].path, jData.textures[0].border));
             }

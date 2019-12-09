@@ -35,12 +35,10 @@ public class RessourcePackLoader : MonoBehaviour
                 string baseID = ids[i].Replace("\r", "");
                 string jsonID = path + baseID + ".json";
                 if (File.Exists(jsonID)) json = new FileFormat.JSON(File.ReadAllText(jsonID));
-                AngryDash.Image.JSON_PARSE_DATA jsonData = AngryDash.Image.JSON_API.Parse(baseID, json);
+                AngryDash.Image.JSON.Data jsonData = AngryDash.Image.JSON_API.Parse(baseID, json);
 
                 foreach (var texture in jsonData.textures)
                 {
-                    //if (tasks.Where(t => !t.IsCompleted).Count() >= 5) yield return new WaitForEndOfFrame(); //Max 5 loads in the same time
-
                     AngryDash.Image.Sprite_API.LoadAsync(texture.path, () => state += 1D / jsonData.textures.Length, texture.border);
                 }
                 yield return new WaitWhile(() => state < i);

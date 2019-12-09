@@ -1,11 +1,12 @@
 ﻿using System.IO;
 using UnityEngine;
+using AngryDash.Image.JSON;
 
 namespace AngryDash.Image
 {
     public class JSON_API
     {
-        public static JSON_PARSE_DATA Parse(string baseID, FileFormat.JSON json = null, bool path = false)
+        public static Data Parse(string baseID, FileFormat.JSON json = null, bool path = false)
         {
             string jsonID = baseID + ".json";
             string rpPath = Sprite_API.forceRP + "textures/";
@@ -37,12 +38,12 @@ namespace AngryDash.Image
 
                     cache.Set(baseID, LoadParse(baseID, json, path));
                 }
-                return cache.Get<JSON_PARSE_DATA>(baseID);
+                return cache.Get<Data>(baseID);
             }
         }
-        public static JSON_PARSE_DATA LoadParse(string baseID, FileFormat.JSON json, bool path)
+        public static Data LoadParse(string baseID, FileFormat.JSON json, bool path)
         {
-            JSON_PARSE_DATA data = new JSON_PARSE_DATA();
+            Data data = new Data();
 
             for (int jNum = 0; jNum < 2; jNum++)
             {
@@ -68,10 +69,10 @@ namespace AngryDash.Image
                     FileFormat.JSON category = json.GetCategory("textures");
 
                     string[] paramNames = new string[] { "basic", "hover", "pressed", "disabled" };
-                    if (data.textures == null) data.textures = new Texture[paramNames.Length];
+                    if (data.textures == null) data.textures = new JSON.Texture[paramNames.Length];
                     for (int i = 0; i < paramNames.Length; i++)
                     {
-                        if (data.textures[i] == null) data.textures[i] = new Texture();
+                        if (data.textures[i] == null) data.textures[i] = new JSON.Texture();
                         if (string.IsNullOrEmpty(data.textures[i].path) | !File.Exists(data.textures[i].path))
                         {
                             if (path) data.textures[i].path = ID + " " + paramNames[i] + ".png";

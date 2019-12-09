@@ -161,7 +161,7 @@ public class Inventory : MonoBehaviour
             Transform go = Instantiate(content.GetChild(0).gameObject, content).transform;
 
 
-            AngryDash.Image.JSON_PARSE_DATA jsonData = AngryDash.Image.JSON_API.Parse(category + items[i].name + fileSuffix);
+            AngryDash.Image.JSON.Data jsonData = AngryDash.Image.JSON_API.Parse(category + items[i].name + fileSuffix);
             AngryDash.Image.Sprite_API_Data[] data = new AngryDash.Image.Sprite_API_Data[4];
             Texture2D tex = new Texture2D(1, 1);
             tex.LoadImage(System.IO.File.ReadAllBytes(jsonData.textures[0].path));
