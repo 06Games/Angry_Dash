@@ -23,7 +23,9 @@ namespace AngryDash.Image.JSON
     {
         public string path;
         [System.NonSerialized] public Vector4 border;
-        public enum Type { Simple, Sliced, Tiled, Fit, Envelope }
+        public enum Type { Basic, Hover, Pressed, Disabled }
         public Type type;
+        public enum Display { Simple, Sliced, Tiled, Fit, Envelope }
+        public Display display;
     }
 }

@@ -24,7 +24,7 @@ namespace AngryDash.Image.Reader
         readonly uint[] Played = new uint[4];
         readonly int[] Frame = new int[4];
         [HideInInspector]
-        public JSON.Texture.Type[] Type = new JSON.Texture.Type[4];
+        public JSON.Texture.Display[] Type = new JSON.Texture.Display[4];
 
         public Vector2 FrameSize
         {
@@ -71,7 +71,7 @@ namespace AngryDash.Image.Reader
                 lastInteractable = GetComponent<Selectable>().interactable;
                 GetComponent<Selectable>().transition = Selectable.Transition.None;
             }
-            Type = data.textures.Select(t => t.type).ToArray();
+            Type = data.textures.Select(t => t.display).ToArray();
 
             if (TextConfiguration)
             {
@@ -126,7 +126,7 @@ namespace AngryDash.Image.Reader
             animationChanged?.Invoke(index);
 
             var thisImage = new UniversalImage(gameObject);
-            if ((int)Type[index] <= 3 || (Type[index] == JSON.Texture.Type.Fit & thisImage.image != null))
+            if ((int)Type[index] <= 3 || (Type[index] == JSON.Texture.Display.Fit & thisImage.image != null))
             {
                 if (Image?.gameObject?.name == name + " - " + GetType().Name)
                 {
@@ -145,12 +145,12 @@ namespace AngryDash.Image.Reader
             }
 
             Image.type = (int)Type[index] > 3 ? SpriteDrawMode.Simple : (SpriteDrawMode)Type[index];
-            if (Type[index] == JSON.Texture.Type.Fit)
+            if (Type[index] == JSON.Texture.Display.Fit)
             {
                 if (Image.image != null) Image.image.preserveAspect = true;
                 else if (Image.spriteR != null) gameObject.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.FitInParent;
             }
-            else if (Type[index] == JSON.Texture.Type.Envelope) Image.gameObject.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            else if (Type[index] == JSON.Texture.Display.Envelope) Image.gameObject.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
 
             if (data[index].Frames.Length > 1)
             {

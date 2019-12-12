@@ -73,6 +73,7 @@ namespace AngryDash.Image
                     for (int i = 0; i < paramNames.Length; i++)
                     {
                         if (data.textures[i] == null) data.textures[i] = new JSON.Texture();
+                        data.textures[i].type = (JSON.Texture.Type)i;
                         if (string.IsNullOrEmpty(data.textures[i].path) | !File.Exists(data.textures[i].path))
                         {
                             if (path) data.textures[i].path = ID + " " + paramNames[i] + ".png";
@@ -99,7 +100,7 @@ namespace AngryDash.Image
                                 else data.textures[i].path = new FileInfo(Sprite_API.spritesPath(ID + ".json")).Directory.FullName + "/" + paramCategory.Value<string>("path");
                             }
 
-                            if (paramCategory.ValueExist("type")) System.Enum.TryParse(paramCategory.Value<string>("type"), out data.textures[i].type);
+                            if (paramCategory.ValueExist("type")) System.Enum.TryParse(paramCategory.Value<string>("type"), out data.textures[i].display);
                         }
                     }
                 }
