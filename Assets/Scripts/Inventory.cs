@@ -1,6 +1,7 @@
 ﻿using AngryDash.Image.Reader;
 using AngryDash.Language;
 using FileFormat;
+using System.Collections.Generic;
 using System.Linq;
 using Tools;
 using UnityEngine;
@@ -169,12 +170,12 @@ public class Inventory : MonoBehaviour
             tex.Apply();
             data[0] = new AngryDash.Image.Sprite_API_Data()
             {
-                Frames = new Sprite[] { Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f), 100, 0, SpriteMeshType.FullRect, jsonData.textures[0].border) },
-                Delay = new float[] { 1 },
+                Frames = new List<Sprite>() { Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f), 100, 0, SpriteMeshType.FullRect, jsonData.textures[0].border) },
+                Delay = new List<float>() { 1 },
                 Repeat = 1
             }; //Basic is default png image
-            data[1] = AngryDash.Image.Sprite_API.GetSprites(jsonData.textures[0].path, jsonData.textures[0].border); //Basic replace hover
-            jsonData.textures[1].type = jsonData.textures[0].type;
+            data[1] = AngryDash.Image.Sprite_API.GetSprites(jsonData.textures[0].path); //Basic replace hover
+            jsonData.textures[1].display = jsonData.textures[0].display;
             go.GetChild(0).GetComponent<UImage_Reader>().Load(data).ApplyJson(jsonData).StopAnimating(0, false);
 
             go.GetComponent<Button>().interactable = i != selected;

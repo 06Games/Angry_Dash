@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace AngryDash.Image
 {
@@ -9,22 +11,22 @@ namespace AngryDash.Image
     public class Sprite_API_Data
     {
         /// <summary> Array of all the frames of the annimation (If the ressource is only a sprite, the sprite will be returned at the index 0) </summary>
-        public Sprite[] Frames = new Sprite[0];
+        public List<Sprite> Frames = new List<Sprite>();
         /// <summary> Delay before each frame </summary>
-        public float[] Delay = new float[0];
+        public List<float> Delay = new List<float>();
         /// <summary> Number of repetitions of the animation (0 being infinity) </summary>
         public uint Repeat = 0;
 
         public Sprite_API_Data()
         {
-            Frames = new Sprite[0];
-            Delay = new float[0];
+            Frames = new List<Sprite>();
+            Delay = new List<float>();
             Repeat = 0;
         }
         public Sprite_API_Data(Sprite[] frames, float[] delay, uint repeat)
         {
-            Frames = frames;
-            Delay = delay;
+            Frames = frames.ToList();
+            Delay = delay.ToList();
             Repeat = repeat;
         }
         public override bool Equals(object obj) { return Equals(obj as Sprite_API_Data); }

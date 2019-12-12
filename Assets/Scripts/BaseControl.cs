@@ -29,6 +29,8 @@ public class BaseControl : MonoBehaviour
         //Delete all cache on exit
         string[] files = System.IO.Directory.GetFiles(Application.temporaryCachePath);
         for (int i = 0; i < files.Length; i++) System.IO.File.Delete(files[i]);
+
+        Resources.UnloadUnusedAssets();
     }
     public void ChangeReturnSceneValue(bool value) { returnScene = value; }
 

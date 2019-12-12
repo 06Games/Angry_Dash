@@ -39,7 +39,7 @@ public class RessourcePackLoader : MonoBehaviour
 
                 foreach (var texture in jsonData.textures)
                 {
-                    AngryDash.Image.Sprite_API.LoadAsync(texture.path, () => state += 1D / jsonData.textures.Length, texture.border);
+                    AngryDash.Image.Sprite_API.LoadAsync(texture.path, texture.border, (SAD) => state += 1D / jsonData.textures.Length);
                 }
                 yield return new WaitWhile(() => state < i);
             }

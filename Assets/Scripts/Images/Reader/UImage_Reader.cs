@@ -41,23 +41,25 @@ namespace AngryDash.Image.Reader
         public UImage_Reader Load(Sprite_API_Data[] spriteData) { data = new List<Sprite_API_Data>(spriteData); return this; }
         public UImage_Reader Load()
         {
-            JSON.Data jsonData = JSON_API.Parse(baseID);
-
-            data = new List<Sprite_API_Data>();
-            foreach(var texture in jsonData.textures) data.Add(Sprite_API.GetSprites(texture.path, texture.border));
-
-            ApplyJson(jsonData);
+            Load(JSON_API.Parse(baseID));
             return this;
         }
         public UImage_Reader SetPath(string id)
         {
-            JSON.Data jsonData = JSON_API.Parse(id, null, true);
-
-            data = new List<Sprite_API_Data>();
-            foreach(var texture in jsonData.textures) data.Add(Sprite_API.GetSprites(texture.path, texture.border));
-
-            ApplyJson(jsonData);
+            Load(JSON_API.Parse(id, null, true));
             return this;
+        }
+
+        void Load(JSON.Data jsonData)
+        {
+            UnityThread.executeCoroutine(l());
+            System.Collections.IEnumerator l()
+            {
+                data = new List<Sprite_API_Data>(new Sprite_API_Data[System.Enum.GetNames(typeof(JSON.Texture.Type)).Length]);
+                foreach (var texture in jsonData.textures) Sprite_API.LoadAsync(texture.path, texture.border, (s) => data[(int)texture.type] = s);
+                yield return new WaitUntil(() => data.Count(d => d != null) == jsonData.textures.Length | gameObject == null);
+                if(gameObject != null) ApplyJson(jsonData);
+            }
         }
 
 
@@ -90,12 +92,12 @@ namespace AngryDash.Image.Reader
                 }
             }
 
-            StartAnimating(0);
             if (GetComponent<Selectable>()?.interactable == false) StartAnimating(3);
+            else StartAnimating(0);
             return this;
         }
 
-        void OnEnable() { StartAnimating(0); }
+        void OnEnable() { if(autoChange) StartAnimating(0); }
         public void OnPointerEnter(PointerEventData eventData) { if (lastInteractable & autoChange) StartAnimating(1, 1); }
         public void OnPointerExit(PointerEventData eventData) { if (lastInteractable & autoChange) StartAnimating(1, -1); }
         public void OnPointerDown(PointerEventData pointerEventData) { if (lastInteractable & autoChange) StartAnimating(2, 1); }
@@ -152,7 +154,7 @@ namespace AngryDash.Image.Reader
             }
             else if (Type[index] == JSON.Texture.Display.Envelope) Image.gameObject.GetComponent<AspectRatioFitter>().aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
 
-            if (data[index].Frames.Length > 1)
+            if (data[index].Frames.Count > 1)
             {
                 if (!keepFrame) Frame[index] = 0;
                 Played[index] = 0;
@@ -162,12 +164,12 @@ namespace AngryDash.Image.Reader
                 animationTime[index].Start();
                 coroutines[index] = StartCoroutine(APNG(index, frameAddition));
             }
-            else if (data[index].Frames.Length == 1 & frameAddition > 0)
+            else if (data[index].Frames.Count == 1 & frameAddition > 0)
             {
                 Image.sprite = data[index].Frames[0];
                 return false;
             }
-            else if (data[index].Frames.Length == 1 & frameAddition < 0) StartAnimating(0, 1);
+            else if (data[index].Frames.Count == 1 & frameAddition < 0) StartAnimating(0, 1);
 
             return true;
         }
@@ -177,7 +179,7 @@ namespace AngryDash.Image.Reader
             if (data == null) return;
             if (index >= data.Count) return;
             if (data[index] == null) return;
-            if (data[index].Frames.Length > 1)
+            if (data[index].Frames.Count > 1)
             {
                 animationTime[index].Stop();
                 if (coroutines[index] != null) StopCoroutine(coroutines[index]);
@@ -192,7 +194,7 @@ namespace AngryDash.Image.Reader
         {
             animationIndex = index;
             int futurFrame = Frame[index] + frameAddition;
-            if (futurFrame <= -1 | futurFrame >= data[index].Frames.Length)
+            if (futurFrame <= -1 | futurFrame >= data[index].Frames.Count)
             {
                 Played[index]++;
                 if (Played[index] < data[index].Repeat | data[index].Repeat == 0) Frame[index] = 0;
@@ -203,7 +205,7 @@ namespace AngryDash.Image.Reader
                 int frameIndex = -1;
                 System.TimeSpan frameTime = new System.TimeSpan(0);
                 bool stop = false;
-                for (int i = futurFrame; i < data[index].Frames.Length & i > -1 & !stop; i = i + frameAddition)
+                for (int i = futurFrame; i < data[index].Frames.Count & i > -1 & !stop; i = i + frameAddition)
                 {
                     int adding = 0;
                     if (frameAddition < 0) adding = 1;
@@ -223,6 +225,7 @@ namespace AngryDash.Image.Reader
                     Frame[index] = frameIndex;
                     animationTime[index].Restart();
                 }
+
                 yield return new WaitForEndOfFrame();
                 coroutines[index] = StartCoroutine(APNG(index, frameAddition));
             }
