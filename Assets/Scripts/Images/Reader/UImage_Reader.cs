@@ -162,7 +162,7 @@ namespace AngryDash.Image.Reader
 
                 animationTime[index] = new System.Diagnostics.Stopwatch();
                 animationTime[index].Start();
-                coroutines[index] = StartCoroutine(APNG(index, frameAddition));
+                coroutines[index] = StartCoroutine(APNG(index, frameAddition, keepFrame));
             }
             else if (data[index].Frames.Count == 1 & frameAddition > 0)
             {
@@ -190,7 +190,7 @@ namespace AngryDash.Image.Reader
         }
 
         public int animationIndex { get; private set; }
-        System.Collections.IEnumerator APNG(int index, int frameAddition)
+        System.Collections.IEnumerator APNG(int index, int frameAddition, bool keepFrame)
         {
             animationIndex = index;
             int futurFrame = Frame[index] + frameAddition;
@@ -227,13 +227,9 @@ namespace AngryDash.Image.Reader
                 }
 
                 yield return new WaitForEndOfFrame();
-                coroutines[index] = StartCoroutine(APNG(index, frameAddition));
+                coroutines[index] = StartCoroutine(APNG(index, frameAddition, keepFrame));
             }
-            else
-            {
-                StopAnimating(index, true);
-                StartAnimating(0);
-            }
+            else StopAnimating(index, keepFrame);
         }
     }
 }
