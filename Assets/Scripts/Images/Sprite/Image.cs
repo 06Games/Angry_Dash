@@ -12,7 +12,8 @@ namespace AngryDash.Image
         public long height { get; set; }
 
         public Rect() { }
-        public Rect(uint[] offset, uint[] size) {
+        public Rect(uint[] offset, uint[] size)
+        {
             x = offset[0];
             y = offset[1];
             width = size[0];
@@ -25,6 +26,19 @@ namespace AngryDash.Image
             width = xSize;
             height = ySize;
         }
+
+        public override string ToString() { return $"({x}, {y}, {width}, {height})"; }
+
+        public static bool operator ==(Rect left, Rect right)
+        {
+            if (left is null & right is null) return true;
+            else if (left is null | right is null) return false;
+            else return left.Equals(right);
+        }
+        public static bool operator !=(Rect left, Rect right) { return !(left == right); }
+        public bool Equals(Rect other) { return x == other.x & y == other.y & width == other.width & height == other.height; }
+        public override bool Equals(object obj) { return Equals(obj as Rect); }
+        public override int GetHashCode() { return base.GetHashCode(); }
     }
 
     internal class Texture
@@ -62,8 +76,9 @@ namespace AngryDash.Image
             if (rect.x == 0 & rect.y == 0 & rect.width == width & rect.height == height) return pixels;
             else
             {
-                var bounds = WorkOnPixels(rect.x, rect.y, rect.width, rect.height);
-                return pixels.GetRange(bounds.Item1, bounds.Item2 - bounds.Item1);
+                var list = new List<int>();
+                WorkOnPixels(rect, (index, count) => list.AddRange(pixels.GetRange(index, count)));
+                return list;
             }
         }
         public void SetPixels(Rect rect, List<int> colors)
@@ -71,15 +86,18 @@ namespace AngryDash.Image
             if (pixels.Count == colors.Count) pixels = colors;
             else
             {
-                var bounds = WorkOnPixels(rect.x, rect.y, rect.width, rect.height);
-                for (int i = bounds.Item1; i < bounds.Item2 & i < colors.Count - bounds.Item1; i++) pixels[i] = colors[i - bounds.Item1];
+                int i2 = 0;
+                WorkOnPixels(rect, (index, count) =>
+                {
+                    pixels.RemoveRange(index, count);
+                    pixels.InsertRange(index, colors.GetRange(i2, count));
+                    i2 += count;
+                });
             }
         }
-        (int, int) WorkOnPixels(float xOffset, float yOffset, float xSize, float ySize)
+        void WorkOnPixels(Rect rect, System.Action<int, int> pixel)
         {
-            float minIndex = width * yOffset + xOffset;
-            float maxIndex = width * (yOffset + ySize - 1) + (xOffset + xSize);
-            return ((int)minIndex * colorBand, (int)maxIndex * colorBand);
+            for (long y = rect.height - 1; y >= 0; y--) pixel((int)((height - 1 - rect.y - y) * width + rect.x) * colorBand, (int)rect.width * colorBand);
         }
         public void Clear()
         {
@@ -94,6 +112,7 @@ namespace AngryDash.Image
             if (colorBand == 1) format = TextureFormat.Alpha8;
             else if (colorBand == 3) format = TextureFormat.RGB24;
             else if (colorBand == 4) format = TextureFormat.RGBA32;
+            else Debug.LogError("Unkown format: " + colorType);
             var texture = new Texture2D(size.x, size.y, format, false);
 
             try { texture.LoadRawTextureData(pixels.Select(i => (byte)i).ToArray()); }
@@ -107,22 +126,11 @@ namespace AngryDash.Image
         void FlipTextureVertically(Texture2D original)
         {
             var originalPixels = original.GetPixels();
-
             Color[] newPixels = new Color[originalPixels.Length];
-
-            int width = original.width;
-            int rows = original.height;
-
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < rows; y++)
-                {
-                    newPixels[x + y * width] = originalPixels[x + (rows - y - 1) * width];
-                }
-            }
-
+            for (int x = 0; x < original.width; x++)
+                for (int y = 0; y < original.height; y++)
+                    newPixels[x + y * original.width] = originalPixels[x + (original.height - y - 1) * original.width];
             original.SetPixels(newPixels);
-            original.Apply();
         }
     }
 }

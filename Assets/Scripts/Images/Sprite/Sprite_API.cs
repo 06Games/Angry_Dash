@@ -67,6 +67,11 @@ namespace AngryDash.Image
                 buffer = new Texture(apng.IHDRChunk.Width, apng.IHDRChunk.Height, (Texture.ColorType)apng.IHDRChunk.ColorType);
                 if (apng.DefaultImageIsAnimated) dispose = apng.DefaultImage.fcTLChunk.DisposeOp;
             }
+            public override string ToString()
+            {
+                return $"{id}:\n{frames.Length} frames\nBorder: {border}\nThe buffer is {buffer.GetPixels().Count} long\n" +
+                    $"The dispose op is equal to {dispose.ToString().Remove(0, "APNGDisposeOp".Length)}\n\n<b>Errors:</b>\n{string.Join("\n", errors)}";
+            }
         }
 
         public static void LoadAsync(string filePath, Vector4 border = new Vector4(), System.Action<Sprite_API_Data> callback = null, bool forcePNG = false)
@@ -92,21 +97,21 @@ namespace AngryDash.Image
 
                     for (int i = 0; i < info.frames.Length; i++)
                     {
-                        float delay = 0;
+                        float delay = 0; //in seconds
                         if (png) delay = 0;
                         else if (info.frames[i].fcTLChunk.DelayNum == 0) delay = 10000;
                         else
                         {
                             if (info.frames[i].fcTLChunk.DelayDen == 0) delay = info.frames[i].fcTLChunk.DelayNum / 100F;
                             else delay = info.frames[i].fcTLChunk.DelayNum / (float)info.frames[i].fcTLChunk.DelayDen;
-                            if (delay == 0) delay = 60;
+                            if (delay == 0) delay = 0.01F; //Skip frame
                         }
                         SAD.Delay.Add(delay);
 
                         bool done = false;
                         GetSprite(info, i, (s) =>
                         {
-                            if (s != null) s.name = Path.GetFileNameWithoutExtension(filePath) + (png ? "": " n° " + i);
+                            if (s != null) s.name = Path.GetFileNameWithoutExtension(filePath) + (png ? "" : " n° " + i);
                             SAD.Frames.Add(s);
                             done = true;
                         });
@@ -137,7 +142,8 @@ namespace AngryDash.Image
                 if (t.Exception != null) Debug.LogError(info.id + "\n" + t.Exception);
                 UnityThread.executeInUpdate(() =>
                 {
-                    try { 
+                    try
+                    {
                         var sp = frameTampon.ToSprite(info.border);
                         if (info.frames[index].fcTLChunk != null) TamponCleaner(info, index, frameTampon);
                         callback(sp);
@@ -163,9 +169,9 @@ namespace AngryDash.Image
             PngReader png = new PngReader(new MemoryStream(frame.GetStream().ToArray()));
             var blendOp = frame.fcTLChunk != null ? frame.fcTLChunk.BlendOp : BlendOps.APNGBlendOpSource;
             int colorNb = png.ImgInfo.Channels;
-            if (blendOp == BlendOps.APNGBlendOpSource) bgColors.Clear();
 
             var PLTE = frame.OtherChunks.FirstOrDefault(c => c.ChunkType == "PLTE")?.ChunkData.Select(c => (int)c).ToList();
+            if (blendOp == BlendOps.APNGBlendOpSource && info.buffer.colorType != Texture.ColorType.palette) bgColors.Clear();
 
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
@@ -176,19 +182,23 @@ namespace AngryDash.Image
                 if (blendOp == BlendOps.APNGBlendOpSource && info.buffer.colorType != Texture.ColorType.palette) bgColors.AddRange(row);
                 else
                 {
-                    int bgIndex = y * info.buffer.colorBand;
-                    for (int x = 0, xIndex = 0; xIndex < row.Length; xIndex += colorNb, x++)
+                    int yI = y * png.ImgInfo.Cols * info.buffer.colorBand;
+                    for (int xI = 0; xI < row.Length; xI += colorNb)
                     {
                         if (blendOp == BlendOps.APNGBlendOpOver)
                         {
-                            int a = colorNb == 4 ? row[xIndex + 3] : 255;
-                            if (a == 255) bgColors[bgIndex + x] = row[xIndex];
-                            else if (a > 0) for (int i = 0; i < 3; i++) bgColors[bgIndex + i] = a * row[xIndex + i] + (1 - a) * row[xIndex + i];
+                            int a = colorNb == 4 ? row[xI + 3] : 255;
+                            if (a > 0)
+                            {
+                                bgColors.RemoveRange(yI + xI, 4);
+                                var px = new System.ArraySegment<int>(row, xI, 3).Select(p => a * p + (1 - a) * p);
+                                bgColors.InsertRange(yI + xI, px.Append(a));
+                            }
                         }
                         else if (blendOp == BlendOps.APNGBlendOpSource & PLTE != null)
                         {
-                            if (xIndex >= row.Length) Debug.LogError(xIndex + " / " + row.Length + " - " + colorNb + "\n" + y + " - " + info.buffer.colorBand);
-                            else if (PLTE.Count > row[xIndex] * 3 + 2) bgColors.AddRange(PLTE.GetRange(row[xIndex] * 3, 3));
+                            if (PLTE.Count > row[xI] * 3 + 2) bgColors.AddRange(PLTE.GetRange(row[xI] * 3, 3));
+                            else throw new System.Exception("The palette is too small");
                         }
                     }
                 }
@@ -197,8 +207,8 @@ namespace AngryDash.Image
             }
 
             Logging.Log("Done: " + info.id + "\n" + png.ImgInfo.Rows + " rows in " + sw.Elapsed + "\nBlend Op: " + blendOp);
-            png.End();
             sw.Stop();
+            png.End();
 
             info.dispose = frame.fcTLChunk != null ? frame.fcTLChunk.DisposeOp : DisposeOps.APNGDisposeOpNone;
             return bgColors;
