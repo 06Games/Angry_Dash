@@ -17,12 +17,7 @@ public class BaseControl : MonoBehaviour
     {
         UnityThread.initUnityThread();
         System.Globalization.CultureInfo.DefaultThreadCurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex == 0)
-        {
-            Application.logMessageReceived += (logString, stackTrace, type) => Logging.Log(logString, type, stackTrace);
-            Logging.Log("The game start", LogType.Log);
-        }
+        Logging.Initialise();
     }
     private void OnApplicationQuit()
     {
