@@ -76,8 +76,10 @@ namespace AngryDash.Image
 
         public static void LoadAsync(string filePath, Vector4 border = new Vector4(), System.Action<Sprite_API_Data> callback = null, bool forcePNG = false)
         {
-            UnityThread.executeCoroutine(LoadC());
-            System.Collections.IEnumerator LoadC()
+            if (ConfigAPI.GetBool("video.experimentalLoading")) UnityThread.executeCoroutine(NEW_API());
+            else callback(OLD_API.GetSprites(filePath, border, forcePNG));
+
+            System.Collections.IEnumerator NEW_API()
             {
                 CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures");
                 Sprite_API_Data SAD = new Sprite_API_Data();

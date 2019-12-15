@@ -58,7 +58,7 @@ namespace AngryDash.Image.Reader
                 data = new List<Sprite_API_Data>(new Sprite_API_Data[System.Enum.GetNames(typeof(JSON.Texture.Type)).Length]);
                 foreach (var texture in jsonData.textures) Sprite_API.LoadAsync(texture.path, texture.border, (s) => data[(int)texture.type] = s);
                 yield return new WaitUntil(() => data.Count(d => d != null) == jsonData.textures.Length | gameObject == null);
-                if(gameObject != null) ApplyJson(jsonData);
+                if (gameObject != null) ApplyJson(jsonData);
             }
         }
 
