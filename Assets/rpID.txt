@@ -10,6 +10,7 @@ native/GUI/startUp/account/background
 native/GUI/startUp/account/google
 native/GUI/startUp/account/apple
 native/GUI/startUp/account/microsoft
+native/GUI/startUp/account/discord
 native/GUI/startUp/ressources/background
 native/GUI/mainMenu/background
 native/GUI/mainMenu/button
@@ -205,6 +206,9 @@ native/GUI/other/loadingScreen/progressState
 native/GUI/other/loadingScreen/splashScreenBg
 native/GUI/other/loadingScreen/splashScreens/0
 native/GUI/other/loadingScreen/splashScreens/1
+native/GUI/other/exitWarning/blurring
+native/GUI/other/exitWarning/panel
+native/GUI/other/exitWarning/button
 native/BACKGROUNDS/0
 native/BACKGROUNDS/1
 native/BACKGROUNDS/2
@@ -260,4 +264,3 @@ native/TRACES/1/Success
 native/TRACES/1/SuccessEnd
 native/TRACES/1/Missed
 native/TRACES/1/MissedEnd
-native/GUI/startUp/account/discord

@@ -56,8 +56,19 @@ public class BaseControl : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (scene == "" & returnScene) Base.Quit(true);
-            else if (!sceneChanging & returnScene)
+            if (returnScene && scene == "")
+            {
+                var go = transform.Find("GUI").Find("Exit Warning");
+                if (go.gameObject.activeInHierarchy) go.gameObject.SetActive(false);
+                else
+                {
+                    var btn = go.GetChild(0).GetChild(1).GetChild(0).GetComponent<UnityEngine.UI.Button>();
+                    btn.onClick.RemoveAllListeners();
+                    btn.onClick.AddListener(() => Base.Quit(true));
+                    go.gameObject.SetActive(true);
+                }
+            }
+            else if (returnScene && !sceneChanging)
             {
                 SceneManager.LoadScene(scene);
                 sceneChanging = true;
