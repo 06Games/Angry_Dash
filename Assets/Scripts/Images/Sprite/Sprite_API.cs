@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Tools;
 using UnityEngine;
 
 namespace AngryDash.Image
@@ -181,7 +182,7 @@ namespace AngryDash.Image
             {
                 var row = png.ReadRow(y).Scanline;
 
-                if (blendOp == BlendOps.APNGBlendOpSource && info.buffer.colorType != Texture.ColorType.palette) bgColors.AddRange(row);
+                if (blendOp == BlendOps.APNGBlendOpSource && info.buffer.colorType.In(Texture.ColorType.RGB, Texture.ColorType.RGBA)) bgColors.AddRange(row);
                 else
                 {
                     int yI = y * png.ImgInfo.Cols * info.buffer.colorBand;
@@ -197,14 +198,18 @@ namespace AngryDash.Image
                                 bgColors.InsertRange(yI + xI, px.Append(a));
                             }
                         }
-                        else if (blendOp == BlendOps.APNGBlendOpSource & PLTE != null)
+                        else if (blendOp == BlendOps.APNGBlendOpSource)
                         {
-                            if (PLTE.Count > row[xI] * 3 + 2) bgColors.AddRange(PLTE.GetRange(row[xI] * 3, 3));
-                            else throw new System.Exception("The palette is too small");
+                            if (info.buffer.colorType == Texture.ColorType.palette && PLTE != null)
+                            {
+                                if (PLTE.Count > row[xI] * 3 + 2) bgColors.AddRange(PLTE.GetRange(row[xI] * 3, 3));
+                                else throw new System.Exception("The palette is too small");
+                            }
+                            else if (info.buffer.colorType == Texture.ColorType.grayscaleA) bgColors.AddRange(new int[] { row[xI], row[xI], row[xI], row[xI + 1] });
+                            else if (info.buffer.colorType == Texture.ColorType.grayscale) bgColors.AddRange(new int[] { row[xI], row[xI], row[xI] });
                         }
                     }
                 }
-
                 if (info.buffer.colorType == Texture.ColorType.palette && png.ImgInfo.Cols > row.Length) bgColors.AddRange(new int[(png.ImgInfo.Cols - row.Length) * info.buffer.colorBand]);
             }
 

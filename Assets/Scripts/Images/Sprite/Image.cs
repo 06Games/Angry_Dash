@@ -59,8 +59,8 @@ namespace AngryDash.Image
         void Draw(ColorType colorType)
         {
             var background = new int[4];
-            if (colorType == ColorType.grayscale) background = new int[1];
-            else if (colorType == ColorType.grayscaleA) background = new int[2];
+            if (colorType == ColorType.grayscale) background = new int[3];
+            else if (colorType == ColorType.grayscaleA) background = new int[4];
             else if (colorType == ColorType.RGB) background = new int[3];
             else if (colorType == ColorType.RGBA) background = new int[4];
             else if (colorType == ColorType.palette) background = new int[3];
@@ -109,8 +109,7 @@ namespace AngryDash.Image
         {
             var size = new Vector2Int((int)width, (int)height);
             var format = TextureFormat.RGB24;
-            if (colorBand == 1) format = TextureFormat.Alpha8;
-            else if (colorBand == 3) format = TextureFormat.RGB24;
+            if (colorBand == 3) format = TextureFormat.RGB24;
             else if (colorBand == 4) format = TextureFormat.RGBA32;
             else Debug.LogError("Unkown format: " + colorType);
             var texture = new Texture2D(size.x, size.y, format, false);
