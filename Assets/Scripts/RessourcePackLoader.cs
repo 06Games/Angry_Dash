@@ -61,10 +61,10 @@ public class RessourcePackLoader : MonoBehaviour
                 if (maxMem < mem) maxMem = mem;
 
                 var status = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", state.ToString("0.00"), ids.Length.ToString());
-                if(Status.text != status) Resources.UnloadUnusedAssets();
+                if (Status.text != status) Resources.UnloadUnusedAssets();
 
                 Status.text = status;
-                if (Infos.IsDestroyed()) break; 
+                if (Infos.IsDestroyed()) break;
                 Infos.text = LangueAPI.Get("native", "", "[0] GB - [1] elapsed", (Profiler.GetTotalReservedMemoryLong() / 1048576f / 1000F).ToString("0.000"), sw.Elapsed.ToString("mm\\:ss"));
                 yield return new WaitForEndOfFrame();
             }

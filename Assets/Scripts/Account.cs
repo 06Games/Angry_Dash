@@ -1,5 +1,4 @@
-﻿using Discord;
-using FileFormat.XML;
+﻿using FileFormat.XML;
 using System;
 using System.Collections.Generic;
 using System.IO;

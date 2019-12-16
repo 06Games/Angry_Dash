@@ -1,6 +1,6 @@
-﻿using System.IO;
+﻿using AngryDash.Image.JSON;
+using System.IO;
 using UnityEngine;
-using AngryDash.Image.JSON;
 
 namespace AngryDash.Image
 {

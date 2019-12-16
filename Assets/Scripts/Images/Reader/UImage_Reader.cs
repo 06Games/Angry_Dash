@@ -97,7 +97,7 @@ namespace AngryDash.Image.Reader
             return this;
         }
 
-        void OnEnable() { if(autoChange) StartAnimating(0); }
+        void OnEnable() { if (autoChange) StartAnimating(0); }
         public void OnPointerEnter(PointerEventData eventData) { if (lastInteractable & autoChange) StartAnimating(1, 1); }
         public void OnPointerExit(PointerEventData eventData) { if (lastInteractable & autoChange) StartAnimating(1, -1); }
         public void OnPointerDown(PointerEventData pointerEventData) { if (lastInteractable & autoChange) StartAnimating(2, 1); }
