@@ -56,7 +56,7 @@ namespace AngryDash.Game
             else userPlayer = this;
 
             FileFormat.XML.RootElement xml = Inventory.xmlDefault;
-            GetComponent<UImage_Reader>().SetID("native/PLAYERS/" + Inventory.GetSelected(xml, "native/PLAYERS/")).Load(); //Player Image
+            GetComponent<UImage_Reader>().SetID("native/PLAYERS/" + Inventory.GetSelected(xml, "native/PLAYERS/")).LoadAsync(); //Player Image
             selectedTrace = Inventory.GetSelected(xml, "native/TRACES/"); //Trace Image
 
 #if UNITY_ANDROID || UNITY_IOS
@@ -67,7 +67,7 @@ namespace AngryDash.Game
             JoyStick.GetComponent<RectTransform>().sizeDelta = new Vector2(size, size);
             Rect rect = JoyStick.GetComponent<RectTransform>().rect;
             joystickOffset = new Vector2((rect.width * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2,
-            (rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
+                (rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
 
             vitesse = 1;
             PositionInitiale = transform.position;
@@ -179,7 +179,7 @@ namespace AngryDash.Game
             Transform traceObj = new GameObject("Trace Obj").transform;
             traceObj.parent = Trace;
             traceObj.gameObject.AddComponent<SpriteRenderer>().sortingOrder = 32766;
-            traceObj.gameObject.AddComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Moving").Load();
+            traceObj.gameObject.AddComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Moving").LoadAsync();
             return traceObj;
         }
         void TraceEnd(Transform traceObj, Vector2 endPos)
@@ -187,10 +187,10 @@ namespace AngryDash.Game
             string endPointID = "native/TRACES/" + selectedTrace + "/SuccessEnd";
             if ((Vector2)transform.position == PositionInitiale)
             {
-                traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Missed").Load();
+                traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Missed").LoadAsync();
                 endPointID = "native/TRACES/" + selectedTrace + "/MissedEnd";
             }
-            else traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Success").Load();
+            else traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Success").LoadAsync();
             GameObject endPoint = new GameObject("Trace End Point");
             endPoint.transform.parent = Trace;
             endPoint.transform.localScale = new Vector2(50 / 64F * 50F, 50 / 64F * 50F);

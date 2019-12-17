@@ -30,34 +30,37 @@ namespace AngryDash.Image.Reader
         {
             get
             {
+                if (data is null) return default;
                 if (data[0] is null) return default;
                 else if (data[0].Frames is null) return default;
                 else return new Vector2(data[0].Frames[0].texture.width, data[0].Frames[0].texture.height);
             }
         }
 
-        void Start() { if (!string.IsNullOrEmpty(baseID)) Load(); }
+        void Start() { if (!string.IsNullOrEmpty(baseID)) LoadAsync(); }
         public UImage_Reader Load(Sprite_API_Data spriteData) { data = new List<Sprite_API_Data>() { spriteData }; return this; }
         public UImage_Reader Load(Sprite_API_Data[] spriteData) { data = new List<Sprite_API_Data>(spriteData); return this; }
-        public UImage_Reader Load()
-        {
-            Load(JSON_API.Parse(baseID));
-            return this;
-        }
-        public UImage_Reader SetPath(string id)
-        {
-            Load(JSON_API.Parse(id, null, true));
-            return this;
-        }
+        public UImage_Reader Load() { Load(JSON_API.Parse(baseID), false); return this; }
+        public UImage_Reader LoadAsync() { Load(JSON_API.Parse(baseID), true); return this; }
+        public UImage_Reader SetPath(string id) { Load(JSON_API.Parse(id, null, true), false); return this; }
+        public UImage_Reader SetPathAync(string id) { Load(JSON_API.Parse(id, null, true), true); return this; }
 
-        void Load(JSON.Data jsonData)
+        void Load(JSON.Data jsonData, bool async)
         {
-            UnityThread.executeCoroutine(l());
-            System.Collections.IEnumerator l()
+            data = new List<Sprite_API_Data>(new Sprite_API_Data[System.Enum.GetNames(typeof(JSON.Texture.Type)).Length]);
+            foreach (var texture in jsonData.textures) Sprite_API.LoadAsync(texture.path, texture.border, (s) => data[(int)texture.type] = s);
+            if (async)
             {
-                data = new List<Sprite_API_Data>(new Sprite_API_Data[System.Enum.GetNames(typeof(JSON.Texture.Type)).Length]);
-                foreach (var texture in jsonData.textures) Sprite_API.LoadAsync(texture.path, texture.border, (s) => data[(int)texture.type] = s);
-                yield return new WaitUntil(() => data.Count(d => d != null) == jsonData.textures.Length | gameObject == null);
+                UnityThread.executeCoroutine(lAsync());
+                System.Collections.IEnumerator lAsync()
+                {
+                    yield return new WaitUntil(() => data.Count(d => d != null) == jsonData.textures.Length | gameObject == null);
+                    if (gameObject != null) ApplyJson(jsonData);
+                }
+            }
+            else
+            {
+                while (data.Count(d => d != null) != jsonData.textures.Length);
                 if (gameObject != null) ApplyJson(jsonData);
             }
         }

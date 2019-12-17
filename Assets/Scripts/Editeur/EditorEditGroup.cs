@@ -48,7 +48,7 @@ public class EditorEditGroup : MonoBehaviour
         foreach (var Group in Groups)
         {
             Transform go = Instantiate(groups.GetChild(0).gameObject, groups).transform;
-            go.GetComponent<AngryDash.Image.Reader.UImage_Reader>().SetID("native/GUI/editor/edit/blocks/groups/selected" + (Group.Value ? "Common" : "")).Load();
+            go.GetComponent<AngryDash.Image.Reader.UImage_Reader>().SetID("native/GUI/editor/edit/blocks/groups/selected" + (Group.Value ? "Common" : "")).LoadAsync();
             go.GetComponent<Button>().onClick.AddListener(() => Remove(Group.Key));
             go.GetChild(0).GetComponent<Text>().text = Group.Key.ToString();
             go.gameObject.SetActive(true);

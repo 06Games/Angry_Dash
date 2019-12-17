@@ -425,7 +425,7 @@ public class Editeur : MonoBehaviour
         float toolboxY = toolbox.GetComponent<RectTransform>().sizeDelta.y * transform.GetChild(0).GetComponent<Canvas>().scaleFactor;
         bool hide = toolbox.position.y >= 0;
         StartCoroutine(HideToolbox(toolbox, toolboxY, hide));
-        Toolbox.transform.parent.GetChild(4).GetComponent<UImage_Reader>().SetID(hide ? "native/GUI/editor/toolboxShow" : "native/GUI/editor/toolboxHide").Load();
+        Toolbox.transform.parent.GetChild(4).GetComponent<UImage_Reader>().SetID(hide ? "native/GUI/editor/toolboxShow" : "native/GUI/editor/toolboxHide").LoadAsync();
     }
     /// <summary> Toolbox hide/show animation </summary>
     /// <param name="toolbox">The toolbox transform</param>
@@ -583,12 +583,12 @@ public class Editeur : MonoBehaviour
         ConfigAPI.SetBool("editor.Grid", on);
         if (on) //Grid ON
         {
-            Img.SetID("native/GUI/editor/gridOn").Load();
+            Img.SetID("native/GUI/editor/gridOn").LoadAsync();
             Grille(true, false);
         }
         else //Grid OFF
         {
-            Img.SetID("native/GUI/editor/gridOff").Load();
+            Img.SetID("native/GUI/editor/gridOff").LoadAsync();
             Grille(false, true);
         }
     }
@@ -713,12 +713,12 @@ public class Editeur : MonoBehaviour
 
         if (!float.TryParse(blockID, out newblockid)) Debug.LogError("Unkown id: " + blockID);
         string rootID = type == Level.Block.Type.Event ? "native/GUI/editor/build/events/" : "native/BLOCKS/";
-        Content.GetChild((int)newblockid).GetChild(0).GetComponent<UImage_Reader>().SetID(rootID + newblockid.ToString("0.0####")).Load();
+        Content.GetChild((int)newblockid).GetChild(0).GetComponent<UImage_Reader>().SetID(rootID + newblockid.ToString("0.0####")).LoadAsync();
 
         for (int i = 0; i < Content.childCount; i++)
         {
             string id = i == (int)newblockid ? "native/GUI/editor/build/buttonSelected" : "native/GUI/editor/build/button";
-            Content.GetChild(i).GetComponent<UImage_Reader>().SetID(id).Load();
+            Content.GetChild(i).GetComponent<UImage_Reader>().SetID(id).LoadAsync();
         }
     }
 
@@ -729,7 +729,7 @@ public class Editeur : MonoBehaviour
         if (id == (int)newblockid) //Deselect
         {
             newblockid = -1;
-            if (id >= 0) Toolbox.GO[3].GetComponent<ScrollRect>().content.GetChild(id).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").Load();
+            if (id >= 0) Toolbox.GO[3].GetComponent<ScrollRect>().content.GetChild(id).GetComponent<UImage_Reader>().SetID("native/GUI/editor/build/button").LoadAsync();
         }
         else //Select
         {
@@ -813,7 +813,7 @@ public class Editeur : MonoBehaviour
                         newRef.transform.rotation = QuaternionExtensions.SetEuler(BulleDeveloppementCat.transform.rotation.eulerAngles.x, 0, 0);
                         newRef.transform.GetComponent<Button>().onClick.AddListener(() => SelectBlock(blockType, newRef.name));
 
-                        newRef.transform.GetComponent<UImage_Reader>().SetID(files[i]).Load();
+                        newRef.transform.GetComponent<UImage_Reader>().SetID(files[i]).LoadAsync();
                     }
                     BulleDeveloppementCat.SetActive(true);
                     BulleDeveloppementCat.GetComponent<RectTransform>().anchoredPosition = pos;

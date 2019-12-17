@@ -19,7 +19,7 @@ namespace AngryDash.Game.API
         {
             UnityThread.executeInUpdate(() =>
             {
-                foreach (var reader in Player.userPlayer.LP.ArrierePlan.GetComponentsInChildren<Image.Reader.UImage_Reader>()) reader.SetID(id).Load();
+                foreach (var reader in Player.userPlayer.LP.ArrierePlan.GetComponentsInChildren<Image.Reader.UImage_Reader>()) reader.SetID(id).LoadAsync();
             });
         }
     }

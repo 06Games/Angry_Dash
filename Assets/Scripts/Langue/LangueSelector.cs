@@ -54,7 +54,7 @@ namespace AngryDash.Language
                 uint dispo = i;
                 go.GetComponent<Button>().onClick.RemoveAllListeners();
                 go.GetComponent<Button>().onClick.AddListener(() => Chang(dispo));
-                go.GetComponent<UImage_Reader>().SetID("native/GUI/settingsMenu/languages/" + LangueDispo[dispo]).Load();
+                go.GetComponent<UImage_Reader>().SetID("native/GUI/settingsMenu/languages/" + LangueDispo[dispo]).LoadAsync();
                 go.gameObject.SetActive(true);
             }
 

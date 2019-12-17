@@ -196,7 +196,7 @@ public class EditorPublishedLevels : MonoBehaviour
                 string id = "native/GUI/editorMenu/communityLevels/starUnassigned";
                 try { if (i < note * 2) id = "native/GUI/editorMenu/communityLevels/starAssigned"; } catch { }
                 go.AddComponent<Image>();
-                go.AddComponent<UImage_Reader>().SetID(id).Load();
+                go.AddComponent<UImage_Reader>().SetID(id).LoadAsync();
             }
             stars.parent.GetChild(2).gameObject.SetActive(note != -1);
             stars.parent.GetChild(2).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsInfosStarsCount", "[0]/5", note.ToString("0.#"));

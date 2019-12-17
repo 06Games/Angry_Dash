@@ -62,7 +62,7 @@ public class SceneManager : MonoBehaviour
         {
             int bgIndex = Random.Range(0, files.Count());
             string bgID = files.ElementAt(bgIndex).Remove(0, (Application.persistentDataPath + "/Ressources/default/textures/").Length).Replace("\\", "/");
-            LSC.loadingScreenObj.transform.GetChild(1).GetChild(0).GetComponent<AngryDash.Image.Reader.UImage_Reader>().SetID(bgID.Remove(bgID.Length - " basic.png".Length)).Load();
+            LSC.loadingScreenObj.transform.GetChild(1).GetChild(0).GetComponent<AngryDash.Image.Reader.UImage_Reader>().SetID(bgID.Remove(bgID.Length - " basic.png".Length)).LoadAsync();
         }
 
         LSC.StartCoroutine(LSC.LoadingScreen(Scene, keep));

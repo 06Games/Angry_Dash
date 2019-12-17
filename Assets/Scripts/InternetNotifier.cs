@@ -16,12 +16,12 @@ public class InternetNotifier : MonoBehaviour
             connected = InternetAPI.IsConnected();
             if (connected)
             {
-                transform.GetChild(0).GetComponent<UImage_Reader>().SetID("native/GUI/other/internetNotification/connected").Load();
+                transform.GetChild(0).GetComponent<UImage_Reader>().SetID("native/GUI/other/internetNotification/connected").LoadAsync();
                 transform.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "internet.connected", "You are now connected to the internet");
             }
             else
             {
-                transform.GetChild(0).GetComponent<UImage_Reader>().SetID("native/GUI/other/internetNotification/disconnected").Load();
+                transform.GetChild(0).GetComponent<UImage_Reader>().SetID("native/GUI/other/internetNotification/disconnected").LoadAsync();
                 transform.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "internet.disconnected", "You are now offline");
             }
             StartCoroutine(Notify());

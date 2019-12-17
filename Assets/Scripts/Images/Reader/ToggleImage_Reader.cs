@@ -34,7 +34,7 @@ namespace AngryDash.Image.Reader
                 if (animation == 0)
                 {
                     reader.animationChanged = null;
-                    reader.SetID(toggle.isOn ? onID : offID).Load();
+                    reader.SetID(toggle.isOn ? onID : offID).LoadAsync();
                 }
             }
         }

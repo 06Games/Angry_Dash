@@ -19,14 +19,14 @@ public class DeleteBloc : MonoBehaviour
         {
             manager.array = oldMenu;
             editor.SelectModeChang(false);
-            reader.SetID("native/GUI/editor/deleteOff").Load();
+            reader.SetID("native/GUI/editor/deleteOff").LoadAsync();
         }
         else
         {
             oldMenu = manager.array;
             manager.Array(4);
             editor.SelectModeChang(true);
-            reader.SetID("native/GUI/editor/deleteOn").Load();
+            reader.SetID("native/GUI/editor/deleteOn").LoadAsync();
         }
     }
 }
