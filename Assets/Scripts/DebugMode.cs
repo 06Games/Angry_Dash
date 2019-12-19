@@ -134,7 +134,7 @@ public class DebugMode : MonoBehaviour
     public void DeviceInfo(Text text)
     {
         Resolution res = Screen.currentResolution;
-        text.text = "Screen: " + res.width + "x" + res.height + "@" + res.refreshRate + "Hz"
+        text.text = "Screen: " + res.width + "x" + res.height + "@" + res.refreshRate + "Hz. DPI: " + Screen.dpi
             + "\nGraphics API: " + SystemInfo.graphicsDeviceVersion
             + "\nGPU: " + SystemInfo.graphicsDeviceName
             + "\nVRAM: " + SystemInfo.graphicsMemorySize + "MB. Max texture size: " + SystemInfo.maxTextureSize + "px. Shader level: " + SystemInfo.graphicsShaderLevel

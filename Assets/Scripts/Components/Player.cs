@@ -60,7 +60,9 @@ namespace AngryDash.Game
             selectedTrace = Inventory.GetSelected(xml, "native/TRACES/"); //Trace Image
 
 #if UNITY_ANDROID || UNITY_IOS
-            float size = 0.3F * Screen.height;
+            var dpi = Screen.dpi;
+            if (dpi < 25 | dpi > 1000) dpi = 150;
+            float size = (96 / 1080F) / (dpi / Screen.height) * (325F / 1080) * Screen.height;
 #else
             float size = 0.2F * Screen.height;
 #endif
