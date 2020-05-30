@@ -56,10 +56,13 @@ namespace AngryDash.Image
         internal class APNGFrameInfo
         {
             public string id { get; set; }
+            public bool animated { get; set; } = true;
+
             public Frame[] frames { get; set; }
             public Vector4 border { get; set; } = new Vector4();
             public Texture buffer { get; set; }
             public DisposeOps dispose { get; set; }
+
             public string[] errors { get; set; } = new string[0];
 
             public APNGFrameInfo(string identifier, APNG apng)
@@ -67,6 +70,7 @@ namespace AngryDash.Image
                 id = identifier;
                 buffer = new Texture(apng.IHDRChunk.Width, apng.IHDRChunk.Height, (Texture.ColorType)apng.IHDRChunk.ColorType);
                 if (apng.DefaultImageIsAnimated) dispose = apng.DefaultImage.fcTLChunk.DisposeOp;
+                else animated = false;
             }
             public override string ToString()
             {
@@ -87,10 +91,10 @@ namespace AngryDash.Image
                 if (!cache.ValueExist(filePath) && File.Exists(filePath))
                 {
                     APNG apng = new APNG(filePath);
-                    APNGFrameInfo info = new APNGFrameInfo(filePath, apng) { border = border };
+                    bool png = apng.IsSimplePNG | !ConfigAPI.GetBool("video.APNG") | forcePNG;
+                    APNGFrameInfo info = new APNGFrameInfo(filePath, apng) { border = border, animated = !png };
                     Logging.Log("Loading: " + info.id);
 
-                    bool png = apng.IsSimplePNG | !ConfigAPI.GetBool("video.APNG") | forcePNG;
                     if (png) info.frames = new Frame[] { apng.DefaultImage }; //PNG
                     else //APNG
                     {
@@ -131,6 +135,16 @@ namespace AngryDash.Image
 
         static void GetSprite(APNGFrameInfo info, int index, System.Action<Sprite> callback)
         {
+            if(!info.animated)
+            {
+                Texture2D tex = new Texture2D(1, 1);
+                tex.LoadImage(File.ReadAllBytes(info.id));
+                tex = tex.PremultiplyAlpha();
+                tex.Apply();
+                callback(Sprite.Create(tex, new UnityEngine.Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f), 100, 0, SpriteMeshType.FullRect, info.border));
+                return;
+            }
+
             Texture frameTampon = info.buffer;
             Task.Run(() =>
             {
