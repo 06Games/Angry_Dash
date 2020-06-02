@@ -48,7 +48,8 @@ public class BaseControl : MonoBehaviour
                 else GetComponent<AudioSource>().Play();
             });
 
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Home") DiscordAPI.Discord.NewActivity(LangueAPI.Get("native", "discordHome_title", "In the home menu"));
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Home")
+            _06Games.Account.Discord.NewActivity(new Discord.Activity() { State = LangueAPI.Get("native", "discordHome_title", "In the home menu"), Assets = new Discord.ActivityAssets() { LargeImage = "default" } });
     }
 
     bool sceneChanging = false;

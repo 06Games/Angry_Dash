@@ -1,4 +1,5 @@
-﻿using AngryDash.Language;
+﻿using _06Games.Account;
+using AngryDash.Language;
 using System.Collections;
 using System.IO;
 using System.Linq;
@@ -111,14 +112,14 @@ public class ProfileLevels : MonoBehaviour
                     go.gameObject.SetActive(true);
                 }
             };
-            client.DownloadStringAsync(new System.Uri(serverURL + "index.php?key=" + Account.Username + "/")); //Searches user's levels
+            client.DownloadStringAsync(new System.Uri(serverURL + "index.php?key=" + API.Information.username + "/")); //Searches user's levels
         }
     }
 
     public void Download(int i)
     {
         if (i >= items.Length) return;
-        string url = serverURL + "files/" + Account.Username + "/" + items[i] + ".level";
+        string url = serverURL + "files/" + API.Information.username + "/" + items[i] + ".level";
         string path = savePath + items[i] + ".level";
         WebClient client = new WebClient();
         client.Encoding = System.Text.Encoding.UTF8;
@@ -136,7 +137,7 @@ public class ProfileLevels : MonoBehaviour
     public void Delete(int i)
     {
         if (i >= items.Length) return;
-        Account.CheckAccountFile((success, msg) =>
+        API.CheckAccountFile((success, msg) =>
         {
             if (success) StartCoroutine(Delete(items[i]));
             else Debug.LogError(msg);
@@ -144,7 +145,7 @@ public class ProfileLevels : MonoBehaviour
     }
     public IEnumerator Delete(string levelName)
     {
-        string url = serverURL + "delete.php?token=" + System.Uri.EscapeUriString(Account.Token + "&level=" + levelName);
+        string url = serverURL + "delete.php?token=" + System.Uri.EscapeUriString(API.Information.token + "&level=" + levelName);
         using (var webRequest = UnityEngine.Networking.UnityWebRequest.Get(url))
         {
             yield return webRequest.SendWebRequest();

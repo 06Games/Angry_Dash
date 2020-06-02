@@ -332,13 +332,13 @@ public class EditorLevelSelector : MonoBehaviour
         PublishPanel.Array(0);
         PublishPanel.gameObject.SetActive(true);
 
-        Account.CheckAccountFile((success, msg) =>
+        _06Games.Account.API.CheckAccountFile((success, msg) =>
         {
             if (success)
             {
                 WebClient client = new WebClient();
                 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/upload.php?token=" + Account.Token + "&level=" + Path.GetFileNameWithoutExtension(files[index].Name);
+                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/upload.php?token=" + _06Games.Account.API.Information.token + "&level=" + Path.GetFileNameWithoutExtension(files[index].Name);
 
                 string lvl = File.ReadAllText(files[index].FullName); //Read the level file
                 if (FileFormat.XML.Utils.IsValid(lvl)) // If the level is in XML, minimize it

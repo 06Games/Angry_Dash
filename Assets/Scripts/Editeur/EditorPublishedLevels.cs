@@ -1,4 +1,5 @@
-﻿using AngryDash.Image.Reader;
+﻿using _06Games.Account;
+using AngryDash.Image.Reader;
 using AngryDash.Language;
 using Level;
 using System.IO;
@@ -156,7 +157,7 @@ public class EditorPublishedLevels : MonoBehaviour
                 string markV = item.GetItem("mark").Value;
                 string comment = item.GetItem("comment").Value;
 
-                if (user == Account.Username) userIndex = coef;
+                if (user == API.Information.username) userIndex = coef;
                 if (float.TryParse(markV, out float itemMark))
                 {
                     mark = (mark * coef + itemMark) / (coef + 1);
@@ -302,11 +303,11 @@ public class EditorPublishedLevels : MonoBehaviour
         WebClient client = new WebClient();
         client.Encoding = System.Text.Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        Account.CheckAccountFile((success, msg) =>
+        API.CheckAccountFile((success, msg) =>
         {
             if (success)
             {
-                string URL = serverURL + "mark.php?action=set&token=" + Account.Token + "&level=" + items[currentFile].Author + "/" + items[currentFile].Name + "&mark=" + (note + 0.5F);
+                string URL = serverURL + "mark.php?action=set&token=" + API.Information.token + "&level=" + items[currentFile].Author + "/" + items[currentFile].Name + "&mark=" + (note + 0.5F);
                 string result = client.DownloadString(URL);
                 if (result.Contains("Success")) Select(currentFile);
                 else Debug.LogError("Connection error: " + result);
@@ -330,11 +331,11 @@ public class EditorPublishedLevels : MonoBehaviour
         WebClient client = new WebClient();
         client.Encoding = System.Text.Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        Account.CheckAccountFile((success, msg) =>
+        API.CheckAccountFile((success, msg) =>
         {
             if (success)
             {
-                string URL = serverURL + "mark.php?action=set&token=" + Account.Token + "&level=" + items[currentFile].Author + "/" + items[currentFile].Name
+                string URL = serverURL + "mark.php?action=set&token=" + API.Information.token + "&level=" + items[currentFile].Author + "/" + items[currentFile].Name
                     + "&comment=" + panel.GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text.HtmlEncode();
                 string result = client.DownloadString(URL);
                 if (result.Contains("Success"))

@@ -1,4 +1,5 @@
-﻿using AngryDash.Language;
+﻿using _06Games.Account;
+using AngryDash.Language;
 using UnityEngine;
 using UnityEngine.UI;
 #if UNITY_ANDROID

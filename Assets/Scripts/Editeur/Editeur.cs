@@ -48,7 +48,7 @@ public class Editeur : MonoBehaviour
         {
             name = Path.GetFileNameWithoutExtension(new FileInfo(path).FullName),
             description = desc,
-            author = Account.Username,
+            author = _06Games.Account.API.Information.username,
             version = Versioning.Actual,
             background = new Level.Background() { category = "native", id = 1, color = new Color32(75, 75, 75, 255) },
             music = null,
@@ -139,10 +139,13 @@ public class Editeur : MonoBehaviour
                 if (level.victoryConditions == null) level.victoryConditions = new Level.VictoryConditions();
                 OpenCat(-1);
 
-                DiscordAPI.Discord.NewActivity(
-                    state: LangueAPI.Get("native", "discordEditor_title", "In the editor"),
-                    detail: LangueAPI.Get("native", "discordEditor_subtitle", "Editing [0]", level.name)
-                );
+                _06Games.Account.Discord.NewActivity(new Discord.Activity()
+                {
+                    State = LangueAPI.Get("native", "discordEditor_title", "In the editor"),
+                    Details = LangueAPI.Get("native", "discordEditor_subtitle", "Editing [0]", level.name),
+                    Assets = new Discord.ActivityAssets() { LargeImage = "default" }
+                });
+
                 cam.GetComponent<BaseControl>().returnScene = false;
 
                 LvlLoadingActivation(false);
@@ -195,14 +198,17 @@ public class Editeur : MonoBehaviour
 
     private void OnEnable()
     {
-        if (level != null) DiscordAPI.Discord.NewActivity(
-             state: LangueAPI.Get("native", "discordEditor_title", "In the editor"),
-             detail: LangueAPI.Get("native", "discordEditor_subtitle", "Editing [0]", level.name)
-         );
+        if (level != null)
+            _06Games.Account.Discord.NewActivity(new Discord.Activity()
+            {
+                State = LangueAPI.Get("native", "discordEditor_title", "In the editor"),
+                Details = LangueAPI.Get("native", "discordEditor_subtitle", "Editing [0]", level.name),
+                Assets = new Discord.ActivityAssets() { LargeImage = "default" }
+            });
     }
     private void Start()
     {
-        DiscordAPI.Discord.NewActivity(LangueAPI.Get("native", "discordEditor_title", "In the editor"));
+        _06Games.Account.Discord.NewActivity(new Discord.Activity() { State = LangueAPI.Get("native", "discordEditor_title", "In the editor"), Assets = new Discord.ActivityAssets() { LargeImage = "default" } });
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
         cam.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, -10);
         cam.GetComponent<Camera>().orthographicSize = Screen.height / 2;

@@ -75,11 +75,12 @@ public class _NetworkManager : NetworkBehaviour
         StartData();
         mapRequested = false;
 
-        DiscordAPI.Discord.NewActivity(
-            state: LangueAPI.Get("native", "discordServer_title", "Play in a server"),
-            image: new DiscordAPI.Img(cap: LangueAPI.Get("native", "discordServer_caption", "Server : [0]:[1]", adress, port.ToString())),
-            startTime: DateTime.UtcNow
-        );
+        _06Games.Account.Discord.NewActivity(new Discord.Activity()
+        {
+            State = LangueAPI.Get("native", "discordServer_title", "Play in a server"),
+            Assets = new Discord.ActivityAssets() { LargeImage = "default", LargeText = LangueAPI.Get("native", "discordServer_caption", "Server : [0]:[1]", adress, port.ToString()) },
+            Timestamps = new Discord.ActivityTimestamps() { Start = _06Games.Account.Discord.CalculateStartTime(DateTime.Now) }
+        });
         History.LvlPlayed(adress + ":" + port, "S", "");
     }
 
