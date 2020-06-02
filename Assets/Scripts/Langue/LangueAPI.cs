@@ -14,7 +14,7 @@ namespace AngryDash.Language
             set
             {
                 ConfigAPI.SetString("Language", value);
-                CacheManager.Dictionary.Static().dictionary.Remove("language");
+                CacheManager.Dictionary.dictionary.Remove("language");
             }
         }
 

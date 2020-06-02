@@ -81,7 +81,12 @@ namespace AngryDash.Image
 
         public static void LoadAsync(string filePath, Vector4 border = new Vector4(), System.Action<Sprite_API_Data> callback = null, bool forcePNG = false)
         {
-            if (ConfigAPI.GetBool("video.experimentalLoading")) UnityThread.executeCoroutine(NEW_API());
+            if (ConfigAPI.GetBool("video.experimentalLoading"))
+#if UNITY_EDITOR
+                if (!UnityEditor.EditorApplication.isPlaying) FindObjectOfType<MonoBehaviour>().StartCoroutine(NEW_API());
+                else
+#endif
+                    UnityThread.executeCoroutine(NEW_API());
             else callback(OLD_API.GetSprites(filePath, border, forcePNG));
 
             System.Collections.IEnumerator NEW_API()
@@ -135,7 +140,7 @@ namespace AngryDash.Image
 
         static void GetSprite(APNGFrameInfo info, int index, System.Action<Sprite> callback)
         {
-            if(!info.animated)
+            if (!info.animated)
             {
                 Texture2D tex = new Texture2D(1, 1);
                 tex.LoadImage(File.ReadAllBytes(info.id));

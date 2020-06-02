@@ -1,43 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace CacheManager
 {
-    public class Dictionary : MonoBehaviour
+    public static class Dictionary
     {
-        public Dictionary<string, Cache> dictionary;
-        public Dictionary()
-        { dictionary = new Dictionary<string, Cache>(); }
-
-        static Dictionary dic;
-        public static Dictionary Static()
-        {
-            if (dic != null) return dic;
-            else if (GameObject.Find("Cache") != null)
-            {
-                dic = GameObject.Find("Cache").GetComponent<Dictionary>();
-                return dic;
-            }
-            else
-            {
-                GameObject cache = new GameObject("Cache");
-                DontDestroyOnLoad(cache);
-                dic = cache.AddComponent<Dictionary>();
-                return dic;
-            }
-        }
+        public static Dictionary<string, Cache> dictionary = new Dictionary<string, Cache>();
         public static bool Exist() { return GameObject.Find("Cache") != null; }
-
-#if UNITY_EDITOR
-        public string[] key;
-        public Cache[] value;
-        private void Update()
-        {
-            key = dictionary.Keys.ToArray();
-            value = dictionary.Values.ToArray();
-        }
-#endif
     }
 
     [System.Serializable]
@@ -45,15 +14,15 @@ namespace CacheManager
     {
         [System.NonSerialized] Dictionary<string, object> dictionary;
 
+        public Cache() { }
         public Cache(string name)
         {
-            Dictionary dic = Dictionary.Static();
-            if (dic.dictionary.ContainsKey(name))
-                dictionary = dic.dictionary[name].dictionary;
+            if (Dictionary.dictionary.ContainsKey(name))
+                dictionary = Dictionary.dictionary[name].dictionary;
             else
             {
                 dictionary = new Dictionary<string, object>();
-                dic.dictionary.Add(name, this);
+                Dictionary.dictionary.Add(name, this);
             }
         }
 

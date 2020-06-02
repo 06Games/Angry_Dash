@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 namespace AngryDash.Image.Reader
 {
+    [ExecuteInEditMode]
     public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         public UImage_Reader SetID(string id) { baseID = id; return this; }
@@ -51,7 +52,11 @@ namespace AngryDash.Image.Reader
             foreach (var texture in jsonData.textures) Sprite_API.LoadAsync(texture.path, texture.border, (s) => data[(int)texture.type] = s);
             if (async)
             {
-                UnityThread.executeCoroutine(lAsync());
+#if UNITY_EDITOR
+                if (!UnityEditor.EditorApplication.isPlaying) StartCoroutine(lAsync());
+                else
+#endif
+                    UnityThread.executeCoroutine(lAsync());
                 System.Collections.IEnumerator lAsync()
                 {
                     yield return new WaitUntil(() => data.Count(d => d != null) == jsonData.textures.Length | gameObject == null);
@@ -229,7 +234,11 @@ namespace AngryDash.Image.Reader
                     animationTime[index].Restart();
                 }
 
-                yield return new WaitForEndOfFrame();
+#if UNITY_EDITOR
+                if (!UnityEditor.EditorApplication.isPlaying) yield return null;
+                else
+#endif
+                    yield return new WaitForEndOfFrame();
                 coroutines[index] = StartCoroutine(APNG(index, frameAddition, keepFrame));
             }
             else StopAnimating(index, keepFrame);
