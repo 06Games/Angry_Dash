@@ -8,18 +8,25 @@ using UnityEngine.UI;
 public class RessourcePackManager : MonoBehaviour
 {
     int category = 0;
-
     Item[] RPs;
 
     public void ChangCategory(int cat) { category = cat; Refresh(); }
 
-    void Start() { Refresh(); }
+    void Start() => Refresh();
     public void Refresh()
     {
         for (int i = 0; i < transform.GetChild(0).childCount; i++)
             transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = i != category;
 
-        if (category == 0)
+        if (ConfigAPI.GetBool("ressources.disable"))
+        {
+            var root = new XML().CreateRootElement("ressource");
+            root.CreateItem("name").Value = "Resource packs are disabled!";
+            root.CreateItem("name").Value = "Resource packs are disabled!";
+            RPs = new[] { new Item(root.node) };
+            category = 0;
+        }
+        else if (category == 0)
         {
             RPs = Directory.GetDirectories(Application.persistentDataPath + "/Ressources/").Select(f =>
             {

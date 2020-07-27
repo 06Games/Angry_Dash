@@ -8,80 +8,42 @@ public class ConfigAPI
 
     public static string GetString(string d)
     {
-        string id = d + " = ";
-
+        var id = d + " = ";
         if (File.Exists(configPath))
-        {
-            string[] lines = File.ReadAllLines(configPath);
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (lines[i].Contains(id))
-                    return lines[i].Replace(id, "");
-            }
-        }
+            foreach (var line in File.ReadAllLines(configPath))
+                if (line.Contains(id)) return line.Remove(0, id.Length);
         return null;
     }
-
-    public static bool GetBool(string d)
-    {
-        bool b = false;
-        try { b = bool.Parse(GetString(d)); } catch { }
-        return b;
-    }
-
-    public static int GetInt(string d)
-    {
-        int b = 0;
-        try { b = int.Parse(GetString(d)); } catch { }
-        return b;
-    }
-
-    public static float GetFloat(string d)
-    {
-        float b = 0;
-        try { b = float.Parse(GetString(d)); } catch { }
-        return b;
-    }
+    public static bool GetBool(string d) => bool.TryParse(GetString(d), out var b) ? b : false;
+    public static int GetInt(string d) => int.TryParse(GetString(d), out var b) ? b : 0;
+    public static float GetFloat(string d) => float.TryParse(GetString(d), out var b) ? b : 0;
 
     public static bool Exists(string d)
     {
-        string id = d + " = ";
-
-        if (!File.Exists(configPath))
-            File.CreateText(configPath);
-
-        string[] lines = File.ReadAllLines(configPath);
-        int l = -1;
-        for (int i = 0; i < lines.Length; i++)
-        {
-            if (lines[i].Contains(id))
-                l = i;
-        }
-
-        return l > -1;
+        var id = d + " = ";
+        if (File.Exists(configPath))
+            foreach (var line in File.ReadAllLines(configPath))
+                if (line.Contains(id)) return true;
+        return false;
     }
     public static void SetString(string d, string p)
     {
         string id = d + " = ";
 
-        string[] lines = new string[5] { "# Angry Dash config file", "# Edit this carefully", "# 06Games,", "# All rights reserved", "" };
+        var lines = new[] { "# Angry Dash config file", "# Edit this carefully", "# 06Games,", "# All rights reserved", "" };
         if (File.Exists(configPath))
-            lines = File.ReadAllLines(configPath);
-        int l = -1;
-        for (int i = 0; i < lines.Length; i++)
         {
-            if (lines[i].Contains(id))
-                l = i;
+            lines = File.ReadAllLines(configPath);
+            for (int i = 0; i < lines.Length; i++)
+                if (lines[i].Contains(id)) { lines[i] = id + p; Write(); return; }
         }
 
-        if (l == -1)
-            lines = lines.Union(new string[1] { id + p }).ToArray();
-        else lines[l] = id + p;
+        lines = lines.Union(new string[1] { id + p }).ToArray();
+        Write();
 
-        File.WriteAllLines(configPath, lines);
+        void Write() => File.WriteAllLines(configPath, lines);
     }
-
-    public static void SetBool(string d, bool p) { SetString(d, p.ToString()); }
-    public static void SetInt(string d, int p) { SetString(d, p.ToString()); }
-    public static void SetFloat(string d, float p) { SetString(d, p.ToString()); }
+    public static void SetBool(string d, bool p) => SetString(d, p.ToString());
+    public static void SetInt(string d, int p) => SetString(d, p.ToString());
+    public static void SetFloat(string d, float p) => SetString(d, p.ToString());
 }

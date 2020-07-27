@@ -47,6 +47,7 @@ namespace AngryDash.Image
         /// <returns></returns>
         public static async Task<Sprite_API_Data> GetSpritesAsync(string filePath, Vector4 border = new Vector4(), bool forcePNG = false)
         {
+            if (ConfigAPI.GetBool("ressources.disable")) return null;
             Sprite_API_Data SAD = null;
             await Task.Run(() => LoadAsync(filePath, border, (sad) => SAD = sad, forcePNG));
             return SAD;
