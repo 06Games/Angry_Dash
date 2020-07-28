@@ -79,27 +79,24 @@ public class DependenciesManager : MonoBehaviour
                     sw.Start();
                     while (!webRequest.isDone)
                     {
-                        var unit = new string[] { "B", "KB", "MB", "GB", "TB" };
-                        double downloadedSize = webRequest.downloadedBytes;
+                        double downloadedS = webRequest.downloadedBytes;
 
                         // Download speed
-                        double speed = downloadedSize / sw.Elapsed.TotalSeconds;
-                        int speedPower = GetCorrectUnit(speed);
-                        speed = Math.Round(speed / Mathf.Pow(1000, speedPower), 1);
+                        var speed = FileSizeUnit(downloadedS / sw.Elapsed.TotalSeconds);
 
                         float pourcentage = webRequest.downloadProgress * 100F; //Progress
 
                         //Downloaded size
                         int sizePower = 0;
-                        if (double.TryParse(webRequest.GetResponseHeader("Content-Length"), out double totalSize)) sizePower = GetCorrectUnit(totalSize);
-                        else sizePower = GetCorrectUnit(downloadedSize);
-                        totalSize = Math.Round(totalSize / Mathf.Pow(1000, sizePower), 1);
-                        downloadedSize = Math.Round(downloadedSize / Mathf.Pow(1000, sizePower), 1);
+                        if (double.TryParse(webRequest.GetResponseHeader("Content-Length"), out double totalS)) sizePower = GetCorrectUnit(totalS);
+                        else sizePower = GetCorrectUnit(downloadedS);
+                        var totalSize = FileSizeUnit(totalS, sizePower);
+                        var downloadedSize = FileSizeUnit(downloadedS, sizePower);
 
 
                         //Text
-                        string speedText = LangueAPI.Get("native", $"download.speed.{unit[speedPower]}", $"[0] {unit[speedPower]}/s", speed);
-                        string downloaded = LangueAPI.Get("native", $"download.state.{unit[sizePower]}", $"[0] {unit[sizePower]} out of [1] {unit[sizePower]}", downloadedSize.ToString(), totalSize > 0 ? totalSize.ToString() : "~");
+                        string speedText = LangueAPI.Get("native", "download.speed", "[0]/s", speed);
+                        string downloaded = LangueAPI.Get("native", "download.state.unit", $"[0] out of [1]", downloadedSize, totalS > 0 ? totalSize : "~");
                         string pourcent = LangueAPI.Get("native", "download.state.percentage", "[0]%", pourcentage.ToString("00"));
                         DownloadInfo.text = speedText + " - " + downloaded + " - <color=grey>" + pourcent + "</color>";
                         DownloadInfo.gameObject.SetActive(true);
@@ -133,6 +130,14 @@ public class DependenciesManager : MonoBehaviour
         }
         else if (!Directory.Exists(ressourcesPath + "default/")) transform.GetChild(0).gameObject.SetActive(true); //This is the first start, the game can't start
         else complete.Invoke(); //Continue without downloading anything
+    }
+
+    public static string FileSizeUnit(double size, int? unitPower = null)
+    {
+        if(unitPower == null) unitPower = GetCorrectUnit(size);
+        var value = Math.Round(size / Mathf.Pow(1000, unitPower.Value), 1);
+        var unit = new string[] { "B", "KB", "MB", "GB", "TB" }[unitPower.Value];
+        return LangueAPI.Get("native", $"download.unit.{unit}", $"[0] {unit}", value.ToString("0.#"));
     }
     public static int GetCorrectUnit(double d)
     {

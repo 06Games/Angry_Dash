@@ -43,8 +43,8 @@ namespace AngryDash.Image.Reader
         public UImage_Reader Load(Sprite_API_Data[] spriteData) { data = new List<Sprite_API_Data>(spriteData); return this; }
         public UImage_Reader Load() { Load(JSON_API.Parse(baseID), false); return this; }
         public UImage_Reader LoadAsync() { Load(JSON_API.Parse(baseID), true); return this; }
-        public UImage_Reader SetPath(string id) { Load(JSON_API.Parse(id, null, true), false); return this; }
-        public UImage_Reader SetPathAync(string id) { Load(JSON_API.Parse(id, null, true), true); return this; }
+        public UImage_Reader SetPath(string id) { baseID = null; Load(JSON_API.Parse(id, null, true), false); return this; }
+        public UImage_Reader SetPathAync(string id) { baseID = null; Load(JSON_API.Parse(id, null, true), true); return this; }
 
         void Load(JSON.Data jsonData, bool async)
         {

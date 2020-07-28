@@ -117,39 +117,22 @@ namespace Security
     /// </summary>
     public static class Hashing
     {
-        public static string SHA1(string value)
-        {
-            SHA1 sha = System.Security.Cryptography.SHA1.Create();
-            byte[] data = sha.ComputeHash(Encoding.Default.GetBytes(value));
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < data.Length; i++)
-            {
-                sb.Append(data[i].ToString("x2"));
-            }
-            return sb.ToString();
-        }
+        public enum Algorithm { SHA1, SHA256, SHA384, SHA512 }
+        public static string SHA(Algorithm alg, string value) => Hash(sha(alg).ComputeHash(Encoding.Default.GetBytes(value))); // ComputeHash - returns byte array
+        public static string SHA(Algorithm alg, Stream value) => Hash(sha(alg).ComputeHash(value)); // ComputeHash - returns byte array
 
-        public static string SHA384(string value)
+        static HashAlgorithm sha(Algorithm alg)
         {
-            SHA384 sha = System.Security.Cryptography.SHA384.Create();
-            byte[] data = sha.ComputeHash(Encoding.Default.GetBytes(value));
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < data.Length; i++)
-            {
-                sb.Append(data[i].ToString("x2"));
-            }
-            return sb.ToString();
+            if (alg == Algorithm.SHA1) return SHA1.Create();
+            else if (alg == Algorithm.SHA256) return SHA256.Create();
+            else if (alg == Algorithm.SHA384) return SHA384.Create();
+            else if (alg == Algorithm.SHA512) return SHA512.Create();
+            else return SHA1.Create();
         }
-
-        public static string SHA512(string value)
+        static string Hash(byte[] data)
         {
-            SHA512 sha = System.Security.Cryptography.SHA512.Create();
-            byte[] data = sha.ComputeHash(Encoding.Default.GetBytes(value));
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < data.Length; i++)
-            {
-                sb.Append(data[i].ToString("x2"));
-            }
+            StringBuilder sb = new StringBuilder(); // Convert byte array to a string
+            for (int i = 0; i < data.Length; i++) sb.Append(data[i].ToString("x2"));
             return sb.ToString();
         }
     }

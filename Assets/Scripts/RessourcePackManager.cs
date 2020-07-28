@@ -1,116 +1,125 @@
 ﻿using AngryDash.Image.Reader;
-using FileFormat.XML;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class RessourcePackManager : MonoBehaviour
 {
     int category = 0;
-    Item[] RPs;
+    public RP[] RPs;
+    [System.Serializable]
+    public class RP
+    {
+        public string folderName;
+        public string name;
+        public string author;
+        public string description;
+        public long size;
+        public string sha256;
+        public bool optionnal;
+        public string url;
+        public string wallpaper;
+    }
 
     public void ChangCategory(int cat) { category = cat; Refresh(); }
+    public static string serverURL { get; private set; }
 
+    void Awake() => serverURL = $"https://06games.ddns.net/beta/api/v1/angry-dash/ressources/?gameVersion={Application.version}";
     void Start() => Refresh();
     public void Refresh()
     {
-        for (int i = 0; i < transform.GetChild(0).childCount; i++)
-            transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = i != category;
+        for (int i = 0; i < transform.GetChild(0).childCount; i++) transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = i != category;
 
         if (ConfigAPI.GetBool("ressources.disable"))
-        {
-            var root = new XML().CreateRootElement("ressource");
-            root.CreateItem("name").Value = "Resource packs are disabled!";
-            root.CreateItem("name").Value = "Resource packs are disabled!";
-            RPs = new[] { new Item(root.node) };
-            category = 0;
-        }
+            RPs = new[] { new RP() { name = "Resource packs are disabled!", description = "Set <b>ressources.disable</b> to <b>False</b> to re-enable them" } };
         else if (category == 0)
         {
             RPs = Directory.GetDirectories(Application.persistentDataPath + "/Ressources/").Select(f =>
             {
-                var root = new XML().CreateRootElement("ressource");
-                root.CreateItem("name").Value = f;
-                return new Item(root.node);
+                var dirInf = new DirectoryInfo(f);
+                var rp = new RP()
+                {
+                    folderName = name = dirInf.Name,
+                    size = dirInf.GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length),
+                    sha256 = Security.Hashing.SHA(Security.Hashing.Algorithm.SHA256, "")
+                };
+                if (!File.Exists(f + "/info.ini")) return rp;
+
+                var ini = new FileFormat.INI.INI(f + "/info.ini").GetCategory("Configuration");
+                rp.name = Format(ini.Value<string>("name") ?? rp.name);
+                rp.author = Format(ini.Value<string>("author"));
+                rp.description = Format(ini.Value<string>("description"));
+                rp.wallpaper = f + "/" + Format(ini.Value<string>("wallpaper"));
+                return rp;
             }).ToArray();
         }
-        else if (category == 1)
+        else if (category == 1 && InternetAPI.IsConnected())
         {
-            if (InternetAPI.IsConnected())
-            {
-                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/ressources/?v=" + Application.version;
-                System.Net.WebClient client = new System.Net.WebClient();
-                System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                RPs = new XML(client.DownloadString(URL)).RootElement.GetItems("ressource");
-            }
-            else RPs = new Item[0];
+            System.Net.WebClient client = new System.Net.WebClient();
+            System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            RPs = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, RP>>(client.DownloadString(serverURL)).Values.ToArray();
         }
+        else RPs = new RP[0];
 
         Transform Content = transform.GetChild(1).GetChild(0).GetChild(0);
+        for (int i = 1; i < Content.childCount; i++) Destroy(Content.GetChild(i).gameObject);
         GameObject Template = Content.GetChild(0).gameObject;
 
-        for (int i = 1; i < Content.childCount; i++)
-            Destroy(Content.GetChild(i).gameObject);
 
         for (int i = 0; i < RPs.Length; i++)
         {
-            Transform go = Instantiate(Template, Content).transform;
-            if (category == 1)
-                go.GetComponent<RectTransform>().sizeDelta = new Vector2(go.GetComponent<RectTransform>().sizeDelta.x, 100);
+            var rp = RPs[i];
             int param = i;
+            Transform go = Instantiate(Template, Content).transform;
+
+            //Could be selected/Is selected
             go.GetComponent<Button>().onClick.AddListener(() => SetRP(param));
-            if (category == 1)
-            {
-                go.GetChild(3).GetComponent<Button>().onClick.AddListener(() => Download(param));
-                string RP = Application.persistentDataPath + "/Ressources/" + Path.GetFileNameWithoutExtension(RPs[i].GetItem("name").Value);
-                go.GetChild(3).gameObject.SetActive(!Directory.Exists(RP));
+            go.GetComponent<Button>().interactable = rp.folderName != ConfigAPI.GetString("ressources.pack");
+            go.Find("Selected").gameObject.SetActive(rp.folderName == ConfigAPI.GetString("ressources.pack"));
 
-                if (Directory.Exists(RP))
-                {
-                    go.GetChild(4).GetComponent<Button>().onClick.AddListener(() => Download(param));
-                    long dirSize = new DirectoryInfo(RP).GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
-                    if (!long.TryParse(RPs[i].GetItem("size").Value, out long rpSize))
-                        go.GetChild(4).gameObject.SetActive(false);
-                    else go.GetChild(4).gameObject.SetActive(dirSize != rpSize);
-                }
-                else go.GetChild(4).gameObject.SetActive(false);
+            //Download btn
+            string RP = Application.persistentDataPath + "/Ressources/" + rp.folderName;
+            var downBtn = go.Find("Download");
+            downBtn.GetComponent<Button>().onClick.AddListener(() => Download(param));
+            downBtn.gameObject.SetActive(true);
+            if (!Directory.Exists(RP)) downBtn.GetComponent<UImage_Reader>().baseID = "native/GUI/settingsMenu/ressourcePacks/download";
+            else
+            {
+                string dirSHA = "";
+                if (dirSHA != rp.sha256 && rp.url != null) downBtn.GetComponent<UImage_Reader>().baseID = "native/GUI/settingsMenu/ressourcePacks/update";
+                else downBtn.gameObject.SetActive(false);
             }
 
-            string name = "";
-            if (category == 0) name = new DirectoryInfo(RPs[i].GetItem("name").Value).Name;
-            else if (category == 1) name = Path.GetFileNameWithoutExtension(RPs[i].GetItem("name").Value);
+            //Infos
+            go.name = rp.name;
+            go.Find("Title").GetComponent<Text>().text = rp.name;
+            go.Find("Description").GetComponent<Text>().text = rp.description;
+            go.Find("Author").GetComponent<Text>().text = AngryDash.Language.LangueAPI.Get("native", "settings.ressourcesPack.author", "by [0]", rp.author);
+            go.Find("Size").GetComponent<Text>().text = DependenciesManager.FileSizeUnit(rp.size);
 
-            go.GetComponent<Button>().interactable = name != ConfigAPI.GetString("ressources.pack");
-            go.GetChild(2).gameObject.SetActive(name == ConfigAPI.GetString("ressources.pack"));
-
-            if (category == 0)
+            //Wallpaper
+            if (!string.IsNullOrEmpty(rp.wallpaper) && System.Uri.TryCreate(rp.wallpaper, System.UriKind.Absolute, out var uri) && uri.Scheme != "file")
             {
-                string[] data = new string[0];
-                if (File.Exists(RPs[i].GetItem("name").Value + "/info.ini")) data = File.ReadAllLines(RPs[i].GetItem("name").Value + "/info.ini");
-
-                string description = "";
-                string wallpaperPath = null;
-                for (int l = 0; l < data.Length; l++)
+                UnityThread.executeCoroutine(GetWall());
+                IEnumerator GetWall()
                 {
-                    string[] infos = data[l].Split(new string[] { " = " }, System.StringSplitOptions.None);
-                    infos[1] = Format(infos[1]);
-
-                    if (infos.Length > 1)
+                    go.GetComponent<UImage_Reader>().Load();
+                    var wall = UnityWebRequestTexture.GetTexture(rp.wallpaper);
+                    yield return wall.SendWebRequest();
+                    try
                     {
-                        if (infos[0] == "name") name = infos[1];
-                        else if (infos[0] == "description") description = infos[1];
-                        else if (infos[0] == "wallpaper") wallpaperPath = RPs[i].GetItem("name").Value + "/" + infos[1];
+                        var tex = DownloadHandlerTexture.GetContent(wall);
+                        go.GetComponent<UImage_Reader>().enabled = false;
+                        go.GetComponent<Image>().sprite = Sprite.Create(tex, new Rect(0.0f, 0.0f, tex.width, tex.height), new Vector2(0.5f, 0.5f));
                     }
+                    catch {}
                 }
-                go.GetChild(1).GetComponent<Text>().text = description;
-                if (!string.IsNullOrEmpty(wallpaperPath)) go.GetComponent<UImage_Reader>().SetPath(wallpaperPath);
-                else go.GetComponent<UImage_Reader>().SetID("native/GUI/settingsMenu/ressourcePacks/defaultBackground");
             }
-            else go.GetComponent<UImage_Reader>().SetID("native/GUI/settingsMenu/ressourcePacks/officialBackground");
-
-            go.name = name;
-            go.GetChild(0).GetComponent<Text>().text = name;
+            else if (!string.IsNullOrEmpty(rp.wallpaper)) go.GetComponent<UImage_Reader>().SetPath(rp.wallpaper);
 
             go.gameObject.SetActive(true);
         }
@@ -120,24 +129,23 @@ public class RessourcePackManager : MonoBehaviour
     {
         if (category == 1)
         {
-            string RP = Application.persistentDataPath + "/Ressources/" + Path.GetFileNameWithoutExtension(RPs[index].GetItem("name").Value);
+            string RP = Application.persistentDataPath + "/Ressources/" + RPs[index].folderName;
             if (!Directory.Exists(RP)) return;
         }
 
-        if (category == 0) ConfigAPI.SetString("ressources.pack", new DirectoryInfo(RPs[index].GetItem("name").Value).Name);
-        else if (category == 1) ConfigAPI.SetString("ressources.pack", Path.GetFileNameWithoutExtension(RPs[index].GetItem("name").Value));
+        ConfigAPI.SetString("ressources.pack", RPs[index].folderName);
         for (int i = 0; i < transform.GetChild(1).GetChild(0).GetChild(0).childCount - 1; i++)
         {
             Transform go = transform.GetChild(1).GetChild(0).GetChild(0).GetChild(i + 1);
             go.GetComponent<Button>().interactable = i != index;
-            go.GetChild(2).gameObject.SetActive(i == index);
+            go.Find("Selected").gameObject.SetActive(i == index);
         }
     }
 
     public void Download(int index)
     {
         SceneManager.LoadScene("Start", new string[] { "Dependencies", "Home", RPs[index].ToString() }, true);
-        transform.GetChild(1).GetChild(0).GetChild(0).GetChild(index + 1).GetChild(3).gameObject.SetActive(false);
+        transform.GetChild(1).GetChild(0).GetChild(0).GetChild(index + 1).Find("Download").gameObject.SetActive(false);
     }
 
     public void ApplyRP()
@@ -149,6 +157,7 @@ public class RessourcePackManager : MonoBehaviour
 
     string Format(string s)
     {
+        if (string.IsNullOrWhiteSpace(s)) return s;
         s = s.Replace("\\t", "\t");
         s = s.Replace("\\n", "\n");
         return s;

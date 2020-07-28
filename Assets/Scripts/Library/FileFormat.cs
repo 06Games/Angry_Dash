@@ -230,8 +230,12 @@ namespace FileFormat
             Nini.Config.IConfigSource source;
             public INI(string path)
             {
-                source = new Nini.Config.IniConfigSource(path);
-                source.AutoSave = true;
+                try
+                {
+                    source = new Nini.Config.IniConfigSource(path);
+                    source.AutoSave = true;
+                }
+                catch { }
             }
             public Category GetCategory(string token) { if (source == null) return new Category(null); else return new Category(source.Configs[token]); }
         }
@@ -245,8 +249,8 @@ namespace FileFormat
             public bool ContainsValues { get { if (config == null) return false; else return config.GetValues().Length > 0; } }
             public void Delete() { if (config != null) config.ConfigSource.Configs.Remove(config); }
 
-            public T Value<T>(string key) { if (config == null) return default(T); else return Tools.StringExtensions.ParseTo<T>(config.Get(key)); }
-            public T Value<T>(string key, string defaultValue) { if (config == null) return default(T); else return Tools.StringExtensions.ParseTo<T>(config.Get(key, defaultValue)); }
+            public T Value<T>(string key) { if (config == null) return default; else return Tools.StringExtensions.ParseTo<T>(config.Get(key)); }
+            public T Value<T>(string key, string defaultValue) { if (config == null) return default; else return Tools.StringExtensions.ParseTo<T>(config.Get(key, defaultValue)); }
             public bool ValueExist(string key) { if (config == null) return false; else return config.Get(key) != null; }
             public void SetValue(string key, object value) { if (config != null) config.Set(key, value); }
             public void RemoveValue(string key) { if (config != null) config.Remove(key); }
