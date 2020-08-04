@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.06games.api": "file:C:/Users/evan/Documents/Unity/Projets/Packages/Packages/com.06games.api",
     "com.06games.authentication": "file:C:/Users/evan/Documents/Unity/Projets/Packages/Packages/com.06games.authentication",
     "com.06games.security": "file:C:/Users/evan/Documents/Unity/Projets/Packages/Packages/com.06games.security",
     "com.unity.2d.sprite": "1.0.0",
