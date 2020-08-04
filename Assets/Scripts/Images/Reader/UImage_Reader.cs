@@ -131,9 +131,7 @@ namespace AngryDash.Image.Reader
         public bool StartAnimating(int index) { return StartAnimating(index, 1, false); }
         public bool StartAnimating(int index, int frameAddition, bool keepFrame = true)
         {
-            if (data == null) return false;
-            if (index >= data.Count) return false;
-            if (data[index] == null) return false;
+            if (data == null || index >= data.Count || data[index] == null || data[index].Frames == null || data[index].Frames.Count == 0) return false;
             animationChanged?.Invoke(index);
 
             var thisImage = new UniversalImage(gameObject);
@@ -173,12 +171,8 @@ namespace AngryDash.Image.Reader
                 animationTime[index].Start();
                 coroutines[index] = StartCoroutine(APNG(index, frameAddition, keepFrame));
             }
-            else if (data[index].Frames.Count == 1 & frameAddition > 0)
-            {
-                Image.sprite = data[index].Frames[0];
-                return false;
-            }
-            else if (data[index].Frames.Count == 1 & frameAddition < 0) StartAnimating(0, 1);
+            else if (frameAddition > 0) { Image.sprite = data[index].Frames[0]; return false; }
+            else if (frameAddition < 0) StartAnimating(0, 1);
 
             return true;
         }
