@@ -81,6 +81,6 @@ public class Intro : MonoBehaviour
 
         var DM = GameObject.Find("Dependencies").GetComponent<DependenciesManager>();
         var social = FindObjectOfType<Social>();
-        yield return DM.DownloadRPs(() => DM.DownloadLevels(() => social.NewStart()), null);
+        yield return DM.DownloadRPs(() => StartCoroutine(DM.DownloadLevels(social.NewStart)), null);
     }
 }

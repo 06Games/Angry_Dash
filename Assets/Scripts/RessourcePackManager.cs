@@ -28,7 +28,7 @@ public class RessourcePackManager : MonoBehaviour
     public void ChangCategory(int cat) { category = cat; Refresh(); }
     public static string serverURL { get; private set; }
 
-    void Awake() => serverURL = $"https://06games.ddns.net/beta/api/v1/angry-dash/ressources/?gameVersion={Application.version}";
+    void Awake() => serverURL = $"{_06Games.ServerAPI.apiUrl}angry-dash/ressources/?gameVersion={Application.version}";
     void Start() => Refresh();
     public void Refresh()
     {
@@ -89,8 +89,8 @@ public class RessourcePackManager : MonoBehaviour
             if (!Directory.Exists(RP)) downBtn.GetComponent<UImage_Reader>().baseID = "native/GUI/settingsMenu/ressourcePacks/download";
             else
             {
-                string dirSHA = "";
-                if (dirSHA != rp.sha256 && rp.url != null) downBtn.GetComponent<UImage_Reader>().baseID = "native/GUI/settingsMenu/ressourcePacks/update";
+                var dirSize = new DirectoryInfo(RP).GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length);
+                if (dirSize != rp.size && rp.url != null) downBtn.GetComponent<UImage_Reader>().baseID = "native/GUI/settingsMenu/ressourcePacks/update";
                 else downBtn.gameObject.SetActive(false);
             }
 
@@ -144,7 +144,7 @@ public class RessourcePackManager : MonoBehaviour
 
     public void Download(int index)
     {
-        SceneManager.LoadScene("Start", new string[] { "Dependencies", "Home", RPs[index].ToString() }, true);
+        SceneManager.LoadScene("Start", new string[] { "Dependencies", "Home", FileFormat.XML.Utils.ClassToXML(RPs[index]) }, true);
         transform.GetChild(1).GetChild(0).GetChild(0).GetChild(index + 1).Find("Download").gameObject.SetActive(false);
     }
 

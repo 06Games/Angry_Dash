@@ -119,7 +119,7 @@ namespace Security
     {
         public enum Algorithm { SHA1, SHA256, SHA384, SHA512 }
         public static string SHA(Algorithm alg, string value) => Hash(sha(alg).ComputeHash(Encoding.Default.GetBytes(value))); // ComputeHash - returns byte array
-        public static string SHA(Algorithm alg, Stream value) => Hash(sha(alg).ComputeHash(value)); // ComputeHash - returns byte array
+        public static string SHA(Algorithm alg, Stream value) { var val = Hash(sha(alg).ComputeHash(value)); value.Close(); return val; }// ComputeHash - returns byte array
 
         static HashAlgorithm sha(Algorithm alg)
         {
