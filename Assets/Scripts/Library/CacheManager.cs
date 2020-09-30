@@ -1,46 +1,36 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
-namespace CacheManager
+[System.Serializable]
+public class Cache
 {
-    public static class Dictionary
+    [System.NonSerialized] public static Dictionary<string, Cache> Dictionary = new Dictionary<string, Cache>();
+    [System.NonSerialized] Dictionary<string, object> cache;
+
+    public static Cache Open(string name)
     {
-        public static Dictionary<string, Cache> dictionary = new Dictionary<string, Cache>();
-        public static bool Exist() { return GameObject.Find("Cache") != null; }
+        if (Dictionary.ContainsKey(name)) return Dictionary[name];
+        else
+        {
+            var cache = new Cache { cache = new Dictionary<string, object>() };
+            Dictionary.Add(name, cache);
+            return cache;
+        }
     }
 
-    [System.Serializable]
-    public class Cache
+    public void Set(string id, object obj)
     {
-        [System.NonSerialized] Dictionary<string, object> dictionary;
-
-        public Cache() { }
-        public Cache(string name)
-        {
-            if (Dictionary.dictionary.ContainsKey(name))
-                dictionary = Dictionary.dictionary[name].dictionary;
-            else
-            {
-                dictionary = new Dictionary<string, object>();
-                Dictionary.dictionary.Add(name, this);
-            }
-        }
-
-        public void Set(string id, object obj)
-        {
-            if (string.IsNullOrEmpty(id)) return;
-            else if (dictionary.ContainsKey(id)) dictionary[id] = obj;
-            else dictionary.Add(id, obj);
-        }
-
-        public T Get<T>(string id) { return (T)Get(id); }
-        public object Get(string id)
-        {
-            if (string.IsNullOrEmpty(id)) return null;
-            else if (dictionary.ContainsKey(id)) return dictionary[id];
-            else return null;
-        }
-
-        public bool ValueExist(string id) { if (id == null) return false; else return dictionary.ContainsKey(id); }
+        if (string.IsNullOrEmpty(id)) return;
+        else if (cache.ContainsKey(id)) cache[id] = obj;
+        else cache.Add(id, obj);
     }
+
+    public T Get<T>(string id) { return (T)Get(id); }
+    public object Get(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return null;
+        else if (cache.ContainsKey(id)) return cache[id];
+        else return null;
+    }
+
+    public bool ValueExist(string id) { if (id == null) return false; else return cache.ContainsKey(id); }
 }

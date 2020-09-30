@@ -52,7 +52,7 @@ namespace AngryDash.Image
             await Task.Run(() => LoadAsync(filePath, border, (sad) => SAD = sad, forcePNG));
             return SAD;
         }
-        public static Sprite_API_Data GetSprites(string filePath) { return new CacheManager.Cache("Ressources/textures").Get<Sprite_API_Data>(filePath); }
+        public static Sprite_API_Data GetSprites(string filePath) { return Cache.Open("Ressources/textures").Get<Sprite_API_Data>(filePath); }
 
         internal class APNGFrameInfo
         {
@@ -92,7 +92,7 @@ namespace AngryDash.Image
 
             System.Collections.IEnumerator NEW_API()
             {
-                CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures");
+                Cache cache = Cache.Open("Ressources/textures");
                 Sprite_API_Data SAD = new Sprite_API_Data();
                 if (!cache.ValueExist(filePath) && File.Exists(filePath))
                 {

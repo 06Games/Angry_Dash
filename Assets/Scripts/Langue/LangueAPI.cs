@@ -14,7 +14,7 @@ namespace AngryDash.Language
             set
             {
                 ConfigAPI.SetString("Language", value);
-                CacheManager.Dictionary.dictionary.Remove("language");
+                Cache.Dictionary.Remove("language");
             }
         }
 
@@ -49,7 +49,7 @@ namespace AngryDash.Language
 
         public static Dictionary<string, string> Load(string category, string persistentPath = null)
         {
-            var cache = new CacheManager.Cache("language");
+            var cache = Cache.Open("language");
             if (!cache.ValueExist(category))
             {
                 var dic = new Dictionary<string, string>();

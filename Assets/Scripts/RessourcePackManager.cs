@@ -150,8 +150,8 @@ public class RessourcePackManager : MonoBehaviour
 
     public void ApplyRP()
     {
-        CacheManager.Dictionary.dictionary.Remove("Ressources/textures/json");
-        CacheManager.Dictionary.dictionary.Remove("Ressources/textures");
+        Cache.Dictionary.Remove("Ressources/textures/json");
+        Cache.Dictionary.Remove("Ressources/textures");
         SceneManager.LoadScene("Load", new string[] { "Settings", "Ressource Pack" });
     }
 

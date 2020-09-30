@@ -7,7 +7,7 @@ namespace SoundAPI
     {
         public static AudioClip Get(string id)
         {
-            CacheManager.Cache cache = new CacheManager.Cache("Ressources/sounds");
+            Cache cache = Cache.Open("Ressources/sounds");
             if (cache.ValueExist(id)) return cache.Get<AudioClip>(id);
             else throw new System.Exception("Sound isn't loaded ! Use Load() function before and wait for the end of the function");
         }
@@ -28,7 +28,7 @@ namespace SoundAPI
         public event System.Action<AudioClip> Complete;
         public IEnumerator Start(bool storeInCache = true)
         {
-            CacheManager.Cache cache = new CacheManager.Cache("Ressources/sounds");
+            Cache cache = Cache.Open("Ressources/sounds");
             AudioClip clip = null;
             bool needLoad = !cache.ValueExist(id);
             if (cache.ValueExist(id))

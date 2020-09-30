@@ -17,12 +17,12 @@ namespace AngryDash.Image
         public static Sprite_API_Data GetSprites(string filePath, Vector4 border = new Vector4(), bool forcePNG = false)
         {
             Load(filePath, border, forcePNG);
-            return new CacheManager.Cache("Ressources/textures").Get<Sprite_API_Data>(filePath) ?? new Sprite_API_Data();
+            return Cache.Open("Ressources/textures").Get<Sprite_API_Data>(filePath) ?? new Sprite_API_Data();
         }
 
         public static void Load(string filePath, Vector4 border = new Vector4(), bool forcePNG = false)
         {
-            CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures");
+            Cache cache = Cache.Open("Ressources/textures");
             if (cache.ValueExist(filePath)) return;
             if (File.Exists(filePath))
             {

@@ -19,7 +19,7 @@ namespace AngryDash.Image
             }
             else
             {
-                CacheManager.Cache cache = new CacheManager.Cache("Ressources/textures/json");
+                Cache cache = Cache.Open("Ressources/textures/json");
                 if (!cache.ValueExist(baseID))
                 {
                     if (json == null) NewJSON();
