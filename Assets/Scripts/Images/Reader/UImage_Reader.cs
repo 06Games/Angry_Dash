@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace AngryDash.Image.Reader
 {
-    //[ExecuteInEditMode]
+    [ExecuteInEditMode]
     public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         public UImage_Reader SetID(string id) { baseID = id; return this; }

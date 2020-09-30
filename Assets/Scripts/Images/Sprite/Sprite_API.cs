@@ -82,7 +82,27 @@ namespace AngryDash.Image
 
         public static void LoadAsync(string filePath, Vector4 border = new Vector4(), System.Action<Sprite_API_Data> callback = null, bool forcePNG = false)
         {
-            if (ConfigAPI.GetBool("video.experimentalLoading"))
+#if UNITY_EDITOR
+            if (!UnityEditor.EditorApplication.isPlaying)
+            {
+                Cache cache = Cache.Open("Ressources/textures");
+
+
+                Sprite_API_Data SAD = new Sprite_API_Data();
+
+                List<float> Delay = new List<float>();
+                List<Sprite> Frames = new List<Sprite>();
+
+                Frames.Add(Resources.Load<Sprite>(filePath.Replace(Application.persistentDataPath + "/Ressources/default/", "Default/").Replace(".png", "")));
+
+                SAD.Frames = Frames;
+                SAD.Delay = Delay;
+                cache.Set(filePath, SAD);
+                callback.Invoke(SAD);
+                return;
+            }
+#endif
+                if (ConfigAPI.GetBool("video.experimentalLoading"))
 #if UNITY_EDITOR
                 if (!UnityEditor.EditorApplication.isPlaying) FindObjectOfType<MonoBehaviour>().StartCoroutine(NEW_API());
                 else

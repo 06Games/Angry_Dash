@@ -1,0 +1,351 @@
+//Accueil
+|gameTitle = Angry Dash
+|gameVersion = v[0]
+|playButton = Jouer
+|editorButton = Editeur
+|settingsButton = Paramètres
+
+//Téléchargement des Dépendances
+|download.ressourcesPack = Téléchargement des ressources requises par le jeu
+|download.ressourcesPack.subtitle = Cela peut prendre quelques minutes\nNe quittez pas le jeu pendant cette opération
+|download.ressourcesPack.connection = Connexion au serveur
+|download.ressourcesPack.state = Fichier : [0] / [1]
+|download.ressourcesPack.noInternet = Une connexion internet est requise au premier démarrage
+|download.ressourcesPack.noInternet.subtitle = Veuillez vérifier votre connexion Internet et redémarrer le jeu
+|download.ressourcesPack.noInternet.exit = Appuyer pour quitter
+|download.unit.B = [0] o
+|download.unit.KB = [0] Ko
+|download.unit.MB = [0] Mo
+|download.unit.GB = [0] Go
+|download.unit.TB = [0] To
+|download.speed = [0]/s
+|download.state.unit = [0] sur [1]
+|download.state.percentage = [0]%
+|download.levels = Téléchargement des niveaux
+|download.levels.state = Niveau : [0] / [1]
+
+//Services de Jeux
+|gameServices.authentication = Authentification...
+|gameServices.authentication.success = Authentifié
+|gameServices.authentication.failed.google = Échec de l'authentification.\nLe service Google Play Games n'a pu démarrer.
+|gameServices.authentication.failed.tryAgain = Réessayer
+|gameServices.abandon.warn = Ignorer cette étape vous empêchera de débloquer des succès et de vous classer lors de cette instance du jeu,\nêtes-vous sûr de continuer?
+|gameServices.abandon.yes = Oui
+|gameServices.abandon.no = Non
+
+//Connection 06Games Account
+|account.title = Connexion
+|account.06games = Se connecter avec un compte 06Games
+|account.06games.username = E-Mail / Nom d'utilisateur
+|account.06games.username.exemple = john.smith@exemple.org
+|account.06games.password = Mot de passe
+|account.06games.password.exemple = Un_Super_Mot_De_Passe
+|account.06games.signUp = S'inscrire
+|account.06games.signIn = Se Connecter
+|account.others = Ou avec un compte
+|account.others.google = Google
+|account.others.google = Discord
+|account.others.apple = Apple ID
+|account.others.microsoft = Microsoft
+|account.connecting = Connexion en cours...
+|account.connecting.cancel = Annuler
+|account.unkownError = Une erreur inconnue s’est produite. Veuillez contacter un responsable et signaler l’erreur suivante: \n<i><color=#B40404>[0]</color></i>
+
+//Chargement des ressources
+|loadingRessources.title = Chargement\ndes ressources
+|loadingRessources.state = [0]/[1]
+
+//Accueil - Jouer
+|PlayTitle = Jouer
+|PlayTitleOfficialServers = Serveurs Officiels
+|PlayTitleCommunityServers = Serveurs Communautaires
+|PlayTitleHistory = Historique
+|play.officialLevels = Niveaux Officiels
+|play.officialLevels.level = Niveau [0]
+|play.officialLevels.play = Jouer
+|PlayOfficialServersClosed = Indisponible actuellement,\nrevenez plus tard
+|PlayCommunityServersIP = Adresse IP :
+|PlayCommunityServersConnect = Connecter
+|PlayCommunityServersAdd = Ajouter
+|PlayCommunityServersRemove = Retirer
+|PlayCommunityServersRefresh = Rafraîchir
+|PlayCommunityServersSyncing = Synchronisation
+|PlayCommunityServersError = Erreur
+|PlayCommunityServersPlayers = [0]/[1]
+|PlayCommunityServersPlayersUnkown = ?/?
+
+//Accueil - Editeur
+|EditorTitle = Editeur
+|EditorTitleEdit = Modifier
+|EditorTitleCommunityLevels = Niveaux de la communauté
+|EditorEditFilter = Entrez des mots-clés...
+|EditorEditSortDecreasingDates = Dates décroissantes
+|EditorEditSortIncreasingDates = Dates croissantes
+|EditorEditSortAToZ = A - Z
+|EditorEditSortZToA = Z - A
+|EditorEditInfosDescription = <b>Description :</b>
+|EditorEditInfosDescriptionError = <color=red>Impossible de lire la description</color>
+|EditorEditInfosPlay = Jouer
+|EditorEditInfosEdit = Modifier
+|EditorEditInfosCopy = Copier
+|EditorEditInfosDelete = Suppr.
+|EditorEditInfosPublish = Publier
+|EditorEditInfosShare = Partager
+|EditorEditCreate = +
+|EditorEditCreateLevelName = Nom du niveau
+|EditorEditCreateLevelDescription = Description
+|EditorEditCreateButton = Créer
+|EditorEditDeleteWarning = Êtes-vous sûr de vouloir supprimer ce niveau ?\n\nCette action est irréversible
+|EditorEditDeleteWarningYes = Oui
+|EditorEditDeleteWarningNo = Non
+|EditorEditPublishing = Le niveau est en cours d'envoi sur nos serveurs,\n\nveuillez patienter...
+|EditorEditPublishError = <color=red>Erreur</color> : [0]
+|EditorEditPublishErrorCancel = Annuler
+|EditorEditPublished = Le niveau a été publié correctement
+|EditorEditPublishedExit = Retour au menu
+|EditorCommunityLevelsSortAToZ = A - Z
+|EditorCommunityLevelsSortZToA = Z - A
+|EditorCommunityLevelsFilter = Entrez des mots-clés...
+|EditorCommunityLevelsAuthor = <color=grey>par [0]</color>
+|EditorCommunityLevelsInfosDescription = <b>Description :</b>
+|EditorCommunityLevelsInfosStarsYou = Vous
+|EditorCommunityLevelsInfosStarsCommunity = Communauté
+|EditorCommunityLevelsInfosStarsCount = [0]/5
+|EditorCommunityLevelsInfosCommentHeader = [0] <i><color=grey>[1]</color></i>
+|EditorCommunityLevelsInfosCommentWrite = Écrire un commentaire\n<size=50><color=grey>à propos de <i>[0]</i></color></size>
+|EditorCommunityLevelsInfosCommentWritingZone = Zone d'écriture
+|EditorCommunityLevelsInfosCommentWritingZonePlaceholder = Écrivez votre commentaire ici ...
+|EditorCommunityLevelsInfosCommentWritingPreview = Aperçu
+|EditorCommunityLevelsInfosCommentWritingSubmit = Soumettre
+|EditorCommunityLevelsInfosMusic = <b>Musique :</b>
+|EditorCommunityLevelsInfosMusicDownload = Télécharger
+
+//Accueil - Paramètres
+|SettingsTitle = Paramètres
+|SettingsTitleLanguages = Langues
+|SettingsTitleVideo = Paramètres Vidéos
+|SettingsTitleSound = Paramètres Audios
+|SettingsTitleEditor = Paramètres de l'Éditeur
+|SettingsTitleRessource = Packs de Ressources
+|SettingsTitleInformations = Informations
+|settings.languages.apply = Appliquer
+|SettingsVideoFpsCounter = Compteur de FPS
+|SettingsVideoFpsLimitV-Sync = V-Sync
+|SettingsVideoFpsLimit = [0] FPS
+|SettingsVideoFpsLimitUnlimited = Illimité
+|SettingsVideoAntiAliasingDisabled = Désactivé
+|SettingsVideoAntiAliasing = MSAA [0]x
+|SettingsVideoFullScreen = Plein Écran
+|SettingsVideoAPNG = Activer les APNG
+|SettingsSoundMaster = Principal
+|SettingsSoundMusics = Musiques
+|SettingsSoundFX = Effets
+|SettingsSoundFullyLoaded = Attendre que les sons soit complètement chargés avant de les jouer\n<color=grey>(Cette option n'est utile que sur des périphériques peu performants)</color>
+|SettingsSoundDownloadedTitle = Musiques téléchargées :
+|SettingsSoundDownloadedItem = [0]\n<color=grey>par [1]</color>
+|settings.editor.showCoordinates = Afficher les coordonées
+|settings.editor.saveAuto = Sauvegarder
+|settings.editor.saveAuto.everytime = tout le temps
+|settings.editor.saveAuto.everyChange = à chaque changement
+|settings.editor.saveAuto.everyMinute = toutes les minutes
+|settings.editor.saveAuto.everyFiveMinutes = toutes les 5 minutes
+|settings.editor.hideToolbox = Cacher la boite à outils
+|settings.ressourcesPack.local = Installés
+|settings.ressourcesPack.official = Magasin
+|settings.ressourcesPack.author = par [0]
+|settings.ressourcesPack.refresh = Actualiser
+|settings.ressourcesPack.apply = Appliquer
+|settings.ressourcesPack.openFolder = Ouvrir Dossier
+|settings.informations.website = Site Web
+|settings.informations.deleteLogs = Supprimer les fichiers journaux
+|settings.informations.privacyPolicy = Politique de confidentialité
+|settings.informations.credits.concept = Concept
+|settings.informations.credits.scripts = Scripts
+|settings.informations.credits.textures = Textures
+|settings.informations.credits.layout = Mise en Page
+|settings.informations.credits.musics = Musiques
+|settings.informations.credits.tests = Tests
+
+//Home - Inventaire
+|InventoryTitle = Inventaire
+|InventoryTitlePlayers = Joueurs
+|InventoryTitleTraces = Traces
+|InventoryError = Une connexion Internet est nécessaire\npour charger l'inventaire
+|InventoryItemSelected = Choisi
+|InventoryItemFree = Gratuit
+
+//Accueil - Profil
+|ProfileTitle = Profil
+|ProfileTitleMyLevels = Mes Niveaux
+|ProfileTitleMyFriends = Mes Amis
+|ProfileTitleMyAccount = Mon Compte
+|ProfileMyLevelsSortAToZ = A - Z
+|ProfileMyLevelsSortZToA = Z - A
+|ProfileMyLevelsDeleteWarning = Cette action est définitive et ne peut être annulée\n\nÊtes-vous sûr de vouloir supprimer le niveau [0] ?
+|ProfileMyLevelsDeleteWarningContinue = Oui
+|ProfileMyLevelsDeleteWarningCancel = Annuler
+|ProfileMyAccountAdvanced = Paramètres avancés
+|ProfileMyAccountDisconnect = Se Déconnecter
+
+//SplashScreen
+|loadingScene = Chargement
+
+//Internet Notification
+|internet.connected = Vous êtes dorénavant connecté à internet
+|internet.disconnected = Vous êtes maintenant hors connexion
+
+//Exit Warning
+|exit.warning = Are you sure you want to quit the game?
+
+//Joueur de niveaux
+|levelPlayer.throw = [0] lancer
+|levelPlayer.throws = [0] lancers
+|levelPlayer.finished = est terminé
+|levelPlayer.finished.reward = Récompense
+|levelPlayer.finished.reward.coins = Pièces
+|levelPlayer.finished.reward.quantity = x[0]
+|levelPlayer.paused = Pause
+|levelPlayer.resume = Reprendre
+|levelPlayer.restart = Recommencer
+|levelPlayer.quit = Quitter
+|levelPlayer.lost = Tu as perdu !
+|levelPlayer.resourcePack.recommend = Ce niveau recommande l'usage d'un pack de ressources, voulez-vous l'installer?
+|levelPlayer.resourcePack.no = Non Merci
+|levelPlayer.resourcePack.required = Ce niveau nécessite l'usage d'un pack de ressources, voulez-vous l'installer?
+|levelPlayer.resourcePack.quit = Quitter
+|levelPlayer.resourcePack.warn = Attention, ce pack de ressource sera téléchargé depuis un serveur externe (<i>[0]</i>), n'appartenant pas à 06Games.\nTéléchargez le seulement si vous avait pleinement confience en l'hébergeur.
+|levelPlayer.resourcePack.install = Installer ([0] Ko)
+
+//Serveur
+|ServerConnecting = Connection...
+|ServerErrorNotResponding_title = Le serveur ne répond pas
+|ServerErrorNotResponding_subtitle = Réessayez plus tard\nSi le problème persiste, contactez l'administrateur.
+|ServerErrorUnknown_title = Une erreur est survenue
+|ServerErrorUnknown_subtitle = Code d'erreur : [0]
+
+//Editeur
+|editor.loading.versionCheck = Vérification de la version du niveau
+|editor.loading.blocks = Placement des blocs
+|editor.loading.blocksStatus = Placement des blocs : [0]/[1]
+|editor.loading.backgrounds = Mise en cache des fonds
+|editor.loading.opening = Ouverture du niveau
+|editor.layer.all = All
+|editor.delete.message = Cliquez sur les blocs que vous voulez supprimer
+|editor.edit = Modifier
+|editor.edit.noBlockSelected = Aucun bloc n'est sélectionné
+|editor.edit.mobileUtilities.multiSelect = Multi\nSélection
+|editor.edit.mobileUtilities.deselect = Désélect
+|editor.edit.block.color = Couleur
+|editor.edit.block.behavior = Comportement
+|editor.edit.block.behavior.collision = Paramètre de Collision
+|editor.edit.block.behavior.collision.stop = Stoppe
+|editor.edit.block.behavior.collision.kill = Tue
+|editor.edit.block.behavior.collision.noCollision = Pas de\ncollision
+|editor.edit.block.behavior.collision.bounce = Rebond
+|editor.edit.block.groups = Groupes
+|editor.edit.block.groups.add = Ajouter
+|editor.edit.block.behavior.boost = Boost\n<size=25>(en nombre de blocs)</size>
+|editor.edit.genericEvent.player = Joueur
+|editor.edit.genericEvent.player.all = Tous les Joueurs
+|editor.edit.genericEvent.player.from = De
+|editor.edit.genericEvent.player.to = À
+|ditor.edit.genericEvent.player.infinity = ∞
+|editor.edit.event = Évènement
+|editor.edit.event.visual = Visuel
+|editor.edit.event.visual.triggers = Évènements
+|editor.edit.event.visual.actions = Actions
+|editor.edit.event.visual.conditions = Conditions
+|editor.edit.event.visual.operators = Opérateurs
+|editor.edit.event.visual.active = Activer
+|editor.edit.event.visual.active.group = Groupe
+|editor.edit.event.visual.active.enable = Activé
+|editor.edit.event.visual.changeTexture = Changer de Texture
+|editor.edit.event.visual.changeTexture.id = ID
+|editor.edit.event.visual.changeBackground = Changer le fond
+|editor.edit.event.visual.changeBackground.id = ID
+|editor.edit.event.visual.backgroundColor = Couleur du fond
+|editor.edit.event.visual.checkpoint = Point de contrôle
+|editor.edit.event.visual.checkpoint.x = X
+|editor.edit.event.visual.checkpoint.y = Y
+|editor.edit.event.visual.collision = Quand Collision
+|editor.edit.event.visual.color = Couleur
+|editor.edit.event.visual.color.group = Groupe
+|editor.edit.event.visual.color.r = R
+|editor.edit.event.visual.color.g = G
+|editor.edit.event.visual.color.b = B
+|editor.edit.event.visual.end = Fin de la partie
+|editor.edit.event.visual.if = Si
+|editor.edit.event.visual.if.then = Alors
+|editor.edit.event.visual.if.else = Sinon
+|editor.edit.event.visual.lose = Perdre la partie
+|editor.edit.event.visual.rotate = Rotation
+|editor.edit.event.visual.rotate.group = Groupe
+|editor.edit.event.visual.rotate.x = X
+|editor.edit.event.visual.rotate.y = Y
+|editor.edit.event.visual.rotate.z = Z
+|editor.edit.event.visual.respawn = Quand réapparition
+|editor.edit.event.visual.start = Debut de la partie
+|editor.edit.event.visual.teleport = Téléporter
+|editor.edit.event.visual.teleport.x = X
+|editor.edit.event.visual.teleport.y = Y
+|editor.edit.event.visual.wait = Attendre
+|editor.edit.event.visual.wait.unit = Secondes
+|editor.edit.event.textual = Textuel
+|editor.edit.event.textual.save = Sauvegarder
+|editor.edit.move.targets = Cibles
+|editor.edit.move.targets.blocks = Blocs
+|editor.edit.move.targets.blocksAssign = Cliquez sur les blocs à affecter
+|editor.edit.move.targets.camera = Camera
+|editor.edit.move.targets.cameraAssign = La caméra est affectée
+|editor.edit.move.translation = Translation
+|editor.edit.move.translation.x = X
+|editor.edit.move.translation.y = Y
+|editor.edit.move.translation.fromPlayer = Depuis le Joueur
+|editor.edit.move.translation.reset = Réinitialiser
+|editor.edit.move.settings = Paramètres
+|editor.edit.move.settings.type = Type de mouvement
+|editor.edit.move.settings.speed = Vitesse
+|editor.edit.move.settings.severalUses = Plusieurs usages
+|editor.edit.move.rotation = Rotation
+|editor.edit.move.rotation.x = X
+|editor.edit.move.rotation.y = Y
+|editor.edit.move.rotation.z = Z
+|editor.edit.move.rotation.reset = Réinitialiser
+|editor.edit.move.rotation.global = Globale
+|editor.build = Construire
+|editor.movements = Déplacements
+|editor.options = Options
+|editor.options.background = Fond
+|editor.options.background.hexCode = Code Hexadécimal
+|editor.options.background.R = R
+|editor.options.background.G = V
+|editor.options.background.B = B
+|editor.options.playingRules = Règles de jeu
+|editor.options.playingRules.respawnMode = Mode de réapparition
+|editor.options.playingRules.playerSettings = Paramètres du joueur
+|editor.options.playingRules.playerSettings.maxDistance = Distance maximale par lancer
+|editor.options.playingRules.victoryConditions = Conditions de victoire
+|editor.options.playingRules.victoryConditions.maxThrows = Nombre maximum de tours
+|editor.options.playingRules.victoryConditions.maxThrows.unlimited = Infini
+|editor.options.music = Musique
+|editor.options.music.sort.AtoZ = A - Z
+|editor.options.music.sort.ZtoA = Z - A
+|editor.options.music.search = Entrez des mots-clés...
+|editor.options.music.artist = <color=grey>par [0]</color>
+|editor.options.music.details.infos = [0]\n<color=grey><size=50>par [1]</size></color>
+|editor.options.music.details.download = Télécharger
+|editor.options.music.details.choose = Choisir
+|editor.options.other = Autres
+|editor.options.other.resourcePack = Pack de ressources
+|editor.options.other.resourcePack.url = URL
+|editor.options.other.resourcePack.required = Requis
+
+//Discord
+|discordStarting_title = Démarrage du jeu
+|discordHome_title = Dans le menu d'accueil
+|discordEditor_title = Dans l'éditeur
+|discordEditor_subtitle = Edition de [0]
+|discordServer_title = Joue dans un serveur
+|discordServer_caption = Serveur : [0]:[1]
+|discordPlaying_title = Joue dans un niveau
+|discordPlaying_caption = Niveau : [0]

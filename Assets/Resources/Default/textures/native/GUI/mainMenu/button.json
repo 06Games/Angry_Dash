@@ -1,0 +1,14 @@
+{
+   "text":{
+      "color":"#878484",
+      "fontStyle":"Normal",
+      "fontAlignment":{
+         "horizontal":"Right",
+         "vertical":"Middle"
+      },
+      "resize":{
+         "minSize":40,
+         "maxSize":60
+      }
+   }
+}

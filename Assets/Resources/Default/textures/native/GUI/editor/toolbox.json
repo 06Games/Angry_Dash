@@ -1,0 +1,13 @@
+{
+   "textures":{
+      "basic":{
+         "type":"Sliced",
+         "border":{
+            "left":266,
+            "right":266,
+            "top":0,
+            "bottom":0
+         }
+      }
+   }
+}
