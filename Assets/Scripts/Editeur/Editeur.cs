@@ -870,7 +870,11 @@ public class Editeur : MonoBehaviour
             UImage.SetID(level.blocks[num].category + (id < 1 ? "/GUI/editor/build/events/" : "/BLOCKS/") + id.ToString("0.0####")).Load();
 
             Vector2 frameSize = UImage.FrameSize;
-            if (frameSize == Vector2.zero) frameSize = new Vector2(100, 100);
+            if (frameSize == Vector2.zero)
+            {
+                var tex = go.GetComponent<SpriteRenderer>().sprite?.texture;
+                frameSize = new Vector2(tex?.width ?? 100, tex?.height ?? 100);
+            }
             go.transform.localScale = new Vector2(100, 100) / frameSize * 50;
             for (int i = 0; i < go.transform.childCount; i++)
             {

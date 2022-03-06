@@ -32,7 +32,7 @@ namespace AngryDash.Image.Reader
             get
             {
                 if (data is null) return default;
-                if (data[0] is null) return default;
+                if (!data.Any() || data[0] is null) return default;
                 else if (data[0].Frames is null) return default;
                 else return new Vector2(data[0].Frames[0].texture.width, data[0].Frames[0].texture.height);
             }
