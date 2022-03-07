@@ -78,7 +78,7 @@ public class RessourcePackManager : MonoBehaviour
 
             //Could be selected/Is selected
             go.GetComponent<Button>().onClick.AddListener(() => SetRP(param));
-            go.GetComponent<Button>().interactable = rp.folderName != ConfigAPI.GetString("ressources.pack");
+            go.GetComponent<Button>().interactable = !ConfigAPI.GetBool("ressources.disable") && rp.folderName != ConfigAPI.GetString("ressources.pack");
             go.Find("Selected").gameObject.SetActive(rp.folderName == ConfigAPI.GetString("ressources.pack"));
 
             //Download btn
@@ -98,7 +98,7 @@ public class RessourcePackManager : MonoBehaviour
             go.name = rp.name;
             go.Find("Title").GetComponent<Text>().text = rp.name;
             go.Find("Description").GetComponent<Text>().text = rp.description;
-            go.Find("Author").GetComponent<Text>().text = AngryDash.Language.LangueAPI.Get("native", "settings.ressourcesPack.author", "by [0]", rp.author);
+            go.Find("Author").GetComponent<Text>().text = string.IsNullOrWhiteSpace(rp.author) ? null : AngryDash.Language.LangueAPI.Get("native", "settings.ressourcesPack.author", "by [0]", rp.author);
             go.Find("Size").GetComponent<Text>().text = DependenciesManager.FileSizeUnit(rp.size);
 
             //Wallpaper

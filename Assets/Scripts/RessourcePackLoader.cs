@@ -12,7 +12,8 @@ public class RessourcePackLoader : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(Load());
+        if (ConfigAPI.GetBool("ressources.disable")) Done();
+        else StartCoroutine(Load());
     }
 
     IEnumerator Load()
@@ -51,8 +52,8 @@ public class RessourcePackLoader : MonoBehaviour
         sw.Stop();
         Debug.Log(sw.Elapsed.TotalSeconds.ToString("0.000").Replace(".", ",") + "\n" + maxMem.ToString("0.000").Replace(".", ","));
 
-        SceneManager.LoadScene("Home", SceneManager.args);
-
+        Done();
+        
         IEnumerator UpdateData()
         {
             while (state < ids.Length)
@@ -70,4 +71,6 @@ public class RessourcePackLoader : MonoBehaviour
             }
         }
     }
+
+    private static void Done() => SceneManager.LoadScene("Home", SceneManager.args);
 }

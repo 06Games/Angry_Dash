@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace AngryDash.Image.Reader
 {
-    [ExecuteInEditMode]
+    //[ExecuteInEditMode]
     public class UImage_Reader : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         public UImage_Reader SetID(string id) { baseID = id; return this; }
@@ -38,7 +38,7 @@ namespace AngryDash.Image.Reader
             }
         }
 
-        void Start() { if (!string.IsNullOrEmpty(baseID)) LoadAsync(); }
+        void Start() { if (!string.IsNullOrEmpty(baseID) && !ConfigAPI.GetBool("ressources.disable")) LoadAsync(); }
         public UImage_Reader Load(Sprite_API_Data spriteData) { data = new List<Sprite_API_Data>() { spriteData }; return this; }
         public UImage_Reader Load(Sprite_API_Data[] spriteData) { data = new List<Sprite_API_Data>(spriteData); return this; }
         public UImage_Reader Load() { Load(JSON_API.Parse(baseID), false); return this; }
@@ -48,7 +48,6 @@ namespace AngryDash.Image.Reader
 
         void Load(JSON.Data jsonData, bool async)
         {
-            if (ConfigAPI.GetBool("ressources.disable")) return;
             data = new List<Sprite_API_Data>(new Sprite_API_Data[System.Enum.GetNames(typeof(JSON.Texture.Type)).Length]);
             foreach (var texture in jsonData.textures) Sprite_API.LoadAsync(texture.path, texture.border, (s) => data[(int)texture.type] = s);
             if (async)
