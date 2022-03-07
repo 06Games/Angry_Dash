@@ -45,6 +45,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -56,6 +57,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -68,15 +70,15 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 3f227967efce9b04eaff552c6fe03103, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5534a9198993b3c4fb1a660023451842, type: 3}
   m_Color: {r: 0.39215687, g: 0.39215687, b: 0.39215687, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 5, y: 5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &1981134399792410
@@ -150,8 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab71db7d79e3d984588063c178b14a65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AffectationType: 0
   Blocks: []
+  AffectationType: 0
+  Group: 0
   Translation: {x: 0, y: 0}
   TranslationFromPlayer: 0000
   Type: 0
