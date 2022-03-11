@@ -9,6 +9,6 @@ namespace AngryDash.Language.Reader
         public string id;
         public string[] arg = new string[0];
 
-        void Start() { GetComponent<Text>().text = LangueAPI.Get(category, id, GetComponent<Text>().text, arg); }
+        private void Start() { GetComponent<Text>().text = LangueAPI.Get(category, id, GetComponent<Text>().text, arg); }
     }
 }

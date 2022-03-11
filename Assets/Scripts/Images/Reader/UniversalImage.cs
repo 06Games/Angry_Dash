@@ -12,10 +12,11 @@ namespace AngryDash.Image.Reader
             get
             {
                 if (spriteR != null) return spriteR.gameObject;
-                else return image != null ? image.gameObject : null;
+                return image != null ? image.gameObject : null;
             }
         }
-        bool Null { get { return spriteR == null | image == null; } }
+
+        private bool Null => spriteR == null | image == null;
 
         public UniversalImage(GameObject go)
         {
@@ -30,7 +31,7 @@ namespace AngryDash.Image.Reader
             get
             {
                 if (spriteR != null) return spriteR.enabled;
-                else return image != null ? image.enabled : false;
+                return image != null ? image.enabled : false;
             }
             set
             {
@@ -41,7 +42,7 @@ namespace AngryDash.Image.Reader
 
         public SpriteDrawMode type
         {
-            get { return default; }
+            get => default;
             set
             {
                 if (spriteR != null) spriteR.drawMode = value;
@@ -54,7 +55,7 @@ namespace AngryDash.Image.Reader
             get
             {
                 if (spriteR != null) return spriteR.sprite;
-                else return image != null ? image.sprite : null;
+                return image != null ? image.sprite : null;
             }
             set
             {

@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Diagnostics;
 using System.Linq;
+using AngryDash.Game.API;
 using UnityEngine;
 
 namespace AngryDash.Game.Events
@@ -8,48 +11,48 @@ namespace AngryDash.Game.Events
     {
         public string[] Blocks;
 
-        public int AffectationType = 0;
+        public int AffectationType;
         public int Group;
         public Vector2 Translation = new Vector2(0, 0);
         public bool[] TranslationFromPlayer = new bool[2];
-        public int Type = 0;
+        public int Type;
         public float Speed = 1;
-        public bool MultiUsage = false;
+        public bool MultiUsage;
         public Vector3 Rotation;
         public bool[] Reset = new bool[2];
-        public bool GlobalRotation = false;
+        public bool GlobalRotation;
 
-        bool Used = false;
+        private bool Used;
 
-        void OnTriggerEnter2D(Collider2D collision)
+        private void OnTriggerEnter2D(Collider2D collision)
         {
             if (!Used) StartCoroutine(Move());
         }
 
-        IEnumerator Move()
+        private IEnumerator Move()
         {
             Used = true;
             GameObject[] go = null;
             if (AffectationType == 0)
             {
-                Blocks = AngryDash.Game.API.BlockUtilities.GetBlocks(Group).Select(x => x.ToString()).ToArray();
+                Blocks = BlockUtilities.GetBlocks(Group).Select(x => x.ToString()).ToArray();
                 go = new GameObject[Blocks.Length];
-                for (int b = 0; b < Blocks.Length; b++)
+                for (var b = 0; b < Blocks.Length; b++)
                     go[b] = GameObject.Find("Objet n° " + Blocks[b]);
             }
             else if (AffectationType == 1)
             {
-                go = new GameObject[] { GameObject.Find("Main Camera") };
+                go = new[] { GameObject.Find("Main Camera") };
                 go[0].GetComponent<MainCam>().OnPlayer = false;
             }
 
-            Vector3 affectedPos = new Vector3();
-            Vector3 affectedRot = new Vector3();
+            var affectedPos = new Vector3();
+            var affectedRot = new Vector3();
             if (go.Length > 0 & Blocks.Length > 0)
             {
                 if (AffectationType == 0)
                 {
-                    LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
+                    var lvlPlayer = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
                     try { affectedPos = lvlPlayer.GetObjectPos(int.Parse(Blocks[0])); } catch { }
                     try { affectedRot = Editor_MoveTrigger.getVector3(lvlPlayer.GetBlocStatus("Rotation", int.Parse(Blocks[0]))); } catch { }
                 }
@@ -65,29 +68,29 @@ namespace AngryDash.Game.Events
                     Rotation = affectedRot - go[0].transform.rotation.eulerAngles;
             }
 
-            GameObject[] Objects = go;
+            var Objects = go;
             if (GlobalRotation)
             {
-                GameObject parent = new GameObject();
+                var parent = new GameObject();
                 parent.transform.parent = GameObject.Find("Items").transform;
-                Vector3[] centerPoints = new Vector3[go.Length];
-                for (int i = 0; i < go.Length; i++)
+                var centerPoints = new Vector3[go.Length];
+                for (var i = 0; i < go.Length; i++)
                     centerPoints[i] = go[i].transform.position;
-                Vector3 centroid = new Vector3(0, 0, 0);
+                var centroid = new Vector3(0, 0, 0);
                 var numPoints = centerPoints.Length;
-                foreach (Vector3 point in centerPoints)
+                foreach (var point in centerPoints)
                     centroid += point;
                 centroid /= numPoints;
 
                 parent.transform.position = centroid;
-                for (int i = 0; i < go.Length; i++)
+                for (var i = 0; i < go.Length; i++)
                     go[i].transform.parent = parent.transform;
 
-                Objects = new GameObject[] { parent };
+                Objects = new[] { parent };
             }
-            Vector2[] InitialPos = new Vector2[Objects.Length];
-            Vector3[] InitialRot = new Vector3[Objects.Length];
-            for (int i = 0; i < Objects.Length; i++)
+            var InitialPos = new Vector2[Objects.Length];
+            var InitialRot = new Vector3[Objects.Length];
+            for (var i = 0; i < Objects.Length; i++)
             {
                 if (Objects[i] != null)
                 {
@@ -105,36 +108,36 @@ namespace AngryDash.Game.Events
             Vector2 InitialPlayerPos = Player.userPlayer.transform.position;
 
 
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-            int l = 0;
+            var stopwatch = new Stopwatch();
+            var l = 0;
 
-            float MoveTime_F = Speed;
+            var MoveTime_F = Speed;
             if ((int)(MoveTime_F / 2) != MoveTime_F / 2 & Type == 1) MoveTime_F = MoveTime_F + 1; //Support Duration impair si le type est Fluid
-            System.TimeSpan MoveTime = System.TimeSpan.FromSeconds(MoveTime_F);
+            var MoveTime = TimeSpan.FromSeconds(MoveTime_F);
             stopwatch.Start();
-            bool lastFrameNotRender = true;
+            var lastFrameNotRender = true;
             while (stopwatch.Elapsed < MoveTime | lastFrameNotRender)
             {
-                long Time = stopwatch.ElapsedMilliseconds;
+                var Time = stopwatch.ElapsedMilliseconds;
                 if (stopwatch.Elapsed >= MoveTime)
                 {
                     lastFrameNotRender = false;
                     Time = (long)MoveTime.TotalMilliseconds;
                 }
-                for (int b = 0; b < Objects.Length; b++)
+                for (var b = 0; b < Objects.Length; b++)
                 {
-                    Vector2 moveVector = new Vector2();
+                    var moveVector = new Vector2();
                     if (Type == 0)
                     {
-                        Vector2 millisecondMove = Translation / (float)MoveTime.TotalMilliseconds;
-                        Vector2 movedRange = ((Vector2)Objects[b].transform.position - InitialPos[b]) / 50F;
+                        var millisecondMove = Translation / (float)MoveTime.TotalMilliseconds;
+                        var movedRange = ((Vector2)Objects[b].transform.position - InitialPos[b]) / 50F;
                         moveVector = (millisecondMove * Time) - movedRange;
                     }
                     else if (Type == 1)
                     {
-                        float maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
-                        Vector2 moveFrame = new Vector2();
-                        for (int i = 0; i < Time + 1; i++)
+                        var maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
+                        var moveFrame = new Vector2();
+                        for (var i = 0; i < Time + 1; i++)
                         {
                             long vi = i + 1;
                             if (i > MoveTime.TotalMilliseconds / 2F)
@@ -142,7 +145,7 @@ namespace AngryDash.Game.Events
                             moveFrame = moveFrame + ((Translation / ((maxDistance / vi) / maxDistance)) / (long)MoveTime.TotalMilliseconds / (maxDistance / 2F));
                         }
 
-                        Vector2 movedRange = ((Vector2)Objects[b].transform.position - InitialPos[b]) / 50F;
+                        var movedRange = ((Vector2)Objects[b].transform.position - InitialPos[b]) / 50F;
                         moveVector = (moveFrame - movedRange);
                     }
 
@@ -150,32 +153,32 @@ namespace AngryDash.Game.Events
                     {
                         if (Objects[b] != null)
                         {
-                            Vector3 pos = Objects[b].transform.position;
-                            for (int m = 0; m < 2; m++)
+                            var pos = Objects[b].transform.position;
+                            for (var m = 0; m < 2; m++)
                             {
                                 if (TranslationFromPlayer[m])
                                 {
-                                    float distanceObjectPlayer = InitialPos[b][m] - InitialPlayerPos[m];
-                                    float playerPos = Player.userPlayer.transform.position[m];
+                                    var distanceObjectPlayer = InitialPos[b][m] - InitialPlayerPos[m];
+                                    var playerPos = Player.userPlayer.transform.position[m];
                                     pos[m] = distanceObjectPlayer + playerPos + (Translation[m] * 50);
                                 }
                                 else pos[m] = pos[m] + moveVector[m] * 50;
                             }
                             Objects[b].transform.position = pos;
-                            if (Objects[b].GetComponent<AngryDash.Game.Mur>() != null) Objects[b].GetComponent<AngryDash.Game.Mur>().Move = moveVector;
+                            if (Objects[b].GetComponent<Mur>() != null) Objects[b].GetComponent<Mur>().Move = moveVector;
 
-                            Vector3 rotateVector = new Vector3();
+                            var rotateVector = new Vector3();
                             if (Type == 0)
                             {
-                                Vector3 millisecondMove = Rotation / (float)MoveTime.TotalMilliseconds;
-                                Vector3 movedRange = (Objects[b].transform.rotation.eulerAngles - InitialRot[b]) / 50F;
+                                var millisecondMove = Rotation / (float)MoveTime.TotalMilliseconds;
+                                var movedRange = (Objects[b].transform.rotation.eulerAngles - InitialRot[b]) / 50F;
                                 rotateVector = (millisecondMove * Time) - movedRange;
                             }
                             else if (Type == 1)
                             {
-                                float maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
-                                Vector3 moveFrame = new Vector3();
-                                for (int i = 0; i < Time + 1; i++)
+                                var maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
+                                var moveFrame = new Vector3();
+                                for (var i = 0; i < Time + 1; i++)
                                 {
                                     long vi = i + 1;
                                     if (i > MoveTime.TotalMilliseconds / 2F)
@@ -183,10 +186,10 @@ namespace AngryDash.Game.Events
                                     moveFrame = moveFrame + ((Rotation / ((maxDistance / vi) / maxDistance)) / (long)MoveTime.TotalMilliseconds / (maxDistance / 2F));
                                 }
 
-                                Vector3 movedRange = (Objects[b].transform.rotation.eulerAngles - InitialRot[b]);
+                                var movedRange = (Objects[b].transform.rotation.eulerAngles - InitialRot[b]);
                                 rotateVector = (moveFrame - movedRange);
                             }
-                            Quaternion quaternion = new Quaternion();
+                            var quaternion = new Quaternion();
                             quaternion.eulerAngles = Objects[b].transform.rotation.eulerAngles + rotateVector;
                             Objects[b].transform.rotation = quaternion;
                         }
@@ -201,9 +204,9 @@ namespace AngryDash.Game.Events
 
             if (GlobalRotation)
             {
-                GameObject tempParent = go[0].transform.parent.gameObject;
-                GameObject parent = GameObject.Find("Items");
-                for (int i = 0; i < go.Length; i++)
+                var tempParent = go[0].transform.parent.gameObject;
+                var parent = GameObject.Find("Items");
+                for (var i = 0; i < go.Length; i++)
                     go[i].transform.parent = parent.transform;
                 Destroy(tempParent);
             }

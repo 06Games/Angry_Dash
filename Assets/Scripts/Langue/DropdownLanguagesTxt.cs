@@ -8,11 +8,12 @@ namespace AngryDash.Language.Reader
         public string category = "native";
         public string[] id;
         public bool keepIfNotExist = true;
-        void Start()
+
+        private void Start()
         {
-            for (int i = 0; i < GetComponent<Dropdown>().options.Capacity & i < id.Length; i++)
+            for (var i = 0; i < GetComponent<Dropdown>().options.Capacity & i < id.Length; i++)
             {
-                string txt = LangueAPI.Get(category, id[i], null);
+                var txt = LangueAPI.Get(category, id[i], null);
                 if (txt == null & !keepIfNotExist) txt = "<color=red>Language File Error</color>";
                 GetComponent<Dropdown>().options[i].text = txt;
             }

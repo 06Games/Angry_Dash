@@ -1,5 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using AngryDash.Image.JSON;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -16,14 +21,14 @@ namespace AngryDash.Image.Reader
         public bool TextConfiguration = true;
 
         //Parameters
-        List<Sprite_API_Data> data = new List<Sprite_API_Data>();
-        UniversalImage Image;
+        private List<Sprite_API_Data> data = new List<Sprite_API_Data>();
+        private UniversalImage Image;
 
         //Data
-        Coroutine[] coroutines = new Coroutine[4];
-        System.Diagnostics.Stopwatch[] animationTime = new System.Diagnostics.Stopwatch[4];
-        readonly uint[] Played = new uint[4];
-        readonly int[] Frame = new int[4];
+        private Coroutine[] coroutines = new Coroutine[4];
+        private Stopwatch[] animationTime = new Stopwatch[4];
+        private readonly uint[] Played = new uint[4];
+        private readonly int[] Frame = new int[4];
         [HideInInspector]
         public JSON.Texture.Display[] Type = new JSON.Texture.Display[4];
 
@@ -33,31 +38,31 @@ namespace AngryDash.Image.Reader
             {
                 if (data is null) return default;
                 if (!data.Any() || data[0] is null) return default;
-                else if (data[0].Frames is null) return default;
-                else return new Vector2(data[0].Frames[0].texture.width, data[0].Frames[0].texture.height);
+                if (data[0].Frames is null) return default;
+                return new Vector2(data[0].Frames[0].texture.width, data[0].Frames[0].texture.height);
             }
         }
 
-        void Start() { if (!string.IsNullOrEmpty(baseID) && !ConfigAPI.GetBool("ressources.disable")) LoadAsync(); }
-        public UImage_Reader Load(Sprite_API_Data spriteData) { data = new List<Sprite_API_Data>() { spriteData }; return this; }
+        private void Start() { if (!string.IsNullOrEmpty(baseID) && !ConfigAPI.GetBool("ressources.disable")) LoadAsync(); }
+        public UImage_Reader Load(Sprite_API_Data spriteData) { data = new List<Sprite_API_Data> { spriteData }; return this; }
         public UImage_Reader Load(Sprite_API_Data[] spriteData) { data = new List<Sprite_API_Data>(spriteData); return this; }
         public UImage_Reader Load() { Load(JSON_API.Parse(baseID), false); return this; }
         public UImage_Reader LoadAsync() { Load(JSON_API.Parse(baseID), true); return this; }
         public UImage_Reader SetPath(string id) { baseID = null; Load(JSON_API.Parse(id, null, true), false); return this; }
         public UImage_Reader SetPathAync(string id) { baseID = null; Load(JSON_API.Parse(id, null, true), true); return this; }
 
-        void Load(JSON.Data jsonData, bool async)
+        private void Load(Data jsonData, bool async)
         {
-            data = new List<Sprite_API_Data>(new Sprite_API_Data[System.Enum.GetNames(typeof(JSON.Texture.Type)).Length]);
-            foreach (var texture in jsonData.textures) Sprite_API.LoadAsync(texture.path, texture.border, (s) => data[(int)texture.type] = s);
+            data = new List<Sprite_API_Data>(new Sprite_API_Data[Enum.GetNames(typeof(JSON.Texture.Type)).Length]);
+            foreach (var texture in jsonData.textures) Sprite_API.LoadAsync(texture.path, texture.border, s => data[(int)texture.type] = s);
             if (async)
             {
 #if UNITY_EDITOR
-                if (!UnityEditor.EditorApplication.isPlaying) StartCoroutine(lAsync());
+                if (!EditorApplication.isPlaying) StartCoroutine(lAsync());
                 else
 #endif
                     UnityThread.executeCoroutine(lAsync());
-                System.Collections.IEnumerator lAsync()
+                IEnumerator lAsync()
                 {
                     yield return new WaitUntil(() => data.Count(d => d != null) == jsonData.textures.Length | gameObject == null);
                     if (gameObject != null) ApplyJson(jsonData);
@@ -71,7 +76,7 @@ namespace AngryDash.Image.Reader
         }
 
 
-        public UImage_Reader ApplyJson(JSON.Data data)
+        public UImage_Reader ApplyJson(Data data)
         {
             if (Image == null) Image = new UniversalImage(gameObject);
 
@@ -86,8 +91,8 @@ namespace AngryDash.Image.Reader
             if (TextConfiguration)
             {
                 //Text
-                Text[] texts = GetComponentsInChildren<Text>(true);
-                for (int i = 0; i < texts.Length; i++)
+                var texts = GetComponentsInChildren<Text>(true);
+                for (var i = 0; i < texts.Length; i++)
                 {
 
                     texts[i].color = data.textColor; //Color
@@ -105,18 +110,19 @@ namespace AngryDash.Image.Reader
             return this;
         }
 
-        void OnEnable() { if (autoChange) StartAnimating(0); }
+        private void OnEnable() { if (autoChange) StartAnimating(0); }
         public void OnPointerEnter(PointerEventData eventData) { if (lastInteractable & autoChange) StartAnimating(1, 1); }
         public void OnPointerExit(PointerEventData eventData) { if (lastInteractable & autoChange) StartAnimating(1, -1); }
         public void OnPointerDown(PointerEventData pointerEventData) { if (lastInteractable & autoChange) StartAnimating(2, 1); }
         public void OnPointerUp(PointerEventData pointerEventData) { if (lastInteractable & autoChange) StartAnimating(2, -1); }
-        bool lastInteractable = true;
+        private bool lastInteractable = true;
         public bool autoChange { get; set; } = true;
-        void Update()
+
+        private void Update()
         {
             if (Image == null) Image = new UniversalImage(gameObject);
             if (GetComponent<Selectable>() == null) return;
-            else if (!autoChange) return;
+            if (!autoChange) return;
 
             if (GetComponent<Selectable>().interactable != lastInteractable)
             {
@@ -126,7 +132,7 @@ namespace AngryDash.Image.Reader
             }
         }
 
-        internal System.Action<int> animationChanged;
+        internal Action<int> animationChanged;
         public bool StartAnimating(int index) { return StartAnimating(index, 1, false); }
         public bool StartAnimating(int index, int frameAddition, bool keepFrame = true)
         {
@@ -166,7 +172,7 @@ namespace AngryDash.Image.Reader
                 Played[index] = 0;
                 if (coroutines[index] != null) StopCoroutine(coroutines[index]);
 
-                animationTime[index] = new System.Diagnostics.Stopwatch();
+                animationTime[index] = new Stopwatch();
                 animationTime[index].Start();
                 coroutines[index] = StartCoroutine(APNG(index, frameAddition, keepFrame));
             }
@@ -192,10 +198,11 @@ namespace AngryDash.Image.Reader
         }
 
         public int animationIndex { get; private set; }
-        System.Collections.IEnumerator APNG(int index, int frameAddition, bool keepFrame)
+
+        private IEnumerator APNG(int index, int frameAddition, bool keepFrame)
         {
             animationIndex = index;
-            int futurFrame = Frame[index] + frameAddition;
+            var futurFrame = Frame[index] + frameAddition;
             if (futurFrame <= -1 | futurFrame >= data[index].Frames.Count)
             {
                 Played[index]++;
@@ -204,15 +211,15 @@ namespace AngryDash.Image.Reader
 
             if (Played[index] < data[index].Repeat | data[index].Repeat == 0)
             {
-                int frameIndex = -1;
-                System.TimeSpan frameTime = new System.TimeSpan(0);
-                bool stop = false;
-                for (int i = futurFrame; i < data[index].Frames.Count & i > -1 & !stop; i = i + frameAddition)
+                var frameIndex = -1;
+                var frameTime = new TimeSpan(0);
+                var stop = false;
+                for (var i = futurFrame; i < data[index].Frames.Count & i > -1 & !stop; i = i + frameAddition)
                 {
-                    int adding = 0;
+                    var adding = 0;
                     if (frameAddition < 0) adding = 1;
 
-                    System.TimeSpan delay = System.TimeSpan.FromSeconds(data[index].Delay[i + adding]);
+                    var delay = TimeSpan.FromSeconds(data[index].Delay[i + adding]);
                     if ((animationTime[index].Elapsed - frameTime).TotalMilliseconds >= delay.TotalMilliseconds)
                     {
                         frameTime = frameTime + delay;
@@ -229,7 +236,7 @@ namespace AngryDash.Image.Reader
                 }
 
 #if UNITY_EDITOR
-                if (!UnityEditor.EditorApplication.isPlaying) yield return null;
+                if (!EditorApplication.isPlaying) yield return null;
                 else
 #endif
                     yield return new WaitForEndOfFrame();

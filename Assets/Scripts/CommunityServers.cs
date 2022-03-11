@@ -1,6 +1,4 @@
-﻿using AngryDash.Language;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class CommunityServers : MonoBehaviour
 {

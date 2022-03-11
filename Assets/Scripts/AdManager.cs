@@ -8,7 +8,7 @@ namespace AdManager
         public static string appKey = "6fb6333d";
 
         // Use this for initialization
-        void Start()
+        private void Start()
         {
             /*Debug.Log("unity-script: MyAppStart Start called");
 
@@ -36,7 +36,7 @@ namespace AdManager
             //IronSource.Agent.validateIntegration();
         }
 
-        void OnApplicationPause(bool isPaused)
+        private void OnApplicationPause(bool isPaused)
         {
             //IronSource.Agent.onApplicationPause(isPaused);
         }

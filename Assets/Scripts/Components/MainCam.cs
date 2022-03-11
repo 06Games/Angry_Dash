@@ -5,7 +5,7 @@ public class MainCam : MonoBehaviour
 {
     public bool OnPlayer = true;
 
-    void Update()
+    private void Update()
     {
         if (Player.userPlayer != null & OnPlayer)
         {

@@ -7,7 +7,7 @@ public class BlocColor : MonoBehaviour
 
     public Editeur editeur;
     public int[] Bloc;
-    ColorPicker CP;
+    private ColorPicker CP;
     public ColorPicker cpExpend;
 
     private void Start()
@@ -48,7 +48,7 @@ public class BlocColor : MonoBehaviour
             editeur.canInteract = !expend;
             editeur.SelectedBlock = Bloc;
 
-            GameObject BG = cpExpend.transform.GetChild(0).GetChild(0).gameObject;
+            var BG = cpExpend.transform.GetChild(0).GetChild(0).gameObject;
             BG.SetActive(true); //Actives preview
             try
             {

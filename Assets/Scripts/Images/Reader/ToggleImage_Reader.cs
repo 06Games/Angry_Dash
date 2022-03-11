@@ -22,7 +22,7 @@ namespace AngryDash.Image.Reader
             reader.animationChanged = null;
 
             toggle.onValueChanged.RemoveAllListeners();
-            toggle.onValueChanged.AddListener((on) =>
+            toggle.onValueChanged.AddListener(on =>
             {
                 reader.animationChanged = anChange;
                 if (!reader.StartAnimating(2)) anChange(0);

@@ -1,46 +1,52 @@
-﻿using AngryDash.Language;
+﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
+using AngryDash.Image;
+using AngryDash.Language;
+using FileFormat;
 using UnityEngine;
 using UnityEngine.Profiling;
+using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 public class RessourcePackLoader : MonoBehaviour
 {
     public TextAsset IDs;
-    public UnityEngine.UI.Text Status;
-    public UnityEngine.UI.Text Infos;
+    public Text Status;
+    public Text Infos;
 
-    void Start()
+    private void Start()
     {
         if (ConfigAPI.GetBool("ressources.disable")) Done();
         else StartCoroutine(Load());
     }
 
-    IEnumerator Load()
+    private IEnumerator Load()
     {
         var path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/";
-        var ids = IDs.text.Split(new string[] { "\n" }, System.StringSplitOptions.None);
+        var ids = IDs.text.Split(new[] { "\n" }, StringSplitOptions.None);
         Status.text = LangueAPI.Get("native", "loadingRessources.state", "[0]/[1]", 0, ids.Length - 1);
 
         float maxMem = 0;
-        var sw = new System.Diagnostics.Stopwatch();
+        var sw = new Stopwatch();
         sw.Start();
 
         double state = 0;
         UnityThread.executeCoroutine(UpdateData());
-        for (int i = 0; i < ids.Length; i++)
+        for (var i = 0; i < ids.Length; i++)
         {
             if (!string.IsNullOrEmpty(ids[i]))
             {
-                FileFormat.JSON json = new FileFormat.JSON("");
-                string baseID = ids[i].Replace("\r", "");
-                string jsonID = path + baseID + ".json";
-                if (File.Exists(jsonID)) json = new FileFormat.JSON(File.ReadAllText(jsonID));
-                AngryDash.Image.JSON.Data jsonData = AngryDash.Image.JSON_API.Parse(baseID, json);
+                var json = new JSON("");
+                var baseID = ids[i].Replace("\r", "");
+                var jsonID = path + baseID + ".json";
+                if (File.Exists(jsonID)) json = new JSON(File.ReadAllText(jsonID));
+                var jsonData = JSON_API.Parse(baseID, json);
 
                 foreach (var texture in jsonData.textures)
                 {
-                    AngryDash.Image.Sprite_API.LoadAsync(texture.path, texture.border, (SAD) => state += 1D / jsonData.textures.Length);
+                    Sprite_API.LoadAsync(texture.path, texture.border, SAD => state += 1D / jsonData.textures.Length);
                 }
                 yield return new WaitWhile(() => state < i);
             }

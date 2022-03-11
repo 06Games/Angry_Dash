@@ -1,6 +1,7 @@
 ﻿using Tools;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace AngryDash.Editor.Event
 {
@@ -10,7 +11,7 @@ namespace AngryDash.Editor.Event
         [HideInInspector] public Transform startParent;
         public Transform visualPanel;
 
-        void Start()
+        private void Start()
         {
             if (startParent == null) startParent = transform.parent;
             if (visualPanel == null) visualPanel = transform.FindParent("Visual");
@@ -39,7 +40,7 @@ namespace AngryDash.Editor.Event
             itemBeingDragged = null;
             GetComponent<CanvasGroup>().blocksRaycasts = true;
 
-            if (startParent.IsChildOf(visualPanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<UnityEngine.UI.ScrollRect>().content)) //The item has just been spawned
+            if (startParent.IsChildOf(visualPanel.GetChild(0).GetChild(1).GetChild(0).GetComponent<ScrollRect>().content)) //The item has just been spawned
             {
                 if (visualPanel.GetChild(1).GetComponent<RectTransform>().IsOver((RectTransform)transform)) //The item is over the code panel
                 {
@@ -54,7 +55,7 @@ namespace AngryDash.Editor.Event
 
                 if (startParent.childCount > 2)
                 {
-                    for (int i = 2; i < startParent.childCount; i++)
+                    for (var i = 2; i < startParent.childCount; i++)
                         Destroy(startParent.GetChild(2).gameObject);
                 }
             }
@@ -67,7 +68,7 @@ namespace AngryDash.Editor.Event
                 }
                 Destroy(gameObject); //Destroy the item
             }
-            else if (startParent == transform.parent & !RectTransformExtensions.IsOver((RectTransform)startParent, transform.position)) //The item has exit its parent
+            else if (startParent == transform.parent & !((RectTransform)startParent).IsOver(transform.position)) //The item has exit its parent
             {
                 transform.SetParent(visualPanel.GetChild(1));
                 startParent.GetComponentInParent<EditorEventItem>().UpdateSize();

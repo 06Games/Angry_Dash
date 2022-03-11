@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -32,8 +33,8 @@ namespace AngryDash.Image
         public static bool operator ==(Rect left, Rect right)
         {
             if (left is null & right is null) return true;
-            else if (left is null | right is null) return false;
-            else return left.Equals(right);
+            if (left is null | right is null) return false;
+            return left.Equals(right);
         }
         public static bool operator !=(Rect left, Rect right) { return !(left == right); }
         public bool Equals(Rect other) { return x == other.x & y == other.y & width == other.width & height == other.height; }
@@ -43,7 +44,7 @@ namespace AngryDash.Image
 
     internal class Texture
     {
-        List<int> pixels { get; set; } = new List<int>();
+        private List<int> pixels { get; set; } = new List<int>();
         public uint width { get; private set; }
         public uint height { get; private set; }
         public int colorBand { get; private set; }
@@ -56,7 +57,8 @@ namespace AngryDash.Image
             height = (uint)y;
             Draw(colorType);
         }
-        void Draw(ColorType colorType)
+
+        private void Draw(ColorType colorType)
         {
             var background = new int[4];
             if (colorType == ColorType.grayscale) background = new int[3];
@@ -67,26 +69,23 @@ namespace AngryDash.Image
             colorBand = background.Length;
             this.colorType = colorType;
 
-            for (int i = 0; i < width * height; i++) pixels.AddRange(background);
+            for (var i = 0; i < width * height; i++) pixels.AddRange(background);
         }
 
         public List<int> GetPixels() { return pixels; }
         public List<int> GetPixels(Rect rect)
         {
             if (rect.x == 0 & rect.y == 0 & rect.width == width & rect.height == height) return pixels;
-            else
-            {
-                var list = new List<int>();
-                WorkOnPixels(rect, (index, count) => list.AddRange(pixels.GetRange(index, count)));
-                return list;
-            }
+            var list = new List<int>();
+            WorkOnPixels(rect, (index, count) => list.AddRange(pixels.GetRange(index, count)));
+            return list;
         }
         public void SetPixels(Rect rect, List<int> colors)
         {
             if (pixels.Count == colors.Count) pixels = colors;
             else
             {
-                int i2 = 0;
+                var i2 = 0;
                 WorkOnPixels(rect, (index, count) =>
                 {
                     pixels.RemoveRange(index, count);
@@ -95,9 +94,10 @@ namespace AngryDash.Image
                 });
             }
         }
-        void WorkOnPixels(Rect rect, System.Action<int, int> pixel)
+
+        private void WorkOnPixels(Rect rect, Action<int, int> pixel)
         {
-            for (long y = rect.height - 1; y >= 0; y--) pixel((int)((height - 1 - rect.y - y) * width + rect.x) * colorBand, (int)rect.width * colorBand);
+            for (var y = rect.height - 1; y >= 0; y--) pixel((int)((height - 1 - rect.y - y) * width + rect.x) * colorBand, (int)rect.width * colorBand);
         }
         public void Clear()
         {
@@ -115,19 +115,19 @@ namespace AngryDash.Image
             var texture = new Texture2D(size.x, size.y, format, false);
 
             try { texture.LoadRawTextureData(pixels.Select(i => (byte)i).ToArray()); }
-            catch { throw new System.Exception("[" + colorType + " - " + format + "] Espected : " + texture.GetRawTextureData().Length + ", Got : " + pixels.Count); }
+            catch { throw new Exception("[" + colorType + " - " + format + "] Espected : " + texture.GetRawTextureData().Length + ", Got : " + pixels.Count); }
             FlipTextureVertically(texture);
 
             texture.Apply();
             return Sprite.Create(texture, new UnityEngine.Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100, 0, SpriteMeshType.FullRect, border);
         }
 
-        void FlipTextureVertically(Texture2D original)
+        private void FlipTextureVertically(Texture2D original)
         {
             var originalPixels = original.GetPixels();
-            Color[] newPixels = new Color[originalPixels.Length];
-            for (int x = 0; x < original.width; x++)
-                for (int y = 0; y < original.height; y++)
+            var newPixels = new Color[originalPixels.Length];
+            for (var x = 0; x < original.width; x++)
+                for (var y = 0; y < original.height; y++)
                     newPixels[x + y * original.width] = originalPixels[x + (original.height - y - 1) * original.width];
             original.SetPixels(newPixels);
         }

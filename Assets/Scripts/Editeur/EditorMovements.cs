@@ -4,9 +4,9 @@ using UnityEngine.UI;
 public class EditorMovements : MonoBehaviour
 {
     public Editeur Editor;
-    Transform Content;
+    private Transform Content;
 
-    void Start()
+    private void Start()
     {
         Content = transform.GetChild(0).GetComponent<ScrollRect>().content;
 
@@ -21,10 +21,10 @@ public class EditorMovements : MonoBehaviour
     public void LeftRight(float mvt) { Translate(new Vector2(mvt, 0)); }
     public void Translate(Vector2 mvt)
     {
-        int[] blocks = Editor.SelectedBlock;
-        for (int i = 0; i < blocks.Length; i++)
+        var blocks = Editor.SelectedBlock;
+        for (var i = 0; i < blocks.Length; i++)
         {
-            GameObject go = GameObject.Find("Objet n° " + blocks[i]);
+            var go = GameObject.Find("Objet n° " + blocks[i]);
             if (go != null)
             {
                 go.transform.Translate(mvt * 50F);
@@ -35,26 +35,26 @@ public class EditorMovements : MonoBehaviour
 
     public void RotateZ(float mvt)
     {
-        int[] blocks = Editor.SelectedBlock;
-        for (int i = 0; i < blocks.Length; i++)
+        var blocks = Editor.SelectedBlock;
+        for (var i = 0; i < blocks.Length; i++)
         {
-            GameObject go = GameObject.Find("Objet n° " + blocks[i]);
+            var go = GameObject.Find("Objet n° " + blocks[i]);
             if (go != null)
             {
                 go.transform.Rotate(new Vector3(0, 0, mvt));
-                Editor.ChangBlocStatus("Rotate", go.transform.rotation.eulerAngles.z.ToString("0"), new int[] { blocks[i] });
+                Editor.ChangBlocStatus("Rotate", go.transform.rotation.eulerAngles.z.ToString("0"), new[] { blocks[i] });
             }
         }
     }
 
     public void Layer(int mvt)
     {
-        foreach (int i in Editor.SelectedBlock)
+        foreach (var i in Editor.SelectedBlock)
         {
-            GameObject go = GameObject.Find("Objet n° " + i);
+            var go = GameObject.Find("Objet n° " + i);
             if (go != null)
             {
-                int layer = (int)Editor.level.blocks[i].position.z + mvt;
+                var layer = (int)Editor.level.blocks[i].position.z + mvt;
                 if (layer > -2 & layer < 1000)
                 {
                     go.GetComponent<SpriteRenderer>().sortingOrder = layer;
@@ -65,7 +65,7 @@ public class EditorMovements : MonoBehaviour
 
         if (Editor.SelectedBlock.Length > 0)
         {
-            int layer = (int)Editor.level.blocks[Editor.SelectedBlock[0]].position.z;
+            var layer = (int)Editor.level.blocks[Editor.SelectedBlock[0]].position.z;
             if (layer != Editor.selectedLayer & Editor.selectedLayer != -2)
                 Editor.ChangeDisplayedLayer(layer - Editor.selectedLayer);
         }

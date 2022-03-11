@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class EditorSetting : MonoBehaviour
 {
-    void Start() { NewStart(); }
+    private void Start() { NewStart(); }
     public void NewStart()
     {
         //Default Values

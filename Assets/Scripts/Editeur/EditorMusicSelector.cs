@@ -1,11 +1,17 @@
-﻿using AngryDash.Language;
-using Level;
+﻿using System;
 using System.Collections;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
+using AngryDash.Language;
+using Level;
+using SoundAPI;
+using TagLib;
 using Tools;
 using UnityEngine;
 using UnityEngine.UI;
+using File = TagLib.File;
 
 public class EditorMusicSelector : MonoBehaviour
 {
@@ -30,7 +36,7 @@ public class EditorMusicSelector : MonoBehaviour
     /// <summary> Songs received from the server </summary>
     public SongItem[] items;
 
-    void Start()
+    private void Start()
     {
         //Initialization
         transform.GetChild(2).gameObject.SetActive(false);
@@ -48,16 +54,16 @@ public class EditorMusicSelector : MonoBehaviour
     {
         if (InternetAPI.IsConnected())
         {
-            WebClient client = new WebClient();
-            client.Encoding = System.Text.Encoding.UTF8;
+            var client = new WebClient();
+            client.Encoding = Encoding.UTF8;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             client.DownloadStringCompleted += (sender, e) =>
             {
                 if (e.Error != null) { Logging.Log(e.Error); return; }
-                string Result = e.Result;
+                var Result = e.Result;
 
-                string[] files = new string[0];
-                if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, System.StringSplitOptions.RemoveEmptyEntries);
+                var files = new string[0];
+                if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.RemoveEmptyEntries);
 
                 //Sorts the files
                 if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
@@ -65,21 +71,21 @@ public class EditorMusicSelector : MonoBehaviour
                 sortMode = sort;
 
                 //Disables the selected sorting button
-                for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
+                for (var i = 0; i < transform.GetChild(0).childCount - 1; i++)
                     transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = (int)sort != i;
 
                 //Removes the displayed musics
-                Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
-                for (int i = 1; i < ListContent.childCount; i++) Destroy(ListContent.GetChild(i).gameObject);
+                var ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
+                for (var i = 1; i < ListContent.childCount; i++) Destroy(ListContent.GetChild(i).gameObject);
 
                 //Get Infos
                 items = new SongItem[files.Length];
-                for (int i = 0; i < files.Length; i++)
+                for (var i = 0; i < files.Length; i++)
                 {
-                    string[] file = files[i].Split(new string[1] { " ; " }, System.StringSplitOptions.None);
+                    var file = files[i].Split(new string[1] { " ; " }, StringSplitOptions.None);
                     if (file.Length == 3)
                     {
-                        items[i] = new SongItem()
+                        items[i] = new SongItem
                         {
                             URL = file[0],
                             Artist = file[1].HtmlDecode(),
@@ -90,21 +96,21 @@ public class EditorMusicSelector : MonoBehaviour
                 }
                 if (items.Length == 0)
                 {
-                    string[] sFiles = System.IO.Directory.GetFiles(Application.persistentDataPath + "/Musics/");
+                    var sFiles = Directory.GetFiles(Application.persistentDataPath + "/Musics/");
                     items = new SongItem[sFiles.Length];
-                    for (int i = 0; i < sFiles.Length; i++)
+                    for (var i = 0; i < sFiles.Length; i++)
                     {
-                        TagLib.Tag TL = TagLib.File.Create(sFiles[i], "application/ogg", TagLib.ReadStyle.None).Tag;
-                        items[i] = new SongItem() { URL = sFiles[i], Artist = TL.Performers[0], Name = TL.Title, Licence = "" };
+                        var TL = File.Create(sFiles[i], "application/ogg", ReadStyle.None).Tag;
+                        items[i] = new SongItem { URL = sFiles[i], Artist = TL.Performers[0], Name = TL.Title, Licence = "" };
                     }
                 }
 
                 //Deplays the musics
                 ListContent.GetChild(0).gameObject.SetActive(false);
-                for (int i = 0; i < items.Length; i++)
+                for (var i = 0; i < items.Length; i++)
                 {
-                    Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
-                    int button = i;
+                    var go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
+                    var button = i;
                     go.GetComponent<Button>().onClick.AddListener(() => Select(button)); //Sets the script to excute on click
                     go.name = items[i].Name; //Changes the editor gameObject name (useful only for debugging)
 
@@ -114,7 +120,7 @@ public class EditorMusicSelector : MonoBehaviour
                     go.gameObject.SetActive(true);
                 }
             };
-            client.DownloadStringAsync(new System.Uri(serverURL + "index.php?key=" + keywords)); //Searches music containing the keywords
+            client.DownloadStringAsync(new Uri(serverURL + "index.php?key=" + keywords)); //Searches music containing the keywords
         }
     }
 
@@ -134,15 +140,15 @@ public class EditorMusicSelector : MonoBehaviour
     /// <param name="selected">Index of the music</param>
     public void Select(int selected)
     {
-        Transform infos = transform.GetChild(2);
+        var infos = transform.GetChild(2);
         infos.GetChild(0).GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "editor.options.music.details.infos", "[0]\n<color=grey><size=50>by [1]</size></color>", items[selected].Name, items[selected].Artist);
 
-        WebClient c = new WebClient();
+        var c = new WebClient();
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string URL = serverURL + "licences/" + items[selected].Artist + " - " + items[selected].Name + ".txt";
+        var URL = serverURL + "licences/" + items[selected].Artist + " - " + items[selected].Name + ".txt";
         URL = URL.RemoveSpecialCharacters().Replace(" ", "%20");
         try { items[selected].Licence = c.DownloadString(URL); }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             Debug.LogWarning("Error when loading: " + URL + "\n" + e.Message);
             items[selected].Licence = "Error";
@@ -161,56 +167,57 @@ public class EditorMusicSelector : MonoBehaviour
         currentFile = selected; //Set the music as selected
     }
 
-    SoundAPI.Load load = null;
+    private Load load;
     public void PlayMusic()
     {
-        Transform playPanel = transform.GetChild(2).GetChild(2).GetChild(1);
-        GameObject go = GameObject.Find("Audio");
+        var playPanel = transform.GetChild(2).GetChild(2).GetChild(1);
+        var go = GameObject.Find("Audio");
         if (go != null)
         {
             if (!go.GetComponent<AudioSource>().isPlaying)
             {
-                string fileName = items[currentFile].Artist + " - " + items[currentFile].Name;
-                SoundAPI.Load newLoad = null;
+                var fileName = items[currentFile].Artist + " - " + items[currentFile].Name;
+                Load newLoad = null;
                 if (System.IO.File.Exists(Application.persistentDataPath + "/Musics/" + fileName))
-                    newLoad = new SoundAPI.Load(Application.persistentDataPath + "/Musics/" + fileName);
-                else newLoad = new SoundAPI.Load(new System.Uri((serverURL + "files/" + fileName + ".ogg").RemoveSpecialCharacters()));
+                    newLoad = new Load(Application.persistentDataPath + "/Musics/" + fileName);
+                else newLoad = new Load(new Uri((serverURL + "files/" + fileName + ".ogg").RemoveSpecialCharacters()));
 
-                AudioSource source = go.GetComponent<AudioSource>();
-                Slider state = playPanel.GetChild(1).GetComponent<Slider>();
+                var source = go.GetComponent<AudioSource>();
+                var state = playPanel.GetChild(1).GetComponent<Slider>();
                 if (load == newLoad)
                 {
-                    go.GetComponent<menuMusic>().Play();
+                    go.GetComponent<MenuMusic>().Play();
                     StartCoroutine(PlayMusicState(source, state));
                 }
                 else
                 {
                     load = newLoad;
-                    load.Readable += (clip) =>
+                    load.Readable += clip =>
                     {
                         playPanel.GetChild(0).GetComponent<Button>().interactable = true;
                         float timepos = 0;
                         if (clip.name == source.clip.name) timepos = source.time;
-                        go.GetComponent<menuMusic>().LoadMusic(clip, timepos);
+                        go.GetComponent<MenuMusic>().LoadMusic(clip, timepos);
                         StartCoroutine(PlayMusicState(source, state));
                     };
-                    load.ReadProgressChanged += (progress) =>
+                    load.ReadProgressChanged += progress =>
                          state.transform.GetChild(0).GetComponent<Scrollbar>().size = progress;
                     playPanel.GetChild(0).GetComponent<Button>().interactable = false;
                     StartCoroutine(load.Start(false));
                 }
             }
-            else go.GetComponent<menuMusic>().Pause();
+            else go.GetComponent<MenuMusic>().Pause();
         }
     }
     public void StopMusic()
     {
         if (load != null) { load.Cancel(); load = null; }
-        GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
+        GameObject.Find("Audio").GetComponent<MenuMusic>().Stop();
     }
-    IEnumerator PlayMusicState(AudioSource audio, Slider state)
+
+    private IEnumerator PlayMusicState(AudioSource audio, Slider state)
     {
-        float timepos = state.value;
+        var timepos = state.value;
         yield return new WaitForEndOfFrame();
         if (state.value == timepos) state.value = audio.time / audio.clip.length;
         else audio.time = timepos * audio.clip.length;
@@ -227,14 +234,14 @@ public class EditorMusicSelector : MonoBehaviour
 
     public void Download()
     {
-        string filename = Application.persistentDataPath + "/Musics/" + items[currentFile].Artist + " - " + items[currentFile].Name;
-        if (!System.IO.Directory.Exists(Application.persistentDataPath + "/Musics/"))
-            System.IO.Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
-        string URL = serverURL + "files/" + items[currentFile].Artist + " - " + items[currentFile].Name + ".ogg";
-        System.Uri url = new System.Uri(URL.RemoveSpecialCharacters().Replace(" ", "%20"));
-        WebClient client = new WebClient();
+        var filename = Application.persistentDataPath + "/Musics/" + items[currentFile].Artist + " - " + items[currentFile].Name;
+        if (!Directory.Exists(Application.persistentDataPath + "/Musics/"))
+            Directory.CreateDirectory(Application.persistentDataPath + "/Musics/");
+        var URL = serverURL + "files/" + items[currentFile].Artist + " - " + items[currentFile].Name + ".ogg";
+        var url = new Uri(URL.RemoveSpecialCharacters().Replace(" ", "%20"));
+        var client = new WebClient();
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        Transform downBtn = transform.GetChild(2).GetChild(2).GetChild(0);
+        var downBtn = transform.GetChild(2).GetChild(2).GetChild(0);
         client.DownloadProgressChanged += (sender, e) =>
             downBtn.GetChild(0).GetComponent<Scrollbar>().size = e.ProgressPercentage / 100F;
         client.DownloadDataCompleted += (sender, e) =>
@@ -246,7 +253,7 @@ public class EditorMusicSelector : MonoBehaviour
             }
             else Logging.Log(e.Error, LogType.Error);
         };
-        Logging.Log("Start downloading music from '" + url.AbsoluteUri + "'", LogType.Log);
+        Logging.Log("Start downloading music from '" + url.AbsoluteUri + "'");
         client.DownloadDataAsync(url);
     }
 }

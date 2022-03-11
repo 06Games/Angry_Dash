@@ -1,15 +1,16 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class Editor_MoveTrigger : MonoBehaviour
 {
 
     public Editeur editor;
-    int[] SB;
-    int array;
-    int affected;
+    private int[] SB;
+    private int array;
+    private int affected;
 
-    public int AffectationType = 0;
+    public int AffectationType;
     public int Group;
     public Vector2 Translation;
     public bool[] TranslationFromPlayer = new bool[2];
@@ -18,14 +19,14 @@ public class Editor_MoveTrigger : MonoBehaviour
     public bool MultiUsage;
     public Vector3 Rotation;
     public bool[] Reset = new bool[2];
-    public bool GlobalRotation = false;
+    public bool GlobalRotation;
 
     private void Start()
     {
         if (string.IsNullOrEmpty(editor.file)) gameObject.SetActive(false);
     }
 
-    void Update()
+    private void Update()
     {
         if (editor.SelectedBlock.Length == 0) { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
 
@@ -39,19 +40,19 @@ public class Editor_MoveTrigger : MonoBehaviour
                 int.TryParse(editor.GetBlocStatus("Group", SB[0]), out Group);
 
                 try { Translation = getVector2(editor.GetBlocStatus("Translation", SB[0])); } catch { }
-                string translationFrom = editor.GetBlocStatus("TranslationFrom", SB[0]);
+                var translationFrom = editor.GetBlocStatus("TranslationFrom", SB[0]);
                 try
                 {
-                    string[] translationFromArray = translationFrom.Substring(1, translationFrom.Length - 2).Split(',');
-                    for (int i = 0; i < translationFromArray.Length; i++)
+                    var translationFromArray = translationFrom.Substring(1, translationFrom.Length - 2).Split(',');
+                    for (var i = 0; i < translationFromArray.Length; i++)
                         TranslationFromPlayer[i] = bool.Parse(translationFromArray[i]);
                 }
                 catch { }
-                string reset = editor.GetBlocStatus("Reset", SB[0]);
+                var reset = editor.GetBlocStatus("Reset", SB[0]);
                 try
                 {
-                    string[] resetArray = reset.Substring(1, reset.Length - 2).Split(',');
-                    for (int i = 0; i < resetArray.Length; i++)
+                    var resetArray = reset.Substring(1, reset.Length - 2).Split(',');
+                    for (var i = 0; i < resetArray.Length; i++)
                         Reset[i] = bool.Parse(resetArray[i]);
                 }
                 catch { }
@@ -65,11 +66,12 @@ public class Editor_MoveTrigger : MonoBehaviour
 
                 Actualise();
             }
-            else { transform.parent.GetComponent<Edit>().EnterToEdit(); return; }
+            else { transform.parent.GetComponent<Edit>().EnterToEdit();
+            }
         }
     }
 
-    void Actualise()
+    private void Actualise()
     {
         //Blocks
         ChangAffectationType(AffectationType);
@@ -102,16 +104,16 @@ public class Editor_MoveTrigger : MonoBehaviour
         AffectationType = a;
         editor.ChangBlocStatus("AffectationType", AffectationType.ToString(), SB);
 
-        for (int i = 0; i < transform.GetChild(1).GetChild(0).childCount; i++)
+        for (var i = 0; i < transform.GetChild(1).GetChild(0).childCount; i++)
             transform.GetChild(1).GetChild(0).GetChild(i).gameObject.SetActive(i == a);
-        for (int i = 0; i < transform.GetChild(1).GetChild(1).childCount; i++)
+        for (var i = 0; i < transform.GetChild(1).GetChild(1).childCount; i++)
             transform.GetChild(1).GetChild(1).GetChild(i).GetComponent<Button>().interactable = !(i == a);
     }
     public void GroupeChange(InputField field)
     {
         if (!string.IsNullOrEmpty(field.text))
         {
-            int.TryParse(field.text, out int groupe);
+            int.TryParse(field.text, out var groupe);
             if (groupe < 0) groupe = 0;
             Group = groupe;
             editor.ChangBlocStatus("Group", Group.ToString(), SB);
@@ -120,13 +122,13 @@ public class Editor_MoveTrigger : MonoBehaviour
 
     public void RangeValueChanged(float ScrollID)
     {
-        int Cat = (int)ScrollID;
-        int Child = Mathf.RoundToInt((ScrollID - (int)ScrollID) * 10F);
-        Slider slider = transform.GetChild(Cat).GetChild(Child).GetComponent<Slider>();
+        var Cat = (int)ScrollID;
+        var Child = Mathf.RoundToInt((ScrollID - (int)ScrollID) * 10F);
+        var slider = transform.GetChild(Cat).GetChild(Child).GetComponent<Slider>();
 
-        float value = (slider.value - (slider.maxValue / 2)) / 10F;
-        float multiplier = 0.05F;
-        int max = value.ToString().Length;
+        var value = (slider.value - (slider.maxValue / 2)) / 10F;
+        var multiplier = 0.05F;
+        var max = value.ToString().Length;
         if (max > 5) max = 5;
 
         float inputFieldValue = -1;
@@ -136,14 +138,14 @@ public class Editor_MoveTrigger : MonoBehaviour
     }
     public void TextRangeValueChanged(float ScrollID)
     {
-        int Cat = (int)ScrollID;
-        int Child = Mathf.RoundToInt((ScrollID - (int)ScrollID) * 10F);
-        Slider slider = transform.GetChild(Cat).GetChild(Child).GetComponent<Slider>();
-        InputField inputField = slider.transform.GetChild(3).GetComponent<InputField>();
+        var Cat = (int)ScrollID;
+        var Child = Mathf.RoundToInt((ScrollID - (int)ScrollID) * 10F);
+        var slider = transform.GetChild(Cat).GetChild(Child).GetComponent<Slider>();
+        var inputField = slider.transform.GetChild(3).GetComponent<InputField>();
         if (inputField.text.Length > 4 & !(inputField.text.Contains(".") | inputField.text.Contains("-"))) inputField.text = "9999";
         try
         {
-            float value = float.Parse(inputField.text);
+            var value = float.Parse(inputField.text);
 
             if (ScrollID == 2.1F) Translation.x = value;
             else if (ScrollID == 2.2F) Translation.y = value;
@@ -161,43 +163,43 @@ public class Editor_MoveTrigger : MonoBehaviour
     }
     public void ToggleRangeValueChanged(float ScrollID)
     {
-        int Cat = (int)ScrollID;
-        int Child = Mathf.RoundToInt((ScrollID - (int)ScrollID) * 10F);
-        Toggle toggle = transform.GetChild(Cat).GetChild(Child).GetChild(5).GetComponent<Toggle>();
+        var Cat = (int)ScrollID;
+        var Child = Mathf.RoundToInt((ScrollID - (int)ScrollID) * 10F);
+        var toggle = transform.GetChild(Cat).GetChild(Child).GetChild(5).GetComponent<Toggle>();
 
         if (Cat == 2)
         {
             TranslationFromPlayer[Child - 1] = toggle.isOn;
 
-            string param = "(" + TranslationFromPlayer[0].ToString();
-            for (int i = 1; i < TranslationFromPlayer.Length; i++)
-                param = param + "," + TranslationFromPlayer[i].ToString();
+            var param = "(" + TranslationFromPlayer[0];
+            for (var i = 1; i < TranslationFromPlayer.Length; i++)
+                param = param + "," + TranslationFromPlayer[i];
             param = param + ")";
             editor.ChangBlocStatus("TranslationFrom", param, SB);
         }
     }
     public void ToggleResetRangeValueChanged(int ScrollID)
     {
-        Transform go = transform.GetChild(ScrollID);
+        var go = transform.GetChild(ScrollID);
         Toggle reset = null;
         if (ScrollID == 2) reset = go.GetChild(go.childCount - 1).GetComponent<Toggle>();
         else if (ScrollID == 4) reset = go.GetChild(go.childCount - 2).GetComponent<Toggle>();
 
-        for (int i = 1; i < go.childCount; i++)
+        for (var i = 1; i < go.childCount; i++)
             if (go.GetChild(i) != reset.transform)
                 go.GetChild(i).gameObject.SetActive(!reset.isOn);
 
         Reset[(ScrollID / 2) - 1] = reset.isOn;
 
-        string param = "(" + Reset[0].ToString();
-        for (int i = 1; i < Reset.Length; i++)
-            param = param + "," + Reset[i].ToString();
+        var param = "(" + Reset[0];
+        for (var i = 1; i < Reset.Length; i++)
+            param = param + "," + Reset[i];
         param = param + ")";
         editor.ChangBlocStatus("Reset", param, SB);
     }
     public void ToggleGlobalRotationRangeValueChanged()
     {
-        Transform go = transform.GetChild(4);
+        var go = transform.GetChild(4);
 
         GlobalRotation = go.GetChild(go.childCount - 1).GetComponent<Toggle>();
 
@@ -212,11 +214,11 @@ public class Editor_MoveTrigger : MonoBehaviour
 
     public void SpeedValueChanged()
     {
-        Slider slider = transform.GetChild(3).GetChild(1).GetComponent<Slider>();
+        var slider = transform.GetChild(3).GetChild(1).GetComponent<Slider>();
 
-        float value = slider.value;
+        var value = slider.value;
         float multiplier = 1;
-        int max = value.ToString().Length;
+        var max = value.ToString().Length;
         if (max > 5) max = 5;
 
         float inputFieldValue = -1;
@@ -228,12 +230,12 @@ public class Editor_MoveTrigger : MonoBehaviour
     }
     public void TextSpeedValueChanged()
     {
-        Slider slider = transform.GetChild(3).GetChild(1).GetComponent<Slider>();
-        InputField inputField = slider.transform.GetChild(3).GetComponent<InputField>();
+        var slider = transform.GetChild(3).GetChild(1).GetComponent<Slider>();
+        var inputField = slider.transform.GetChild(3).GetComponent<InputField>();
         if (inputField.text.Length > 4 & !(inputField.text.Contains(".") | inputField.text.Contains("-"))) inputField.text = "9999";
         try
         {
-            float value = float.Parse(inputField.text);
+            var value = float.Parse(inputField.text);
             Speed = value;
             slider.value = value;
         }
@@ -250,19 +252,19 @@ public class Editor_MoveTrigger : MonoBehaviour
 
     public static Vector2 getVector2(string rString)
     {
-        string[] temp = rString.Substring(1, rString.Length - 2).Split(',');
-        float x = System.Convert.ToSingle(temp[0]);
-        float y = System.Convert.ToSingle(temp[1]);
-        Vector2 rValue = new Vector2(x, y);
+        var temp = rString.Substring(1, rString.Length - 2).Split(',');
+        var x = Convert.ToSingle(temp[0]);
+        var y = Convert.ToSingle(temp[1]);
+        var rValue = new Vector2(x, y);
         return rValue;
     }
     public static Vector3 getVector3(string rString)
     {
-        string[] temp = rString.Substring(1, rString.Length - 2).Split(',');
-        float x = System.Convert.ToSingle(temp[0]);
-        float y = System.Convert.ToSingle(temp[1]);
-        float z = System.Convert.ToSingle(temp[2]);
-        Vector3 rValue = new Vector3(x, y, z);
+        var temp = rString.Substring(1, rString.Length - 2).Split(',');
+        var x = Convert.ToSingle(temp[0]);
+        var y = Convert.ToSingle(temp[1]);
+        var z = Convert.ToSingle(temp[2]);
+        var rValue = new Vector3(x, y, z);
         return rValue;
     }
 }

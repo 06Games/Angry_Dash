@@ -1,4 +1,5 @@
-﻿using _06Games.Account;
+﻿using System;
+using _06Games.Account;
 using AngryDash.Language;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,10 +10,10 @@ using GooglePlayGames;
 
 public class Social : MonoBehaviour
 {
-    readonly string scene = "Load";
+    private readonly string scene = "Load";
 
 #if UNITY_EDITOR
-    static bool editorContinue = true;
+    private static bool editorContinue = true;
 #endif
 
     public void NewStart()
@@ -21,16 +22,16 @@ public class Social : MonoBehaviour
         transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "gameServices.authentication", "Authentication...");
         transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
 
-        Button quit = transform.GetChild(1).GetChild(1).GetComponent<Button>();
+        var quit = transform.GetChild(1).GetChild(1).GetComponent<Button>();
         quit.onClick.RemoveAllListeners();
         quit.onClick.AddListener(() =>
         {
-            Account ac = GameObject.Find("Account").GetComponent<Account>();
+            var ac = GameObject.Find("Account").GetComponent<Account>();
             ac.complete += () => SceneManager.LoadScene(scene);
             ac.Initialize();
             gameObject.SetActive(false);
         });
-        Auth((error) =>
+        Auth(error =>
         {
             if (error)
             {
@@ -40,9 +41,9 @@ public class Social : MonoBehaviour
             else
             {
                 transform.GetChild(0).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "gameServices.authentication.success", "Authenticated");
-                Achievement("CgkI9r-go54eEAIQAg", true, (bool s) => { }); //Achievement 'Welcome'
+                Achievement("CgkI9r-go54eEAIQAg", true, s => { }); //Achievement 'Welcome'
 
-                Account ac = GameObject.Find("Account").GetComponent<Account>();
+                var ac = GameObject.Find("Account").GetComponent<Account>();
                 ac.complete += () => SceneManager.LoadScene(scene);
                 ac.Initialize();
                 gameObject.SetActive(false);
@@ -50,10 +51,10 @@ public class Social : MonoBehaviour
         });
     }
 
-    static bool mWaitingForAuth = false;
+    private static bool mWaitingForAuth;
     /// <summary>Authentificate to the game service</summary>
     /// <param name="onComplete">The function to call at the end of the operation</param>
-    public static void Auth(System.Action<bool> onComplete)
+    public static void Auth(Action<bool> onComplete)
     {
         if (!InternetAPI.IsConnected()) { onComplete.Invoke(false); return; }
         if (UnityEngine.Social.localUser.authenticated) { onComplete.Invoke(true); return; }
@@ -74,7 +75,7 @@ public class Social : MonoBehaviour
 #endif
             try
             {
-                UnityEngine.Social.localUser.Authenticate((bool success) =>
+                UnityEngine.Social.localUser.Authenticate(success =>
                 {
                     mWaitingForAuth = false;
 #if UNITY_EDITOR
@@ -85,20 +86,20 @@ public class Social : MonoBehaviour
                     onComplete.Invoke(!success);
                 });
             }
-            catch (System.Exception e) { Debug.LogError(e); onComplete.Invoke(false); }
+            catch (Exception e) { Debug.LogError(e); onComplete.Invoke(false); }
         }
     }
 
     #region Call
     /// <summary>Check if the user is authenticated</summary>
     /// <param name="callback">The api to call at the end of the check</param>
-    static void Check(System.Action callback, System.Action errorCallback)
+    private static void Check(Action callback, Action errorCallback)
     {
         if (!InternetAPI.IsConnected()) errorCallback.Invoke();
         else if (mWaitingForAuth) errorCallback.Invoke();
         else if (!UnityEngine.Social.localUser.authenticated)
         {
-            Auth((error) =>
+            Auth(error =>
             {
                 if (error) errorCallback.Invoke();
                 else callback.Invoke();
@@ -116,7 +117,7 @@ public class Social : MonoBehaviour
     /// <param name="id">ID of the achievement</param>
     /// <param name="unlock">If true, unlock the achievement else reveal it</param>
     /// <param name="callback">The function to call at the end of the operation</param>
-    public static void Achievement(string id, bool unlock, System.Action<bool> callback)
+    public static void Achievement(string id, bool unlock, Action<bool> callback)
     {
         Check(() =>
         {
@@ -129,7 +130,7 @@ public class Social : MonoBehaviour
     /// <param name="id">ID of the achievement</param>
     /// <param name="progress">The progress of the achievement (in %)</param>
     /// <param name="callback">The function to call at the end of the operation</param>
-    public static void Achievement(string id, double progress, System.Action<bool> callback)
+    public static void Achievement(string id, double progress, Action<bool> callback)
     {
         Check(() =>
         {
@@ -153,7 +154,7 @@ public class Social : MonoBehaviour
     /// <param name="id">ID of the leaderboard</param>
     /// <param name="score">The player's score</param>
     /// <param name="callback">The function to call at the end of the operation</param>
-    public static void Leaderboard(string id, long score, System.Action<bool> callback)
+    public static void Leaderboard(string id, long score, Action<bool> callback)
     {
         Check(() =>
         {
@@ -167,7 +168,7 @@ public class Social : MonoBehaviour
     /// <param name="score">The player's score</param>
     /// <param name="tag">Metadata tag</param>
     /// <param name="callback">The function to call at the end of the operation</param>
-    public static void Leaderboard(string id, long score, string tag, System.Action<bool> callback)
+    public static void Leaderboard(string id, long score, string tag, Action<bool> callback)
     {
         Check(() =>
         {
@@ -213,7 +214,7 @@ public class Social : MonoBehaviour
     /// <summary>Modify an event</summary>
     /// <param name="id">ID of the event</param>
     /// <param name="callback">The function to call after receiving the value (bool: error, ulong: value)</param>
-    public static void GetEvent(string id, System.Action<bool, ulong> callback)
+    public static void GetEvent(string id, Action<bool, ulong> callback)
     {
         Check(() =>
         {

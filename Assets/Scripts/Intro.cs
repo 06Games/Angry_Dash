@@ -1,5 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using AngryDash.Language;
+using Discord;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Video;
 
 public class Intro : MonoBehaviour
@@ -8,21 +12,21 @@ public class Intro : MonoBehaviour
     public VideoClip videoToPlay;
     public GameObject Fond;
 
-    void Start()
+    private void Start()
     {
         Fond.SetActive(true);
         StartCoroutine(playVideo(() => StartCoroutine(PlayEnd())));
 
-        _ = AngryDash.Language.LangueAPI.LoadAsync("native", Application.persistentDataPath);
+        _ = LangueAPI.LoadAsync("native", Application.persistentDataPath);
     }
 
-    IEnumerator playVideo(System.Action onComplete = null)
+    private IEnumerator playVideo(Action onComplete = null)
     {
         //Add VideoPlayer to the GameObject
-        VideoPlayer videoPlayer = gameObject.AddComponent<VideoPlayer>();
+        var videoPlayer = gameObject.AddComponent<VideoPlayer>();
 
         //Add AudioSource
-        AudioSource audioSource = gameObject.AddComponent<AudioSource>();
+        var audioSource = gameObject.AddComponent<AudioSource>();
 
         //Disable Play on Awake for both Video and Audio
         videoPlayer.playOnAwake = false;
@@ -48,8 +52,8 @@ public class Intro : MonoBehaviour
         else
         {
             //Assign the Texture from Video to RawImage to be displayed
-            UnityEngine.UI.RawImage rawImage = gameObject.AddComponent<UnityEngine.UI.RawImage>();
-            float sizeMultiplier = 1080F / Screen.height;
+            var rawImage = gameObject.AddComponent<RawImage>();
+            var sizeMultiplier = 1080F / Screen.height;
             transform.localScale = new Vector2(videoPlayer.texture.width / sizeMultiplier, videoPlayer.texture.height / sizeMultiplier);
             rawImage.texture = videoPlayer.texture;
 
@@ -73,10 +77,10 @@ public class Intro : MonoBehaviour
         }
     }
 
-    IEnumerator PlayEnd()
+    private IEnumerator PlayEnd()
     {
         yield return new WaitForEndOfFrame();
-        _06Games.Account.Discord.NewActivity(new Discord.Activity() { State = AngryDash.Language.LangueAPI.Get("native", "discordStarting_title", "Starting the game"), Assets = new Discord.ActivityAssets() { LargeImage = "default" } });
+        _06Games.Account.Discord.NewActivity(new Activity { State = LangueAPI.Get("native", "discordStarting_title", "Starting the game"), Assets = new ActivityAssets { LargeImage = "default" } });
         Fond.SetActive(false);
 
         var DM = GameObject.Find("Dependencies").GetComponent<DependenciesManager>();

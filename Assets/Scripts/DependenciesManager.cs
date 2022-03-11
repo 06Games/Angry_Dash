@@ -1,42 +1,46 @@
-﻿using AngryDash.Language;
-using FileFormat.XML;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using _06Games;
+using AngryDash.Language;
+using FileFormat;
+using FileFormat.XML;
+using Security;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-using RP = RessourcePackManager.RP;
+using Debug = UnityEngine.Debug;
 
 public class DependenciesManager : MonoBehaviour
 {
-    void Start()
+    private void Start()
     {
-        string[] args = SceneManager.args;
+        var args = SceneManager.args;
         if (args.Length >= 2)
         {
             if (args[0] == "Dependencies")
             {
                 //Disable start-up actions
-                for (int i = 0; i < transform.parent.childCount; i++)
+                for (var i = 0; i < transform.parent.childCount; i++)
                 {
-                    GameObject child = transform.parent.GetChild(i).gameObject;
+                    var child = transform.parent.GetChild(i).gameObject;
                     if (child != gameObject) child.SetActive(false);
                 }
-                StartCoroutine(DownloadRPs(() => SceneManager.LoadScene(args[1]), new[] { Utils.XMLtoClass<RP>(args[2]) }));
+                StartCoroutine(DownloadRPs(() => SceneManager.LoadScene(args[1]), new[] { Utils.XMLtoClass<RessourcePackManager.RP>(args[2]) }));
             }
         }
     }
 
     public void DownloadRPs(Action complete) { StartCoroutine(DownloadRPs(complete, null)); }
-    public IEnumerator DownloadRPs(Action complete, RP[] downloadList)
+    public IEnumerator DownloadRPs(Action complete, RessourcePackManager.RP[] downloadList)
     {
-        string ressourcesPath = Application.persistentDataPath + "/Ressources/";
+        var ressourcesPath = Application.persistentDataPath + "/Ressources/";
         if (!Directory.Exists(ressourcesPath)) Directory.CreateDirectory(ressourcesPath);
 
-        bool firstStart = !Directory.Exists(ressourcesPath + "default/");
+        var firstStart = !Directory.Exists(ressourcesPath + "default/");
         if (!firstStart && downloadList == null) { complete?.Invoke(); yield break; } //This isn't the first start and the user hasn't requested to download a RP
         if (firstStart && !InternetAPI.IsConnected()) { transform.GetChild(0).gameObject.SetActive(true); yield break; } //This is the first start, the game can't start
 
@@ -46,19 +50,19 @@ public class DependenciesManager : MonoBehaviour
         slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.Get("native", "download.ressourcesPack.connection", "Connection to the server");
         slider.transform.GetChild(4).gameObject.SetActive(false);
         DownloadPanel.SetActive(true);
-        Text DownloadInfo = slider.transform.GetChild(4).GetComponent<Text>();
+        var DownloadInfo = slider.transform.GetChild(4).GetComponent<Text>();
 
         if (downloadList == null) //First start, we get the list of required RPs
-            yield return _06Games.ServerAPI.ClassCoroutine<Dictionary<string, RP>>($"angry-dash/ressources/?gameVersion={Application.version}", (r) => downloadList = r.Values.ToArray());
+            yield return ServerAPI.ClassCoroutine<Dictionary<string, RessourcePackManager.RP>>($"angry-dash/ressources/?gameVersion={Application.version}", r => downloadList = r.Values.ToArray());
 
         yield return Download(DownloadInfo, slider, downloadList, !firstStart, (rp, handle) =>
         {
-            string zipPath = Application.temporaryCachePath + "/" + rp.folderName + ".zip";
+            var zipPath = Application.temporaryCachePath + "/" + rp.folderName + ".zip";
             File.WriteAllBytes(zipPath, handle.data);
             var rpDir = new DirectoryInfo(ressourcesPath + rp.folderName);
             if (rpDir.Exists) rpDir.Delete(true);
-            FileFormat.ZIP.DecompressAsync(zipPath, ressourcesPath + rp.folderName + "/", () => File.Delete(zipPath)); //Unzip in background and delete the file when it's finished
-        }, (rp) =>
+            ZIP.DecompressAsync(zipPath, ressourcesPath + rp.folderName + "/", () => File.Delete(zipPath)); //Unzip in background and delete the file when it's finished
+        }, rp =>
         {
             var rpDir = new DirectoryInfo(ressourcesPath + rp.folderName);
             return rpDir.Exists && rpDir.GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length) == rp.size;
@@ -77,17 +81,17 @@ public class DependenciesManager : MonoBehaviour
             yield break;
         }
 
-        string levelsPath = Application.persistentDataPath + "/Levels/Official Levels/";
+        var levelsPath = Application.persistentDataPath + "/Levels/Official Levels/";
         if (!Directory.Exists(levelsPath)) Directory.CreateDirectory(levelsPath);
 
-        GameObject DownloadPanel = transform.GetChild(2).gameObject;
+        var DownloadPanel = transform.GetChild(2).gameObject;
         DownloadPanel.SetActive(true);
         var slider = DownloadPanel.transform.GetChild(0).GetComponent<Slider>();
         slider.transform.GetChild(3).GetComponent<Text>().text = LangueAPI.Get("native", "download.ressourcesPack.connection", "Connection to the server");
         slider.value = 0;
 
-        RP[] downloadList = null;
-        yield return _06Games.ServerAPI.ClassCoroutine<Dictionary<string, RP>>($"angry-dash/levels/official/?gameVersion={Application.version}", (r) => downloadList = r.Select(pair =>
+        RessourcePackManager.RP[] downloadList = null;
+        yield return ServerAPI.ClassCoroutine<Dictionary<string, RessourcePackManager.RP>>($"angry-dash/levels/official/?gameVersion={Application.version}", r => downloadList = r.Select(pair =>
         {
             var rp = pair.Value;
             rp.name = pair.Key;
@@ -95,10 +99,10 @@ public class DependenciesManager : MonoBehaviour
             return rp;
         }).ToArray());
 
-        yield return Download(null, slider, downloadList, true, (rp, handle) => File.WriteAllBytes(levelsPath + rp.folderName, handle.data), (rp) =>
+        yield return Download(null, slider, downloadList, true, (rp, handle) => File.WriteAllBytes(levelsPath + rp.folderName, handle.data), rp =>
         {
             var levelFile = new FileInfo(levelsPath + rp.folderName);
-            return levelFile.Exists && Security.Hashing.SHA(Security.Hashing.Algorithm.SHA256, levelFile.OpenRead()) == rp.sha256;
+            return levelFile.Exists && Hashing.SHA(Hashing.Algorithm.SHA256, levelFile.OpenRead()) == rp.sha256;
         });
 
 
@@ -107,9 +111,9 @@ public class DependenciesManager : MonoBehaviour
     }
 
 
-    IEnumerator Download(Text DownloadInfo, Slider slider, RP[] downloadList, bool canAbort, Action<RP, DownloadHandler> downloadComplete, Func<RP, bool> skip = null)
+    private IEnumerator Download(Text DownloadInfo, Slider slider, RessourcePackManager.RP[] downloadList, bool canAbort, Action<RessourcePackManager.RP, DownloadHandler> downloadComplete, Func<RessourcePackManager.RP, bool> skip = null)
     {
-        for (int i = 0; i < downloadList.Length; i++)
+        for (var i = 0; i < downloadList.Length; i++)
         {
             var rp = downloadList[i];
             slider.value = i / downloadList.Length;
@@ -118,19 +122,19 @@ public class DependenciesManager : MonoBehaviour
             if (skip != null && skip(rp)) continue;
 
             var downloader = UnityWebRequest.Get(rp.url);
-            var sw = new System.Diagnostics.Stopwatch();
+            var sw = new Stopwatch();
             downloader.SendWebRequest();
             sw.Start();
 
-            string speedText = "";
+            var speedText = "";
             var lastSpeedUpdate = TimeSpan.Zero;
             while (!downloader.isDone)
             {
                 double downloadedS = downloader.downloadedBytes;
-                float pourcentage = downloader.downloadProgress * 100F; //Progress
+                var pourcentage = downloader.downloadProgress * 100F; //Progress
 
                 //Downloaded size
-                int sizePower = double.TryParse(downloader.GetResponseHeader("Content-Length"), out double totalS) ? GetCorrectUnit(totalS) : GetCorrectUnit(downloadedS);
+                var sizePower = double.TryParse(downloader.GetResponseHeader("Content-Length"), out var totalS) ? GetCorrectUnit(totalS) : GetCorrectUnit(downloadedS);
                 var totalSize = FileSizeUnit(totalS, sizePower);
                 var downloadedSize = FileSizeUnit(downloadedS, sizePower);
 
@@ -141,8 +145,8 @@ public class DependenciesManager : MonoBehaviour
                     speedText = LangueAPI.Get("native", "download.speed", "[0]/s", speed);
                     lastSpeedUpdate = sw.Elapsed;
                 }
-                string downloaded = LangueAPI.Get("native", "download.state.unit", $"[0] out of [1]", downloadedSize, totalS > 0 ? totalSize : "~");
-                string pourcent = LangueAPI.Get("native", "download.state.percentage", "[0]%", pourcentage.ToString("00"));
+                var downloaded = LangueAPI.Get("native", "download.state.unit", "[0] out of [1]", downloadedSize, totalS > 0 ? totalSize : "~");
+                var pourcent = LangueAPI.Get("native", "download.state.percentage", "[0]%", pourcentage.ToString("00"));
                 if (DownloadInfo != null)
                 {
                     DownloadInfo.text = speedText + " - " + downloaded + " - <color=grey>" + pourcent + "</color>";
@@ -151,7 +155,7 @@ public class DependenciesManager : MonoBehaviour
 
                 //Progress bar
                 float baseValue = i / downloadList.Length;
-                float oneValue = 1F / downloadList.Length;
+                var oneValue = 1F / downloadList.Length;
                 slider.value = baseValue + (pourcentage / 100F * oneValue);
 
                 if (canAbort && Input.GetKey(KeyCode.Escape)) //If the user wants to skip and the default RP already exists
@@ -171,12 +175,12 @@ public class DependenciesManager : MonoBehaviour
     {
         if (unitPower == null) unitPower = GetCorrectUnit(size);
         var value = Math.Round(size / Mathf.Pow(1000, unitPower.Value), 1);
-        var unit = new string[] { "B", "KB", "MB", "GB", "TB" }[unitPower.Value];
+        var unit = new[] { "B", "KB", "MB", "GB", "TB" }[unitPower.Value];
         return LangueAPI.Get("native", $"download.unit.{unit}", $"[0] {unit}", value.ToString("0.#"));
     }
     public static int GetCorrectUnit(double d)
     {
-        int NbEntier = Math.Round(d, 0).ToString().Length;
+        var NbEntier = Math.Round(d, 0).ToString().Length;
         return (int)((NbEntier - 1) / 3F);
     }
 }

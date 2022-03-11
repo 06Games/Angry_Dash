@@ -9,9 +9,9 @@ namespace AngryDash.Game.API
     {
         public static List<int> GetBlocks(int group)
         {
-            Level.Block[] Blocks = Player.userPlayer.LP.level.blocks;
-            List<int> blocks = new List<int>();
-            for (int i = 0; i < Blocks.Length; i++)
+            var Blocks = Player.userPlayer.LP.level.blocks;
+            var blocks = new List<int>();
+            for (var i = 0; i < Blocks.Length; i++)
             {
                 if (Blocks[i].parameter.ContainsKey("Groups"))
                 {
@@ -25,10 +25,10 @@ namespace AngryDash.Game.API
         {
             UnityThread.executeInUpdate(() =>
             {
-                Color32 color = new Color32(r, g, b, 255);
-                foreach (int block in GetBlocks(blockGroup))
+                var color = new Color32(r, g, b, 255);
+                foreach (var block in GetBlocks(blockGroup))
                 {
-                    GameObject go = GameObject.Find("Items").transform.Find($"Objet n° {block}").gameObject;
+                    var go = GameObject.Find("Items").transform.Find($"Objet n° {block}").gameObject;
                     if (go != null) go.GetComponent<SpriteRenderer>().color = color;
                 }
             });
@@ -37,9 +37,9 @@ namespace AngryDash.Game.API
         {
             UnityThread.executeInUpdate(() =>
             {
-                foreach (int block in GetBlocks(blockGroup))
+                foreach (var block in GetBlocks(blockGroup))
                 {
-                    GameObject go = GameObject.Find("Items").transform.Find($"Objet n° {block}").gameObject;
+                    var go = GameObject.Find("Items").transform.Find($"Objet n° {block}").gameObject;
                     if (go != null) go.SetActive(enable == "True");
                 }
             });

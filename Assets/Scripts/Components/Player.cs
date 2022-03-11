@@ -1,9 +1,11 @@
-﻿using AngryDash.Image.Reader;
-using CnControls;
+﻿using System;
 using System.Collections;
+using System.Diagnostics;
+using AngryDash.Image.Reader;
+using CnControls;
 using Tools;
 using UnityEngine;
-using UnityEngine.Networking;
+using Random = UnityEngine.Random;
 
 namespace AngryDash.Game
 {
@@ -17,25 +19,25 @@ namespace AngryDash.Game
 
         //Joystick
         public GameObject JoyStick; //The joystick
-        Vector2 joystickOffset; //The joystick's offset on screen
+        private Vector2 joystickOffset; //The joystick's offset on screen
         public Vector3 Sensibility; //Min et max de l'aléatoire + Sensibilité actuelle (distance en nombre blocs)
-        Vector2 joystickPos; //pos du joystick
+        private Vector2 joystickPos; //pos du joystick
 
         //Avancer
-        public bool PeutAvancer = false; //Pas de mur
+        public bool PeutAvancer; //Pas de mur
         public Vector2 PositionInitiale; //Dernier point d'arrivé valide
-        public bool Touched = false; //Le joueur est-il déjà géré par un bloc
-        bool Moving = false; //Le joueur est en mouvement ?
+        public bool Touched; //Le joueur est-il déjà géré par un bloc
+        private bool Moving; //Le joueur est en mouvement ?
 
         //Paramètres
-        string selectedTrace = "0"; //Trace Type
+        private string selectedTrace = "0"; //Trace Type
         public float vitesse = 1; //Multiplicateur de la vitesse du joueur
         public Level.Player levelSettings; //Autres paramètres défini par le niveau
 
         //Evenements
-        public System.Action onRespawn;
+        public Action onRespawn;
 
-        void Start()
+        private void Start()
         {
             if (LP == null) LP = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
             if (JoyStick == null) JoyStick = GameObject.Find("SensitiveJoystick");
@@ -56,19 +58,19 @@ namespace AngryDash.Game
 #endif
             userPlayer = this;
 
-            FileFormat.XML.RootElement xml = Inventory.xmlDefault;
+            var xml = Inventory.xmlDefault;
             GetComponent<UImage_Reader>().SetID("native/PLAYERS/" + Inventory.GetSelected(xml, "native/PLAYERS/")).LoadAsync(); //Player Image
             selectedTrace = Inventory.GetSelected(xml, "native/TRACES/"); //Trace Image
 
 #if UNITY_ANDROID || UNITY_IOS
             var dpi = Screen.dpi;
             if (dpi < 25 | dpi > 1000) dpi = 150;
-            float size = (96 / 1080F) / (dpi / Screen.height) * (325F / 1080) * Screen.height;
+            var size = (96 / 1080F) / (dpi / Screen.height) * (325F / 1080) * Screen.height;
 #else
             float size = 0.2F * Screen.height;
 #endif
             JoyStick.GetComponent<RectTransform>().sizeDelta = new Vector2(size, size);
-            Rect rect = JoyStick.GetComponent<RectTransform>().rect;
+            var rect = JoyStick.GetComponent<RectTransform>().rect;
             joystickOffset = new Vector2((rect.width * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2,
                 (rect.height * JoyStick.transform.parent.GetComponent<Canvas>().scaleFactor) / 2);
 
@@ -76,11 +78,11 @@ namespace AngryDash.Game
             PositionInitiale = transform.position;
         }
 
-        void Update()
+        private void Update()
         {
             JoyStick.GetComponent<RectTransform>().position = (Vector2)LP.GetComponent<Camera>().WorldToScreenPoint(transform.position) - joystickOffset;
             Sensibility.z = Random.Range(Sensibility.x, Sensibility.y);
-            Vector2 newJoystickPos = new Vector2(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
+            var newJoystickPos = new Vector2(CnInputManager.GetAxis("Horizontal"), CnInputManager.GetAxis("Vertical"));
             JoyStick.SetActive(!Moving);
 
             if (newJoystickPos == new Vector2(0, 0) & joystickPos != new Vector2(0, 0) & !Moving & PeutAvancer) //si le joueur a laché le joystick
@@ -99,31 +101,31 @@ namespace AngryDash.Game
             Moving = true;
 
             //Rotation du Player
-            float adjacent = joystickPos.x;
-            float oppose = joystickPos.y;
-            float hypothenuse = Mathf.Sqrt(Mathf.Pow(adjacent, 2) + Mathf.Pow(oppose, 2));
-            float cos = adjacent / hypothenuse;
+            var adjacent = joystickPos.x;
+            var oppose = joystickPos.y;
+            var hypothenuse = Mathf.Sqrt(Mathf.Pow(adjacent, 2) + Mathf.Pow(oppose, 2));
+            var cos = adjacent / hypothenuse;
             double z = (Mathf.Acos(cos) * 180) / Mathf.PI;
             if (transform.position.y < transform.position.y - joystickPos.y) z -= 90;
             else z = z * -1 - 90;
-            Quaternion rot = new Quaternion();
+            var rot = new Quaternion();
             rot.eulerAngles = new Vector3(0, 0, (float)z);
             transform.rotation = rot;
 
-            System.TimeSpan MoveTime = System.TimeSpan.FromSeconds(0.75F / vitesse);
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            var MoveTime = TimeSpan.FromSeconds(0.75F / vitesse);
+            var stopwatch = new Stopwatch();
             Vector2 InitialPos = transform.position;
 
-            Transform traceObj = CreateTrace();
-            Vector2 endPos = InitialPos;
+            var traceObj = CreateTrace();
+            var endPos = InitialPos;
 
-            bool LastFrame = true;
+            var LastFrame = true;
             long lastTime = 0;
             stopwatch.Start();
             while ((stopwatch.Elapsed < MoveTime | LastFrame) & PeutAvancer)
             {
-                Vector2 mouvement = levelSettings.distance * 50F * joystickPos;
-                float Mouvement = Mathf.Sqrt(Mathf.Pow(mouvement.x, 2) + Mathf.Pow(mouvement.y, 2));
+                var mouvement = levelSettings.distance * 50F * joystickPos;
+                var Mouvement = Mathf.Sqrt(Mathf.Pow(mouvement.x, 2) + Mathf.Pow(mouvement.y, 2));
                 if (vitesse <= 0)
                 {
                     stopwatch.Stop();
@@ -132,20 +134,20 @@ namespace AngryDash.Game
                 }
                 else
                 {
-                    MoveTime = System.TimeSpan.FromSeconds(0.75F / vitesse);
+                    MoveTime = TimeSpan.FromSeconds(0.75F / vitesse);
 
-                    long Time = stopwatch.ElapsedMilliseconds;
+                    var Time = stopwatch.ElapsedMilliseconds;
                     if (stopwatch.Elapsed >= MoveTime)
                     {
                         LastFrame = false;
                         Time = (long)MoveTime.TotalMilliseconds;
                     }
 
-                    float maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
+                    var maxDistance = ((float)MoveTime.TotalMilliseconds / 2) + 1;
                     float moveFrame = 0;
-                    for (long i = lastTime; i < Time + 1; i++)
+                    for (var i = lastTime; i < Time + 1; i++)
                     {
-                        long vi = i + 1;
+                        var vi = i + 1;
                         if (i > MoveTime.TotalMilliseconds / 2F)
                             vi = (long)MoveTime.TotalMilliseconds - i;
                         moveFrame = moveFrame + ((Mouvement / ((maxDistance / vi) / maxDistance)) / (long)MoveTime.TotalMilliseconds / (maxDistance / 2F));
@@ -159,7 +161,7 @@ namespace AngryDash.Game
                         traceObj = CreateTrace(); //Create another
                     }
 
-                    Vector2 imgSize = traceObj.GetComponent<UImage_Reader>().FrameSize;
+                    var imgSize = traceObj.GetComponent<UImage_Reader>().FrameSize;
                     traceObj.localScale = new Vector2(100F / imgSize.x * 25, Vector2Extensions.Distance(transform.position, InitialPos) * 100F / imgSize.y);
                     traceObj.position = Vector2Extensions.Center(transform.position, InitialPos);
                     traceObj.rotation = transform.rotation;
@@ -177,24 +179,25 @@ namespace AngryDash.Game
             Moving = false;
         }
 
-        Transform CreateTrace()
+        private Transform CreateTrace()
         {
-            Transform traceObj = new GameObject("Trace Obj").transform;
+            var traceObj = new GameObject("Trace Obj").transform;
             traceObj.parent = Trace;
             traceObj.gameObject.AddComponent<SpriteRenderer>().sortingOrder = 32766;
             traceObj.gameObject.AddComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Moving").LoadAsync();
             return traceObj;
         }
-        void TraceEnd(Transform traceObj, Vector2 endPos)
+
+        private void TraceEnd(Transform traceObj, Vector2 endPos)
         {
-            string endPointID = "native/TRACES/" + selectedTrace + "/SuccessEnd";
+            var endPointID = "native/TRACES/" + selectedTrace + "/SuccessEnd";
             if ((Vector2)transform.position == PositionInitiale)
             {
                 traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Missed").LoadAsync();
                 endPointID = "native/TRACES/" + selectedTrace + "/MissedEnd";
             }
             else traceObj.GetComponent<UImage_Reader>().SetID("native/TRACES/" + selectedTrace + "/Success").LoadAsync();
-            GameObject endPoint = new GameObject("Trace End Point");
+            var endPoint = new GameObject("Trace End Point");
             endPoint.transform.parent = Trace;
             endPoint.transform.localScale = new Vector2(50 / 64F * 50F, 50 / 64F * 50F);
             endPoint.transform.position = endPos;
@@ -203,18 +206,18 @@ namespace AngryDash.Game
             StartCoroutine(TraceDespawn(traceObj.GetComponent<SpriteRenderer>(), endPoint.GetComponent<SpriteRenderer>()));
         }
 
-        IEnumerator TraceDespawn(SpriteRenderer traceObj, SpriteRenderer endPoint)
+        private IEnumerator TraceDespawn(SpriteRenderer traceObj, SpriteRenderer endPoint)
         {
-            int actualStage = LP.nbLancer + 5;
+            var actualStage = LP.nbLancer + 5;
             yield return new WaitWhile(() => LP.nbLancer < actualStage);
 
-            Color obj = traceObj.color;
-            Color end = endPoint.color;
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            var obj = traceObj.color;
+            var end = endPoint.color;
+            var stopwatch = new Stopwatch();
             stopwatch.Start();
             while (stopwatch.Elapsed.TotalMilliseconds < 2000)
             {
-                float a = (2000 - (int)stopwatch.Elapsed.TotalMilliseconds) / 2000F;
+                var a = (2000 - (int)stopwatch.Elapsed.TotalMilliseconds) / 2000F;
                 Apply(a);
                 yield return new WaitForEndOfFrame();
             }

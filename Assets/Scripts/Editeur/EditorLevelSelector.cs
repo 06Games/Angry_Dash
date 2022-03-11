@@ -1,8 +1,15 @@
-﻿using AngryDash.Language;
+﻿using System;
 using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
+using _06Games.Account;
+using AngryDash.Image.Reader;
+using AngryDash.Language;
+using FileFormat;
+using FileFormat.XML;
+using SFB;
 using Tools;
 using UnityEngine;
 using UnityEngine.UI;
@@ -31,7 +38,7 @@ public class EditorLevelSelector : MonoBehaviour
     {
         get
         {
-            string dir = Application.persistentDataPath + "/Levels/Edited Levels/";
+            var dir = Application.persistentDataPath + "/Levels/Edited Levels/";
             if (!Directory.Exists(dir)) //If the folder does not exist, then create it
                 Directory.CreateDirectory(dir);
             return dir;
@@ -42,9 +49,9 @@ public class EditorLevelSelector : MonoBehaviour
     /// <summary> Index of the selected level, value equal to -1 if no level is selected </summary>
     public int currentFile = -1;
     /// <summary> The root of the selected level </summary>
-    FileFormat.XML.RootElement xmlRoot;
+    private RootElement xmlRoot;
 
-    void Start()
+    private void Start()
     {
         //Initialization
         currentFile = -1; //No level is selected
@@ -70,7 +77,7 @@ public class EditorLevelSelector : MonoBehaviour
                 selectedFile = files[currentFile];
         }
 
-        FileInfo[] FI = new DirectoryInfo(directory).GetFiles(keywords + ".level", SearchOption.AllDirectories); //Searches level containing the keywords
+        var FI = new DirectoryInfo(directory).GetFiles(keywords + ".level", SearchOption.AllDirectories); //Searches level containing the keywords
 
         //Sorts the files
         if (sort == SortMode.Newest) files = FI.OrderByDescending(f => f.LastWriteTime).ToArray();
@@ -80,24 +87,24 @@ public class EditorLevelSelector : MonoBehaviour
         sortMode = sort;
 
         //Disables the selected sorting button
-        for (int i = 0; i < transform.GetChild(0).childCount - 2; i++)
+        for (var i = 0; i < transform.GetChild(0).childCount - 2; i++)
             transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = (int)sort != i;
 
         //Removes the displayed levels
-        Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
-        for (int i = 1; i < ListContent.childCount; i++)
+        var ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
+        for (var i = 1; i < ListContent.childCount; i++)
             Destroy(ListContent.GetChild(i).gameObject);
 
         //Deplays the levels
         ListContent.GetChild(0).gameObject.SetActive(false);
-        int newSelect = -1;
-        for (int i = 0; i < files.Length; i++)
+        var newSelect = -1;
+        for (var i = 0; i < files.Length; i++)
         {
-            Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
-            int button = i;
+            var go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
+            var button = i;
             go.GetComponent<Button>().onClick.AddListener(() => Select(button)); //Sets the script to excute on click
 
-            string fileName = PathExtensions.GetRelativePath(files[i].DirectoryName, directory).Replace("\\", "/");
+            var fileName = PathExtensions.GetRelativePath(files[i].DirectoryName, directory).Replace("\\", "/");
             if (!string.IsNullOrEmpty(fileName)) fileName = fileName + "/";
             fileName = fileName + Path.GetFileNameWithoutExtension(files[i].Name);
 
@@ -119,7 +126,7 @@ public class EditorLevelSelector : MonoBehaviour
     /// <param name="newSelect">Index of the level</param>
     public IEnumerator ScrollAndSelectButton(int newSelect)
     {
-        Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
+        var ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
         yield return new WaitForEndOfFrame(); //Wait for the next frame
         Select(newSelect); //Selects the level
         ListContent.GetChild(newSelect + 1).GetComponent<Button>().interactable = false; //Disables the button
@@ -145,22 +152,22 @@ public class EditorLevelSelector : MonoBehaviour
     {
         if (currentFile == selected) //Close the panel
         {
-            GameObject infos = transform.GetChild(2).gameObject;
+            var infos = transform.GetChild(2).gameObject;
             if (infos.activeInHierarchy)
             {
                 StartCoroutine(InfosPanelAnimation(false));
-                transform.GetChild(1).GetChild(0).GetChild(0).GetChild(currentFile + 1).GetComponent<AngryDash.Image.Reader.UImage_Reader>().autoChange = true;
+                transform.GetChild(1).GetChild(0).GetChild(0).GetChild(currentFile + 1).GetComponent<UImage_Reader>().autoChange = true;
                 currentFile = -1;
             }
         }
         else
         {
-            Transform infos = transform.GetChild(2);
-            try { xmlRoot = new FileFormat.XML.XML(File.ReadAllText(files[selected].FullName)).RootElement; } catch { xmlRoot = null; }
+            var infos = transform.GetChild(2);
+            try { xmlRoot = new XML(File.ReadAllText(files[selected].FullName)).RootElement; } catch { xmlRoot = null; }
 
             //Description
             DescriptionEditMode(false);
-            string Desc = LangueAPI.Get("native", "EditorEditInfosDescriptionError", "<color=red>Can not read the description</color>");
+            var Desc = LangueAPI.Get("native", "EditorEditInfosDescriptionError", "<color=red>Can not read the description</color>");
             if (xmlRoot != null) Desc = xmlRoot.GetItem("description").Value;
             infos.GetChild(0).GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text = Desc.Format();
 
@@ -168,11 +175,11 @@ public class EditorLevelSelector : MonoBehaviour
             if (!infos.gameObject.activeInHierarchy) StartCoroutine(InfosPanelAnimation(true));
 
             //Disables the selected level button
-            Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
-            for (int i = 1; i < ListContent.childCount; i++)
+            var ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
+            for (var i = 1; i < ListContent.childCount; i++)
             {
                 //ListContent.GetChild(i).GetComponent<Button>().interactable = (i - 1) != selected;
-                var reader = ListContent.GetChild(i).GetComponent<AngryDash.Image.Reader.UImage_Reader>();
+                var reader = ListContent.GetChild(i).GetComponent<UImage_Reader>();
                 reader.autoChange = (i - 1) != selected;
                 reader.StartAnimating((i - 1) == selected ? 3 : 0);
             }
@@ -183,24 +190,24 @@ public class EditorLevelSelector : MonoBehaviour
 
     /// <summary> Starts the opening/closing animation of the info panel </summary>
     /// <param name="open">Opening animation ?</param>
-    IEnumerator InfosPanelAnimation(bool open)
+    private IEnumerator InfosPanelAnimation(bool open)
     {
         //Infos panel
-        RectTransform infos = (RectTransform)transform.GetChild(2);
-        Vector2 pos = new Vector2(0, 137.5F);
+        var infos = (RectTransform)transform.GetChild(2);
+        var pos = new Vector2(0, 137.5F);
         if (open) infos.position = new Vector2(pos.x, pos.y * -1);
         else infos.position = pos;
         infos.gameObject.SetActive(true);
 
         //List
-        Vector2 ListOffset = new Vector2(0, 275) - new Vector2(0, 100);
+        var ListOffset = new Vector2(0, 275) - new Vector2(0, 100);
         if (open) transform.GetChild(1).GetComponent<RectTransform>().offsetMin = new Vector2(0, 100);
         else transform.GetChild(1).GetComponent<RectTransform>().offsetMin = new Vector2(0, 275);
 
-        int Speed = 15; //Number of frames to make the animation
+        var Speed = 15; //Number of frames to make the animation
         Vector2 newpos = infos.position; //Position of the info panel
-        Vector2 newListOffset = transform.GetChild(1).GetComponent<RectTransform>().offsetMin; //Position of the list
-        for (int i = 0; i < Speed; i++)
+        var newListOffset = transform.GetChild(1).GetComponent<RectTransform>().offsetMin; //Position of the list
+        for (var i = 0; i < Speed; i++)
         {
             //Infos panel
             if (open) newpos.y = newpos.y + (pos.y * 2 / Speed);
@@ -220,14 +227,14 @@ public class EditorLevelSelector : MonoBehaviour
     /// <summary> Create a new level </summary>
     public void CreateNewLevel(Transform CreatePanel)
     {
-        string name = CreatePanel.GetChild(1).GetComponent<InputField>().text;
+        var name = CreatePanel.GetChild(1).GetComponent<InputField>().text;
         if (!string.IsNullOrEmpty(name))
         {
-            string path = directory + name + ".level";
+            var path = directory + name + ".level";
             if (!File.Exists(path))
             {
-                string desc = CreatePanel.GetChild(2).GetComponent<InputField>().text;
-                SceneManager.LoadScene("Editor", new string[] { "Home/Editor/Editor", "Create", path, desc.Unformat() });
+                var desc = CreatePanel.GetChild(2).GetComponent<InputField>().text;
+                SceneManager.LoadScene("Editor", new[] { "Home/Editor/Editor", "Create", path, desc.Unformat() });
             }
             else CreatePanel.GetChild(1).GetChild(5).gameObject.SetActive(true);
         }
@@ -237,8 +244,8 @@ public class EditorLevelSelector : MonoBehaviour
     public void SwitchDescriptionEditMode() { DescriptionEditMode(transform.GetChild(2).GetChild(0).GetChild(1).gameObject.activeInHierarchy); }
     public void DescriptionEditMode(bool edit)
     {
-        Transform desc = transform.GetChild(2).GetChild(0);
-        string description = "";
+        var desc = transform.GetChild(2).GetChild(0);
+        var description = "";
         if (edit) description = desc.GetChild(1).GetChild(0).GetChild(0).GetChild(0).GetComponent<Text>().text;
         else description = desc.GetChild(2).GetComponent<InputField>().text;
 
@@ -266,14 +273,14 @@ public class EditorLevelSelector : MonoBehaviour
     public void PlayLevel(int index)
     {
         History.LvlPlayed(files[index].FullName, "P");
-        SceneManager.LoadScene("Player", new string[] { "Home/Editor/Editor", "File", files[index].FullName });
+        SceneManager.LoadScene("Player", new[] { "Home/Editor/Editor", "File", files[index].FullName });
     }
 
     /// <summary> Edit the selected level </summary>
     public void EditCurrentLevel() { EditLevel(currentFile); }
     /// <summary> Edit the level at the index specified </summary>
     /// <param name="index">Index of desired level</param>
-    public void EditLevel(int index) { SceneManager.LoadScene("Editor", new string[] { "Home/Editor/Editor", "Edit", files[index].FullName }); }
+    public void EditLevel(int index) { SceneManager.LoadScene("Editor", new[] { "Home/Editor/Editor", "Edit", files[index].FullName }); }
 
     /// <summary> Copy the selected level </summary>
     public void CopyCurrentLevel() { CopyLevel(currentFile); }
@@ -307,7 +314,7 @@ public class EditorLevelSelector : MonoBehaviour
 #if UNITY_STANDALONE || UNITY_EDITOR
         NativeShare.SharePC(files[index].FullName, "", "", //Path
             Path.GetFileNameWithoutExtension(files[index].Name), //Default file name
-            new SFB.ExtensionFilter[] { new SFB.ExtensionFilter("level file", "level") } //Windows filter
+            new[] { new ExtensionFilter("level file", "level") } //Windows filter
         );
 #elif UNITY_ANDROID || UNITY_IOS
         NativeShare.Share(
@@ -328,32 +335,32 @@ public class EditorLevelSelector : MonoBehaviour
     /// <param name="index">Index of desired level</param>
     public void PublishLevel(int index)
     {
-        MenuManager PublishPanel = transform.GetChild(5).GetComponent<MenuManager>();
+        var PublishPanel = transform.GetChild(5).GetComponent<MenuManager>();
         PublishPanel.Array(0);
         PublishPanel.gameObject.SetActive(true);
 
-        _06Games.Account.API.CheckAccountFile((success, msg) =>
+        API.CheckAccountFile((success, msg) =>
         {
             if (success)
             {
-                WebClient client = new WebClient();
+                var client = new WebClient();
                 ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-                string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/upload.php?token=" + _06Games.Account.API.Information.token + "&level=" + Path.GetFileNameWithoutExtension(files[index].Name);
+                var URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/levels/community/upload.php?token=" + API.Information.token + "&level=" + Path.GetFileNameWithoutExtension(files[index].Name);
 
-                string lvl = File.ReadAllText(files[index].FullName); //Read the level file
-                if (FileFormat.XML.Utils.IsValid(lvl)) // If the level is in XML, minimize it
+                var lvl = File.ReadAllText(files[index].FullName); //Read the level file
+                if (Utils.IsValid(lvl)) // If the level is in XML, minimize it
                     lvl = lvl.Replace("\n", "").Replace("\r", "").Replace("\t", "");
                 client.UploadDataCompleted += (sender, e) =>
                 {
                     if (e.Error != null) Error(e.Error.Message);
                     else
                     {
-                        var response = new FileFormat.JSON(System.Text.Encoding.UTF8.GetString(e.Result));
+                        var response = new JSON(Encoding.UTF8.GetString(e.Result));
                         if (response.Value<string>("state") == "Done") PublishPanel.Array(2);
                         else Error(response.Value<string>("state"));
                     }
                 };
-                client.UploadDataAsync(new System.Uri(URL.Replace(" ", "%20")), lvl.ToByte());
+                client.UploadDataAsync(new Uri(URL.Replace(" ", "%20")), lvl.ToByte());
 
             }
             else Error(msg);

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 public class Base : MonoBehaviour
 {
@@ -21,7 +24,7 @@ public class Base : MonoBehaviour
     {
 #if UNITY_EDITOR
         if (forceEditor)
-            UnityEditor.EditorApplication.isPlaying = false;
+            EditorApplication.isPlaying = false;
         else Debug.Log("The game as been close");
 #else
             Debug.Log("The game as been close");
@@ -31,7 +34,7 @@ public class Base : MonoBehaviour
 
     public void CharacterCounter(Text display)
     {
-        InputField IF = GetComponent<InputField>();
+        var IF = GetComponent<InputField>();
         display.text = IF.text.Length + " / " + IF.characterLimit;
     }
 
@@ -41,7 +44,7 @@ public class Base : MonoBehaviour
         path = path.Replace("%PERSISTENT%", Application.persistentDataPath);
 #if UNITY_STANDALONE_WIN || UNITY_EDITOR
         path = path.Replace("/", "\\");
-        System.Diagnostics.Process.Start("explorer.exe", "\"" + path + "\"");
+        Process.Start("explorer.exe", "\"" + path + "\"");
 #elif UNITY_STANDALONE_MACOS
         bool openInsidesOfFolder = false;
         string macPath = path.Replace("\\", "/"); // mac finder doesn't like backward slashes

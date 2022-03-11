@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using Level;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class EditMenus
 {
-    public Level.Block.Type Type;
+    public Block.Type Type;
     public int Object;
 }
 
@@ -19,10 +21,10 @@ public class Edit : MonoBehaviour
         editeur.NoBlocSelectedPanel.SetActive(editeur.SelectedBlock.Length == 0);
         try
         {
-            GameObject selected = GetComponent<MenuManager>().selectedObject;
+            var selected = GetComponent<MenuManager>().selectedObject;
             if (selected != null) selected.GetComponent<MenuManager>().Array(0);
         }
-        catch (System.Exception e) { Debug.LogError(e); return; }
+        catch (Exception e) { Debug.LogError(e); return; }
 
 #if UNITY_STANDALONE || UNITY_EDITOR
         MobileUtilities.SetActive(false);
@@ -35,10 +37,10 @@ public class Edit : MonoBehaviour
     {
         if (editeur.SelectedBlock.Length > 0)
         {
-            Level.Block block = new Level.Block();
+            var block = new Block();
             if (editeur.SelectedBlock[0] < editeur.level.blocks.Length) block = editeur.level.blocks[editeur.SelectedBlock[0]];
 
-            EditMenus menu = menus.Where(f => f.Type == block.type).FirstOrDefault();
+            var menu = menus.Where(f => f.Type == block.type).FirstOrDefault();
             if (block.id == 0.4F) GetComponent<MenuManager>().Array(2); //Compatibility
             else if (block.id > 0 & block.id < 1) GetComponent<MenuManager>().Array(3);
             else if (menu != null) GetComponent<MenuManager>().Array(menu.Object);

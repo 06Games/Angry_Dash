@@ -5,19 +5,23 @@ using UnityEngine.Events;
 public class SurCollision : MonoBehaviour
 {
     public bool Collision;
-    void OnTriggerExit(Collider other)
+
+    private void OnTriggerExit(Collider other)
     {
         Collision = false;
     }
-    void OnTriggerEnter(Collider other)
+
+    private void OnTriggerEnter(Collider other)
     {
         Collision = true;
     }
-    void OnTriggerExit2D(Collider2D collision)
+
+    private void OnTriggerExit2D(Collider2D collision)
     {
         Collision = false;
     }
-    void OnTriggerEnter2D(Collider2D collision)
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         Collision = true;
     }

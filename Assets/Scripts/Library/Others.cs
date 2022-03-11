@@ -1,12 +1,15 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Reflection;
+using UnityEditor;
+using UnityEngine;
 
 public static class InspectorUtilities
 {
     public static void ClearConsole()
     {
 #if UNITY_EDITOR
-        var logEntries = System.Type.GetType("UnityEditor.LogEntries,UnityEditor.dll");
-        var clearMethod = logEntries.GetMethod("Clear", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+        var logEntries = Type.GetType("UnityEditor.LogEntries,UnityEditor.dll");
+        var clearMethod = logEntries.GetMethod("Clear", BindingFlags.Static | BindingFlags.Public);
         clearMethod.Invoke(null, null);
 #endif
     }
@@ -21,8 +24,8 @@ namespace Display
         /// </summary>
         public static Vector2 Resolution
         {
-            get { return new Vector2(UnityEngine.Screen.width, UnityEngine.Screen.height); }
-            set { UnityEngine.Screen.SetResolution((int)value.x, (int)value.y, fullScreen); }
+            get => new Vector2(UnityEngine.Screen.width, UnityEngine.Screen.height);
+            set => UnityEngine.Screen.SetResolution((int)value.x, (int)value.y, fullScreen);
         }
 
         public static bool fullScreen
@@ -30,7 +33,7 @@ namespace Display
             get
             {
 #if UNITY_EDITOR
-                return UnityEditor.EditorWindow.GetWindow(System.Type.GetType("UnityEditor.GameView,UnityEditor")).maximized;
+                return EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).maximized;
 #else
                 return UnityEngine.Screen.fullScreen;
 #endif
@@ -38,7 +41,7 @@ namespace Display
             set
             {
 #if UNITY_EDITOR
-                UnityEditor.EditorWindow.GetWindow(System.Type.GetType("UnityEditor.GameView,UnityEditor")).maximized = value;
+                EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).maximized = value;
 #else
                 UnityEngine.Screen.fullScreen = value;
 #endif
@@ -71,8 +74,8 @@ namespace MessengerExtensions
         /// </summary>
         private static void InvokeIfExists(this object objectToCheck, string methodName, params object[] parameters)
         {
-            System.Type type = objectToCheck.GetType();
-            System.Reflection.MethodInfo methodInfo = type.GetMethod(methodName);
+            var type = objectToCheck.GetType();
+            var methodInfo = type.GetMethod(methodName);
             if (type.GetMethod(methodName) != null)
             {
                 methodInfo.Invoke(objectToCheck, parameters);
@@ -84,8 +87,8 @@ namespace MessengerExtensions
         /// </summary>
         public static void BroadcastToAll(this GameObject gameobject, string methodName, params object[] parameters)
         {
-            MonoBehaviour[] components = gameobject.GetComponents<MonoBehaviour>();
-            foreach (MonoBehaviour m in components)
+            var components = gameobject.GetComponents<MonoBehaviour>();
+            foreach (var m in components)
             {
                 m.InvokeIfExists(methodName, parameters);
             }
@@ -103,8 +106,8 @@ namespace MessengerExtensions
         /// </summary>
         public static void SendMessageToAll(this GameObject gameobject, string methodName, params object[] parameters)
         {
-            MonoBehaviour[] components = gameobject.GetComponentsInChildren<MonoBehaviour>(true);
-            foreach (MonoBehaviour m in components)
+            var components = gameobject.GetComponentsInChildren<MonoBehaviour>(true);
+            foreach (var m in components)
             {
                 m.InvokeIfExists(methodName, parameters);
             }
@@ -122,7 +125,7 @@ namespace MessengerExtensions
         /// </summary>
         public static void SendMessageUpwardsToAll(this GameObject gameobject, string methodName, params object[] parameters)
         {
-            Transform tranform = gameobject.transform;
+            var tranform = gameobject.transform;
             while (tranform != null)
             {
                 tranform.gameObject.BroadcastToAll(methodName, parameters);

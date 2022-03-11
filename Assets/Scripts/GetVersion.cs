@@ -4,8 +4,7 @@ using UnityEngine.UI;
 
 public class GetVersion : MonoBehaviour
 {
-
-    void Start()
+    private void Start()
     {
         GetComponent<Text>().text = LangueAPI.Get("native", "gameVersion", "v[0]", Base.GetVersion());
     }

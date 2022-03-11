@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ConfigAPI
 {
-    static string configPath = Application.persistentDataPath + "/config.ini";
+    private static string configPath = Application.persistentDataPath + "/config.ini";
 
     public static string GetString(string d)
     {
@@ -28,13 +28,13 @@ public class ConfigAPI
     }
     public static void SetString(string d, string p)
     {
-        string id = d + " = ";
+        var id = d + " = ";
 
         var lines = new[] { "# Angry Dash config file", "# Edit this carefully", "# 06Games,", "# All rights reserved", "" };
         if (File.Exists(configPath))
         {
             lines = File.ReadAllLines(configPath);
-            for (int i = 0; i < lines.Length; i++)
+            for (var i = 0; i < lines.Length; i++)
                 if (lines[i].Contains(id)) { lines[i] = id + p; Write(); return; }
         }
 

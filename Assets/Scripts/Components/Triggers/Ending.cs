@@ -1,4 +1,6 @@
-﻿using AngryDash.Language;
+﻿using AngryDash.Game.RewardChecker;
+using AngryDash.Image.Reader;
+using AngryDash.Language;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,7 +11,7 @@ namespace AngryDash.Game.Events
         private void OnTriggerEnter2D(Collider2D collision) { EndGame(collision.GetComponent<Player>()); }
         public static void EndGame(Player player)
         {
-            Transform EndPanel = GameObject.Find("Base").transform.GetChild(4).GetChild(0);
+            var EndPanel = GameObject.Find("Base").transform.GetChild(4).GetChild(0);
             if (EndPanel.parent.gameObject.activeInHierarchy) return;
             player.PeutAvancer = false;
 
@@ -17,11 +19,11 @@ namespace AngryDash.Game.Events
             EndPanel.GetChild(3).GetChild(1).gameObject.SetActive(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online");
             EndPanel.parent.gameObject.SetActive(true);
 
-            FileFormat.XML.RootElement xml = Inventory.xmlDefault;
-            LevelPlayer lvlPlayer = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
-            int gain = 0;
-            int lastGain = 0;
-            FileFormat.XML.Item lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
+            var xml = Inventory.xmlDefault;
+            var lvlPlayer = GameObject.Find("Main Camera").GetComponent<LevelPlayer>();
+            var gain = 0;
+            var lastGain = 0;
+            var lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
             if (lvlItem.node != null) int.TryParse(lvlItem.Value, out lastGain);
             else
             {
@@ -29,13 +31,13 @@ namespace AngryDash.Game.Events
                 lvlItem = xml.GetItemByAttribute("PlayedLevels", "type", "Official").GetItemByAttribute("level", "name", lvlPlayer.level.name);
             }
 
-            int.TryParse(xml.GetItem("Money").Value, out int money);
+            int.TryParse(xml.GetItem("Money").Value, out var money);
             if (lvlPlayer.FromScene == "Home/Play/Official Levels")
             {
-                RewardChecker.Official reward = new RewardChecker.Official(lvlPlayer.level.name) { turn = lvlPlayer.nbLancer };
+                var reward = new Official(lvlPlayer.level.name) { turn = lvlPlayer.nbLancer };
                 gain = reward.money;
 
-                for (int i = 0; i < 3; i++) UnityThread.executeCoroutine(OfficialLevels.SetStar(EndPanel.GetChild(1).GetChild(i).GetComponent<Image.Reader.UImage_Reader>(), reward.stars > i ? 0 : 3));
+                for (var i = 0; i < 3; i++) UnityThread.executeCoroutine(OfficialLevels.SetStar(EndPanel.GetChild(1).GetChild(i).GetComponent<UImage_Reader>(), reward.stars > i ? 0 : 3));
             }
             else EndPanel.GetChild(1).gameObject.SetActive(false);
 

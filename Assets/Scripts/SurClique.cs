@@ -11,11 +11,13 @@ public class SurClique : MonoBehaviour
         Gauche,
         Droit
     }
-    bool clic;
-    public bool WantKeyUp = false;
+
+    private bool clic;
+    public bool WantKeyUp;
 
     public QuelClique SurQuelClique;
-    void Update()
+
+    private void Update()
     {
 #if UNITY_STANDALONE || UNITY_EDITOR
         if (SurQuelClique == QuelClique.Gauche & !WantKeyUp)

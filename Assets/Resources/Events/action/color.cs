@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace AngryDash.Editor.Event.Components
@@ -14,12 +12,12 @@ namespace AngryDash.Editor.Event.Components
         public ColorPicker picker;
         private GameObject pickedDisablePanel;
 
-        void Start() { pickedDisablePanel = picker.transform.Find("Disabled").gameObject; }
-        void Update() { pickedDisablePanel.SetActive(!R.interactable); }
+        private void Start() { pickedDisablePanel = picker.transform.Find("Disabled").gameObject; }
+        private void Update() { pickedDisablePanel.SetActive(!R.interactable); }
 
         public void rgbChanged()
         {
-            Color32 color = new Color32();
+            var color = new Color32();
             byte.TryParse(R.text, out color.r);
             byte.TryParse(G.text, out color.g);
             byte.TryParse(B.text, out color.b);

@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace AngryDash.Image.JSON
 {
-    [System.Serializable]
+    [Serializable]
     public class Data
     {
         [Header("Textures")]
@@ -10,7 +11,7 @@ namespace AngryDash.Image.JSON
 
         [Space(10)]
         [Header("Text Components")]
-        [System.NonSerialized] public Color32 textColor = new Color32(255, 255, 255, 255);
+        [NonSerialized] public Color32 textColor = new Color32(255, 255, 255, 255);
         public FontStyle textStyle = FontStyle.Normal;
         public TextAnchor textAnchor = TextAnchor.MiddleLeft;
         public bool textResize;
@@ -18,11 +19,11 @@ namespace AngryDash.Image.JSON
         public int[] textResizeMinAndMax = new int[2];  //Only works if textResize = true
     }
 
-    [System.Serializable]
+    [Serializable]
     public class Texture
     {
         public string path;
-        [System.NonSerialized] public Vector4 border;
+        [NonSerialized] public Vector4 border;
         public enum Type { Basic, Hover, Pressed, Disabled }
         public Type type;
         public enum Display { Simple, Sliced, Tiled, Fit, Envelope }

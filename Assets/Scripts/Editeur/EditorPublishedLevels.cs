@@ -1,10 +1,15 @@
-﻿using _06Games.Account;
-using AngryDash.Image.Reader;
-using AngryDash.Language;
-using Level;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
+using System.Threading;
+using _06Games.Account;
+using AngryDash.Image.Reader;
+using AngryDash.Language;
+using FileFormat.XML;
+using Level;
 using Tools;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,11 +33,12 @@ public class EditorPublishedLevels : MonoBehaviour
     /// <summary> Index of the selected level, value equal to -1 if no level is selected </summary>
     public int currentFile = -1;
 
-    FileFormat.XML.RootElement markXML;
-    int userIndex = -1;
+    private RootElement markXML;
+    private int userIndex = -1;
 
     public LevelItem[] items;
-    void Start()
+
+    private void Start()
     {
         //Initialization
         transform.GetChild(2).gameObject.SetActive(false);
@@ -50,16 +56,16 @@ public class EditorPublishedLevels : MonoBehaviour
     {
         if (InternetAPI.IsConnected())
         {
-            WebClient client = new WebClient();
-            client.Encoding = System.Text.Encoding.UTF8;
+            var client = new WebClient();
+            client.Encoding = Encoding.UTF8;
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             client.DownloadStringCompleted += (sender, e) =>
             {
                 if (e.Error != null) { Logging.Log(e.Error); return; }
-                string Result = e.Result;
+                var Result = e.Result;
 
-                string[] files = new string[0];
-                if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, System.StringSplitOptions.None);
+                var files = new string[0];
+                if (!string.IsNullOrEmpty(Result)) files = Result.Split(new string[1] { "<BR />" }, StringSplitOptions.None);
 
                 //Sorts the files
                 if (sort == SortMode.aToZ) files = files.OrderBy(f => f.ToString()).ToArray();
@@ -67,26 +73,26 @@ public class EditorPublishedLevels : MonoBehaviour
                 sortMode = sort;
 
                 //Disables the selected sorting button
-                for (int i = 0; i < transform.GetChild(0).childCount - 1; i++)
+                for (var i = 0; i < transform.GetChild(0).childCount - 1; i++)
                     transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = (int)sort != i;
 
                 //Removes the displayed levels
-                Transform ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
-                for (int i = 1; i < ListContent.childCount; i++)
+                var ListContent = transform.GetChild(1).GetChild(0).GetChild(0);
+                for (var i = 1; i < ListContent.childCount; i++)
                     Destroy(ListContent.GetChild(i).gameObject);
 
                 //Get Infos
                 items = new LevelItem[files.Length];
-                for (int i = 0; i < files.Length; i++)
+                for (var i = 0; i < files.Length; i++)
                 {
-                    string[] file = new string[1] { files[i] };
+                    var file = new string[1] { files[i] };
                     if (files[i].Contains(" ; "))
-                        file = files[i].Split(new string[1] { " ; " }, System.StringSplitOptions.None);
+                        file = files[i].Split(new string[1] { " ; " }, StringSplitOptions.None);
 
                     items[i] = new LevelItem();
-                    for (int l = 0; l < file.Length; l++)
+                    for (var l = 0; l < file.Length; l++)
                     {
-                        string[] line = file[l].Split(new string[1] { " = " }, System.StringSplitOptions.None);
+                        var line = file[l].Split(new string[1] { " = " }, StringSplitOptions.None);
                         if (line[0] == "level")
                             items[i].Name = file[l].Replace("level = ", "");
                         else if (line[0] == "author")
@@ -100,10 +106,10 @@ public class EditorPublishedLevels : MonoBehaviour
 
                 //Deplays the levels
                 ListContent.GetChild(0).gameObject.SetActive(false);
-                for (int i = 0; i < items.Length; i++)
+                for (var i = 0; i < items.Length; i++)
                 {
-                    Transform go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
-                    int button = i;
+                    var go = Instantiate(ListContent.GetChild(0).gameObject, ListContent).transform; //Creates a button
+                    var button = i;
                     go.GetComponent<Button>().onClick.AddListener(() => Select(button)); //Sets the script to excute on click
                     go.name = items[i].Name; //Changes the editor gameObject name (useful only for debugging)
 
@@ -112,7 +118,7 @@ public class EditorPublishedLevels : MonoBehaviour
                     go.gameObject.SetActive(true);
                 }
             };
-            client.DownloadStringAsync(new System.Uri(serverURL + "index.php?key=" + keywords)); //Searches level containing the keywords
+            client.DownloadStringAsync(new Uri(serverURL + "index.php?key=" + keywords)); //Searches level containing the keywords
         }
     }
 
@@ -132,33 +138,33 @@ public class EditorPublishedLevels : MonoBehaviour
     /// <param name="selected">Index of the level</param>
     public void Select(int selected)
     {
-        Transform infos = transform.GetChild(2);
+        var infos = transform.GetChild(2);
         infos.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>().text = items[selected].Name;
         infos.GetChild(0).GetChild(1).GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsAuthor", "by [0]", items[selected].Author);
         infos.GetChild(1).GetChild(1).GetComponent<ScrollRect>().content.GetChild(0).GetComponent<Text>().text = items[selected].Description;
 
-        WebClient client = new WebClient();
-        client.Encoding = System.Text.Encoding.UTF8;
+        var client = new WebClient();
+        client.Encoding = Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-        string URL = serverURL + "mark.php?action=get&level=" + items[selected].Author + "/" + items[selected].Name;
-        markXML = new FileFormat.XML.XML(client.DownloadString(URL)).RootElement;
+        var URL = serverURL + "mark.php?action=get&level=" + items[selected].Author + "/" + items[selected].Name;
+        markXML = new XML(client.DownloadString(URL)).RootElement;
 
         float mark = -1;
         userIndex = -1;
         Transform comments = infos.GetChild(2).GetChild(1).GetComponent<ScrollRect>().content;
-        for (int i = 1; i < comments.childCount; i++) Destroy(comments.GetChild(i).gameObject);
+        for (var i = 1; i < comments.childCount; i++) Destroy(comments.GetChild(i).gameObject);
         if (markXML.GetItems("item") != null)
         {
-            int coef = 0;
-            foreach (FileFormat.XML.Item item in markXML.GetItems("item"))
+            var coef = 0;
+            foreach (var item in markXML.GetItems("item"))
             {
-                string user = item.GetItem("user").Value;
-                System.DateTime.TryParse(item.GetItem("date").Value, out System.DateTime date);
-                string markV = item.GetItem("mark").Value;
-                string comment = item.GetItem("comment").Value;
+                var user = item.GetItem("user").Value;
+                DateTime.TryParse(item.GetItem("date").Value, out var date);
+                var markV = item.GetItem("mark").Value;
+                var comment = item.GetItem("comment").Value;
 
                 if (user == API.Information.username) userIndex = coef;
-                if (float.TryParse(markV, out float itemMark))
+                if (float.TryParse(markV, out var itemMark))
                 {
                     mark = (mark * coef + itemMark) / (coef + 1);
                     coef++;
@@ -166,35 +172,35 @@ public class EditorPublishedLevels : MonoBehaviour
 
                 if (!string.IsNullOrEmpty(comment))
                 {
-                    Transform cGO = Instantiate(comments.GetChild(0).gameObject, comments).transform;
-                    cGO.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsInfosCommentHeader", "[0] <i><color=grey>[1]</color></i>", user, date.ToString(System.Threading.Thread.CurrentThread.CurrentUICulture));
+                    var cGO = Instantiate(comments.GetChild(0).gameObject, comments).transform;
+                    cGO.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsInfosCommentHeader", "[0] <i><color=grey>[1]</color></i>", user, date.ToString(Thread.CurrentThread.CurrentUICulture));
                     cGO.GetChild(1).GetComponent<Text>().text = comment.HtmlDecode();
                     cGO.gameObject.SetActive(true);
                 }
             }
         }
 
-        for (int s = 0; s < 2; s++)
+        for (var s = 0; s < 2; s++)
         {
-            float note = mark;
+            var note = mark;
             if (s == 0 & userIndex >= 0) float.TryParse(markXML.GetItems("item")[userIndex].GetItem("mark").Value, out note);
 
-            Transform stars = infos.GetChild(2).GetChild(0).GetChild(s).GetChild(1);
+            var stars = infos.GetChild(2).GetChild(0).GetChild(s).GetChild(1);
             foreach (Transform go in stars) Destroy(go.gameObject);
-            for (int i = 0; i < 10 & !(note == -1 & s == 1); i++)
+            for (var i = 0; i < 10 & !(note == -1 & s == 1); i++)
             {
-                GameObject go = new GameObject(((i * 0.5F) + 0.5F).ToString());
+                var go = new GameObject(((i * 0.5F) + 0.5F).ToString());
                 go.transform.parent = stars;
                 if (i / 2F != i / 2) go.AddComponent<RectTransform>().localScale = new Vector3(-1, 1, 1);
                 else go.AddComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
 
                 if (s == 0)
                 {
-                    int button = i;
+                    var button = i;
                     go.AddComponent<Button>().onClick.AddListener(() => Mark(button * 0.5F));
                 }
 
-                string id = "native/GUI/editorMenu/communityLevels/starUnassigned";
+                var id = "native/GUI/editorMenu/communityLevels/starUnassigned";
                 try { if (i < note * 2) id = "native/GUI/editorMenu/communityLevels/starAssigned"; } catch { }
                 go.AddComponent<Image>();
                 go.AddComponent<UImage_Reader>().SetID(id).LoadAsync();
@@ -205,7 +211,7 @@ public class EditorPublishedLevels : MonoBehaviour
 
         if (!string.IsNullOrEmpty(items[selected].Music))
         {
-            string[] music = items[selected].Music.Split(new string[] { " - " }, System.StringSplitOptions.None);
+            var music = items[selected].Music.Split(new[] { " - " }, StringSplitOptions.None);
             if (music.Length == 2)
             {
                 infos.GetChild(3).GetChild(1).GetComponent<Text>().text = music[1] + "\n" + LangueAPI.Get("native", "EditorCommunityLevelsAuthor", "<color=grey>by [0]</color>", music[0]);
@@ -227,14 +233,14 @@ public class EditorPublishedLevels : MonoBehaviour
     /// <param name="index">Index of desired level</param>
     public void PlayLevel(int index)
     {
-        string url = serverURL + "files/" + items[index].Author + "/" + items[index].Name + ".level";
-        WebClient client = new WebClient();
-        client.Encoding = System.Text.Encoding.UTF8;
+        var url = serverURL + "files/" + items[index].Author + "/" + items[index].Name + ".level";
+        var client = new WebClient();
+        client.Encoding = Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
-        LevelItem item = items[index];
+        var item = items[index];
         item.Data = client.DownloadString(url).Replace("\r", "");
-        SceneManager.LoadScene("Player", new string[] { "Home/Editor/Community Levels", "Data", item.ToString() });
+        SceneManager.LoadScene("Player", new[] { "Home/Editor/Community Levels", "Data", item.ToString() });
     }
 
 
@@ -246,19 +252,19 @@ public class EditorPublishedLevels : MonoBehaviour
     {
         if (InternetAPI.IsConnected())
         {
-            string path = Application.persistentDataPath + "/Musics/";
+            var path = Application.persistentDataPath + "/Musics/";
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
-            string URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/files/" +
-                items[index].Music.HtmlDecode().Replace(" ", "%20") + ".ogg";
+            var URL = "https://06games.ddns.net/Projects/Games/Angry%20Dash/musics/files/" +
+                      items[index].Music.HtmlDecode().Replace(" ", "%20") + ".ogg";
 
-            using (WebClient wc = new WebClient())
+            using (var wc = new WebClient())
             {
                 wc.DownloadProgressChanged += wc_DownloadProgressChanged;
                 wc.DownloadFileCompleted += wc_DownloadFileCompleted;
 
-                wc.DownloadFileAsync(new System.Uri(URL), path + items[index].Music.HtmlDecode(), index);
+                wc.DownloadFileAsync(new Uri(URL), path + items[index].Music.HtmlDecode(), index);
 
                 transform.GetChild(2).GetChild(3).GetChild(2).gameObject.SetActive(false);
                 transform.GetChild(2).GetChild(3).GetChild(3).gameObject.SetActive(true);
@@ -267,48 +273,48 @@ public class EditorPublishedLevels : MonoBehaviour
     }
     private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
-        var unit = new string[] { "B", "KB", "MB", "GB", "TB" };
+        var unit = new[] { "B", "KB", "MB", "GB", "TB" };
         double downloadedSize = e.BytesReceived;
         double totalSize = e.TotalBytesToReceive;
-        int pourcentage = e.ProgressPercentage;
+        var pourcentage = e.ProgressPercentage;
 
         //Downloaded size
-        int sizePower = 0;
+        var sizePower = 0;
         if (totalSize > 0) sizePower = DependenciesManager.GetCorrectUnit(totalSize);
         else sizePower = DependenciesManager.GetCorrectUnit(downloadedSize);
-        totalSize = System.Math.Round(totalSize / Mathf.Pow(1000, sizePower), 1);
-        downloadedSize = System.Math.Round(downloadedSize / Mathf.Pow(1000, sizePower), 1);
+        totalSize = Math.Round(totalSize / Mathf.Pow(1000, sizePower), 1);
+        downloadedSize = Math.Round(downloadedSize / Mathf.Pow(1000, sizePower), 1);
 
         UnityThread.executeInUpdate(() =>
         {
-            string downloaded = LangueAPI.Get("native", $"download.state.{unit[sizePower]}", $"[0] {unit[sizePower]} out of [1] {unit[sizePower]}", downloadedSize.ToString(), totalSize > 0 ? totalSize.ToString() : "~");
-            string pourcent = LangueAPI.Get("native", "download.state.percentage", "[0]%", pourcentage.ToString("00"));
+            var downloaded = LangueAPI.Get("native", $"download.state.{unit[sizePower]}", $"[0] {unit[sizePower]} out of [1] {unit[sizePower]}", downloadedSize.ToString(), totalSize > 0 ? totalSize.ToString() : "~");
+            var pourcent = LangueAPI.Get("native", "download.state.percentage", "[0]%", pourcentage.ToString("00"));
 
-            Text DownloadInfo = transform.GetChild(2).GetChild(3).GetChild(3).GetComponent<Text>();
+            var DownloadInfo = transform.GetChild(2).GetChild(3).GetChild(3).GetComponent<Text>();
             DownloadInfo.gameObject.SetActive(true);
             DownloadInfo.text = downloaded + " - <color=grey>" + pourcent + "</color>";
         });
     }
-    private void wc_DownloadFileCompleted(object sender, System.ComponentModel.AsyncCompletedEventArgs e)
+    private void wc_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
     {
         if (e.Cancelled) { print("The download has been cancelled"); return; }
         if (e.Error != null) { Debug.LogError("An error ocurred while trying to download file\n" + e.Error); return; }
-        int index = (int)e.UserState;
+        var index = (int)e.UserState;
 
         UnityThread.executeInUpdate(() => transform.GetChild(2).GetChild(3).GetChild(3).gameObject.SetActive(false));
     }
 
     public void Mark(float note)
     {
-        WebClient client = new WebClient();
-        client.Encoding = System.Text.Encoding.UTF8;
+        var client = new WebClient();
+        client.Encoding = Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         API.CheckAccountFile((success, msg) =>
         {
             if (success)
             {
-                string URL = serverURL + "mark.php?action=set&token=" + API.Information.token + "&level=" + items[currentFile].Author + "/" + items[currentFile].Name + "&mark=" + (note + 0.5F);
-                string result = client.DownloadString(URL);
+                var URL = serverURL + "mark.php?action=set&token=" + API.Information.token + "&level=" + items[currentFile].Author + "/" + items[currentFile].Name + "&mark=" + (note + 0.5F);
+                var result = client.DownloadString(URL);
                 if (result.Contains("Success")) Select(currentFile);
                 else Debug.LogError("Connection error: " + result);
             }
@@ -318,7 +324,7 @@ public class EditorPublishedLevels : MonoBehaviour
 
     public void NewComment(Transform panel)
     {
-        string commentText = "";
+        var commentText = "";
         if (userIndex >= 0) commentText = markXML.GetItems("item")[userIndex].GetItem("comment").Value.HtmlDecode();
 
         panel.GetChild(0).GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "EditorCommunityLevelsInfosCommentWrite", "Write a Comment\n<size=50><color=grey>about [0]</color></size>", items[currentFile].Name);
@@ -328,16 +334,16 @@ public class EditorPublishedLevels : MonoBehaviour
 
     public void SubmitComment(Transform panel)
     {
-        WebClient client = new WebClient();
-        client.Encoding = System.Text.Encoding.UTF8;
+        var client = new WebClient();
+        client.Encoding = Encoding.UTF8;
         ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         API.CheckAccountFile((success, msg) =>
         {
             if (success)
             {
-                string URL = serverURL + "mark.php?action=set&token=" + API.Information.token + "&level=" + items[currentFile].Author + "/" + items[currentFile].Name
-                    + "&comment=" + panel.GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text.HtmlEncode();
-                string result = client.DownloadString(URL);
+                var URL = serverURL + "mark.php?action=set&token=" + API.Information.token + "&level=" + items[currentFile].Author + "/" + items[currentFile].Name
+                          + "&comment=" + panel.GetChild(1).GetChild(0).GetChild(1).GetComponent<InputField>().text.HtmlEncode();
+                var result = client.DownloadString(URL);
                 if (result.Contains("Success"))
                 {
                     Select(currentFile);

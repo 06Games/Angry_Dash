@@ -1,15 +1,20 @@
-﻿using Hjg.Pngcs;
-using LibAPNG;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Hjg.Pngcs;
+using LibAPNG;
 using Tools;
+using UnityEditor;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace AngryDash.Image
 {
-    public partial class Sprite_API : MonoBehaviour
+    public class Sprite_API : MonoBehaviour
     {
         public static string forceRP { get; set; }
 
@@ -22,21 +27,21 @@ namespace AngryDash.Image
 #if UNITY_EDITOR
             if (!id.Contains("bg") & !id.Contains("languages/") & !id.Contains("common/") & !id.Contains("startUp/button") & !string.IsNullOrEmpty(id))
             {
-                string fid = id.Replace(" basic", "").Replace(" hover", "").Replace(" pressed", "").Replace(" disabled", "");
-                string idPath = Application.dataPath + "/rpID.txt";
-                string[] lines = new string[0];
+                var fid = id.Replace(" basic", "").Replace(" hover", "").Replace(" pressed", "").Replace(" disabled", "");
+                var idPath = Application.dataPath + "/rpID.txt";
+                var lines = new string[0];
                 if (File.Exists(idPath)) lines = File.ReadAllLines(idPath);
                 fid = fid.Replace(".png", "").Replace(".json", "");
-                if (!string.IsNullOrEmpty(fid)) File.WriteAllLines(idPath, lines.Union(new string[] { fid }));
+                if (!string.IsNullOrEmpty(fid)) File.WriteAllLines(idPath, lines.Union(new[] { fid }));
             }
 
 #endif
             if (!string.IsNullOrWhiteSpace(forceRP) && File.Exists(forceRP + "textures/" + id)) return forceRP + "textures/" + id;
 
             if (ConfigAPI.GetString("ressources.pack") == null) ConfigAPI.SetString("ressources.pack", "default");
-            string path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/" + id;
+            var path = Application.persistentDataPath + "/Ressources/" + ConfigAPI.GetString("ressources.pack") + "/textures/" + id;
             if (File.Exists(path)) return path;
-            else return Application.persistentDataPath + "/Ressources/default/textures/" + id;
+            return Application.persistentDataPath + "/Ressources/default/textures/" + id;
         }
 
         /// <summary>
@@ -49,7 +54,7 @@ namespace AngryDash.Image
         {
             if (ConfigAPI.GetBool("ressources.disable")) return null;
             Sprite_API_Data SAD = null;
-            await Task.Run(() => LoadAsync(filePath, border, (sad) => SAD = sad, forcePNG));
+            await Task.Run(() => LoadAsync(filePath, border, sad => SAD = sad, forcePNG));
             return SAD;
         }
         public static Sprite_API_Data GetSprites(string filePath) { return Cache.Open("Ressources/textures").Get<Sprite_API_Data>(filePath); }
@@ -60,7 +65,7 @@ namespace AngryDash.Image
             public bool animated { get; set; } = true;
 
             public Frame[] frames { get; set; }
-            public Vector4 border { get; set; } = new Vector4();
+            public Vector4 border { get; set; }
             public Texture buffer { get; set; }
             public DisposeOps dispose { get; set; }
 
@@ -80,18 +85,18 @@ namespace AngryDash.Image
             }
         }
 
-        public static void LoadAsync(string filePath, Vector4 border = new Vector4(), System.Action<Sprite_API_Data> callback = null, bool forcePNG = false)
+        public static void LoadAsync(string filePath, Vector4 border = new Vector4(), Action<Sprite_API_Data> callback = null, bool forcePNG = false)
         {
 #if UNITY_EDITOR
-            if (!UnityEditor.EditorApplication.isPlaying)
+            if (!EditorApplication.isPlaying)
             {
-                Cache cache = Cache.Open("Ressources/textures");
+                var cache = Cache.Open("Ressources/textures");
 
 
-                Sprite_API_Data SAD = new Sprite_API_Data();
+                var SAD = new Sprite_API_Data();
 
-                List<float> Delay = new List<float>();
-                List<Sprite> Frames = new List<Sprite>();
+                var Delay = new List<float>();
+                var Frames = new List<Sprite>();
 
                 Frames.Add(Resources.Load<Sprite>(filePath.Replace(Application.persistentDataPath + "/Ressources/default/", "Default/").Replace(".png", "")));
 
@@ -104,31 +109,31 @@ namespace AngryDash.Image
 #endif
                 if (ConfigAPI.GetBool("video.experimentalLoading"))
 #if UNITY_EDITOR
-                if (!UnityEditor.EditorApplication.isPlaying) FindObjectOfType<MonoBehaviour>().StartCoroutine(NEW_API());
+                if (!EditorApplication.isPlaying) FindObjectOfType<MonoBehaviour>().StartCoroutine(NEW_API());
                 else
 #endif
                     UnityThread.executeCoroutine(NEW_API());
             else callback(OLD_API.GetSprites(filePath, border, forcePNG));
 
-            System.Collections.IEnumerator NEW_API()
+            IEnumerator NEW_API()
             {
-                Cache cache = Cache.Open("Ressources/textures");
-                Sprite_API_Data SAD = new Sprite_API_Data();
+                var cache = Cache.Open("Ressources/textures");
+                var SAD = new Sprite_API_Data();
                 if (!cache.ValueExist(filePath) && File.Exists(filePath))
                 {
-                    APNG apng = new APNG(filePath);
-                    bool png = apng.IsSimplePNG | !ConfigAPI.GetBool("video.APNG") | forcePNG;
-                    APNGFrameInfo info = new APNGFrameInfo(filePath, apng) { border = border, animated = !png };
+                    var apng = new APNG(filePath);
+                    var png = apng.IsSimplePNG | !ConfigAPI.GetBool("video.APNG") | forcePNG;
+                    var info = new APNGFrameInfo(filePath, apng) { border = border, animated = !png };
                     Logging.Log("Loading: " + info.id);
 
-                    if (png) info.frames = new Frame[] { apng.DefaultImage }; //PNG
+                    if (png) info.frames = new[] { apng.DefaultImage }; //PNG
                     else //APNG
                     {
                         info.frames = apng.Frames;
                         SAD.Repeat = apng.acTLChunk.NumPlays;
                     }
 
-                    for (int i = 0; i < info.frames.Length; i++)
+                    for (var i = 0; i < info.frames.Length; i++)
                     {
                         float delay = 0; //in seconds
                         if (png) delay = 0;
@@ -141,8 +146,8 @@ namespace AngryDash.Image
                         }
                         SAD.Delay.Add(delay);
 
-                        bool done = false;
-                        GetSprite(info, i, (s) =>
+                        var done = false;
+                        GetSprite(info, i, s =>
                         {
                             if (s != null) s.name = Path.GetFileNameWithoutExtension(filePath) + (png ? "" : " n° " + i);
                             SAD.Frames.Add(s);
@@ -159,11 +164,11 @@ namespace AngryDash.Image
             }
         }
 
-        static void GetSprite(APNGFrameInfo info, int index, System.Action<Sprite> callback)
+        private static void GetSprite(APNGFrameInfo info, int index, Action<Sprite> callback)
         {
             if (!info.animated)
             {
-                Texture2D tex = new Texture2D(1, 1);
+                var tex = new Texture2D(1, 1);
                 tex.LoadImage(File.ReadAllBytes(info.id));
                 tex = tex.PremultiplyAlpha();
                 tex.Apply();
@@ -171,16 +176,16 @@ namespace AngryDash.Image
                 return;
             }
 
-            Texture frameTampon = info.buffer;
+            var frameTampon = info.buffer;
             Task.Run(() =>
             {
-                Frame frame = info.frames[index];
+                var frame = info.frames[index];
                 var rect = new Rect(
-                    frame.fcTLChunk != null ? new uint[] { frame.fcTLChunk.XOffset, info.buffer.height - frame.fcTLChunk.YOffset - frame.fcTLChunk.Height } : new uint[] { 0, 0 },
-                    frame.fcTLChunk != null ? new uint[] { frame.fcTLChunk.Width, frame.fcTLChunk.Height } : new uint[] { frameTampon.width, frameTampon.height }
+                    frame.fcTLChunk != null ? new[] { frame.fcTLChunk.XOffset, info.buffer.height - frame.fcTLChunk.YOffset - frame.fcTLChunk.Height } : new uint[] { 0, 0 },
+                    frame.fcTLChunk != null ? new[] { frame.fcTLChunk.Width, frame.fcTLChunk.Height } : new[] { frameTampon.width, frameTampon.height }
                 );
                 frameTampon.SetPixels(rect, ProcessSprite(info, frame, frameTampon.GetPixels(rect)));
-            }).ContinueWith((t) =>
+            }).ContinueWith(t =>
             {
                 if (t.Exception != null) Debug.LogError(info.id + "\n" + t.Exception);
                 UnityThread.executeInUpdate(() =>
@@ -191,11 +196,12 @@ namespace AngryDash.Image
                         if (info.frames[index].fcTLChunk != null) TamponCleaner(info, index, frameTampon);
                         callback(sp);
                     }
-                    catch (System.Exception e) { Debug.LogError(info.id + "\n" + e.Message); callback(null); }
+                    catch (Exception e) { Debug.LogError(info.id + "\n" + e.Message); callback(null); }
                 });
             });
         }
-        static void TamponCleaner(APNGFrameInfo info, int index, Texture frameTampon)
+
+        private static void TamponCleaner(APNGFrameInfo info, int index, Texture frameTampon)
         {
             if (index == 0 & info.dispose == DisposeOps.APNGDisposeOpPrevious) //Previous in the first frame
                 info.dispose = DisposeOps.APNGDisposeOpBackground; //is treated as Background
@@ -207,34 +213,34 @@ namespace AngryDash.Image
                 info.buffer = frameTampon;
         }
 
-        static List<int> ProcessSprite(APNGFrameInfo info, Frame frame, List<int> bgColors)
+        private static List<int> ProcessSprite(APNGFrameInfo info, Frame frame, List<int> bgColors)
         {
-            PngReader png = new PngReader(new MemoryStream(frame.GetStream().ToArray()));
+            var png = new PngReader(new MemoryStream(frame.GetStream().ToArray()));
             var blendOp = frame.fcTLChunk != null ? frame.fcTLChunk.BlendOp : BlendOps.APNGBlendOpSource;
-            int colorNb = png.ImgInfo.Channels;
+            var colorNb = png.ImgInfo.Channels;
 
             var PLTE = frame.OtherChunks.FirstOrDefault(c => c.ChunkType == "PLTE")?.ChunkData.Select(c => (int)c).ToList();
             if (blendOp == BlendOps.APNGBlendOpSource && info.buffer.colorType != Texture.ColorType.palette) bgColors.Clear();
 
-            var sw = new System.Diagnostics.Stopwatch();
+            var sw = new Stopwatch();
             sw.Start();
-            for (int y = 0; y < png.ImgInfo.Rows; y++)
+            for (var y = 0; y < png.ImgInfo.Rows; y++)
             {
                 var row = png.ReadRow(y).Scanline;
 
                 if (blendOp == BlendOps.APNGBlendOpSource && info.buffer.colorType.In(Texture.ColorType.RGB, Texture.ColorType.RGBA)) bgColors.AddRange(row);
                 else
                 {
-                    int yI = y * png.ImgInfo.Cols * info.buffer.colorBand;
-                    for (int xI = 0; xI < row.Length; xI += colorNb)
+                    var yI = y * png.ImgInfo.Cols * info.buffer.colorBand;
+                    for (var xI = 0; xI < row.Length; xI += colorNb)
                     {
                         if (blendOp == BlendOps.APNGBlendOpOver)
                         {
-                            int a = colorNb == 4 ? row[xI + 3] : 255;
+                            var a = colorNb == 4 ? row[xI + 3] : 255;
                             if (a > 0)
                             {
                                 bgColors.RemoveRange(yI + xI, 4);
-                                var px = new System.ArraySegment<int>(row, xI, 3).Select(p => a * p + (1 - a) * p);
+                                var px = new ArraySegment<int>(row, xI, 3).Select(p => a * p + (1 - a) * p);
                                 bgColors.InsertRange(yI + xI, px.Append(a));
                             }
                         }
@@ -243,10 +249,10 @@ namespace AngryDash.Image
                             if (info.buffer.colorType == Texture.ColorType.palette && PLTE != null)
                             {
                                 if (PLTE.Count > row[xI] * 3 + 2) bgColors.AddRange(PLTE.GetRange(row[xI] * 3, 3));
-                                else throw new System.Exception("The palette is too small");
+                                else throw new Exception("The palette is too small");
                             }
-                            else if (info.buffer.colorType == Texture.ColorType.grayscaleA) bgColors.AddRange(new int[] { row[xI], row[xI], row[xI], row[xI + 1] });
-                            else if (info.buffer.colorType == Texture.ColorType.grayscale) bgColors.AddRange(new int[] { row[xI], row[xI], row[xI] });
+                            else if (info.buffer.colorType == Texture.ColorType.grayscaleA) bgColors.AddRange(new[] { row[xI], row[xI], row[xI], row[xI + 1] });
+                            else if (info.buffer.colorType == Texture.ColorType.grayscale) bgColors.AddRange(new[] { row[xI], row[xI], row[xI] });
                         }
                     }
                 }

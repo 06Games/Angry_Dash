@@ -1,8 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary> All function additions to Unity native classes </summary>
 namespace Tools
@@ -22,7 +31,8 @@ namespace Tools
                     .Replace("\\r", "\r")
                     .Replace("\\t", "\t");
             }
-            else return str;
+
+            return str;
         }
 
         /// <summary>
@@ -37,7 +47,8 @@ namespace Tools
                     .Replace("\r", "\\r")
                     .Replace("\t", "\\t");
             }
-            else return str;
+
+            return str;
         }
 
         /// <summary>
@@ -45,14 +56,14 @@ namespace Tools
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="str"></param>
-        public static T ParseTo<T>(this string str) { return (T)System.Convert.ChangeType(str, typeof(T)); }
+        public static T ParseTo<T>(this string str) { return (T)Convert.ChangeType(str, typeof(T)); }
 
-        public static string[] Split(this string s, params string[] delimiter) { return s.Split(delimiter, System.StringSplitOptions.None); }
-        public static string[] Split(this string s, System.StringSplitOptions options, params string[] delimiter) { return s.Split(delimiter, options); }
+        public static string[] Split(this string s, params string[] delimiter) { return s.Split(delimiter, StringSplitOptions.None); }
+        public static string[] Split(this string s, StringSplitOptions options, params string[] delimiter) { return s.Split(delimiter, options); }
 
         public static bool Contains(this string s, params string[] values)
         {
-            foreach (string value in values)
+            foreach (var value in values)
                 if (s.Contains(value)) return true;
             return false;
         }
@@ -61,9 +72,9 @@ namespace Tools
         public static string TrimStart(this string target, string trimString)
         {
             if (string.IsNullOrEmpty(trimString)) return target;
-            else if (string.IsNullOrEmpty(target)) return "";
+            if (string.IsNullOrEmpty(target)) return "";
 
-            string result = target;
+            var result = target;
             while (result.StartsWith(trimString))
             {
                 result = result.Substring(trimString.Length);
@@ -75,7 +86,7 @@ namespace Tools
         {
             if (string.IsNullOrEmpty(trimString)) return target;
 
-            string result = target;
+            var result = target;
             while (result.EndsWith(trimString))
             {
                 result = result.Substring(0, result.Length - trimString.Length);
@@ -95,24 +106,25 @@ namespace Tools
                     .Replace("\"", "\\\"")
                     .Replace("#", "!DIESE!");
             }
-            else return s;
+
+            return s;
         }
 
         public static string HtmlDecode(this string s)
         {
             if (!string.IsNullOrEmpty(s))
             {
-                string s2 = s;
+                var s2 = s;
                 try
                 {
-                    string[] code = s.Split(new string[] { "&" }, System.StringSplitOptions.None);
-                    string newString = code[0];
+                    var code = s.Split(new[] { "&" }, StringSplitOptions.None);
+                    var newString = code[0];
                     if (code.Length > 1)
                     {
-                        for (int i = 1; i < code.Length; i++)
+                        for (var i = 1; i < code.Length; i++)
                         {
-                            string[] t = s.Split(new string[] { ";" }, System.StringSplitOptions.None);
-                            string c = System.Text.RegularExpressions.Regex.Replace(s, "[^0-9]", "");
+                            var t = s.Split(new[] { ";" }, StringSplitOptions.None);
+                            var c = Regex.Replace(s, "[^0-9]", "");
                             newString = newString + code[i].Replace(code[i], char.ConvertFromUtf32(int.Parse(c))) + t[2];
                         }
                         s = newString;
@@ -126,15 +138,16 @@ namespace Tools
                     .Replace("\\\"", "\"")
                     .Replace("!DIESE!", "#");
             }
-            else return s;
+
+            return s;
         }
 
         public static string RemoveSpecialCharacters(this string s)
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            foreach (char ch in s.Normalize(NormalizationForm.FormD))
+            var sb = new System.Text.StringBuilder();
+            foreach (var ch in s.Normalize(NormalizationForm.FormD))
             {
-                if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch) != System.Globalization.UnicodeCategory.NonSpacingMark)
+                if (CharUnicodeInfo.GetUnicodeCategory(ch) != UnicodeCategory.NonSpacingMark)
                     sb.Append(ch);
             }
             return sb.ToString().Normalize(NormalizationForm.FormC);
@@ -145,7 +158,7 @@ namespace Tools
         {
             if (string.IsNullOrEmpty(s)) return string.Empty;
 
-            char[] a = s.ToCharArray();
+            var a = s.ToCharArray();
             a[0] = char.ToUpper(a[0]);
             return new string(a);
         }
@@ -175,24 +188,26 @@ namespace Tools
             return this;
         }
         public StringBuilder AppendLines(string lines) { return AppendLines(lines.Split("\n")); }
-        public StringBuilder AppendLines(string[] lines) { foreach (string line in lines) AppendLine(line); return this; }
+        public StringBuilder AppendLines(string[] lines) { foreach (var line in lines) AppendLine(line); return this; }
 
         public StringBuilder Merge(System.Text.StringBuilder stringBuilder) { return AppendLines(stringBuilder.ToString()); }
         public StringBuilder Merge(StringBuilder stringBuilder) { return AppendLines(stringBuilder.ToString()); }
         public override string ToString() { return _builder.ToString(); }
 
-        public int LineCount { get { return System.Text.RegularExpressions.Regex.Matches(_builder.ToString(), "\n").Count; } }
-        public int Length { get { return _builder.Length; } set { _builder.Length = value; } }
-        public string this[int line] { get { return _builder.ToString().Split("\n")[line]; } }
+        public int LineCount => Regex.Matches(_builder.ToString(), "\n").Count;
+        public int Length { get => _builder.Length;
+            set => _builder.Length = value;
+        }
+        public string this[int line] => _builder.ToString().Split("\n")[line];
     }
 
     public static class TypeExtensions
     {
-        public static System.Type[] GetTypesInNamespace(string nameSpace)
+        public static Type[] GetTypesInNamespace(string nameSpace)
         {
             return
-              System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
-                      .Where(t => string.Equals(t.Namespace, nameSpace, System.StringComparison.Ordinal))
+              Assembly.GetExecutingAssembly().GetTypes()
+                      .Where(t => string.Equals(t.Namespace, nameSpace, StringComparison.Ordinal))
                       .ToArray();
         }
     }
@@ -201,8 +216,8 @@ namespace Tools
     {
         public static Texture2D PremultiplyAlpha(this Texture2D texture)
         {
-            Color[] pixels = texture.GetPixels();
-            for (int i = 0; i < pixels.Length; i++) pixels[i] = Premultiply(pixels[i]);
+            var pixels = texture.GetPixels();
+            for (var i = 0; i < pixels.Length; i++) pixels[i] = Premultiply(pixels[i]);
             texture.SetPixels(pixels);
             return texture;
         }
@@ -220,12 +235,12 @@ namespace Tools
         /// <param name="index">The index of the element</param>
         public static T[] RemoveAt<T>(this T[] source, int index)
         {
-            T[] dest = new T[source.Length - 1];
+            var dest = new T[source.Length - 1];
             if (index > 0)
-                System.Array.Copy(source, 0, dest, 0, index);
+                Array.Copy(source, 0, dest, 0, index);
 
             if (index < source.Length - 1)
-                System.Array.Copy(source, index + 1, dest, index, source.Length - index - 1);
+                Array.Copy(source, index + 1, dest, index, source.Length - index - 1);
 
             return dest;
         }
@@ -236,12 +251,12 @@ namespace Tools
         /// <param name="to">The index of the last element to delete</param>
         public static T[] RemoveAt<T>(this T[] source, int from, int to)
         {
-            T[] dest = new T[source.Length - (to - from) - 1];
+            var dest = new T[source.Length - (to - from) - 1];
             if (from > 0)
-                System.Array.Copy(source, 0, dest, 0, from);
+                Array.Copy(source, 0, dest, 0, from);
 
             if (to < source.Length - 1)
-                System.Array.Copy(source, to + 1, dest, from, source.Length - to - 1);
+                Array.Copy(source, to + 1, dest, from, source.Length - to - 1);
 
             return dest;
         }
@@ -252,9 +267,9 @@ namespace Tools
         /// <param name="to">The index of the last element to copy</param>
         public static T[] Get<T>(this T[] list, int from, int to)
         {
-            if (from < 0) throw new System.Exception("From index can not be less than 0");
-            else if (to < from) throw new System.Exception("To index can not be less than From index");
-            else if (to >= list.Length) throw new System.Exception("To index can not be more than the list length");
+            if (from < 0) throw new Exception("From index can not be less than 0");
+            if (to < from) throw new Exception("To index can not be less than From index");
+            if (to >= list.Length) throw new Exception("To index can not be more than the list length");
 
             return list.Skip(from).Take(to - from).ToArray();
         }
@@ -264,9 +279,9 @@ namespace Tools
     {
         /// <summary> Return a DateTime as a string </summary>
         /// <param name="DT"></param>
-        public static string Format(this System.DateTime DT)
+        public static string Format(this DateTime DT)
         {
-            string a = "dd'/'MM'/'yyyy";
+            var a = "dd'/'MM'/'yyyy";
             return DT.ToString(a);
         }
     }
@@ -277,13 +292,14 @@ namespace Tools
         /// <param name="scroll">The ScrollRect</param>
         /// <param name="target">The child to scroll to</param>
         /// <param name="myMonoBehaviour">Any MonoBehaviour script</param>
-        public static void SnapTo(this UnityEngine.UI.ScrollRect scroll, Transform target, MonoBehaviour myMonoBehaviour) { myMonoBehaviour.StartCoroutine(Snap(scroll, target)); }
-        static IEnumerator Snap(UnityEngine.UI.ScrollRect scroll, Transform target)
+        public static void SnapTo(this ScrollRect scroll, Transform target, MonoBehaviour myMonoBehaviour) { myMonoBehaviour.StartCoroutine(Snap(scroll, target)); }
+
+        private static IEnumerator Snap(ScrollRect scroll, Transform target)
         {
             float Frames = 30;
-            float normalizePosition = 1 - (target.GetSiblingIndex() - 1F) / (scroll.content.childCount - 2F);
-            float actualNormalizePosition = scroll.verticalNormalizedPosition;
-            for (int i = 0; i < Frames; i++)
+            var normalizePosition = 1 - (target.GetSiblingIndex() - 1F) / (scroll.content.childCount - 2F);
+            var actualNormalizePosition = scroll.verticalNormalizedPosition;
+            for (var i = 0; i < Frames; i++)
             {
                 scroll.verticalNormalizedPosition = scroll.verticalNormalizedPosition + ((normalizePosition - actualNormalizePosition) / Frames);
                 yield return new WaitForEndOfFrame();
@@ -297,21 +313,21 @@ namespace Tools
         public static Vector2 Size(this Sprite sp)
         {
             if (sp == null) return new Vector2();
-            Rect rect = sp.rect; return new Vector2(rect.width, rect.height);
+            var rect = sp.rect; return new Vector2(rect.width, rect.height);
         }
 
         public static Sprite Flip(this Sprite sp)
         {
-            Texture2D original = sp.texture;
-            Texture2D flipped = new Texture2D(original.width, original.height);
+            var original = sp.texture;
+            var flipped = new Texture2D(original.width, original.height);
 
-            int xN = original.width;
-            int yN = original.height;
+            var xN = original.width;
+            var yN = original.height;
 
 
-            for (int i = 0; i < xN; i++)
+            for (var i = 0; i < xN; i++)
             {
-                for (int j = 0; j < yN; j++)
+                for (var j = 0; j < yN; j++)
                 {
                     flipped.SetPixel(xN - i - 1, j, original.GetPixel(i, j));
                 }
@@ -333,11 +349,11 @@ namespace Tools
         /// <param name="n">the name of the parent</param>
         public static Transform FindParent(this Transform transform, string n)
         {
-            Transform parent = transform.parent;
+            var parent = transform.parent;
             while (parent != null)
             {
                 if (parent.name == n) return parent;
-                else parent = parent.parent;
+                parent = parent.parent;
             }
             return null;
         }
@@ -375,20 +391,20 @@ namespace Tools
         static public Rect GetWorldRect(this RectTransform rt, Vector2 scale)
         {
             // Convert the rectangle to world corners and grab the top left
-            Vector3[] corners = new Vector3[4];
+            var corners = new Vector3[4];
             rt.GetWorldCorners(corners);
-            Vector3 topLeft = corners[0];
+            var topLeft = corners[0];
 
             // Rescale the size appropriately based on the current Canvas scale
-            Vector2 scaledSize = new Vector2(scale.x * rt.rect.size.x, scale.y * rt.rect.size.y);
+            var scaledSize = new Vector2(scale.x * rt.rect.size.x, scale.y * rt.rect.size.y);
 
             return new Rect(topLeft, scaledSize);
         }
 
         public static void SetRect(this RectTransform transform, Rect rect)
         {
-            bool flipX = transform.anchorMax.x == 1 & transform.anchorMin.x == 1;
-            bool flipY = transform.anchorMax.y == 1 & transform.anchorMin.y == 1;
+            var flipX = transform.anchorMax.x == 1 & transform.anchorMin.x == 1;
+            var flipY = transform.anchorMax.y == 1 & transform.anchorMin.y == 1;
             transform.anchoredPosition = (rect.position + (rect.size / 2F)) * new Vector2(flipX ? -1 : 1, flipY ? -1 : 1);
             transform.sizeDelta = rect.size;
         }
@@ -407,14 +423,14 @@ namespace Tools
     {
         public static Vector2 Parse(string s)
         {
-            if (TryParse(s, out Vector2 vector)) return vector;
-            else throw new System.FormatException("The string entered wasn't in a correct format ! : {s}");
+            if (TryParse(s, out var vector)) return vector;
+            throw new FormatException("The string entered wasn't in a correct format ! : {s}");
         }
         public static bool TryParse(string s, out Vector2 vector)
         {
-            string[] temp = s.Substring(1, s.Length - 2).Split(',');
+            var temp = s.Substring(1, s.Length - 2).Split(',');
 
-            bool success = true;
+            var success = true;
             if (!float.TryParse(temp[0], out vector.x)) success = false;
             if (!float.TryParse(temp[1], out vector.y)) success = false;
             if (!success) vector = new Vector2();
@@ -434,15 +450,15 @@ namespace Tools
     {
         public static Vector3 Parse(string s)
         {
-            Vector3 vector = new Vector3();
+            var vector = new Vector3();
             if (TryParse(s, out vector)) return vector;
-            else throw new System.FormatException("The string entered wasn't in a correct format ! : {s}");
+            throw new FormatException("The string entered wasn't in a correct format ! : {s}");
         }
         public static bool TryParse(string s, out Vector3 vector)
         {
-            string[] temp = s.Substring(1, s.Length - 2).Split(',');
+            var temp = s.Substring(1, s.Length - 2).Split(',');
 
-            bool success = true;
+            var success = true;
             if (temp.Length != 3) { vector = new Vector3(); success = false; }
             else
             {
@@ -489,7 +505,7 @@ namespace Tools
         /// <param name="color">RGBA color</param>
         public static string ToHex(this Color32 color)
         {
-            string hex = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2") + color.a.ToString();
+            var hex = color.r.ToString("X2") + color.g.ToString("X2") + color.b.ToString("X2") + color.a;
             return hex;
         }
 
@@ -498,12 +514,12 @@ namespace Tools
         public static Color ParseHex(string hex)
         {
             if (hex == null) return new Color32(190, 190, 190, 255);
-            else if (hex.Length < 6 | hex.Length > 9) return new Color32(190, 190, 190, 255);
+            if (hex.Length < 6 | hex.Length > 9) return new Color32(190, 190, 190, 255);
 
-            byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-            byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-            byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-            byte a = byte.Parse(hex.Substring(6), System.Globalization.NumberStyles.Number);
+            var r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber);
+            var g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber);
+            var b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber);
+            var a = byte.Parse(hex.Substring(6), NumberStyles.Number);
             return new Color32(r, g, b, a);
         }
     }
@@ -513,9 +529,9 @@ namespace Tools
         public static T DeepClone<T>(this T obj)
         {
             if (obj == null) return default;
-            using (var ms = new System.IO.MemoryStream())
+            using (var ms = new MemoryStream())
             {
-                var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                var formatter = new BinaryFormatter();
                 formatter.Serialize(ms, obj);
                 ms.Position = 0;
 
@@ -536,7 +552,7 @@ namespace Tools
         /// <summary>Performs the specified action on each element of the enumerable</summary>
         /// <param name="source">The enumerable to loop through</param>
         /// <param name="action">The Action delegate to perform on each element of the enumerable</param>
-        public static void ForEach<T>(this IEnumerable<T> source, System.Action<T> action)
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             foreach (var item in source)
                 action(item);
@@ -545,45 +561,47 @@ namespace Tools
         /// <summary>Compare two strings in a natural way (ex. 1,2,3,..,10 and not 1,10,2,3,...)</summary>
         public static int CompareNatural(string strA, string strB)
         {
-            return CompareNatural(strA, strB, System.Globalization.CultureInfo.CurrentCulture, System.Globalization.CompareOptions.IgnoreCase);
+            return CompareNatural(strA, strB, CultureInfo.CurrentCulture, CompareOptions.IgnoreCase);
         }
 
         /// <summary>Compare two strings in a natural way (ex. 1,2,3,..,10 and not 1,10,2,3,...)</summary>
-        public static int CompareNatural(string strA, string strB, System.Globalization.CultureInfo culture, System.Globalization.CompareOptions options)
+        public static int CompareNatural(string strA, string strB, CultureInfo culture, CompareOptions options)
         {
-            System.Globalization.CompareInfo cmp = culture.CompareInfo;
-            int iA = 0;
-            int iB = 0;
-            int softResult = 0;
-            int softResultWeight = 0;
+            var cmp = culture.CompareInfo;
+            var iA = 0;
+            var iB = 0;
+            var softResult = 0;
+            var softResultWeight = 0;
             while (iA < strA.Length && iB < strB.Length)
             {
-                bool isDigitA = System.Char.IsDigit(strA[iA]);
-                bool isDigitB = System.Char.IsDigit(strB[iB]);
+                var isDigitA = Char.IsDigit(strA[iA]);
+                var isDigitB = Char.IsDigit(strB[iB]);
                 if (isDigitA != isDigitB)
                 {
                     return cmp.Compare(strA, iA, strB, iB, options);
                 }
-                else if (!isDigitA && !isDigitB)
+
+                if (!isDigitA && !isDigitB)
                 {
-                    int jA = iA + 1;
-                    int jB = iB + 1;
-                    while (jA < strA.Length && !System.Char.IsDigit(strA[jA])) jA++;
-                    while (jB < strB.Length && !System.Char.IsDigit(strB[jB])) jB++;
-                    int cmpResult = cmp.Compare(strA, iA, jA - iA, strB, iB, jB - iB, options);
+                    var jA = iA + 1;
+                    var jB = iB + 1;
+                    while (jA < strA.Length && !Char.IsDigit(strA[jA])) jA++;
+                    while (jB < strB.Length && !Char.IsDigit(strB[jB])) jB++;
+                    var cmpResult = cmp.Compare(strA, iA, jA - iA, strB, iB, jB - iB, options);
                     if (cmpResult != 0)
                     {
                         // Certain strings may be considered different due to "soft" differences that are
                         // ignored if more significant differences follow, e.g. a hyphen only affects the
                         // comparison if no other differences follow
-                        string sectionA = strA.Substring(iA, jA - iA);
-                        string sectionB = strB.Substring(iB, jB - iB);
+                        var sectionA = strA.Substring(iA, jA - iA);
+                        var sectionB = strB.Substring(iB, jB - iB);
                         if (cmp.Compare(sectionA + "1", sectionB + "2", options) ==
                             cmp.Compare(sectionA + "2", sectionB + "1", options))
                         {
                             return cmp.Compare(strA, iA, strB, iB, options);
                         }
-                        else if (softResultWeight < 1)
+
+                        if (softResultWeight < 1)
                         {
                             softResult = cmpResult;
                             softResultWeight = 1;
@@ -594,19 +612,19 @@ namespace Tools
                 }
                 else
                 {
-                    char zeroA = (char)(strA[iA] - (int)System.Char.GetNumericValue(strA[iA]));
-                    char zeroB = (char)(strB[iB] - (int)System.Char.GetNumericValue(strB[iB]));
-                    int jA = iA;
-                    int jB = iB;
+                    var zeroA = (char)(strA[iA] - (int)Char.GetNumericValue(strA[iA]));
+                    var zeroB = (char)(strB[iB] - (int)Char.GetNumericValue(strB[iB]));
+                    var jA = iA;
+                    var jB = iB;
                     while (jA < strA.Length && strA[jA] == zeroA) jA++;
                     while (jB < strB.Length && strB[jB] == zeroB) jB++;
-                    int resultIfSameLength = 0;
+                    var resultIfSameLength = 0;
                     do
                     {
-                        isDigitA = jA < strA.Length && System.Char.IsDigit(strA[jA]);
-                        isDigitB = jB < strB.Length && System.Char.IsDigit(strB[jB]);
-                        int numA = isDigitA ? (int)System.Char.GetNumericValue(strA[jA]) : 0;
-                        int numB = isDigitB ? (int)System.Char.GetNumericValue(strB[jB]) : 0;
+                        isDigitA = jA < strA.Length && Char.IsDigit(strA[jA]);
+                        isDigitB = jB < strB.Length && Char.IsDigit(strB[jB]);
+                        var numA = isDigitA ? (int)Char.GetNumericValue(strA[jA]) : 0;
+                        var numB = isDigitB ? (int)Char.GetNumericValue(strB[jB]) : 0;
                         if (isDigitA && (char)(strA[jA] - numA) != zeroA) isDigitA = false;
                         if (isDigitB && (char)(strB[jB] - numB) != zeroB) isDigitB = false;
                         if (isDigitA && isDigitB)
@@ -626,20 +644,22 @@ namespace Tools
                         // number must be larger
                         return isDigitA ? 1 : -1;
                     }
-                    else if (resultIfSameLength != 0)
+
+                    if (resultIfSameLength != 0)
                     {
                         // Both numbers are the same length (ignoring leading zeros) and at least one of
                         // the digits differed - the first difference determines the result
                         return resultIfSameLength;
                     }
-                    int lA = jA - iA;
-                    int lB = jB - iB;
+                    var lA = jA - iA;
+                    var lB = jB - iB;
                     if (lA != lB)
                     {
                         // Both numbers are equivalent but one has more leading zeros
                         return lA > lB ? -1 : 1;
                     }
-                    else if (zeroA != zeroB && softResultWeight < 2)
+
+                    if (zeroA != zeroB && softResultWeight < 2)
                     {
                         softResult = cmp.Compare(strA, iA, 1, strB, iB, 1, options);
                         softResultWeight = 2;
@@ -652,7 +672,8 @@ namespace Tools
             {
                 return iA < strA.Length ? 1 : -1;
             }
-            else if (softResult != 0)
+
+            if (softResult != 0)
             {
                 return softResult;
             }
@@ -661,26 +682,26 @@ namespace Tools
 
         public class Comparer<T> : IComparer<T>
         {
-            private System.Comparison<T> _comparison;
-            public Comparer(System.Comparison<T> comparison) { _comparison = comparison; }
+            private Comparison<T> _comparison;
+            public Comparer(Comparison<T> comparison) { _comparison = comparison; }
             public int Compare(T x, T y) { return _comparison(x, y); }
         }
     }
 
     namespace Dictionary
     {
-        [System.Serializable]
-        public class Serializable<TKey, TValue> : System.IEquatable<Serializable<TKey, TValue>>
+        [Serializable]
+        public class Serializable<TKey, TValue> : IEquatable<Serializable<TKey, TValue>>
         {
-            [System.Xml.Serialization.XmlIgnore]
+            [XmlIgnore]
             public Dictionary<TKey, TValue> dictionary = new Dictionary<TKey, TValue>();
             public Pair<TKey, TValue>[] pair
             {
                 get
                 {
-                    List<Pair<TKey, TValue>> list = new List<Pair<TKey, TValue>>();
-                    foreach (KeyValuePair<TKey, TValue> keyValue in dictionary)
-                        list.Add(new Pair<TKey, TValue>() { Key = keyValue.Key, Value = keyValue.Value });
+                    var list = new List<Pair<TKey, TValue>>();
+                    foreach (var keyValue in dictionary)
+                        list.Add(new Pair<TKey, TValue> { Key = keyValue.Key, Value = keyValue.Value });
                     return list.ToArray();
                 }
                 set
@@ -692,7 +713,11 @@ namespace Tools
 
             public TValue this[TKey key]
             {
-                get { if (dictionary.ContainsKey(key)) return dictionary[key]; else return default; }
+                get
+                {
+                    if (dictionary.ContainsKey(key)) return dictionary[key];
+                    return default;
+                }
                 set
                 {
                     if (dictionary.ContainsKey(key)) dictionary[key] = value;
@@ -714,13 +739,13 @@ namespace Tools
                 if (ReferenceEquals(this, other)) return true; //Optimization for a common success case.
                 if (GetType() != other.GetType()) return false; //If run-time types are not exactly the same, return false.
 
-                bool match = true;
-                Pair<TKey, TValue>[] pSelf = pair;
-                Pair<TKey, TValue>[] pOther = other.pair;
+                var match = true;
+                var pSelf = pair;
+                var pOther = other.pair;
                 if (pSelf.Length != pOther.Length) match = false;
                 else
                 {
-                    for (int i = 0; i < pSelf.Length & i < pOther.Length; i++)
+                    for (var i = 0; i < pSelf.Length & i < pOther.Length; i++)
                     {
                         if (!pSelf[i].Equals(pOther[i])) match = false;
                     }
@@ -731,20 +756,20 @@ namespace Tools
             public static bool operator ==(Serializable<TKey, TValue> left, Serializable<TKey, TValue> right)
             {
                 if (left is null & right is null) return true;
-                else if (left is null | right is null) return false;
-                else return left.Equals(right);
+                if (left is null | right is null) return false;
+                return left.Equals(right);
             }
             public static bool operator !=(Serializable<TKey, TValue> left, Serializable<TKey, TValue> right) { return !(left == right); }
             public override int GetHashCode() { return base.GetHashCode(); }
             public void CopyTo(out Serializable<TKey, TValue> other)
             {
                 other = new Serializable<TKey, TValue>();
-                foreach (KeyValuePair<TKey, TValue> kv in dictionary) other.Add(kv.Key, kv.Value);
+                foreach (var kv in dictionary) other.Add(kv.Key, kv.Value);
             }
         }
 
-        [System.Serializable]
-        public class Pair<TKey, TValue> : System.IEquatable<Pair<TKey, TValue>>
+        [Serializable]
+        public class Pair<TKey, TValue> : IEquatable<Pair<TKey, TValue>>
         {
             public TKey Key;
             public TValue Value;
@@ -762,8 +787,8 @@ namespace Tools
             public static bool operator ==(Pair<TKey, TValue> left, Pair<TKey, TValue> right)
             {
                 if (left is null & right is null) return true;
-                else if (left is null | right is null) return false;
-                else return left.Equals(right);
+                if (left is null | right is null) return false;
+                return left.Equals(right);
             }
             public static bool operator !=(Pair<TKey, TValue> left, Pair<TKey, TValue> right) { return !(left == right); }
             public override int GetHashCode() { return base.GetHashCode(); }
@@ -778,27 +803,24 @@ namespace Tools
             p_startPath = p_startPath.Replace("\\", "/").Trim('/');
 
             if (p_fullDestinationPath.StartsWith(p_startPath)) return p_fullDestinationPath.Remove(0, p_startPath.Length);
-            else
+            var l_startPathParts = p_startPath.Split('/');
+            var l_destinationPathParts = p_fullDestinationPath.Split('/');
+
+            var l_sameCounter = 0;
+            while ((l_sameCounter < l_startPathParts.Length) && (l_sameCounter < l_destinationPathParts.Length) && l_startPathParts[l_sameCounter].Equals(l_destinationPathParts[l_sameCounter], StringComparison.InvariantCultureIgnoreCase))
             {
-                string[] l_startPathParts = p_startPath.Split('/');
-                string[] l_destinationPathParts = p_fullDestinationPath.Split('/');
-
-                int l_sameCounter = 0;
-                while ((l_sameCounter < l_startPathParts.Length) && (l_sameCounter < l_destinationPathParts.Length) && l_startPathParts[l_sameCounter].Equals(l_destinationPathParts[l_sameCounter], System.StringComparison.InvariantCultureIgnoreCase))
-                {
-                    l_sameCounter++;
-                }
-
-                if (l_sameCounter == 0) return p_fullDestinationPath; // There is no relative link.
-
-                System.Text.StringBuilder l_builder = new System.Text.StringBuilder();
-                for (int i = l_sameCounter; i < l_startPathParts.Length; i++) l_builder.Append("../");
-
-                for (int i = l_sameCounter; i < l_destinationPathParts.Length; i++) l_builder.Append(l_destinationPathParts[i] + "/");
-
-                if (l_builder.Length > 0) l_builder.Length--;
-                return l_builder.ToString();
+                l_sameCounter++;
             }
+
+            if (l_sameCounter == 0) return p_fullDestinationPath; // There is no relative link.
+
+            var l_builder = new System.Text.StringBuilder();
+            for (var i = l_sameCounter; i < l_startPathParts.Length; i++) l_builder.Append("../");
+
+            for (var i = l_sameCounter; i < l_destinationPathParts.Length; i++) l_builder.Append(l_destinationPathParts[i] + "/");
+
+            if (l_builder.Length > 0) l_builder.Length--;
+            return l_builder.ToString();
         }
     }
 
@@ -828,9 +850,9 @@ namespace Tools
         /// <summary>Searches through the Scenes loaded for scenes with the given name.</summary>
         /// <param name="name">Name of scenes to find.</param>
         /// <returns>A list of reference to the Scenes.</returns>
-        public static IEnumerable<UnityEngine.SceneManagement.Scene> GetScenesByName(string name)
+        public static IEnumerable<Scene> GetScenesByName(string name)
         {
-            for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+            for (var i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
             {
                 var scene = UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
                 if (scene.name == name) yield return scene;

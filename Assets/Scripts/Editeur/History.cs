@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Linq;
 using UnityEngine;
@@ -7,42 +7,42 @@ using UnityEngine.UI;
 public class History : MonoBehaviour
 {
 
-    public static string HistoryFile { get { return Application.persistentDataPath + "/history.txt"; } }
+    public static string HistoryFile => Application.persistentDataPath + "/history.txt";
 
     public EditorPublishedLevels PublishedLevels;
 
-    void Start() { Refresh(); }
+    private void Start() { Refresh(); }
     public void Refresh()
     {
         Initialise();
 
-        Transform Content = transform.GetChild(1).GetChild(0).GetChild(0);
-        for (int i = 1; i < Content.childCount; i++)
+        var Content = transform.GetChild(1).GetChild(0).GetChild(0);
+        for (var i = 1; i < Content.childCount; i++)
             Destroy(Content.GetChild(i).gameObject);
 
-        string[] history = File.ReadAllLines(HistoryFile);
-        for (int i = 1; i < history.Length; i++)
+        var history = File.ReadAllLines(HistoryFile);
+        for (var i = 1; i < history.Length; i++)
         {
-            string[] a = history[history.Length - i].Split(new string[] { "[" }, System.StringSplitOptions.None);
-            string[] b = a[1].Split(new string[] { "] " }, System.StringSplitOptions.None);
-            string[] c = b[1].Split(new string[] { " |" }, System.StringSplitOptions.None);
-            string action = a[0];
-            System.DateTime time = System.DateTime.Parse(b[0]).ToLocalTime();
-            string file = c[0];
+            var a = history[history.Length - i].Split(new[] { "[" }, StringSplitOptions.None);
+            var b = a[1].Split(new[] { "] " }, StringSplitOptions.None);
+            var c = b[1].Split(new[] { " |" }, StringSplitOptions.None);
+            var action = a[0];
+            var time = DateTime.Parse(b[0]).ToLocalTime();
+            var file = c[0];
 
             if (action == "O")
-                file = c[0].Split(new string[] { "/", "_" }, System.StringSplitOptions.None)[1];
+                file = c[0].Split(new[] { "/", "_" }, StringSplitOptions.None)[1];
             else if (action == "S")
                 file = c[0];
             else
             {
-                string[] dirToFile = c[0].Split(new string[] { "/", "\\" }, System.StringSplitOptions.None);
+                var dirToFile = c[0].Split(new[] { "/", "\\" }, StringSplitOptions.None);
                 file = dirToFile[dirToFile.Length - 1].Replace(".level", "");
             }
-            string author = c[1].Replace("|", "");
+            var author = c[1].Replace("|", "");
 
             Content.GetChild(0).gameObject.SetActive(false);
-            Transform go = Instantiate(Content.GetChild(0).gameObject, Content).transform;
+            var go = Instantiate(Content.GetChild(0).gameObject, Content).transform;
 
             go.GetChild(0).GetComponent<Text>().text = file;
             go.GetChild(1).GetComponent<Text>().text = author;
@@ -52,7 +52,7 @@ public class History : MonoBehaviour
             go.GetChild(3).GetChild(2).gameObject.SetActive(action == "O");
             go.GetChild(3).GetChild(3).gameObject.SetActive(action == "S");
 
-            int actual = history.Length - i;
+            var actual = history.Length - i;
             go.GetComponent<Button>().onClick.AddListener(() => Open(actual));
             go.gameObject.SetActive(true);
         }
@@ -60,15 +60,15 @@ public class History : MonoBehaviour
 
     public void Open(int actual)
     {
-        string[] history = File.ReadAllLines(HistoryFile);
-        string[] a = history[actual].Split(new string[] { "[" }, System.StringSplitOptions.None);
-        string[] b = a[1].Split(new string[] { "] " }, System.StringSplitOptions.None);
-        string[] c = b[1].Split(new string[] { " |" }, System.StringSplitOptions.None);
-        string action = a[0];
-        string file = c[0];
+        var history = File.ReadAllLines(HistoryFile);
+        var a = history[actual].Split(new[] { "[" }, StringSplitOptions.None);
+        var b = a[1].Split(new[] { "] " }, StringSplitOptions.None);
+        var c = b[1].Split(new[] { " |" }, StringSplitOptions.None);
+        var action = a[0];
+        var file = c[0];
 
-        if (action == "P" | file.Contains(Application.persistentDataPath + "/Levels/Official Levels/")) SceneManager.LoadScene("Player", new string[] { "Home/Play/History", "File", file });
-        else if (action == "E") SceneManager.LoadScene("Editor", new string[] { "Home/Play/History", "Edit", file });
+        if (action == "P" | file.Contains(Application.persistentDataPath + "/Levels/Official Levels/")) SceneManager.LoadScene("Player", new[] { "Home/Play/History", "File", file });
+        else if (action == "E") SceneManager.LoadScene("Editor", new[] { "Home/Play/History", "Edit", file });
         else if (action == "O")
         {
             PublishedLevels.transform.parent.parent.gameObject.SetActive(true);
@@ -77,13 +77,13 @@ public class History : MonoBehaviour
             PublishedLevels.Select(0);
             transform.parent.parent.gameObject.SetActive(false);
         }
-        else if (action == "S") SceneManager.LoadScene("Online", new string[] { "Connect", file });
+        else if (action == "S") SceneManager.LoadScene("Online", new[] { "Connect", file });
     }
 
-    static void Initialise()
+    private static void Initialise()
     {
         if (!File.Exists(HistoryFile))
-            File.WriteAllLines(HistoryFile, new string[] { "# History of levels played" });
+            File.WriteAllLines(HistoryFile, new[] { "# History of levels played" });
     }
 
     /// <summary>
@@ -96,14 +96,14 @@ public class History : MonoBehaviour
     {
         Initialise();
 
-        string date = System.DateTime.UtcNow.ToString();
+        var date = DateTime.UtcNow.ToString();
 
         if ((type == "E" | type == "P") & author == "")
         {
             if (!File.Exists(file)) return;
-            int u = -1;
-            string[] f = File.ReadAllLines(file);
-            for (int x = 0; x < f.Length; x++)
+            var u = -1;
+            var f = File.ReadAllLines(file);
+            for (var x = 0; x < f.Length; x++)
             {
                 if (f[x].Contains("author = ") & u == -1)
                     u = x;
@@ -111,20 +111,20 @@ public class History : MonoBehaviour
             if (u != -1) author = f[u].Replace("author = ", "");
         }
 
-        string line = type + "[" + date + "] " + file + " |" + author + "|";
+        var line = type + "[" + date + "] " + file + " |" + author + "|";
 
-        string[] history = File.ReadAllLines(HistoryFile);
-        for (int i = 0; i < history.Length; i++)
+        var history = File.ReadAllLines(HistoryFile);
+        for (var i = 0; i < history.Length; i++)
         {
-            string[] b = history[i].Split(new string[] { "] " }, System.StringSplitOptions.None);
+            var b = history[i].Split(new[] { "] " }, StringSplitOptions.None);
             if (b.Length >= 2)
             {
-                string[] splited = b[1].Split(new string[] { " |" }, System.StringSplitOptions.None);
+                var splited = b[1].Split(new[] { " |" }, StringSplitOptions.None);
                 if (splited.Length >= 2)
                 {
                     if (splited[0] == file)
                     {
-                        List<string> historyList = history.ToList();
+                        var historyList = history.ToList();
                         historyList.RemoveAt(i);
                         history = historyList.ToArray();
                         i = i - 1;
@@ -132,7 +132,7 @@ public class History : MonoBehaviour
                 }
             }
         }
-        File.WriteAllLines(HistoryFile, history.Union(new string[] { line }).ToArray());
+        File.WriteAllLines(HistoryFile, history.Union(new[] { line }).ToArray());
     }
 
 
@@ -142,18 +142,18 @@ public class History : MonoBehaviour
     /// <param name="file">Le chemin d'accès au fichier (Local, URL ou IP)</param>
     public static void LvlRemoved(string file)
     {
-        string[] history = File.ReadAllLines(HistoryFile);
-        for (int i = 0; i < history.Length; i++)
+        var history = File.ReadAllLines(HistoryFile);
+        for (var i = 0; i < history.Length; i++)
         {
-            string[] b = history[i].Split(new string[] { "] " }, System.StringSplitOptions.None);
+            var b = history[i].Split(new[] { "] " }, StringSplitOptions.None);
             if (b.Length >= 2)
             {
-                string[] splited = b[1].Split(new string[] { " |" }, System.StringSplitOptions.None);
+                var splited = b[1].Split(new[] { " |" }, StringSplitOptions.None);
                 if (splited.Length >= 2)
                 {
                     if (splited[0] == file)
                     {
-                        List<string> historyList = history.ToList();
+                        var historyList = history.ToList();
                         historyList.RemoveAt(i);
                         history = historyList.ToArray();
                         i = i - 1;

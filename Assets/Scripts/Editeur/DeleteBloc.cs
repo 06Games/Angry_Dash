@@ -6,15 +6,15 @@ public class DeleteBloc : MonoBehaviour
 
     public Editeur editor;
 
-    void Update()
+    private void Update()
     {
         if (editor.file != "") editor.DeleteSelectedBloc(true);
     }
 
-    int oldMenu;
+    private int oldMenu;
     public void Switch(UImage_Reader reader)
     {
-        MenuManager manager = transform.parent.GetComponent<MenuManager>();
+        var manager = transform.parent.GetComponent<MenuManager>();
         if (manager.array == 4)
         {
             manager.array = oldMenu;

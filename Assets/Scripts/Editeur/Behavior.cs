@@ -7,34 +7,34 @@ public class Behavior : MonoBehaviour
 {
 
     public Editeur editor;
-    int[] SB;
+    private int[] SB;
 
-    void Update()
+    private void Update()
     {
         if (editor.SelectedBlock.Length == 0) { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
 
-        InputField Boost = transform.GetChild(1).GetChild(0).GetComponent<InputField>();
+        var Boost = transform.GetChild(1).GetChild(0).GetComponent<InputField>();
 
         if (SB != editor.SelectedBlock)
         {
             if (editor.SelectedBlock.Length > 0)
             {
                 SB = editor.SelectedBlock;
-                float.TryParse(editor.GetBlocStatus("Behavior", SB[0]), out float id);
+                float.TryParse(editor.GetBlocStatus("Behavior", SB[0]), out var id);
                 transform.GetChild(0).GetChild((int)id).GetComponent<Toggle>().isOn = true;
 
-                string[] ID = id.ToString().Split(".");
+                var ID = id.ToString().Split(".");
                 if (ID.Length == 2) Boost.text = ID[1];
                 else Boost.text = "0";
             }
             else { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
         }
 
-        string col = GetComponent<ToggleGroup>().ActiveToggles().FirstOrDefault().name;
+        var col = GetComponent<ToggleGroup>().ActiveToggles().FirstOrDefault().name;
         if (col == "2" | col == "3") Boost.interactable = true;
         else Boost.interactable = false;
 
-        int b = -1;
+        var b = -1;
         if (int.TryParse(Boost.text, out b))
         {
             if (b.ToString() != Boost.text) Boost.text = b.ToString();

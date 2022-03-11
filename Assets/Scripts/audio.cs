@@ -7,7 +7,7 @@ public class audio : MonoBehaviour
     [Header("Sound level")]
     public AudioMixer mixer;
     public string[] parametersNames = new string[3] { "Master", "Musique", "FX" };
-    string[] parametersConfigNames = new string[] { "audio.master", "audio.music", "audio.fx" };
+    private string[] parametersConfigNames = { "audio.master", "audio.music", "audio.fx" };
 
     public int[] Value = new int[3] { -15, -15, -15 };
     public Scrollbar[] scroll;
@@ -15,10 +15,11 @@ public class audio : MonoBehaviour
     [Header("Other parameters")]
     public Toggle FullyLoaded;
 
-    void Start() { NewStart(); }
-    void NewStart()
+    private void Start() { NewStart(); }
+
+    private void NewStart()
     {
-        for (int i = 0; i < parametersNames.Length; i++)
+        for (var i = 0; i < parametersNames.Length; i++)
         {
             if (string.IsNullOrEmpty(ConfigAPI.GetString(parametersConfigNames[i]))) ConfigAPI.SetInt(parametersConfigNames[i], 0);
 

@@ -1,33 +1,64 @@
-﻿using System.IO;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
+using ICSharpCode.SharpZipLib.Zip;
+using Newtonsoft.Json.Linq;
+using Nini.Config;
+using Tools;
 using UnityEngine;
 
 namespace FileFormat
 {
     public class JSON
     {
-        public Newtonsoft.Json.Linq.JObject jToken;
+        public JObject jToken;
         public JSON(string plainText)
         {
             if (!string.IsNullOrEmpty(plainText))
             {
-                try { jToken = Newtonsoft.Json.Linq.JObject.Parse(plainText); }
-                catch (System.Exception e) { Debug.LogError("Error parsing:\n" + plainText + "\nError details:\n" + e.Message); }
+                try { jToken = JObject.Parse(plainText); }
+                catch (Exception e) { Debug.LogError("Error parsing:\n" + plainText + "\nError details:\n" + e.Message); }
             }
         }
-        public JSON(Newtonsoft.Json.Linq.JToken token)
+        public JSON(JToken token)
         {
-            try { jToken = (Newtonsoft.Json.Linq.JObject)token; }
-            catch (System.Exception e) { Debug.LogError("Error parsing the token\nError details:\n" + e.Message); }
+            try { jToken = (JObject)token; }
+            catch (Exception e) { Debug.LogError("Error parsing the token\nError details:\n" + e.Message); }
         }
 
-        public JSON GetCategory(string token) { if (jToken == null) return new JSON(null); else return new JSON(jToken.SelectToken(token)); }
-        public void Delete() { if (jToken != null) jToken.Remove(); }
-        public bool ContainsValues { get { if (jToken == null) return false; else return jToken.HasValues; } }
+        public JSON GetCategory(string token)
+        {
+            if (jToken == null) return new JSON(null);
+            return new JSON(jToken.SelectToken(token));
+        }
+        public void Delete()
+        {
+            jToken?.Remove();
+        }
+        public bool ContainsValues { get
+        {
+            if (jToken == null) return false;
+            return jToken.HasValues;
+        } }
 
-        public T Value<T>(string value) { if (jToken == null) return default; else return jToken.Value<T>(value); }
-        public bool ValueExist(string value) { if (jToken == null) return false; else return jToken.Value<string>(value) != null; }
+        public T Value<T>(string value)
+        {
+            if (jToken == null) return default;
+            return jToken.Value<T>(value);
+        }
+        public bool ValueExist(string value)
+        {
+            return jToken?.Value<string>(value) != null;
+        }
 
         public override string ToString() { return jToken.ToString(); }
     }
@@ -38,16 +69,16 @@ namespace FileFormat
         {
             public static string ClassToXML<T>(T data, bool minimised = true)
             {
-                System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
-                var settings = new System.Xml.XmlWriterSettings
+                var _serializer = new XmlSerializer(typeof(T));
+                var settings = new XmlWriterSettings
                 {
-                    NewLineHandling = System.Xml.NewLineHandling.Entitize,
+                    NewLineHandling = NewLineHandling.Entitize,
                     Encoding = Encoding.UTF8,
                     Indent = !minimised
                 };
 
                 using (var stream = new StringWriter())
-                using (var writer = System.Xml.XmlWriter.Create(stream, settings))
+                using (var writer = XmlWriter.Create(stream, settings))
                 {
                     _serializer.Serialize(writer, data);
 
@@ -56,12 +87,12 @@ namespace FileFormat
             }
             public static T XMLtoClass<T>(string data)
             {
-                System.Xml.Serialization.XmlSerializer _serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
+                var _serializer = new XmlSerializer(typeof(T));
                 if (string.IsNullOrEmpty(data))
                     return default(T);
 
                 using (var stream = new StringReader(data))
-                using (var reader = System.Xml.XmlReader.Create(stream))
+                using (var reader = XmlReader.Create(stream))
                 {
                     return (T)_serializer.Deserialize(reader);
                 }
@@ -69,7 +100,7 @@ namespace FileFormat
 
             public static bool IsValid(string xmlFile)
             {
-                try { new System.Xml.XmlDocument().LoadXml(xmlFile); }
+                try { new XmlDocument().LoadXml(xmlFile); }
                 catch { return false; }
                 return true;
             }
@@ -77,25 +108,25 @@ namespace FileFormat
 
         public class XML
         {
-            System.Xml.XmlDocument xmlDoc;
-            public XML() { xmlDoc = new System.Xml.XmlDocument(); }
-            public XML(System.Xml.XmlDocument xml) { if (xml == null) xmlDoc = new System.Xml.XmlDocument(); else xmlDoc = xml; }
+            private XmlDocument xmlDoc;
+            public XML() { xmlDoc = new XmlDocument(); }
+            public XML(XmlDocument xml) { if (xml == null) xmlDoc = new XmlDocument(); else xmlDoc = xml; }
             public XML(string plainText)
             {
-                xmlDoc = new System.Xml.XmlDocument();
+                xmlDoc = new XmlDocument();
                 if (!string.IsNullOrEmpty(plainText)) xmlDoc.LoadXml(plainText);
             }
             public override string ToString() { return ToString(true); }
             public string ToString(bool minimised)
             {
-                var settings = new System.Xml.XmlWriterSettings
+                var settings = new XmlWriterSettings
                 {
-                    NewLineHandling = System.Xml.NewLineHandling.Entitize,
+                    NewLineHandling = NewLineHandling.Entitize,
                     Encoding = Encoding.UTF8,
                     Indent = !minimised
                 };
                 using (var stringWriter = new StringWriter())
-                using (var xmlTextWriter = System.Xml.XmlWriter.Create(stringWriter, settings))
+                using (var xmlTextWriter = XmlWriter.Create(stringWriter, settings))
                 {
                     xmlDoc.WriteTo(xmlTextWriter);
                     xmlTextWriter.Flush();
@@ -105,7 +136,7 @@ namespace FileFormat
 
             public RootElement CreateRootElement(string name)
             {
-                System.Xml.XmlNode xmlNode = xmlDoc.CreateElement(name);
+                XmlNode xmlNode = xmlDoc.CreateElement(name);
                 xmlDoc.AppendChild(xmlNode);
                 return new RootElement(xmlNode);
             }
@@ -114,22 +145,22 @@ namespace FileFormat
                 get
                 {
                     if (xmlDoc.DocumentElement != null) return new RootElement(xmlDoc.DocumentElement);
-                    else throw new System.Exception("There is no Root Element ! Create one with CreateRootElement() function");
+                    throw new Exception("There is no Root Element ! Create one with CreateRootElement() function");
                 }
             }
         }
 
         public class RootElement : Base_Collection
         {
-            public RootElement(System.Xml.XmlNode xmlNode) { node = xmlNode; }
+            public RootElement(XmlNode xmlNode) { node = xmlNode; }
 
-            public XML xmlFile { get { return new XML(node == null ? null : node.OwnerDocument); } }
+            public XML xmlFile => new XML(node == null ? null : node.OwnerDocument);
         }
 
         public class Item : Base_Collection
         {
-            public Item(System.Xml.XmlNode xmlNode) { node = xmlNode; }
-            public RootElement rootElement { get { return new RootElement(node.OwnerDocument.DocumentElement); } }
+            public Item(XmlNode xmlNode) { node = xmlNode; }
+            public RootElement rootElement => new RootElement(node.OwnerDocument.DocumentElement);
 
             public string Attribute(string key) { return node.Attributes[key].Value; }
             public Item SetAttribute(string key, string value = "")
@@ -138,87 +169,96 @@ namespace FileFormat
                     node.Attributes[key].Value = value;
                 else
                 { //Create attribute
-                    System.Xml.XmlAttribute xmlAttribute = node.OwnerDocument.CreateAttribute(key);
+                    var xmlAttribute = node.OwnerDocument.CreateAttribute(key);
                     node.Attributes.Append(xmlAttribute);
                     xmlAttribute.Value = value;
                 }
                 return this;
             }
-            public Item RemoveAttribute(string key) { if (node != null) node.Attributes.Remove(node.Attributes[key]); return this; }
+            public Item RemoveAttribute(string key) {
+                node?.Attributes.Remove(node.Attributes[key]);
+                return this; }
 
-            public Item Parent { get { return new Item(node == null ? null : node.ParentNode); } }
+            public Item Parent => new Item(node == null ? null : node.ParentNode);
 
             public T value<T>()
             {
-                string v = Value;
+                var v = Value;
                 if (v == null) return default;
-                else try { return Tools.StringExtensions.ParseTo<T>(v); } catch { return default; }
+                try { return StringExtensions.ParseTo<T>(v); } catch { return default; }
             }
             public string Value
             {
-                get { if (node == null) return null; else return node.InnerText; }
-                set { if (node == null) throw new System.Exception("This item does not exist! Can not set a value!\nCheck Item.Exist before calling this function."); else node.InnerText = value; }
+                get
+                {
+                    return node?.InnerText;
+                }
+                set
+                {
+                    if (node == null) throw new Exception("This item does not exist! Can not set a value!\nCheck Item.Exist before calling this function.");
+                    node.InnerText = value;
+                }
             }
             public void Remove() { node.ParentNode.RemoveChild(node); }
         }
 
         public abstract class Base_Collection
         {
-            public System.Xml.XmlNode node;
+            public XmlNode node;
             public Item GetItem(string key)
             {
                 if (node == null) return new Item(null);
-                System.Xml.XmlNode xmlNode = node.SelectSingleNode(key);
+                var xmlNode = node.SelectSingleNode(key);
                 if (xmlNode == null) return new Item(null);
-                else return new Item(xmlNode);
+                return new Item(xmlNode);
             }
             public Item[] GetItems()
             {
                 if (node == null) return new Item[0];
-                System.Xml.XmlNodeList list = node.ChildNodes;
-                Item[] items = new Item[list.Count];
-                for (int i = 0; i < items.Length; i++) items[i] = new Item(list[i]);
+                var list = node.ChildNodes;
+                var items = new Item[list.Count];
+                for (var i = 0; i < items.Length; i++) items[i] = new Item(list[i]);
                 if (items.Length > 0) return items;
-                else return new Item[0];
+                return new Item[0];
             }
             public Item[] GetItems(string key)
             {
                 if (node == null) return new Item[0];
-                System.Xml.XmlNodeList list = node.SelectNodes(key);
-                Item[] items = new Item[list.Count];
-                for (int i = 0; i < items.Length; i++)
+                var list = node.SelectNodes(key);
+                var items = new Item[list.Count];
+                for (var i = 0; i < items.Length; i++)
                     items[i] = new Item(list[i]);
                 if (items.Length > 0) return items;
-                else return new Item[0];
+                return new Item[0];
             }
             public Item GetItemByAttribute(string key, string attribute, string attributeValue = "")
             {
                 if (node == null) return new Item(null);
-                System.Xml.XmlNode xmlNode = node.SelectSingleNode(key + "[@" + attribute + " = \"" + attributeValue + "\"]");
+                var xmlNode = node.SelectSingleNode(key + "[@" + attribute + " = \"" + attributeValue + "\"]");
                 if (xmlNode == null) return new Item(null);
-                else return new Item(xmlNode);
+                return new Item(xmlNode);
             }
             public Item[] GetItemsByAttribute(string key, string attribute, string attributeValue = "")
             {
                 if (node == null) return new Item[0];
-                System.Xml.XmlNodeList list = node.SelectNodes(key + "[@" + attribute + " = '" + attributeValue + "']");
-                Item[] items = new Item[list.Count];
-                for (int i = 0; i < items.Length; i++)
+                var list = node.SelectNodes(key + "[@" + attribute + " = '" + attributeValue + "']");
+                var items = new Item[list.Count];
+                for (var i = 0; i < items.Length; i++)
                     items[i] = new Item(list[i]);
                 if (items.Length > 0) return items;
-                else return null;
+                return null;
             }
             public Item CreateItem(string key)
             {
-                if (node == null) throw new System.Exception("This item does not exist! Can not create a child!\nCheck Item.Exist before calling this function.");
-                System.Xml.XmlNode xmlNode = node.OwnerDocument.CreateElement(key);
+                if (node == null) throw new Exception("This item does not exist! Can not create a child!\nCheck Item.Exist before calling this function.");
+                XmlNode xmlNode = node.OwnerDocument.CreateElement(key);
                 node.AppendChild(xmlNode);
                 return new Item(xmlNode);
             }
 
-            public bool Exist { get { return node != null; } }
+            public bool Exist => node != null;
 
-            public System.Collections.Generic.IEnumerator<Item> GetEnumerator() { return GetItems().ToList().GetEnumerator(); }
+            public IEnumerator<Item> GetEnumerator() { return GetItems().ToList().GetEnumerator(); }
             public override string ToString() { return node.OuterXml; }
         }
     }
@@ -227,52 +267,81 @@ namespace FileFormat
     {
         public class INI
         {
-            Nini.Config.IConfigSource source;
+            private IConfigSource source;
             public INI(string path)
             {
                 try
                 {
-                    source = new Nini.Config.IniConfigSource(path);
+                    source = new IniConfigSource(path);
                     source.AutoSave = true;
                 }
                 catch { }
             }
-            public Category GetCategory(string token) { if (source == null) return new Category(null); else return new Category(source.Configs[token]); }
+            public Category GetCategory(string token)
+            {
+                if (source == null) return new Category(null);
+                return new Category(source.Configs[token]);
+            }
         }
 
         public class Category
         {
-            Nini.Config.IConfig config;
-            public Category(Nini.Config.IConfig iConfig) { config = iConfig; }
+            private IConfig config;
+            public Category(IConfig iConfig) { config = iConfig; }
 
 
-            public bool ContainsValues { get { if (config == null) return false; else return config.GetValues().Length > 0; } }
-            public void Delete() { if (config != null) config.ConfigSource.Configs.Remove(config); }
+            public bool ContainsValues { get
+            {
+                if (config == null) return false;
+                return config.GetValues().Length > 0;
+            } }
+            public void Delete()
+            {
+                config?.ConfigSource.Configs.Remove(config);
+            }
 
-            public T Value<T>(string key) { if (config == null) return default; else return Tools.StringExtensions.ParseTo<T>(config.Get(key)); }
-            public T Value<T>(string key, string defaultValue) { if (config == null) return default; else return Tools.StringExtensions.ParseTo<T>(config.Get(key, defaultValue)); }
-            public bool ValueExist(string key) { if (config == null) return false; else return config.Get(key) != null; }
-            public void SetValue(string key, object value) { if (config != null) config.Set(key, value); }
-            public void RemoveValue(string key) { if (config != null) config.Remove(key); }
+            public T Value<T>(string key)
+            {
+                if (config == null) return default;
+                return StringExtensions.ParseTo<T>(config.Get(key));
+            }
+            public T Value<T>(string key, string defaultValue)
+            {
+                if (config == null) return default;
+                return StringExtensions.ParseTo<T>(config.Get(key, defaultValue));
+            }
+            public bool ValueExist(string key)
+            {
+                return config?.Get(key) != null;
+            }
+            public void SetValue(string key, object value)
+            {
+                config?.Set(key, value);
+            }
+            public void RemoveValue(string key)
+            {
+                config?.Remove(key);
+            }
         }
     }
 
     public class Binary
     {
-        string chain = "";
+        private string chain = "";
         public Binary(byte[] data)
         {
-            string binary = string.Join("", data.Select(byt => System.Convert.ToString(byt, 2).PadLeft(8, '0')));
-            string onlyNumbers = System.Text.RegularExpressions.Regex.Replace(binary, "[0-9]", "");
+            var binary = string.Join("", data.Select(byt => Convert.ToString(byt, 2).PadLeft(8, '0')));
+            var onlyNumbers = Regex.Replace(binary, "[0-9]", "");
             if (string.IsNullOrEmpty(onlyNumbers)) chain = binary;
-            else throw new System.ArgumentException("The specified string is not binary");
+            else throw new ArgumentException("The specified string is not binary");
         }
-        Binary(string data) { chain = data; }
+
+        private Binary(string data) { chain = data; }
         public static Binary Parse(string data) { return new Binary(data.Replace(" ", "")); }
 
         public override string ToString()
         {
-            string str = "";
+            var str = "";
             for (var i = 0; i < chain.Length; i += 8)
             {
                 if (i < 8) str = chain.Substring(i, Mathf.Min(8, chain.Length - i));
@@ -283,11 +352,11 @@ namespace FileFormat
         public string Decode() { return Decode(Encoding.UTF8); }
         public string Decode(Encoding encoding)
         {
-            System.Collections.Generic.List<byte> byteList = new System.Collections.Generic.List<byte>();
+            var byteList = new List<byte>();
 
-            for (int i = 0; i < chain.Length; i += 8)
+            for (var i = 0; i < chain.Length; i += 8)
             {
-                byteList.Add(System.Convert.ToByte(chain.Substring(i, 8), 2));
+                byteList.Add(Convert.ToByte(chain.Substring(i, 8), 2));
             }
             return encoding.GetString(byteList.ToArray());
         }
@@ -302,7 +371,7 @@ namespace FileFormat
         /// <param name="zipPath">Path where the zip file will be saved</param>
         public static void Compress(string unzipPath, string zipPath)
         {
-            ICSharpCode.SharpZipLib.Zip.FastZip fastZip = new ICSharpCode.SharpZipLib.Zip.FastZip
+            var fastZip = new FastZip
             {
                 CreateEmptyDirectories = true
             };
@@ -312,7 +381,7 @@ namespace FileFormat
         public static byte[] Compress(byte[] input)
         {
             using (var compressStream = new MemoryStream())
-            using (var compressor = new System.IO.Compression.DeflateStream(compressStream, System.IO.Compression.CompressionMode.Compress))
+            using (var compressor = new DeflateStream(compressStream, CompressionMode.Compress))
             {
                 new MemoryStream(input).CopyTo(compressor);
                 compressor.Close();
@@ -327,7 +396,7 @@ namespace FileFormat
         /// <param name="unzipPath">Path where the zip file will be extracted</param>
         public static void Decompress(string zipPath, string unzipPath)
         {
-            ICSharpCode.SharpZipLib.Zip.FastZip fastZip = new ICSharpCode.SharpZipLib.Zip.FastZip
+            var fastZip = new FastZip
             {
                 CreateEmptyDirectories = true
             };
@@ -339,16 +408,16 @@ namespace FileFormat
             var output = new MemoryStream();
 
             using (var compressStream = new MemoryStream(input))
-            using (var decompressor = new System.IO.Compression.DeflateStream(compressStream, System.IO.Compression.CompressionMode.Decompress))
+            using (var decompressor = new DeflateStream(compressStream, CompressionMode.Decompress))
                 decompressor.CopyTo(output);
 
             output.Position = 0;
             return output.ToArray();
         }
 
-        public static async void DecompressAsync(string zipPath, string unzipPath, System.Action onComplete)
+        public static async void DecompressAsync(string zipPath, string unzipPath, Action onComplete)
         {
-            await System.Threading.Tasks.Task.Run(() => Decompress(zipPath, unzipPath), new System.Threading.CancellationToken(false) { });
+            await Task.Run(() => Decompress(zipPath, unzipPath), new CancellationToken(false));
             onComplete();
         }
     }
@@ -362,21 +431,21 @@ namespace FileFormat
         /// <param name="gzipFile">Path where the gzip file will be saved, null if zipPath.gz</param>
         public static void Compress(string zipFile, string gzipFile = null)
         {
-            FileInfo fileToBeGZipped = new FileInfo(zipFile);
+            var fileToBeGZipped = new FileInfo(zipFile);
             if (gzipFile == null) gzipFile = string.Concat(fileToBeGZipped.FullName, ".gz");
-            FileInfo gzipFileName = new FileInfo(gzipFile);
+            var gzipFileName = new FileInfo(gzipFile);
 
-            using (FileStream fileToBeZippedAsStream = fileToBeGZipped.OpenRead())
+            using (var fileToBeZippedAsStream = fileToBeGZipped.OpenRead())
             {
-                using (FileStream gzipTargetAsStream = gzipFileName.Create())
+                using (var gzipTargetAsStream = gzipFileName.Create())
                 {
-                    using (System.IO.Compression.GZipStream gzipStream = new System.IO.Compression.GZipStream(gzipTargetAsStream, System.IO.Compression.CompressionMode.Compress))
+                    using (var gzipStream = new GZipStream(gzipTargetAsStream, CompressionMode.Compress))
                     {
                         try
                         {
                             fileToBeZippedAsStream.CopyTo(gzipStream);
                         }
-                        catch (System.Exception ex)
+                        catch (Exception ex)
                         {
                             Debug.LogError(ex.Message);
                         }
@@ -392,7 +461,7 @@ namespace FileFormat
         {
             using (var outStream = new MemoryStream())
             {
-                using (var tinyStream = new System.IO.Compression.GZipStream(outStream, System.IO.Compression.CompressionMode.Compress))
+                using (var tinyStream = new GZipStream(outStream, CompressionMode.Compress))
                 using (var mStream = new MemoryStream(zip))
                     mStream.CopyTo(tinyStream);
 
@@ -407,17 +476,17 @@ namespace FileFormat
         /// <param name="zipFile">Path where the zip file will be saved</param>
         public static void Extract(string gzipFile, string zipFile)
         {
-            using (FileStream fileToDecompressAsStream = new FileInfo(gzipFile).OpenRead())
+            using (var fileToDecompressAsStream = new FileInfo(gzipFile).OpenRead())
             {
-                using (FileStream decompressedStream = File.Create(zipFile))
+                using (var decompressedStream = File.Create(zipFile))
                 {
-                    using (System.IO.Compression.GZipStream decompressionStream = new System.IO.Compression.GZipStream(fileToDecompressAsStream, System.IO.Compression.CompressionMode.Decompress))
+                    using (var decompressionStream = new GZipStream(fileToDecompressAsStream, CompressionMode.Decompress))
                     {
                         try
                         {
                             decompressionStream.CopyTo(decompressedStream);
                         }
-                        catch (System.Exception ex)
+                        catch (Exception ex)
                         {
                             Debug.LogError(ex.Message);
                         }
@@ -432,7 +501,7 @@ namespace FileFormat
         public static byte[] Extract(byte[] gzip)
         {
             using (var inStream = new MemoryStream(gzip))
-            using (var bigStream = new System.IO.Compression.GZipStream(inStream, System.IO.Compression.CompressionMode.Decompress))
+            using (var bigStream = new GZipStream(inStream, CompressionMode.Decompress))
             using (var bigStreamOut = new MemoryStream())
             {
                 bigStream.CopyTo(bigStreamOut);
@@ -446,23 +515,23 @@ namespace FileFormat
     {
         public static string CalculateMD5(string filename)
         {
-            using (var md5 = System.Security.Cryptography.MD5.Create())
+            using (var md5 = MD5.Create())
             {
                 using (var stream = File.OpenRead(filename))
                 {
                     var hash = md5.ComputeHash(stream);
-                    return System.BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
                 }
             }
         }
         public static string CalculateMD5(this FileInfo file)
         {
-            using (var md5 = System.Security.Cryptography.MD5.Create())
+            using (var md5 = MD5.Create())
             {
                 using (var stream = file.OpenRead())
                 {
                     var hash = md5.ComputeHash(stream);
-                    return System.BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+                    return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
                 }
             }
         }

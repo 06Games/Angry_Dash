@@ -13,19 +13,19 @@ namespace AngryDash.Game.RewardChecker
             get
             {
                 if (name == "1") return new List<int> { 12, 10, 8 };
-                else if (name == "2") return new List<int> { 9, 7, 6 };
-                else if (name == "3") return new List<int> { 6, 0, 5 };
-                else if (name == "4") return new List<int> { 13, 11, 9 };
-                else if (name == "5") return new List<int> { 25, 20, 15 };
-                else if (name == "6") return new List<int> { 24, 20, 16 };
-                else if (name == "7") return new List<int> { 24, 21, 18 };
-                else if (name == "8") return new List<int> { 10, 8, 6 };
-                else if (name == "9") return new List<int> { 29, 25, 21 };
-                else if (name == "10") return new List<int> { 30, 25, 20 };
-                else if (name == "11") return new List<int> { 25, 20, 17 };
-                else if (name == "12") return new List<int> { 22, 18, 16 };
-                else if (name == "13") return new List<int> { 25, 20, 17 };
-                else return new List<int> { 0, 0, 0 };
+                if (name == "2") return new List<int> { 9, 7, 6 };
+                if (name == "3") return new List<int> { 6, 0, 5 };
+                if (name == "4") return new List<int> { 13, 11, 9 };
+                if (name == "5") return new List<int> { 25, 20, 15 };
+                if (name == "6") return new List<int> { 24, 20, 16 };
+                if (name == "7") return new List<int> { 24, 21, 18 };
+                if (name == "8") return new List<int> { 10, 8, 6 };
+                if (name == "9") return new List<int> { 29, 25, 21 };
+                if (name == "10") return new List<int> { 30, 25, 20 };
+                if (name == "11") return new List<int> { 25, 20, 17 };
+                if (name == "12") return new List<int> { 22, 18, 16 };
+                if (name == "13") return new List<int> { 25, 20, 17 };
+                return new List<int> { 0, 0, 0 };
             }
         }
 
@@ -49,14 +49,12 @@ namespace AngryDash.Game.RewardChecker
                     Debug.LogError("You are a cheater !");
                     return 0;
                 }
-                else
-                {
-                    int starsNumber = stars;
-                    if (starsNumber == 3) return 25;
-                    else if (starsNumber == 2) return 15;
-                    else if (starsNumber == 1) return 10;
-                    else return 5;
-                }
+
+                var starsNumber = stars;
+                if (starsNumber == 3) return 25;
+                if (starsNumber == 2) return 15;
+                if (starsNumber == 1) return 10;
+                return 5;
             }
         }
     }

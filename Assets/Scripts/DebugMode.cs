@@ -1,12 +1,14 @@
 ﻿using System.Collections;
+using AngryDash.Game;
+using Tayx.Graphy;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DebugMode : MonoBehaviour
 {
-    public Tayx.Graphy.GraphyManager graphy;
+    public GraphyManager graphy;
 
-    void Start()
+    private void Start()
     {
         if (ConfigAPI.GetBool("debug.enable") & FindObjectsOfType<DebugMode>().Length <= 1)
         {
@@ -31,7 +33,8 @@ public class DebugMode : MonoBehaviour
     }
 
     public void Actualize() { Actualize(transform.GetChild(1).GetChild(2).GetComponent<ScrollRect>().content); }
-    void Actualize(Transform content)
+
+    private void Actualize(Transform content)
     {
         UnityThread.executeInUpdate(() =>
         {
@@ -46,7 +49,8 @@ public class DebugMode : MonoBehaviour
     }
 
     public void Graphy(Toggle toggle) { Graphy(toggle.isOn); }
-    void Graphy(bool on)
+
+    private void Graphy(bool on)
     {
         if (on) graphy.Enable();
         else graphy.Disable();
@@ -55,13 +59,14 @@ public class DebugMode : MonoBehaviour
     }
 
     public void ShowLogs(Toggle toggle) { ShowLogs(toggle.isOn); }
-    void ShowLogs(bool on)
+
+    private void ShowLogs(bool on)
     {
         Transform content = transform.GetChild(0).GetChild(0).GetChild(1).GetComponent<ScrollRect>().content;
-        GameObject template = content.GetChild(0).gameObject;
+        var template = content.GetChild(0).gameObject;
         void Logs(LogType logType, string scene)
         {
-            string type = "";
+            var type = "";
             if (logType == LogType.Log) type = "<color=grey>Info: </color>";
             else if (logType == LogType.Warning) type = "<color=orange>Warning: </color>";
             else if (logType == LogType.Error | logType == LogType.Exception) type = "<color=red>Error: </color>";
@@ -69,7 +74,7 @@ public class DebugMode : MonoBehaviour
 
 
             if (content.childCount >= 5) Destroy(content.GetChild(1).gameObject);
-            GameObject go = Instantiate(template, content);
+            var go = Instantiate(template, content);
             go.transform.GetChild(0).GetComponent<Text>().text = type + scene;
             go.SetActive(true);
             StartCoroutine(LogAutoSuppr(go));
@@ -81,12 +86,13 @@ public class DebugMode : MonoBehaviour
 
         ConfigAPI.SetBool("debug.showLogs", on);
     }
-    IEnumerator LogAutoSuppr(GameObject go)
+
+    private IEnumerator LogAutoSuppr(GameObject go)
     {
         yield return new WaitForSeconds(5);
         if (go != null)
         {
-            Image text = go.GetComponent<Image>();
+            var text = go.GetComponent<Image>();
             while (text != null && text.color.a > 0)
             {
                 text.color = new Color(text.color.r, text.color.g, text.color.b, text.color.a - 0.05F);
@@ -96,28 +102,30 @@ public class DebugMode : MonoBehaviour
         }
     }
 
-    bool Coordinates;
+    private bool Coordinates;
     public void ShowCoordinates(Toggle toggle) { ShowCoordinates(toggle.isOn); }
-    void ShowCoordinates(bool on)
+
+    private void ShowCoordinates(bool on)
     {
         ConfigAPI.SetBool("debug.showCoordinates", on);
 
         if (on)
         {
             StartCoroutine(CoordinatesRefresh(transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Text>()));
-            SceneManager.OnSceneChange += (scene) => Coordinates = scene.name == "Player";
+            SceneManager.OnSceneChange += scene => Coordinates = scene.name == "Player";
         }
     }
-    IEnumerator CoordinatesRefresh(Text text, GameObject player = null)
-    {
-        bool on = ConfigAPI.GetBool("debug.showCoordinates");
 
-        if (player == null & Coordinates) player = AngryDash.Game.Player.userPlayer.gameObject;
+    private IEnumerator CoordinatesRefresh(Text text, GameObject player = null)
+    {
+        var on = ConfigAPI.GetBool("debug.showCoordinates");
+
+        if (player == null & Coordinates) player = Player.userPlayer.gameObject;
         if (Coordinates) text.gameObject.SetActive(true);
 
-        Vector2 playerPos = new Vector2(25, 25);
+        var playerPos = new Vector2(25, 25);
         if (player != null) playerPos = player.transform.position;
-        for (int i = 0; i < 2; i++) playerPos[i] = (playerPos[i] - 25) / 50F;
+        for (var i = 0; i < 2; i++) playerPos[i] = (playerPos[i] - 25) / 50F;
         text.text = playerPos.ToString("0.0");
 
         if (!Coordinates)
@@ -133,7 +141,7 @@ public class DebugMode : MonoBehaviour
 
     public void DeviceInfo(Text text)
     {
-        Resolution res = Screen.currentResolution;
+        var res = Screen.currentResolution;
         text.text = "Screen: " + res.width + "x" + res.height + "@" + res.refreshRate + "Hz. DPI: " + Screen.dpi
             + "\nGraphics API: " + SystemInfo.graphicsDeviceVersion
             + "\nGPU: " + SystemInfo.graphicsDeviceName

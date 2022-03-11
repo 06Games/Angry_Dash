@@ -1,15 +1,17 @@
-﻿using AngryDash.Image.Reader;
-using AngryDash.Language;
+﻿using System;
 using System.Collections;
+using System.Diagnostics;
+using AngryDash.Image.Reader;
+using AngryDash.Language;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class InternetNotifier : MonoBehaviour
 {
-    bool connected;
-    void Awake() { connected = InternetAPI.IsConnected(); }
+    private bool connected;
+    private void Awake() { connected = InternetAPI.IsConnected(); }
 
-    void Update()
+    private void Update()
     {
         if (connected != InternetAPI.IsConnected())
         {
@@ -28,16 +30,16 @@ public class InternetNotifier : MonoBehaviour
         }
     }
 
-    IEnumerator Notify()
+    private IEnumerator Notify()
     {
-        int goal = -50 + Screen.height;
-        for (int i = 0; i <= 1; i++)
+        var goal = -50 + Screen.height;
+        for (var i = 0; i <= 1; i++)
         {
-            float pos = transform.position.y;
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            var pos = transform.position.y;
+            var sw = new Stopwatch();
             sw.Start();
-            bool LastFrame = true;
-            System.TimeSpan totalTime = System.TimeSpan.FromMilliseconds(250);
+            var LastFrame = true;
+            var totalTime = TimeSpan.FromMilliseconds(250);
             while (sw.Elapsed < totalTime | LastFrame)
             {
                 float Time = sw.ElapsedMilliseconds;
@@ -46,10 +48,10 @@ public class InternetNotifier : MonoBehaviour
                     LastFrame = false;
                     Time = (long)totalTime.TotalMilliseconds;
                 }
-                float totalDist = goal - pos;
-                float doneDist = transform.position.y - pos;
-                float wantedDist = totalDist / (float)totalTime.TotalMilliseconds * Time;
-                float mvt = wantedDist - doneDist;
+                var totalDist = goal - pos;
+                var doneDist = transform.position.y - pos;
+                var wantedDist = totalDist / (float)totalTime.TotalMilliseconds * Time;
+                var mvt = wantedDist - doneDist;
                 transform.position += new Vector3(0, mvt);
                 yield return new WaitForEndOfFrame();
             }

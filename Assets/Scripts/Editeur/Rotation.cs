@@ -6,10 +6,10 @@ public class Rotation : MonoBehaviour
 
     public InputField IF;
     public Editeur editeur;
-    int[] Bloc;
+    private int[] Bloc;
     public Button[] Button;
 
-    void Update()
+    private void Update()
     {
         if (editeur.SelectedBlock.Length == 0) { transform.parent.parent.GetComponent<Edit>().EnterToEdit(); return; }
 

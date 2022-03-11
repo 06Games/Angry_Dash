@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace AngryDash.Image
     /// <summary>
     /// Contains animation information
     /// </summary>
-    [System.Serializable]
+    [Serializable]
     public class Sprite_API_Data
     {
         /// <summary> Array of all the frames of the annimation (If the ressource is only a sprite, the sprite will be returned at the index 0) </summary>
@@ -15,7 +16,7 @@ namespace AngryDash.Image
         /// <summary> Delay before each frame </summary>
         public List<float> Delay = new List<float>();
         /// <summary> Number of repetitions of the animation (0 being infinity) </summary>
-        public uint Repeat = 0;
+        public uint Repeat;
 
         public Sprite_API_Data()
         {
@@ -41,8 +42,8 @@ namespace AngryDash.Image
         public static bool operator ==(Sprite_API_Data left, Sprite_API_Data right)
         {
             if (left is null & right is null) return true;
-            else if (left is null | right is null) return false;
-            else return left.Equals(right);
+            if (left is null | right is null) return false;
+            return left.Equals(right);
         }
         public static bool operator !=(Sprite_API_Data left, Sprite_API_Data right) { return !(left == right); }
         public override int GetHashCode() { return base.GetHashCode(); }

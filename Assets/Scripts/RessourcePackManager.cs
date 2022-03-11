@@ -1,17 +1,25 @@
-﻿using AngryDash.Image.Reader;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using _06Games;
+using AngryDash.Image.Reader;
+using AngryDash.Language;
+using FileFormat.INI;
+using FileFormat.XML;
+using Newtonsoft.Json;
+using Security;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class RessourcePackManager : MonoBehaviour
 {
-    int category = 0;
+    private int category;
     public RP[] RPs;
-    [System.Serializable]
+    [Serializable]
     public class RP
     {
         public string folderName;
@@ -28,28 +36,28 @@ public class RessourcePackManager : MonoBehaviour
     public void ChangCategory(int cat) { category = cat; Refresh(); }
     public static string serverURL { get; private set; }
 
-    void Awake() => serverURL = $"{_06Games.ServerAPI.apiUrl}angry-dash/ressources/?gameVersion={Application.version}";
-    void Start() => Refresh();
+    private void Awake() => serverURL = $"{ServerAPI.apiUrl}angry-dash/ressources/?gameVersion={Application.version}";
+    private void Start() => Refresh();
     public void Refresh()
     {
-        for (int i = 0; i < transform.GetChild(0).childCount; i++) transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = i != category;
+        for (var i = 0; i < transform.GetChild(0).childCount; i++) transform.GetChild(0).GetChild(i).GetComponent<Button>().interactable = i != category;
 
         if (ConfigAPI.GetBool("ressources.disable"))
-            RPs = new[] { new RP() { name = "Resource packs are disabled!", description = "Set <b>ressources.disable</b> to <b>False</b> to re-enable them" } };
+            RPs = new[] { new RP { name = "Resource packs are disabled!", description = "Set <b>ressources.disable</b> to <b>False</b> to re-enable them" } };
         else if (category == 0)
         {
             RPs = Directory.GetDirectories(Application.persistentDataPath + "/Ressources/").Select(f =>
             {
                 var dirInf = new DirectoryInfo(f);
-                var rp = new RP()
+                var rp = new RP
                 {
                     folderName = name = dirInf.Name,
                     size = dirInf.GetFiles("*", SearchOption.AllDirectories).Sum(file => file.Length),
-                    sha256 = Security.Hashing.SHA(Security.Hashing.Algorithm.SHA256, "")
+                    sha256 = Hashing.SHA(Hashing.Algorithm.SHA256, "")
                 };
                 if (!File.Exists(f + "/info.ini")) return rp;
 
-                var ini = new FileFormat.INI.INI(f + "/info.ini").GetCategory("Configuration");
+                var ini = new INI(f + "/info.ini").GetCategory("Configuration");
                 rp.name = Format(ini.Value<string>("name") ?? rp.name);
                 rp.author = Format(ini.Value<string>("author"));
                 rp.description = Format(ini.Value<string>("description"));
@@ -59,22 +67,22 @@ public class RessourcePackManager : MonoBehaviour
         }
         else if (category == 1 && InternetAPI.IsConnected())
         {
-            System.Net.WebClient client = new System.Net.WebClient();
-            System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            RPs = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, RP>>(client.DownloadString(serverURL)).Values.ToArray();
+            var client = new WebClient();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            RPs = JsonConvert.DeserializeObject<Dictionary<string, RP>>(client.DownloadString(serverURL)).Values.ToArray();
         }
         else RPs = new RP[0];
 
-        Transform Content = transform.GetChild(1).GetChild(0).GetChild(0);
-        for (int i = 1; i < Content.childCount; i++) Destroy(Content.GetChild(i).gameObject);
-        GameObject Template = Content.GetChild(0).gameObject;
+        var Content = transform.GetChild(1).GetChild(0).GetChild(0);
+        for (var i = 1; i < Content.childCount; i++) Destroy(Content.GetChild(i).gameObject);
+        var Template = Content.GetChild(0).gameObject;
 
 
-        for (int i = 0; i < RPs.Length; i++)
+        for (var i = 0; i < RPs.Length; i++)
         {
             var rp = RPs[i];
-            int param = i;
-            Transform go = Instantiate(Template, Content).transform;
+            var param = i;
+            var go = Instantiate(Template, Content).transform;
 
             //Could be selected/Is selected
             go.GetComponent<Button>().onClick.AddListener(() => SetRP(param));
@@ -82,7 +90,7 @@ public class RessourcePackManager : MonoBehaviour
             go.Find("Selected").gameObject.SetActive(rp.folderName == ConfigAPI.GetString("ressources.pack"));
 
             //Download btn
-            string RP = Application.persistentDataPath + "/Ressources/" + rp.folderName;
+            var RP = Application.persistentDataPath + "/Ressources/" + rp.folderName;
             var downBtn = go.Find("Download");
             downBtn.GetComponent<Button>().onClick.AddListener(() => Download(param));
             downBtn.gameObject.SetActive(true);
@@ -98,11 +106,11 @@ public class RessourcePackManager : MonoBehaviour
             go.name = rp.name;
             go.Find("Title").GetComponent<Text>().text = rp.name;
             go.Find("Description").GetComponent<Text>().text = rp.description;
-            go.Find("Author").GetComponent<Text>().text = string.IsNullOrWhiteSpace(rp.author) ? null : AngryDash.Language.LangueAPI.Get("native", "settings.ressourcesPack.author", "by [0]", rp.author);
+            go.Find("Author").GetComponent<Text>().text = string.IsNullOrWhiteSpace(rp.author) ? null : LangueAPI.Get("native", "settings.ressourcesPack.author", "by [0]", rp.author);
             go.Find("Size").GetComponent<Text>().text = DependenciesManager.FileSizeUnit(rp.size);
 
             //Wallpaper
-            if (!string.IsNullOrEmpty(rp.wallpaper) && System.Uri.TryCreate(rp.wallpaper, System.UriKind.Absolute, out var uri) && uri.Scheme != "file")
+            if (!string.IsNullOrEmpty(rp.wallpaper) && Uri.TryCreate(rp.wallpaper, UriKind.Absolute, out var uri) && uri.Scheme != "file")
             {
                 UnityThread.executeCoroutine(GetWall());
                 IEnumerator GetWall()
@@ -129,14 +137,14 @@ public class RessourcePackManager : MonoBehaviour
     {
         if (category == 1)
         {
-            string RP = Application.persistentDataPath + "/Ressources/" + RPs[index].folderName;
+            var RP = Application.persistentDataPath + "/Ressources/" + RPs[index].folderName;
             if (!Directory.Exists(RP)) return;
         }
 
         ConfigAPI.SetString("ressources.pack", RPs[index].folderName);
-        for (int i = 0; i < transform.GetChild(1).GetChild(0).GetChild(0).childCount - 1; i++)
+        for (var i = 0; i < transform.GetChild(1).GetChild(0).GetChild(0).childCount - 1; i++)
         {
-            Transform go = transform.GetChild(1).GetChild(0).GetChild(0).GetChild(i + 1);
+            var go = transform.GetChild(1).GetChild(0).GetChild(0).GetChild(i + 1);
             go.GetComponent<Button>().interactable = i != index;
             go.Find("Selected").gameObject.SetActive(i == index);
         }
@@ -144,7 +152,7 @@ public class RessourcePackManager : MonoBehaviour
 
     public void Download(int index)
     {
-        SceneManager.LoadScene("Start", new string[] { "Dependencies", "Home", FileFormat.XML.Utils.ClassToXML(RPs[index]) }, true);
+        SceneManager.LoadScene("Start", new[] { "Dependencies", "Home", Utils.ClassToXML(RPs[index]) }, true);
         transform.GetChild(1).GetChild(0).GetChild(0).GetChild(index + 1).Find("Download").gameObject.SetActive(false);
     }
 
@@ -152,10 +160,10 @@ public class RessourcePackManager : MonoBehaviour
     {
         Cache.Dictionary.Remove("Ressources/textures/json");
         Cache.Dictionary.Remove("Ressources/textures");
-        SceneManager.LoadScene("Load", new string[] { "Settings", "Ressource Pack" });
+        SceneManager.LoadScene("Load", new[] { "Settings", "Ressource Pack" });
     }
 
-    string Format(string s)
+    private string Format(string s)
     {
         if (string.IsNullOrWhiteSpace(s)) return s;
         s = s.Replace("\\t", "\t");

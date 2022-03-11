@@ -1,21 +1,29 @@
-﻿using AngryDash.Image.Reader;
-using AngryDash.Language;
-using Level;
+﻿using System;
+using System.Collections;
+using System.Globalization;
 using System.IO;
+using AngryDash.Game.Events;
+using AngryDash.Image;
+using AngryDash.Image.Reader;
+using AngryDash.Language;
+using Discord;
+using FileFormat;
+using Level;
 using Tools;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using Event = AngryDash.Game.Events.Event;
 
 namespace AngryDash.Game
 {
     public class LevelPlayer : MonoBehaviour
     {
         public Infos level;
-        string file;
+        private string file;
         public string FromScene;
         public string[] passThroughArgs;
-        Camera cam;
+        private Camera cam;
 
         public GameObject PlayerPrefab;
         public GameObject[] Prefabs;
@@ -23,7 +31,7 @@ namespace AngryDash.Game
 
         public Transform ArrierePlan;
 
-        Vector3 EndPoint;
+        private Vector3 EndPoint;
         public GameObject EventPrefab;
         public GameObject[] TriggerPref;
         public Transform Base;
@@ -46,7 +54,7 @@ namespace AngryDash.Game
 
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
             {
-                string[] args = SceneManager.args;
+                var args = SceneManager.args;
                 if (args.Length > 2)
                 {
                     passThroughArgs = args.RemoveAt(0, 2);
@@ -61,7 +69,8 @@ namespace AngryDash.Game
                 else FromFile();
             }
         }
-        void FromFile(string _file = null, string _fromScene = null)
+
+        private void FromFile(string _file = null, string _fromScene = null)
         {
             if (!string.IsNullOrEmpty(_file))
             {
@@ -69,7 +78,7 @@ namespace AngryDash.Game
                 if (string.IsNullOrEmpty(_fromScene)) FromScene = "Home";
                 else FromScene = _fromScene;
 
-                Infos lvl = Infos.Parse(LevelUpdater.UpdateLevel(File.ReadAllText(file)));
+                var lvl = Infos.Parse(LevelUpdater.UpdateLevel(File.ReadAllText(file)));
                 if (string.IsNullOrEmpty(lvl.name)) lvl.name = Path.GetFileNameWithoutExtension(file);
                 PlayLevel(lvl);
             }
@@ -80,7 +89,7 @@ namespace AngryDash.Game
 
         public void PlayLevel(LevelItem item)
         {
-            Infos lvl = Infos.Parse(LevelUpdater.UpdateLevel(item.Data));
+            var lvl = Infos.Parse(LevelUpdater.UpdateLevel(item.Data));
             if (string.IsNullOrEmpty(lvl.name)) lvl.name = item.Name;
             PlayLevel(lvl);
         }
@@ -88,26 +97,26 @@ namespace AngryDash.Game
         {
             level = item;
             StartCoroutine(Parse()); //Spawn blocks
-            _06Games.Account.Discord.NewActivity(new Discord.Activity()
+            _06Games.Account.Discord.NewActivity(new Activity
             {
                 State = LangueAPI.Get("native", "discordPlaying_title", "Play a level"),
-                Assets = new Discord.ActivityAssets() { LargeImage = "default", LargeText = LangueAPI.Get("native", "discordPlaying_caption", "Level : [0]", level.name) },
-                Timestamps = new Discord.ActivityTimestamps() { Start = _06Games.Account.Discord.CalculateStartTime(System.DateTime.Now) }
+                Assets = new ActivityAssets { LargeImage = "default", LargeText = LangueAPI.Get("native", "discordPlaying_caption", "Level : [0]", level.name) },
+                Timestamps = new ActivityTimestamps { Start = _06Games.Account.Discord.CalculateStartTime(DateTime.Now) }
             });
         }
 
-        System.Collections.IEnumerator Parse()
+        private IEnumerator Parse()
         {
             if (string.IsNullOrWhiteSpace(level.rpURL)) StartCoroutine(ParseCoroutine());
             else
             {
-                Transform go = Base.Find("RP");
+                var go = Base.Find("RP");
 
-                string[] title = new string[] { "levelPlayer.resourcePack.recommend", "This level recommends a resource pack, do you want to install it?" };
-                if (level.rpRequired) title = new string[] { "levelPlayer.resourcePack.required", "This level require a resource pack, do you want to install it?" };
+                var title = new[] { "levelPlayer.resourcePack.recommend", "This level recommends a resource pack, do you want to install it?" };
+                if (level.rpRequired) title = new[] { "levelPlayer.resourcePack.required", "This level require a resource pack, do you want to install it?" };
                 go.GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", title[0], title[1]);
 
-                if (System.Uri.TryCreate(level.rpURL, System.UriKind.Absolute, out var uri))
+                if (Uri.TryCreate(level.rpURL, UriKind.Absolute, out var uri))
                 {
                     if (uri.Host == "localhost" | uri.Host == "06games.ddns.net") go.GetChild(1).gameObject.SetActive(false);
                     else go.GetChild(1).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.resourcePack.warn", "Warning, this resource pack will be downloaded from an external server (<i>[0]</i>), not belonging to 06Games.\nDownload it only if you had full confidence in the host.", uri.Host);
@@ -116,7 +125,7 @@ namespace AngryDash.Game
                     var request = UnityWebRequest.Head(uri);
                     request.timeout = 15;
                     yield return request.SendWebRequest();
-                    bool error = !string.IsNullOrWhiteSpace(request.error);
+                    var error = !string.IsNullOrWhiteSpace(request.error);
                     long size = 0;
 
                     if (!error)
@@ -124,17 +133,17 @@ namespace AngryDash.Game
                         long.TryParse(request.GetResponseHeader("Content-Length"), out size);
                         go.GetChild(2).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", "levelPlayer.resourcePack.install", "Install ([0] KB)", Mathf.RoundToInt(size / 1000F));
 
-                        string[] no = new string[] { "levelPlayer.resourcePack.no", "No Thanks" };
-                        if (level.rpRequired) no = new string[] { "levelPlayer.resourcePack.quit", "Quit" };
+                        var no = new[] { "levelPlayer.resourcePack.no", "No Thanks" };
+                        if (level.rpRequired) no = new[] { "levelPlayer.resourcePack.quit", "Quit" };
                         go.GetChild(3).GetChild(0).GetComponent<Text>().text = LangueAPI.Get("native", no[0], no[1]);
                     }
 
                     var file = new FileInfo(Application.persistentDataPath + "/Levels/Resource Packs/" + level.rpURL.TrimStart("http://").TrimStart("https://").TrimStart("file://").Replace("\\", "/").Replace("/", "_"));
                     if (file.Exists && (file.Length == size | error))
                     {
-                        string dirPath = Application.temporaryCachePath + "/downloadedRP/";
-                        if (!Directory.Exists(dirPath)) FileFormat.ZIP.Decompress(file.FullName, dirPath);
-                        Image.Sprite_API.forceRP = dirPath;
+                        var dirPath = Application.temporaryCachePath + "/downloadedRP/";
+                        if (!Directory.Exists(dirPath)) ZIP.Decompress(file.FullName, dirPath);
+                        Sprite_API.forceRP = dirPath;
                         StartCoroutine(ParseCoroutine());
                     }
                     else go.gameObject.SetActive(true);
@@ -143,26 +152,27 @@ namespace AngryDash.Game
             }
         }
         public void DownloadRP() { StartCoroutine(DownloadRPCoroutine()); }
-        System.Collections.IEnumerator DownloadRPCoroutine()
+
+        private IEnumerator DownloadRPCoroutine()
         {
-            Transform go = Base.Find("RP");
+            var go = Base.Find("RP");
 
             var request = UnityWebRequest.Get(level.rpURL);
             var async = request.SendWebRequest();
-            async.completed += (a) =>
+            async.completed += a =>
             {
-                string zipPath = Application.persistentDataPath + "/Levels/Resource Packs/" + level.rpURL.TrimStart("http://").TrimStart("https://").TrimStart("file://").Replace("\\", "/").Replace("/", "_");
-                string dirPath = Application.temporaryCachePath + "/downloadedRP/";
+                var zipPath = Application.persistentDataPath + "/Levels/Resource Packs/" + level.rpURL.TrimStart("http://").TrimStart("https://").TrimStart("file://").Replace("\\", "/").Replace("/", "_");
+                var dirPath = Application.temporaryCachePath + "/downloadedRP/";
 
                 File.WriteAllBytes(zipPath, request.downloadHandler.data);
-                FileFormat.ZIP.Decompress(zipPath, dirPath);
-                Image.Sprite_API.forceRP = dirPath;
+                ZIP.Decompress(zipPath, dirPath);
+                Sprite_API.forceRP = dirPath;
 
                 StartCoroutine(ParseCoroutine());
                 go.gameObject.SetActive(false);
             };
 
-            Slider slider = go.GetChild(2).GetChild(1).GetComponent<Slider>();
+            var slider = go.GetChild(2).GetChild(1).GetComponent<Slider>();
             while (!async.isDone)
             {
                 yield return new WaitForEndOfFrame();
@@ -175,14 +185,14 @@ namespace AngryDash.Game
             else StartCoroutine(ParseCoroutine());
         }
 
-        System.Collections.IEnumerator ParseCoroutine()
+        private IEnumerator ParseCoroutine()
         {
-            for (int i = 0; i < ArrierePlan.childCount; i++)
+            for (var i = 0; i < ArrierePlan.childCount; i++)
             {
                 ArrierePlan.GetChild(i).GetComponent<UnityEngine.UI.Image>().color = level.background.color;
                 ArrierePlan.GetChild(i).GetComponent<UImage_Reader>().SetID(level.background.category + "/BACKGROUNDS/" + level.background.id).Load();
             }
-            Vector2 size = ArrierePlan.GetChild(0).GetComponent<UnityEngine.UI.Image>().sprite.Size();
+            var size = ArrierePlan.GetChild(0).GetComponent<UnityEngine.UI.Image>().sprite.Size();
             ArrierePlan.GetComponent<CanvasScaler>().referenceResolution = size;
             float match = 1;
             if (size.y < size.x) match = 0;
@@ -193,20 +203,20 @@ namespace AngryDash.Game
             if (level.victoryConditions == null) level.victoryConditions = new VictoryConditions();
             Player.userPlayer.levelSettings = level.player.DeepClone();
 
-            Transform place = new GameObject("Items").transform;
-            for (int i = 0; i < level.blocks.Length; i++) Instance(i, place);
+            var place = new GameObject("Items").transform;
+            for (var i = 0; i < level.blocks.Length; i++) Instance(i, place);
             transform.GetChild(0).gameObject.SetActive(true);
 
             Base.GetChild(4).gameObject.SetActive(false);
 
 
-            string music = "";
+            var music = "";
             if (level.music != null) music = Application.persistentDataPath + "/Musics/" + level.music.Artist + " - " + level.music.Name;
 
             if (GameObject.Find("Audio") != null)
             {
-                GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
-                if (!string.IsNullOrEmpty(music)) GameObject.Find("Audio").GetComponent<menuMusic>().LoadUnpackagedMusic(music);
+                GameObject.Find("Audio").GetComponent<MenuMusic>().Stop();
+                if (!string.IsNullOrEmpty(music)) GameObject.Find("Audio").GetComponent<MenuMusic>().LoadUnpackagedMusic(music);
             }
 
             if (SummonPlace != null) Destroy(SummonPlace.gameObject);
@@ -219,42 +229,42 @@ namespace AngryDash.Game
 
         public void Instance(int num, Transform place)
         {
-            float id = level.blocks[num].id;
-            Vector3 p = level.blocks[num].position * 50 + new Vector3(25, 25, 0);
-            Vector3 pos = new Vector3(p.x, p.y, 0);
-            Quaternion rot = new Quaternion();
+            var id = level.blocks[num].id;
+            var p = level.blocks[num].position * 50 + new Vector3(25, 25, 0);
+            var pos = new Vector3(p.x, p.y, 0);
+            var rot = new Quaternion();
 
             if (id >= 1)
             {
-                string color = GetBlocStatus("Color", num);
-                float.TryParse(GetBlocStatus("Behavior", num), out float colid);
-                int.TryParse(GetBlocStatus("Rotate", num), out int rotZ);
+                var color = GetBlocStatus("Color", num);
+                float.TryParse(GetBlocStatus("Behavior", num), out var colid);
+                int.TryParse(GetBlocStatus("Rotate", num), out var rotZ);
                 rot.eulerAngles = new Vector3(0, 0, rotZ);
 
                 GameObject go;
                 try { go = Instantiate(Prefabs[(int)id - 1], pos, rot, place); }
                 catch { Debug.LogWarning("The block at the line " + num + " as an invalid id"); return; }
                 go.name = "Objet n° " + num;
-                SpriteRenderer SR = go.GetComponent<SpriteRenderer>();
+                var SR = go.GetComponent<SpriteRenderer>();
                 SR.color = HexToColor(color);
                 SR.sortingOrder = (int)level.blocks[num].position.z;
-                Vector2 size = go.GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id.ToString(".0####")).Load().FrameSize;
+                var size = go.GetComponent<UImage_Reader>().SetID("native/BLOCKS/" + id.ToString(".0####")).Load().FrameSize;
                 if (size != Vector2.zero) go.transform.localScale = new Vector2(100, 100) / size * 50;
                 else go.transform.localScale = new Vector2(50, 50);
 
                 if ((int)id == 1)
                 {
-                    BoxCollider2D[] colliders = go.GetComponents<BoxCollider2D>();
+                    var colliders = go.GetComponents<BoxCollider2D>();
                     if (colliders.Length > 0) colliders[0].size = size / new Vector2(100, 100);
                     if (colliders.Length > 1) colliders[1].size = size / new Vector2(100, 100) + new Vector2(0.1F, 0.1F);
                 }
                 else
                 {
-                    PolygonCollider2D[] colliders = go.GetComponents<PolygonCollider2D>();
+                    var colliders = go.GetComponents<PolygonCollider2D>();
                     foreach (var collider in colliders)
                     {
-                        Vector2[] points = collider.points;
-                        for (int i = 0; i < points.Length; i++) points[i] *= size / new Vector2(100, 100);
+                        var points = collider.points;
+                        for (var i = 0; i < points.Length; i++) points[i] *= size / new Vector2(100, 100);
                         collider.points = points;
                     }
                 }
@@ -264,10 +274,10 @@ namespace AngryDash.Game
             }
             else if (id == 0) //Event
             {
-                GameObject go = Instantiate(EventPrefab, pos, rot, place);
+                var go = Instantiate(EventPrefab, pos, rot, place);
                 go.name = "Objet n° " + num;
                 go.transform.localScale = new Vector2(50, 50);
-                go.GetComponent<Events.Event>().script = GetBlocStatus("Script", num);
+                go.GetComponent<Event>().script = GetBlocStatus("Script", num);
             }
             else //Compatibility Mode
             {
@@ -278,44 +288,44 @@ namespace AngryDash.Game
                 }
                 else if (id == 0.2F) //Stop
                 {
-                    GameObject go = Instantiate(TriggerPref[0], pos, rot, place);
+                    var go = Instantiate(TriggerPref[0], pos, rot, place);
                     go.name = "Objet n° " + num;
-                    Vector2 size = go.GetComponent<UImage_Reader>().Load().FrameSize;
+                    var size = go.GetComponent<UImage_Reader>().Load().FrameSize;
                     if (size != Vector2.zero) go.transform.localScale = new Vector2(100, 100) / size * 50;
                     else go.transform.localScale = new Vector2(50, 50);
                 }
                 else if (id == 0.3F) //Checkpoint
                 {
-                    GameObject go = Instantiate(TriggerPref[1], pos, rot, place);
+                    var go = Instantiate(TriggerPref[1], pos, rot, place);
                     go.name = "Objet n° " + num;
-                    Vector2 size = go.GetComponent<UImage_Reader>().Load().FrameSize;
+                    var size = go.GetComponent<UImage_Reader>().Load().FrameSize;
                     if (size != Vector2.zero) go.transform.localScale = new Vector2(100, 100) / size * 50;
                     else go.transform.localScale = new Vector2(50, 50);
                     go.SetActive(Player.userPlayer.levelSettings.respawnMode == 1);
                 }
                 else if (id == 0.4F) //Move
                 {
-                    GameObject go = Instantiate(TriggerPref[2], pos, rot, place);
+                    var go = Instantiate(TriggerPref[2], pos, rot, place);
                     go.name = "Objet n° " + num;
                     go.transform.localScale = new Vector2(50, 50);
 
-                    Events.MoveTrigger moveTrigger = go.GetComponent<Events.MoveTrigger>();
+                    var moveTrigger = go.GetComponent<MoveTrigger>();
                     int.TryParse(GetBlocStatus("AffectationType", num), out moveTrigger.AffectationType);
                     int.TryParse(GetBlocStatus("Group", num), out moveTrigger.Group);
                     try { moveTrigger.Translation = Editor_MoveTrigger.getVector2(GetBlocStatus("Translation", num)); } catch { }
-                    string translationFrom = GetBlocStatus("TranslationFrom", num);
+                    var translationFrom = GetBlocStatus("TranslationFrom", num);
                     try
                     {
-                        string[] translationFromArray = translationFrom.Substring(1, translationFrom.Length - 2).Split(',');
-                        for (int i = 0; i < translationFromArray.Length; i++)
+                        var translationFromArray = translationFrom.Substring(1, translationFrom.Length - 2).Split(',');
+                        for (var i = 0; i < translationFromArray.Length; i++)
                             bool.TryParse(translationFromArray[i], out moveTrigger.TranslationFromPlayer[i]);
                     }
                     catch { }
-                    string reset = GetBlocStatus("Reset", num);
+                    var reset = GetBlocStatus("Reset", num);
                     try
                     {
-                        string[] resetArray = reset.Substring(1, reset.Length - 2).Split(',');
-                        for (int i = 0; i < resetArray.Length; i++) bool.TryParse(resetArray[i], out moveTrigger.Reset[i]);
+                        var resetArray = reset.Substring(1, reset.Length - 2).Split(',');
+                        for (var i = 0; i < resetArray.Length; i++) bool.TryParse(resetArray[i], out moveTrigger.Reset[i]);
                     }
                     catch { }
                     bool.TryParse(GetBlocStatus("GlobalRotation", num), out moveTrigger.GlobalRotation);
@@ -334,38 +344,39 @@ namespace AngryDash.Game
         public static Color HexToColor(string hex)
         {
             if (hex == null) return new Color32(190, 190, 190, 255);
-            else if (hex.Length < 6 | hex.Length > 9) return new Color32(190, 190, 190, 255);
+            if (hex.Length < 6 | hex.Length > 9) return new Color32(190, 190, 190, 255);
 
-            byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-            byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-            byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-            byte a = byte.Parse(hex.Substring(6), System.Globalization.NumberStyles.Number);
+            var r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber);
+            var g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber);
+            var b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber);
+            var a = byte.Parse(hex.Substring(6), NumberStyles.Number);
             return new Color32(r, g, b, a);
         }
         public string GetBlocStatus(string StatusID, int Bloc)
         {
             if (level.blocks.Length > Bloc)
             {
-                Block block = level.blocks[Bloc];
+                var block = level.blocks[Bloc];
 
                 if (StatusID == "ID") return block.id.ToString();
-                else if (StatusID == "Position") return block.position.ToString();
-                else if (StatusID == "PositionX") return block.position.x.ToString();
-                else if (StatusID == "PositionY") return block.position.y.ToString();
-                else if (StatusID == "Layer") return block.position.z.ToString();
-                else if (block.parameter.ContainsKey(StatusID)) return block.parameter[StatusID];
-                else return "";
+                if (StatusID == "Position") return block.position.ToString();
+                if (StatusID == "PositionX") return block.position.x.ToString();
+                if (StatusID == "PositionY") return block.position.y.ToString();
+                if (StatusID == "Layer") return block.position.z.ToString();
+                if (block.parameter.ContainsKey(StatusID)) return block.parameter[StatusID];
+                return "";
             }
-            else return "";
+
+            return "";
         }
 
-        static float oldSpeed = 1;
+        private static float oldSpeed = 1;
         public static void Pause(bool pause)
         {
             if (pause) Time.timeScale = 0;
             else Time.timeScale = 1;
 
-            Player player = Player.userPlayer;
+            var player = Player.userPlayer;
             player.enabled = !pause;
             if (pause)
             {
@@ -380,28 +391,28 @@ namespace AngryDash.Game
             Time.timeScale = 1;
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Online")
             {
-                string scene = FromScene;
+                var scene = FromScene;
                 string[] args = null;
                 if (FromScene == "") scene = "Home";
                 else if (FromScene.Contains("/"))
                 {
-                    string[] FromSceneDetails = FromScene.Split(new string[] { "/" }, System.StringSplitOptions.None);
+                    var FromSceneDetails = FromScene.Split(new[] { "/" }, StringSplitOptions.None);
                     scene = FromSceneDetails[0];
                     args = FromSceneDetails.RemoveAt(0);
-                    GameObject.Find("Audio").GetComponent<menuMusic>().StartDefault();
+                    GameObject.Find("Audio").GetComponent<MenuMusic>().StartDefault();
                 }
                 else if (FromScene == "Editor")
                 {
                     scene = FromScene;
                     args = passThroughArgs;
-                    GameObject.Find("Audio").GetComponent<menuMusic>().Stop();
+                    GameObject.Find("Audio").GetComponent<MenuMusic>().Stop();
                 }
 
                 if (scene != "Editor")
                 {
-                    string path = Application.temporaryCachePath + "/downloadedRP/";
+                    var path = Application.temporaryCachePath + "/downloadedRP/";
                     if (Directory.Exists(path)) Directory.Delete(path, true);
-                    Image.Sprite_API.forceRP = null;
+                    Sprite_API.forceRP = null;
                 }
                 SceneManager.LoadScene(scene, args);
             }

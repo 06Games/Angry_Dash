@@ -1,15 +1,16 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ControllerManager : MonoBehaviour
 {
-    public bool Controller = false;
-    UnityEngine.EventSystems.EventSystem eventSystem;
-    Selectable baseSelectable;
+    public bool Controller;
+    private EventSystem eventSystem;
+    private Selectable baseSelectable;
 
-    void Start()
+    private void Start()
     {
-        eventSystem = GameObject.Find("EventSystem").GetComponent<UnityEngine.EventSystems.EventSystem>();
+        eventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
         if (eventSystem.firstSelectedGameObject != null) baseSelectable = eventSystem.firstSelectedGameObject.GetComponent<Selectable>();
     }
 
@@ -19,16 +20,16 @@ public class ControllerManager : MonoBehaviour
         baseSelectable = obj;
     }
 
-    void Update()
+    private void Update()
     {
         if (eventSystem == null)
         {
-            eventSystem = GameObject.Find("EventSystem").GetComponent<UnityEngine.EventSystems.EventSystem>();
+            eventSystem = GameObject.Find("EventSystem").GetComponent<EventSystem>();
             baseSelectable = eventSystem.firstSelectedGameObject?.GetComponent<Selectable>();
         }
-        bool newController = Input.GetJoystickNames().Length > 0;
+        var newController = Input.GetJoystickNames().Length > 0;
         if (newController) newController = !(Input.GetJoystickNames().Length == 1 & string.IsNullOrEmpty(Input.GetJoystickNames()[0]));
-        if (newController == true & Controller == false & baseSelectable != null) baseSelectable.Select();
+        if (newController & Controller == false & baseSelectable != null) baseSelectable.Select();
         if (Controller & eventSystem.currentSelectedGameObject == null & baseSelectable != null) baseSelectable.Select();
         if (Controller & !newController) eventSystem.SetSelectedGameObject(null);
         Controller = newController;

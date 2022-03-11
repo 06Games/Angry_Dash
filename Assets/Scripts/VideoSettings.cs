@@ -1,7 +1,7 @@
 ﻿using AngryDash.Language;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Screen = Display.Screen;
 
 public class VideoSettings : MonoBehaviour
 {
@@ -16,7 +16,7 @@ public class VideoSettings : MonoBehaviour
 #endif
     }
 
-    void Start() { NewStart(); }
+    private void Start() { NewStart(); }
     public void NewStart()
     {
         ShowFPS(ConfigAPI.GetBool("video.showFPS"));
@@ -41,16 +41,18 @@ public class VideoSettings : MonoBehaviour
     }
 
     public void ShowFPS(Toggle _Toggle) { ShowFPS(_Toggle.isOn, _Toggle); }
-    void ShowFPS(bool show, Toggle _Toggle = null)
+
+    private void ShowFPS(bool show, Toggle _Toggle = null)
     {
         ConfigAPI.SetBool("video.showFPS", show);
         if (_Toggle == null) GraphicalOptions.GetChild(0).GetComponent<Toggle>().isOn = show;
     }
 
     public void MaxFPS(Slider _Slider) { MaxFPS(_Slider.value, _Slider); }
-    void MaxFPS(float value, Slider _Slider = null)
+
+    private void MaxFPS(float value, Slider _Slider = null)
     {
-        int FPS = (int)value;
+        var FPS = (int)value;
         if (_Slider != null)
             FPS = (int)(value * 60F);
 
@@ -73,7 +75,7 @@ public class VideoSettings : MonoBehaviour
             if (value >= 0) _Slider.value = value / 60;
             else _Slider.value = 7;
         }
-        string Text = LangueAPI.Get("native", "SettingsVideoFpsLimit", "[0] FPS", FPS);
+        var Text = LangueAPI.Get("native", "SettingsVideoFpsLimit", "[0] FPS", FPS);
         if (value == 0)
             Text = LangueAPI.Get("native", "SettingsVideoFpsLimitV-Sync", "V-Sync");
         else if (FPS == -1)
@@ -84,15 +86,16 @@ public class VideoSettings : MonoBehaviour
     }
 
     public void MSAA(Dropdown _Dropdown) { MSAA(_Dropdown.value, _Dropdown); }
-    void MSAA(int value, Dropdown _Dropdown = null)
+
+    private void MSAA(int value, Dropdown _Dropdown = null)
     {
         if (_Dropdown == null)
         {
             _Dropdown = GraphicalOptions.GetChild(2).GetComponent<Dropdown>();
             _Dropdown.value = (int)Mathf.Log(value, 2);
-            List<Dropdown.OptionData> OD = _Dropdown.options;
+            var OD = _Dropdown.options;
             OD[0].text = LangueAPI.Get("native", "SettingsVideoAntiAliasingDisabled", "Disabled");
-            for (int i = 1; i < OD.ToArray().Length; i++)
+            for (var i = 1; i < OD.ToArray().Length; i++)
                 OD[i].text = LangueAPI.Get("native", "SettingsVideoAntiAliasing", "MSAA [0]x", Mathf.Pow(2, i));
 
             _Dropdown.options = OD;
@@ -108,15 +111,16 @@ public class VideoSettings : MonoBehaviour
     public void FullScreen(bool on, Toggle _Toggle = null)
     {
         ConfigAPI.SetBool("video.fullScreen", on);
-        if (on) Display.Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, true);
-        else Display.Screen.SetResolution(1366, 768, false);
+        if (on) Screen.SetResolution(UnityEngine.Screen.currentResolution.width, UnityEngine.Screen.currentResolution.height, true);
+        else Screen.SetResolution(1366, 768, false);
 
         if (_Toggle == null)
             GraphicalOptions.GetChild(3).GetComponent<Toggle>().isOn = on;
     }
 
     public void APNG(Toggle toggle) { APNG(toggle.isOn, toggle); }
-    void APNG(bool on, Toggle toggle = null)
+
+    private void APNG(bool on, Toggle toggle = null)
     {
         ConfigAPI.SetBool("video.APNG", on);
         if (toggle == null) GraphicalOptions.GetChild(4).GetComponent<Toggle>().isOn = on;

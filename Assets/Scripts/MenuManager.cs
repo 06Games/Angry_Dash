@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
     public GameObject[] GO;
-    public UnityEngine.UI.Selectable[] Buttons;
+    public Selectable[] Buttons;
     public int array;
 
-    void Update()
+    private void Update()
     {
-        for (int i = 0; i < GO.Length; i++)
+        for (var i = 0; i < GO.Length; i++)
         {
             if (GO[i] != null)
             {
@@ -31,10 +32,14 @@ public class MenuManager : MonoBehaviour
 
     public GameObject selectedObject
     {
-        get { if (array >= 0 & array < GO.Length) return GO[array]; else return null; }
+        get
+        {
+            if (array >= 0 & array < GO.Length) return GO[array];
+            return null;
+        }
         set
         {
-            for (int i = 0; i < GO.Length; i++)
+            for (var i = 0; i < GO.Length; i++)
             {
                 if (GO[i] == value) { array = i; i = GO.Length; }
             }

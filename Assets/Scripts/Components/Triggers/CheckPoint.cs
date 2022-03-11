@@ -4,11 +4,11 @@ namespace AngryDash.Game.Events
 {
     public class CheckPoint : MonoBehaviour
     {
-        AngryDash.Game.Player player;
+        private Player player;
 
-        void OnTriggerEnter2D(Collider2D collision)
+        private void OnTriggerEnter2D(Collider2D collision)
         {
-            player = collision.gameObject.GetComponent<AngryDash.Game.Player>();
+            player = collision.gameObject.GetComponent<Player>();
             if (player.levelSettings.respawnMode == 1) player.PositionInitiale = transform.position;
             if (player.levelSettings.respawnMode == 1) GetComponent<SpriteRenderer>().color = new Color32(255, 130, 0, 255);
         }
