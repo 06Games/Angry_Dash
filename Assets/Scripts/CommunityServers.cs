@@ -1,14 +1,12 @@
 ﻿using AngryDash.Language;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class CommunityServers : MonoBehaviour
 {
-#pragma warning disable CS0618 // En attendant la nouvelle API
-
+#if EnableMultiplayer
     public Sprite DefaultServerIcon;
-
+    
     NetworkManager NM;
     NetworkClient Client;
     string adress = "localhost";
@@ -227,4 +225,5 @@ public class CommunityServers : MonoBehaviour
         }
     }
     #endregion
+#endif
 }

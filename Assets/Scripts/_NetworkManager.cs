@@ -1,8 +1,8 @@
-﻿using AngryDash.Language;
+﻿#if EnableMultiplayer
+using AngryDash.Language;
 using Level;
 using System;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 #pragma warning disable CS0618 // En attendant la nouvelle API
@@ -172,3 +172,4 @@ public class _NetworkManager : NetworkBehaviour
         Selection.SetActive(false);
     }
 }
+ #endif

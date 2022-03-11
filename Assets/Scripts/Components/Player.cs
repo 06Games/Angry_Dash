@@ -41,11 +41,10 @@ namespace AngryDash.Game
             if (JoyStick == null) JoyStick = GameObject.Find("SensitiveJoystick");
             if (Trace == null) Trace = GameObject.Find("Traces").transform;
 
+#if EnableMultiplayer
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Online")
             {
-#pragma warning disable CS0618 // En attendant la nouvelle API
                 if (GetComponent<NetworkIdentity>().isLocalPlayer)
-#pragma warning restore CS0618 // En attendant la nouvelle API
                 {
                     userPlayer = this;
                     GetComponent<SpriteRenderer>().color = new Color32(255, 185, 0, 255);
@@ -53,7 +52,9 @@ namespace AngryDash.Game
                 }
                 else enabled = false;
             }
-            else userPlayer = this;
+            else
+#endif
+            userPlayer = this;
 
             FileFormat.XML.RootElement xml = Inventory.xmlDefault;
             GetComponent<UImage_Reader>().SetID("native/PLAYERS/" + Inventory.GetSelected(xml, "native/PLAYERS/")).LoadAsync(); //Player Image

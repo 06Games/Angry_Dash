@@ -405,10 +405,12 @@ namespace AngryDash.Game
                 }
                 SceneManager.LoadScene(scene, args);
             }
+#if EnableMultiplayer
             else
             {
                 GameObject.Find("Network Manager").GetComponent<_NetworkManager>().Disconnect();
             }
+#endif
         }
 
         public void Replay()
