@@ -172,7 +172,8 @@ public class LevelScriptEditor : Editor
     {
         var myTarget = (MenuMusic)target;
         var source = myTarget.GetComponent<AudioSource>();
-        EditorGUILayout.LabelField("Position", source.time + " / " + source.clip.length);
+        if(source.clip != null) EditorGUILayout.LabelField("Position", source.time + " / " + source.clip.length);
+        else EditorGUILayout.LabelField("No clip");
     }
 }
 #endif
